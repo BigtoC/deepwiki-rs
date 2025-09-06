@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="120" height="120" src="https://placehold.co/120x120/e63946/ffffff?text=Litho">
+  <img height="120" src="./assets/banner_litho.jpg">
 </p>
 <h3 align="center">Litho (deepwiki-rs)</h3>
 
@@ -14,7 +14,6 @@
 <p align="center">
   <img src="https://img.shields.io/github/v/release/sopaco/deepwiki-rs?label=version&color=6A5ACD" />
   <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/sopaco/deepwiki-rs/rust.yml">
-  <img src="https://img.shields.io/github/downloads/sopaco/deepwiki-rs/total" />
 </p>
 <hr />
 

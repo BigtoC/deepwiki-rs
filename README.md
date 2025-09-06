@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="120" height="120" src="https://placehold.co/120x120/e63946/ffffff?text=Litho">
+  <img height="120" src="./assets/banner_litho.jpg">
 </p>
 <h3 align="center">Litho (deepwiki-rs)</h3>
 
