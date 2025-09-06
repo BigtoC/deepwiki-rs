@@ -14,7 +14,6 @@
 <p align="center">
   <img src="https://img.shields.io/github/v/release/sopaco/deepwiki-rs?label=version&color=6A5ACD" />
   <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/sopaco/deepwiki-rs/rust.yml">
-  <img src="https://img.shields.io/github/downloads/sopaco/deepwiki-rs/total" />
 </p>
 <hr />
 
