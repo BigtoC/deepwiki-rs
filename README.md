@@ -27,10 +27,6 @@
 
 ❤️ Like **Litho**? Star it 🌟 or [Sponsor Me](https://github.com/sponsors/sopaco)! ❤️
 
-**Note: Installation and Usage Instructions**
-
-📖 For installation details and configuration methods, please refer to the [**Documentation**](#documentation).
-
 # 🌠 Key Features
 
 - **Automated Documentation Generation**: Automatically generates comprehensive C4 architecture documentation by analyzing project code, reducing manual documentation efforts.
