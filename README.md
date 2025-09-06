@@ -12,10 +12,14 @@
 <p align="center">🛠️ A high-performance, <strong>AI-driven</strong> architecture documentation generator based on <strong>Rust</strong>.</p>
 <p align="center">📚 Automatically generates professional <strong>C4 architecture documentation</strong> for any software project.</p>
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/sopaco/deepwiki-rs?label=version&color=6A5ACD" />
+  <a href="https://crates.io/crates/deepwiki-rs"><img src="https://img.shields.io/crates/v/deepwiki-rs.svg?color=dca282" /></a>
+  <a href=""><img src="https://img.shields.io/badge/built_with-Rust-dca282.svg?logo=rust" /></a>
   <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/sopaco/deepwiki-rs/rust.yml">
 </p>
 <hr />
+
+> [!WARNING]
+> ⚠ Here be dragons! As we plan to ship a torrent of features in the following months, future updates will contain breaking changes. With SGNetworks evolving, we'll annotate changes and highlight migration paths as we encounter them.
 
 > 🚀 Help me develop this software better by [sponsoring on GitHub](https://github.com/sponsors/sopaco)
 
@@ -26,6 +30,10 @@
 **Litho** is completely free and open-source, making it an ideal solution for teams looking to maintain up-to-date architecture documentation without the manual effort. By using large language models (LLMs), Litho provides insightful analysis and clear documentation that helps developers understand complex codebases more easily.
 
 ❤️ Like **Litho**? Star it 🌟 or [Sponsor Me](https://github.com/sponsors/sopaco)! ❤️
+
+**Thanks to the kind people**
+
+[![Stargazers repo roster for @sopaco/deepwiki-rs](https://reporoster.com/stars/sopaco/deepwiki-rs)](https://github.com/sopaco/deepwiki-rs/stargazers)
 
 # 🌠 Key Features
 

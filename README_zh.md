@@ -12,10 +12,14 @@
 <p align="center">💪🏻 基于<strong>Rust</strong>的高性能<strong>AI驱动</strong>文档智能生成引擎（类DeepWiki）</p>
 <p align="center">📚 自动为任何软件项目生成专业的<strong>C4风格项目架构文档</strong></p>
 <p align="center">
-  <img src="https://img.shields.io/github/v/release/sopaco/deepwiki-rs?label=version&color=6A5ACD" />
+  <a href="https://crates.io/crates/deepwiki-rs"><img src="https://img.shields.io/crates/v/deepwiki-rs.svg?color=dca282" /></a>
+  <a href=""><img src="https://img.shields.io/badge/built_with-Rust-dca282.svg?logo=rust" /></a>
   <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/sopaco/deepwiki-rs/rust.yml">
 </p>
 <hr />
+
+> [!WARNING]
+> ⚠️ 随着计划在未来几个月内的引擎架构重构和生态工具补充，后续更新将包含 较大的配置规范与生成效果的变更（Breaking Changes）。
 
 > 🚀 通过 [在 GitHub 上赞助](https://github.com/sponsors/sopaco)让这个软件更好的发展。
 
