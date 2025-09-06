@@ -1,0 +1,737 @@
+{
+  "root_dir": ".",
+  "directory_tree": {
+    "path": ".",
+    "relative_path": "",
+    "subdirectories": [
+      {
+        "path": ".\\src",
+        "relative_path": "src",
+        "subdirectories": [
+          {
+            "path": ".\\src\\cli",
+            "relative_path": "src\\cli",
+            "subdirectories": [],
+            "files": []
+          },
+          {
+            "path": ".\\src\\common_utils_impl",
+            "relative_path": "src\\common_utils_impl",
+            "subdirectories": [],
+            "files": []
+          },
+          {
+            "path": ".\\src\\config",
+            "relative_path": "src\\config",
+            "subdirectories": [],
+            "files": []
+          },
+          {
+            "path": ".\\src\\document",
+            "relative_path": "src\\document",
+            "subdirectories": [
+              {
+                "path": ".\\src\\document\\exporters",
+                "relative_path": "src\\document\\exporters",
+                "subdirectories": [],
+                "files": []
+              },
+              {
+                "path": ".\\src\\document\\templates",
+                "relative_path": "src\\document\\templates",
+                "subdirectories": [],
+                "files": []
+              }
+            ],
+            "files": []
+          },
+          {
+            "path": ".\\src\\generator",
+            "relative_path": "src\\generator",
+            "subdirectories": [
+              {
+                "path": ".\\src\\generator\\prompts",
+                "relative_path": "src\\generator\\prompts",
+                "subdirectories": [],
+                "files": [
+                  {
+                    "path": ".\\src\\generator\\prompts\\architecture_user.tpl",
+                    "relative_path": "src\\generator\\prompts\\architecture_user.tpl",
+                    "size": 374,
+                    "modified_time": "2025-09-05T15:46:36.256185Z",
+                    "file_type": "tpl"
+                  },
+                  {
+                    "path": ".\\src\\generator\\prompts\\component_user.tpl",
+                    "relative_path": "src\\generator\\prompts\\component_user.tpl",
+                    "size": 1972,
+                    "modified_time": "2025-09-05T15:46:36.202034100Z",
+                    "file_type": "tpl"
+                  },
+                  {
+                    "path": ".\\src\\generator\\prompts\\generic_writer_sys.tpl",
+                    "relative_path": "src\\generator\\prompts\\generic_writer_sys.tpl",
+                    "size": 99,
+                    "modified_time": "2025-09-05T15:46:36.216392700Z",
+                    "file_type": "tpl"
+                  },
+                  {
+                    "path": ".\\src\\generator\\prompts\\overview_user.tpl",
+                    "relative_path": "src\\generator\\prompts\\overview_user.tpl",
+                    "size": 1878,
+                    "modified_time": "2025-09-05T15:46:36.234346300Z",
+                    "file_type": "tpl"
+                  }
+                ]
+              }
+            ],
+            "files": [
+              {
+                "path": ".\\src\\generator\\html_doc.tpl",
+                "relative_path": "src\\generator\\html_doc.tpl",
+                "size": 1506,
+                "modified_time": "2025-09-05T15:46:36.125622400Z",
+                "file_type": "tpl"
+              },
+              {
+                "path": ".\\src\\generator\\mod.rs",
+                "relative_path": "src\\generator\\mod.rs",
+                "size": 40144,
+                "modified_time": "2025-09-06T05:04:23.922441300Z",
+                "file_type": "rs"
+              }
+            ]
+          },
+          {
+            "path": ".\\src\\llm",
+            "relative_path": "src\\llm",
+            "subdirectories": [
+              {
+                "path": ".\\src\\llm\\client",
+                "relative_path": "src\\llm\\client",
+                "subdirectories": [],
+                "files": []
+              },
+              {
+                "path": ".\\src\\llm\\prompt",
+                "relative_path": "src\\llm\\prompt",
+                "subdirectories": [
+                  {
+                    "path": ".\\src\\llm\\prompt\\templates",
+                    "relative_path": "src\\llm\\prompt\\templates",
+                    "subdirectories": [],
+                    "files": []
+                  }
+                ],
+                "files": []
+              },
+              {
+                "path": ".\\src\\llm\\prompts",
+                "relative_path": "src\\llm\\prompts",
+                "subdirectories": [],
+                "files": [
+                  {
+                    "path": ".\\src\\llm\\prompts\\project_analyst_sys.tpl",
+                    "relative_path": "src\\llm\\prompts\\project_analyst_sys.tpl",
+                    "size": 348,
+                    "modified_time": "2025-09-05T15:46:36.066238800Z",
+                    "file_type": "tpl"
+                  },
+                  {
+                    "path": ".\\src\\llm\\prompts\\project_analyst_user.tpl",
+                    "relative_path": "src\\llm\\prompts\\project_analyst_user.tpl",
+                    "size": 411,
+                    "modified_time": "2025-09-05T15:46:36.053176800Z",
+                    "file_type": "tpl"
+                  }
+                ]
+              }
+            ],
+            "files": [
+              {
+                "path": ".\\src\\llm\\client.rs",
+                "relative_path": "src\\llm\\client.rs",
+                "size": 2601,
+                "modified_time": "2025-09-06T03:10:11.183792Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\llm\\mod.rs",
+                "relative_path": "src\\llm\\mod.rs",
+                "size": 4222,
+                "modified_time": "2025-09-06T03:10:10.895919400Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\llm\\prompt.rs",
+                "relative_path": "src\\llm\\prompt.rs",
+                "size": 597,
+                "modified_time": "2025-09-06T02:44:04.077468200Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\llm\\retry.rs",
+                "relative_path": "src\\llm\\retry.rs",
+                "size": 7744,
+                "modified_time": "2025-09-05T15:46:36.017827100Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\llm\\utils.rs",
+                "relative_path": "src\\llm\\utils.rs",
+                "size": 1194,
+                "modified_time": "2025-09-06T03:10:10.894056100Z",
+                "file_type": "rs"
+              }
+            ]
+          },
+          {
+            "path": ".\\src\\metadata",
+            "relative_path": "src\\metadata",
+            "subdirectories": [
+              {
+                "path": ".\\src\\metadata\\component",
+                "relative_path": "src\\metadata\\component",
+                "subdirectories": [],
+                "files": []
+              },
+              {
+                "path": ".\\src\\metadata\\prompts",
+                "relative_path": "src\\metadata\\prompts",
+                "subdirectories": [],
+                "files": [
+                  {
+                    "path": ".\\src\\metadata\\prompts\\analysis_component_sys.tpl",
+                    "relative_path": "src\\metadata\\prompts\\analysis_component_sys.tpl",
+                    "size": 2490,
+                    "modified_time": "2025-09-05T18:15:03.241396300Z",
+                    "file_type": "tpl"
+                  }
+                ]
+              }
+            ],
+            "files": [
+              {
+                "path": ".\\src\\metadata\\architecture_meta.rs",
+                "relative_path": "src\\metadata\\architecture_meta.rs",
+                "size": 11358,
+                "modified_time": "2025-09-05T18:15:42.845201800Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\metadata\\component.rs",
+                "relative_path": "src\\metadata\\component.rs",
+                "size": 26630,
+                "modified_time": "2025-09-06T05:04:23.923437700Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\metadata\\component_classifier.rs",
+                "relative_path": "src\\metadata\\component_classifier.rs",
+                "size": 2395,
+                "modified_time": "2025-09-05T15:46:36.451772Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\metadata\\dependency.rs",
+                "relative_path": "src\\metadata\\dependency.rs",
+                "size": 33382,
+                "modified_time": "2025-09-06T05:04:23.922441300Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\metadata\\llm_analyzer.rs",
+                "relative_path": "src\\metadata\\llm_analyzer.rs",
+                "size": 16875,
+                "modified_time": "2025-09-06T05:04:23.924839700Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\metadata\\mod.rs",
+                "relative_path": "src\\metadata\\mod.rs",
+                "size": 6553,
+                "modified_time": "2025-09-06T02:11:21.474541600Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\metadata\\structure.rs",
+                "relative_path": "src\\metadata\\structure.rs",
+                "size": 16953,
+                "modified_time": "2025-09-05T15:46:36.531477600Z",
+                "file_type": "rs"
+              }
+            ]
+          },
+          {
+            "path": ".\\src\\prompts",
+            "relative_path": "src\\prompts",
+            "subdirectories": [],
+            "files": [
+              {
+                "path": ".\\src\\prompts\\sample.tpl",
+                "relative_path": "src\\prompts\\sample.tpl",
+                "size": 0,
+                "modified_time": "2025-09-05T15:46:36.284926Z",
+                "file_type": "tpl"
+              }
+            ]
+          },
+          {
+            "path": ".\\src\\react",
+            "relative_path": "src\\react",
+            "subdirectories": [
+              {
+                "path": ".\\src\\react\\tools",
+                "relative_path": "src\\react\\tools",
+                "subdirectories": [],
+                "files": [
+                  {
+                    "path": ".\\src\\react\\tools\\architecture_detector.rs",
+                    "relative_path": "src\\react\\tools\\architecture_detector.rs",
+                    "size": 17935,
+                    "modified_time": "2025-09-05T15:46:36.373190700Z",
+                    "file_type": "rs"
+                  },
+                  {
+                    "path": ".\\src\\react\\tools\\code_analyzer.rs",
+                    "relative_path": "src\\react\\tools\\code_analyzer.rs",
+                    "size": 23455,
+                    "modified_time": "2025-09-06T05:04:23.937559100Z",
+                    "file_type": "rs"
+                  },
+                  {
+                    "path": ".\\src\\react\\tools\\file_explorer.rs",
+                    "relative_path": "src\\react\\tools\\file_explorer.rs",
+                    "size": 10334,
+                    "modified_time": "2025-09-05T15:46:36.388267400Z",
+                    "file_type": "rs"
+                  },
+                  {
+                    "path": ".\\src\\react\\tools\\file_reader.rs",
+                    "relative_path": "src\\react\\tools\\file_reader.rs",
+                    "size": 8627,
+                    "modified_time": "2025-09-06T05:04:23.938891100Z",
+                    "file_type": "rs"
+                  },
+                  {
+                    "path": ".\\src\\react\\tools\\mod.rs",
+                    "relative_path": "src\\react\\tools\\mod.rs",
+                    "size": 1004,
+                    "modified_time": "2025-09-05T15:46:36.421078400Z",
+                    "file_type": "rs"
+                  }
+                ]
+              }
+            ],
+            "files": [
+              {
+                "path": ".\\src\\react\\agent.rs",
+                "relative_path": "src\\react\\agent.rs",
+                "size": 17543,
+                "modified_time": "2025-09-05T15:46:36.341160100Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\react\\config.rs",
+                "relative_path": "src\\react\\config.rs",
+                "size": 1865,
+                "modified_time": "2025-09-05T15:46:36.309488200Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\react\\context.rs",
+                "relative_path": "src\\react\\context.rs",
+                "size": 5462,
+                "modified_time": "2025-09-05T15:46:36.356223500Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\react\\mod.rs",
+                "relative_path": "src\\react\\mod.rs",
+                "size": 637,
+                "modified_time": "2025-09-05T15:46:36.326758800Z",
+                "file_type": "rs"
+              }
+            ]
+          },
+          {
+            "path": ".\\src\\tools",
+            "relative_path": "src\\tools",
+            "subdirectories": [],
+            "files": [
+              {
+                "path": ".\\src\\tools\\llm.rs",
+                "relative_path": "src\\tools\\llm.rs",
+                "size": 363,
+                "modified_time": "2025-09-05T15:46:35.921506300Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\tools\\mod.rs",
+                "relative_path": "src\\tools\\mod.rs",
+                "size": 31,
+                "modified_time": "2025-09-05T15:46:35.948801Z",
+                "file_type": "rs"
+              },
+              {
+                "path": ".\\src\\tools\\outlet.rs",
+                "relative_path": "src\\tools\\outlet.rs",
+                "size": 10041,
+                "modified_time": "2025-09-06T05:04:23.936556600Z",
+                "file_type": "rs"
+              }
+            ]
+          },
+          {
+            "path": ".\\src\\utils_impl",
+            "relative_path": "src\\utils_impl",
+            "subdirectories": [],
+            "files": []
+          }
+        ],
+        "files": [
+          {
+            "path": ".\\src\\cli.rs",
+            "relative_path": "src\\cli.rs",
+            "size": 4761,
+            "modified_time": "2025-09-06T03:10:10.877730800Z",
+            "file_type": "rs"
+          },
+          {
+            "path": ".\\src\\config.rs",
+            "relative_path": "src\\config.rs",
+            "size": 6933,
+            "modified_time": "2025-09-06T02:11:21.463283300Z",
+            "file_type": "rs"
+          },
+          {
+            "path": ".\\src\\lib.rs",
+            "relative_path": "src\\lib.rs",
+            "size": 463,
+            "modified_time": "2025-09-06T05:04:23.896810Z",
+            "file_type": "rs"
+          },
+          {
+            "path": ".\\src\\main.rs",
+            "relative_path": "src\\main.rs",
+            "size": 4180,
+            "modified_time": "2025-09-06T05:04:23.896810Z",
+            "file_type": "rs"
+          },
+          {
+            "path": ".\\src\\utils.rs",
+            "relative_path": "src\\utils.rs",
+            "size": 13574,
+            "modified_time": "2025-09-06T05:04:23.896810Z",
+            "file_type": "rs"
+          }
+        ]
+      }
+    ],
+    "files": [
+      {
+        "path": ".\\Cargo.toml",
+        "relative_path": "Cargo.toml",
+        "size": 1095,
+        "modified_time": "2025-09-05T23:06:24.644687Z",
+        "file_type": "toml"
+      },
+      {
+        "path": ".\\README.md",
+        "relative_path": "README.md",
+        "size": 2629,
+        "modified_time": "2025-09-05T17:33:02.979289200Z",
+        "file_type": "md"
+      }
+    ]
+  },
+  "all_files": [
+    {
+      "path": ".\\Cargo.toml",
+      "relative_path": "Cargo.toml",
+      "size": 1095,
+      "modified_time": "2025-09-05T23:06:24.644687Z",
+      "file_type": "toml"
+    },
+    {
+      "path": ".\\README.md",
+      "relative_path": "README.md",
+      "size": 2629,
+      "modified_time": "2025-09-05T17:33:02.979289200Z",
+      "file_type": "md"
+    },
+    {
+      "path": ".\\src\\cli.rs",
+      "relative_path": "src\\cli.rs",
+      "size": 4761,
+      "modified_time": "2025-09-06T03:10:10.877730800Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\config.rs",
+      "relative_path": "src\\config.rs",
+      "size": 6933,
+      "modified_time": "2025-09-06T02:11:21.463283300Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\generator\\html_doc.tpl",
+      "relative_path": "src\\generator\\html_doc.tpl",
+      "size": 1506,
+      "modified_time": "2025-09-05T15:46:36.125622400Z",
+      "file_type": "tpl"
+    },
+    {
+      "path": ".\\src\\generator\\mod.rs",
+      "relative_path": "src\\generator\\mod.rs",
+      "size": 40144,
+      "modified_time": "2025-09-06T05:04:23.922441300Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\generator\\prompts\\architecture_user.tpl",
+      "relative_path": "src\\generator\\prompts\\architecture_user.tpl",
+      "size": 374,
+      "modified_time": "2025-09-05T15:46:36.256185Z",
+      "file_type": "tpl"
+    },
+    {
+      "path": ".\\src\\generator\\prompts\\component_user.tpl",
+      "relative_path": "src\\generator\\prompts\\component_user.tpl",
+      "size": 1972,
+      "modified_time": "2025-09-05T15:46:36.202034100Z",
+      "file_type": "tpl"
+    },
+    {
+      "path": ".\\src\\generator\\prompts\\generic_writer_sys.tpl",
+      "relative_path": "src\\generator\\prompts\\generic_writer_sys.tpl",
+      "size": 99,
+      "modified_time": "2025-09-05T15:46:36.216392700Z",
+      "file_type": "tpl"
+    },
+    {
+      "path": ".\\src\\generator\\prompts\\overview_user.tpl",
+      "relative_path": "src\\generator\\prompts\\overview_user.tpl",
+      "size": 1878,
+      "modified_time": "2025-09-05T15:46:36.234346300Z",
+      "file_type": "tpl"
+    },
+    {
+      "path": ".\\src\\lib.rs",
+      "relative_path": "src\\lib.rs",
+      "size": 463,
+      "modified_time": "2025-09-06T05:04:23.896810Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\llm\\client.rs",
+      "relative_path": "src\\llm\\client.rs",
+      "size": 2601,
+      "modified_time": "2025-09-06T03:10:11.183792Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\llm\\mod.rs",
+      "relative_path": "src\\llm\\mod.rs",
+      "size": 4222,
+      "modified_time": "2025-09-06T03:10:10.895919400Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\llm\\prompt.rs",
+      "relative_path": "src\\llm\\prompt.rs",
+      "size": 597,
+      "modified_time": "2025-09-06T02:44:04.077468200Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\llm\\prompts\\project_analyst_sys.tpl",
+      "relative_path": "src\\llm\\prompts\\project_analyst_sys.tpl",
+      "size": 348,
+      "modified_time": "2025-09-05T15:46:36.066238800Z",
+      "file_type": "tpl"
+    },
+    {
+      "path": ".\\src\\llm\\prompts\\project_analyst_user.tpl",
+      "relative_path": "src\\llm\\prompts\\project_analyst_user.tpl",
+      "size": 411,
+      "modified_time": "2025-09-05T15:46:36.053176800Z",
+      "file_type": "tpl"
+    },
+    {
+      "path": ".\\src\\llm\\retry.rs",
+      "relative_path": "src\\llm\\retry.rs",
+      "size": 7744,
+      "modified_time": "2025-09-05T15:46:36.017827100Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\llm\\utils.rs",
+      "relative_path": "src\\llm\\utils.rs",
+      "size": 1194,
+      "modified_time": "2025-09-06T03:10:10.894056100Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\main.rs",
+      "relative_path": "src\\main.rs",
+      "size": 4180,
+      "modified_time": "2025-09-06T05:04:23.896810Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\metadata\\architecture_meta.rs",
+      "relative_path": "src\\metadata\\architecture_meta.rs",
+      "size": 11358,
+      "modified_time": "2025-09-05T18:15:42.845201800Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\metadata\\component.rs",
+      "relative_path": "src\\metadata\\component.rs",
+      "size": 26630,
+      "modified_time": "2025-09-06T05:04:23.923437700Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\metadata\\component_classifier.rs",
+      "relative_path": "src\\metadata\\component_classifier.rs",
+      "size": 2395,
+      "modified_time": "2025-09-05T15:46:36.451772Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\metadata\\dependency.rs",
+      "relative_path": "src\\metadata\\dependency.rs",
+      "size": 33382,
+      "modified_time": "2025-09-06T05:04:23.922441300Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\metadata\\llm_analyzer.rs",
+      "relative_path": "src\\metadata\\llm_analyzer.rs",
+      "size": 16875,
+      "modified_time": "2025-09-06T05:04:23.924839700Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\metadata\\mod.rs",
+      "relative_path": "src\\metadata\\mod.rs",
+      "size": 6553,
+      "modified_time": "2025-09-06T02:11:21.474541600Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\metadata\\prompts\\analysis_component_sys.tpl",
+      "relative_path": "src\\metadata\\prompts\\analysis_component_sys.tpl",
+      "size": 2490,
+      "modified_time": "2025-09-05T18:15:03.241396300Z",
+      "file_type": "tpl"
+    },
+    {
+      "path": ".\\src\\metadata\\structure.rs",
+      "relative_path": "src\\metadata\\structure.rs",
+      "size": 16953,
+      "modified_time": "2025-09-05T15:46:36.531477600Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\prompts\\sample.tpl",
+      "relative_path": "src\\prompts\\sample.tpl",
+      "size": 0,
+      "modified_time": "2025-09-05T15:46:36.284926Z",
+      "file_type": "tpl"
+    },
+    {
+      "path": ".\\src\\react\\agent.rs",
+      "relative_path": "src\\react\\agent.rs",
+      "size": 17543,
+      "modified_time": "2025-09-05T15:46:36.341160100Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\react\\config.rs",
+      "relative_path": "src\\react\\config.rs",
+      "size": 1865,
+      "modified_time": "2025-09-05T15:46:36.309488200Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\react\\context.rs",
+      "relative_path": "src\\react\\context.rs",
+      "size": 5462,
+      "modified_time": "2025-09-05T15:46:36.356223500Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\react\\mod.rs",
+      "relative_path": "src\\react\\mod.rs",
+      "size": 637,
+      "modified_time": "2025-09-05T15:46:36.326758800Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\react\\tools\\architecture_detector.rs",
+      "relative_path": "src\\react\\tools\\architecture_detector.rs",
+      "size": 17935,
+      "modified_time": "2025-09-05T15:46:36.373190700Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\react\\tools\\code_analyzer.rs",
+      "relative_path": "src\\react\\tools\\code_analyzer.rs",
+      "size": 23455,
+      "modified_time": "2025-09-06T05:04:23.937559100Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\react\\tools\\file_explorer.rs",
+      "relative_path": "src\\react\\tools\\file_explorer.rs",
+      "size": 10334,
+      "modified_time": "2025-09-05T15:46:36.388267400Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\react\\tools\\file_reader.rs",
+      "relative_path": "src\\react\\tools\\file_reader.rs",
+      "size": 8627,
+      "modified_time": "2025-09-06T05:04:23.938891100Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\react\\tools\\mod.rs",
+      "relative_path": "src\\react\\tools\\mod.rs",
+      "size": 1004,
+      "modified_time": "2025-09-05T15:46:36.421078400Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\tools\\llm.rs",
+      "relative_path": "src\\tools\\llm.rs",
+      "size": 363,
+      "modified_time": "2025-09-05T15:46:35.921506300Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\tools\\mod.rs",
+      "relative_path": "src\\tools\\mod.rs",
+      "size": 31,
+      "modified_time": "2025-09-05T15:46:35.948801Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\tools\\outlet.rs",
+      "relative_path": "src\\tools\\outlet.rs",
+      "size": 10041,
+      "modified_time": "2025-09-06T05:04:23.936556600Z",
+      "file_type": "rs"
+    },
+    {
+      "path": ".\\src\\utils.rs",
+      "relative_path": "src\\utils.rs",
+      "size": 13574,
+      "modified_time": "2025-09-06T05:04:23.896810Z",
+      "file_type": "rs"
+    }
+  ]
+}

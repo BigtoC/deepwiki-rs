@@ -1,0 +1,23 @@
+{
+  "basic_info": {
+    "name": "SrcReactToolsFileExplorer",
+    "file_path": ".\\src\\react\\tools\\file_explorer.rs",
+    "importance_score": 0.6100000000000001,
+    "component_type": null,
+    "dependencies": []
+  },
+  "analytic_info": {
+    "detailed_documentation": "```json\n{\n  \"detailed_documentation\": \"FileExplorerTool 是一个用于探索项目文件系统的工具组件，主要功能包括列出目录内容、查找特定文件模式以及获取文件信息。该工具基于 Rust 语言实现，使用 walkdir 库进行文件系统遍历，并结合 serde 库进行数据序列化和反序列化。\\n\\n主要功能包括：\\n1. 列出目录内容：支持递归和非递归模式，可以指定最大文件数量限制\\n2. 查找文件：根据文件名模式查找文件，支持最大文件数量限制\\n3. 获取文件信息：获取单个文件的详细信息，包括大小、类型等\\n\\n该工具通过 Config 配置文件进行配置，支持排除特定目录、文件和扩展名，以及包含特定扩展名的文件。\\n\\n工具的输出包括文件列表、目录列表、总文件数量、见解信息和文件类型统计。见解信息包括项目类型检测、文件类型统计等。\",\n  \"summary\": \"FileExplorerTool 是一个用于探索项目文件系统的工具组件，主要功能包括列出目录内容、查找特定文件模式以及获取文件信息。\",\n  \"main_functions\": [\n    \"列出目录内容\",\n    \"查找特定文件模式\",\n    \"获取文件信息\"\n  ],\n  \"technical_features\": [\n    \"使用 walkdir 库进行文件系统遍历\",\n    \"支持递归和非递归模式\",\n    \"支持文件过滤和排除配置\",\n    \"生成项目见解信息\",\n    \"支持最大文件数量限制\"\n  ],\n  \"role_in_project\": \"FileExplorerTool 在项目中扮演着文件系统探索和分析的核心角色。它为项目提供了文件系统的基础信息，支持其他组件进行更高级的分析和处理。通过配置文件，可以灵活地控制文件探索的范围和深度，适应不同项目的需求。\",\n  \"component_type\": \"tool\",\n  \"confidence\": 0.95\n}\n```",
+    "summary": "基于LLM分析的组件功能描述",
+    "main_functions": [
+      "待分析"
+    ],
+    "technical_features": [
+      "待分析"
+    ],
+    "role_in_project": "项目组件",
+    "component_type": "other",
+    "confidence": 0.1
+  },
+  "prompt_hash": "470c46d98d1b159e73a5227b9333be07"
+}

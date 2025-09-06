@@ -1,0 +1,31 @@
+{
+  "basic_info": {
+    "name": "SrcReactToolsCodeAnalyzer",
+    "file_path": ".\\src\\react\\tools\\code_analyzer.rs",
+    "importance_score": 0.6200000000000001,
+    "component_type": null,
+    "dependencies": []
+  },
+  "analytic_info": {
+    "detailed_documentation": "CodeAnalyzerTool 是一个用于分析代码文件的工具组件，主要功能包括解析代码文件、提取代码元素（如函数、类、导入等）、计算代码复杂度并生成代码洞察。该工具支持多种编程语言，包括 Rust、Python、JavaScript/TypeScript、Java、C/C++ 和 Go。\n\n主要功能包括：\n1. 文件分析：分析指定文件，提取函数、类、导入等信息，并计算代码复杂度。\n2. 依赖提取：提取代码文件中的依赖项信息。\n3. 函数查找：查找代码文件中的特定函数。\n\n该工具通过实现 Tool trait 与框架集成，提供标准化的接口和参数定义，支持异步操作。",
+    "summary": "CodeAnalyzerTool 是一个多语言代码分析工具，用于提取代码元素、计算复杂度并生成洞察。",
+    "main_functions": [
+      "分析代码文件并提取函数、类、导入等信息",
+      "提取代码文件中的依赖项",
+      "查找代码文件中的特定函数",
+      "计算代码复杂度并生成洞察"
+    ],
+    "technical_features": [
+      "支持多种编程语言（Rust、Python、JavaScript/TypeScript、Java、C/C++、Go）",
+      "异步操作支持",
+      "标准化的 Tool trait 实现",
+      "详细的代码元素信息提取",
+      "代码复杂度计算",
+      "依赖项分析"
+    ],
+    "role_in_project": "CodeAnalyzerTool 在项目中扮演代码分析和理解的核心角色，为开发者提供代码结构、复杂度和依赖关系的洞察，帮助开发者更好地理解和维护代码库。",
+    "component_type": "util",
+    "confidence": 0.95
+  },
+  "prompt_hash": "9bd4e9ac2760ad072abe9934e0c45126"
+}

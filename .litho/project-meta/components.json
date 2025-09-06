@@ -1,0 +1,215 @@
+[
+  {
+    "name": "Main",
+    "file_path": ".\\src\\main.rs",
+    "description": "Litho是一个AI驱动的Rust项目，用于自动生成C4架构文档，通过LLM分析和ReAct模式分析项目代码，提取元数据，识别核心组件，并生成各种格式的文档。",
+    "importance_score": 0.6400000000000001,
+    "dependency_count": 3,
+    "dependencies": [
+      "SrcGeneratorMod",
+      "SrcMetadataMod",
+      "SrcUtils"
+    ],
+    "component_type": "feature",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "feature",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcReactToolsCodeAnalyzer",
+    "file_path": ".\\src\\react\\tools\\code_analyzer.rs",
+    "description": "CodeAnalyzerTool 是一个多语言代码分析工具，用于提取代码元素、计算复杂度并生成洞察。",
+    "importance_score": 0.6200000000000001,
+    "dependency_count": 0,
+    "dependencies": [],
+    "component_type": "util",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "util",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcMetadataDependency",
+    "file_path": ".\\src\\metadata\\dependency.rs",
+    "description": "该组件用于分析和提取项目代码库中文件和函数依赖关系，支持多种编程语言，并构建依赖图。",
+    "importance_score": 0.6200000000000001,
+    "dependency_count": 1,
+    "dependencies": [
+      "SrcMetadataMod"
+    ],
+    "component_type": "feature",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "feature",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcMetadataMod",
+    "file_path": ".\\src\\metadata\\mod.rs",
+    "description": "MetadataExtractor 是一个负责从项目代码库中提取结构和依赖信息的核心组件，利用LLM服务增强分析能力，生成项目元数据并保存为JSON文件。",
+    "importance_score": 0.6200000000000001,
+    "dependency_count": 5,
+    "dependencies": [
+      "SrcMetadataArchitectureMeta",
+      "SrcMetadataComponent",
+      "SrcMetadataDependency",
+      "SrcMetadataLlmAnalyzer",
+      "SrcMetadataStructure"
+    ],
+    "component_type": "feature",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "feature",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcGeneratorMod",
+    "file_path": ".\\src\\generator\\mod.rs",
+    "description": "该组件是一个文档生成系统的核心模块，负责从项目代码和元数据中提取信息并生成各种格式的技术文档，包括项目概览、项目架构和组件文档。",
+    "importance_score": 0.6200000000000001,
+    "dependency_count": 1,
+    "dependencies": [
+      "SrcMetadataMod"
+    ],
+    "component_type": "feature",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "feature",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcMetadataComponent",
+    "file_path": ".\\src\\metadata\\component.rs",
+    "description": "该组件是一个核心的代码分析模块，主要负责识别和分析项目中的核心组件，通过多种算法和策略计算文件的重要性评分，并支持使用架构元描述和LLM增强组件的识别和分析能力。",
+    "importance_score": 0.6200000000000001,
+    "dependency_count": 1,
+    "dependencies": [
+      "SrcMetadataMod"
+    ],
+    "component_type": "feature",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "feature",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcMetadataLlmAnalyzer",
+    "file_path": ".\\src\\metadata\\llm_analyzer.rs",
+    "description": "LLMComponentAnalyzer 是一个使用大语言模型分析代码组件功能和作用的工具，生成结构化的分析结果并支持缓存机制。",
+    "importance_score": 0.6100000000000001,
+    "dependency_count": 1,
+    "dependencies": [
+      "SrcMetadataMod"
+    ],
+    "component_type": "feature",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "feature",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcReactAgent",
+    "file_path": ".\\src\\react\\agent.rs",
+    "description": "LithoReactAgent是一个基于ReAct模式的智能代理组件，用于自动化分析软件项目并生成C4架构文档。",
+    "importance_score": 0.6100000000000001,
+    "dependency_count": 0,
+    "dependencies": [],
+    "component_type": "feature",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "feature",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcMetadataStructure",
+    "file_path": ".\\src\\metadata\\structure.rs",
+    "description": "该组件是一个用于分析和提取项目目录结构的工具模块，提供文件和目录信息收集、目录树构建、文件过滤和项目结构分析等功能。",
+    "importance_score": 0.6100000000000001,
+    "dependency_count": 0,
+    "dependencies": [],
+    "component_type": "feature",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "feature",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcUtils",
+    "file_path": ".\\src\\utils.rs",
+    "description": "这是一个Rust语言实现的工具函数库，提供了文件系统操作、字符串处理、数据结构操作、路径处理、时间处理和错误处理等多个方面的工具函数。",
+    "importance_score": 0.6100000000000001,
+    "dependency_count": 0,
+    "dependencies": [],
+    "component_type": "util",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "util",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcMetadataArchitectureMeta",
+    "file_path": ".\\src\\metadata\\architecture_meta.rs",
+    "description": "该组件是一个架构元描述模块，用于定义和管理项目中的各种组件类型及其元数据。",
+    "importance_score": 0.6100000000000001,
+    "dependency_count": 0,
+    "dependencies": [],
+    "component_type": "model",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "model",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcReactToolsArchitectureDetector",
+    "file_path": ".\\src\\react\\tools\\architecture_detector.rs",
+    "description": "ArchitectureDetectorTool 是一个用于分析和检测软件项目架构模式的工具组件，通过分析目录结构和文件组织方式识别架构模式并提供相关建议。",
+    "importance_score": 0.6100000000000001,
+    "dependency_count": 0,
+    "dependencies": [],
+    "component_type": "util",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "util",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.95
+    }
+  },
+  {
+    "name": "SrcReactToolsFileExplorer",
+    "file_path": ".\\src\\react\\tools\\file_explorer.rs",
+    "description": "基于LLM分析的组件功能描述",
+    "importance_score": 0.6100000000000001,
+    "dependency_count": 0,
+    "dependencies": [],
+    "component_type": "other",
+    "force_included": false,
+    "classification_info": {
+      "component_type": "other",
+      "classification_source": "AIAnalysis",
+      "confidence": 0.1
+    }
+  }
+]

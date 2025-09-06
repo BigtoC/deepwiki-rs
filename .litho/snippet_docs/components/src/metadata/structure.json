@@ -1,0 +1,33 @@
+{
+  "basic_info": {
+    "name": "SrcMetadataStructure",
+    "file_path": ".\\src\\metadata\\structure.rs",
+    "importance_score": 0.6100000000000001,
+    "component_type": null,
+    "dependencies": []
+  },
+  "analytic_info": {
+    "detailed_documentation": "该组件是一个用于分析和提取项目目录结构的工具模块。它提供了多种功能来遍历文件系统，收集文件和目录的元数据，并构建项目结构的层次化表示。组件的核心功能包括：\n\n1. 文件和目录信息收集：通过FileInfo和DirectoryInfo结构体存储文件和目录的详细信息，包括路径、大小、修改时间、文件类型等。\n2. 项目结构提取：提供两种主要方法extract_structure和extract_structure_with_config来提取项目结构，支持配置过滤。\n3. 目录树构建：通过递归遍历文件系统构建目录树，支持最大深度限制。\n4. 文件和目录过滤：提供基于配置的过滤功能，可以排除特定文件、目录、扩展名等。\n5. 项目结构分析：提供多种分析方法，如按文件类型统计、获取最大文件、获取最近修改文件等。\n6. 结构摘要生成：提供generate_summary方法生成项目结构的简要摘要。\n\n该组件使用了多种Rust生态系统的库，如anyhow用于错误处理，chrono用于时间处理，serde用于序列化和反序列化，walkdir用于遍历文件系统。",
+    "summary": "该组件是一个用于分析和提取项目目录结构的工具模块，提供文件和目录信息收集、目录树构建、文件过滤和项目结构分析等功能。",
+    "main_functions": [
+      "文件和目录信息收集",
+      "项目结构提取",
+      "目录树构建",
+      "文件和目录过滤",
+      "项目结构分析",
+      "结构摘要生成"
+    ],
+    "technical_features": [
+      "使用Rust生态系统的库如anyhow、chrono、serde、walkdir",
+      "支持配置过滤功能",
+      "提供多种项目结构分析方法",
+      "支持最大深度限制",
+      "使用glob模式进行文件和目录匹配",
+      "支持序列化和反序列化"
+    ],
+    "role_in_project": "该组件在项目中扮演着核心的项目分析和元数据收集的角色。它为其他组件提供了项目结构的详细信息，使得其他组件可以基于这些信息进行更高级的分析和处理。例如，它可以为代码分析工具、项目管理工具或构建系统提供项目结构的基础数据。",
+    "component_type": "feature",
+    "confidence": 0.95
+  },
+  "prompt_hash": "42e053807c36b0c7a1a1449f058cfadb"
+}

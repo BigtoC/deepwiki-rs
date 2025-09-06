@@ -1,0 +1,42 @@
+{
+  "basic_info": {
+    "name": "SrcMetadataDependency",
+    "file_path": ".\\src\\metadata\\dependency.rs",
+    "importance_score": 0.6200000000000001,
+    "component_type": null,
+    "dependencies": [
+      "SrcMetadataMod"
+    ]
+  },
+  "analytic_info": {
+    "detailed_documentation": "该组件是一个用于分析和提取项目代码库中文件和函数依赖关系的工具。它支持多种编程语言，包括Rust、Python、JavaScript/TypeScript、Svelte、Vue、Java、C/C++和Go。组件的核心功能是扫描项目文件，识别各种导入语句和依赖关系，并构建文件和函数之间的依赖图。\n\n主要功能包括：\n1. 并行处理项目中的所有文件，提取文件和函数依赖关系\n2. 支持多种编程语言的依赖提取，包括Rust、Python、JavaScript/TypeScript、Svelte、Vue、Java、C/C++和Go\n3. 使用正则表达式匹配各种导入语句和依赖声明\n4. 处理不同类型的导入语句，如use、import、require、include等\n5. 根据文件路径和模块路径映射，定位依赖的目标文件\n6. 提供详细的依赖信息，包括源文件、目标文件和依赖类型\n\n该组件在项目架构中扮演着关键角色，为项目的代码分析、架构可视化、依赖管理等提供基础数据支持。",
+    "summary": "该组件用于分析和提取项目代码库中文件和函数依赖关系，支持多种编程语言，并构建依赖图。",
+    "main_functions": [
+      "extract_dependencies: 提取项目的所有文件和函数依赖关系",
+      "extract_file_dependencies: 提取单个文件的依赖关系",
+      "extract_rust_dependencies: 提取Rust文件的依赖关系",
+      "extract_svelte_dependencies: 提取Svelte文件的依赖关系",
+      "extract_vue_dependencies: 提取Vue文件的依赖关系",
+      "extract_java_dependencies: 提取Java文件的依赖关系",
+      "extract_cpp_dependencies: 提取C/C++文件的依赖关系",
+      "extract_python_dependencies: 提取Python文件的依赖关系",
+      "extract_javascript_dependencies: 提取JavaScript/TypeScript文件的依赖关系",
+      "extract_go_dependencies: 提取Go文件的依赖关系",
+      "extract_sql_dependencies: 提取SQL文件的依赖关系",
+      "extract_generic_dependencies: 提取通用文件的依赖关系"
+    ],
+    "technical_features": [
+      "使用正则表达式匹配各种导入语句和依赖声明",
+      "支持多种编程语言的依赖提取",
+      "并行处理文件以提高性能",
+      "使用Arc和Mutex实现线程安全的共享数据",
+      "支持文件和函数级别的依赖分析",
+      "处理不同类型的导入语句，如use、import、require、include等",
+      "根据文件路径和模块路径映射，定位依赖的目标文件"
+    ],
+    "role_in_project": "该组件在项目架构中扮演着关键角色，为项目的代码分析、架构可视化、依赖管理等提供基础数据支持。它通过分析代码中的导入语句和依赖声明，构建项目的依赖图，帮助开发者理解代码库的结构和依赖关系，从而支持更好的代码维护、重构和优化。",
+    "component_type": "feature",
+    "confidence": 0.95
+  },
+  "prompt_hash": "b6e833656ea80ebc36f1edbced21da27"
+}

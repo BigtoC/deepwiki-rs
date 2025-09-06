@@ -1,0 +1,35 @@
+{
+  "basic_info": {
+    "name": "SrcMetadataLlmAnalyzer",
+    "file_path": ".\\src\\metadata\\llm_analyzer.rs",
+    "importance_score": 0.6100000000000001,
+    "component_type": null,
+    "dependencies": [
+      "SrcMetadataMod"
+    ]
+  },
+  "analytic_info": {
+    "detailed_documentation": "LLMComponentAnalyzer 是一个使用大语言模型(LLM)分析代码组件功能和作用的工具。它通过提取组件的源码和依赖关系信息，生成结构化的分析结果，包括组件的详细文档、简短摘要、主要功能、技术特点、项目角色和组件类型。该工具支持缓存机制，可以避免重复分析相同的组件。它还能生成组件索引文档，帮助开发者快速了解项目中的各个组件。LLMComponentAnalyzer 使用LLMService接口与大语言模型交互，并通过Config配置参数控制分析行为。",
+    "summary": "LLMComponentAnalyzer 是一个使用大语言模型分析代码组件功能和作用的工具，生成结构化的分析结果并支持缓存机制。",
+    "main_functions": [
+      "分析代码组件的功能和作用",
+      "生成结构化的分析结果",
+      "支持缓存机制避免重复分析",
+      "生成组件索引文档",
+      "与大语言模型交互获取分析结果"
+    ],
+    "technical_features": [
+      "使用LLMService接口与大语言模型交互",
+      "支持Config配置参数控制分析行为",
+      "提取组件源码和依赖关系信息",
+      "生成结构化的JSON分析结果",
+      "支持缓存机制提高性能",
+      "生成组件索引文档",
+      "处理LLM响应并解析结果"
+    ],
+    "role_in_project": "LLMComponentAnalyzer 在项目中扮演着代码分析和文档生成的核心角色。它通过分析代码组件的功能和作用，帮助开发者更好地理解项目结构和各个组件的作用。它生成的结构化分析结果和组件索引文档，为项目文档化提供了重要支持，提高了代码可维护性和可理解性。",
+    "component_type": "feature",
+    "confidence": 0.95
+  },
+  "prompt_hash": "e3c3be3e807b2e1bfe73f59b3277be45"
+}

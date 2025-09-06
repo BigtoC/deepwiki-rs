@@ -1,0 +1,31 @@
+{
+  "basic_info": {
+    "name": "SrcReactToolsArchitectureDetector",
+    "file_path": ".\\src\\react\\tools\\architecture_detector.rs",
+    "importance_score": 0.6100000000000001,
+    "component_type": null,
+    "dependencies": []
+  },
+  "analytic_info": {
+    "detailed_documentation": "ArchitectureDetectorTool 是一个用于分析和检测软件项目架构模式的工具组件。它通过分析项目目录结构和文件组织方式，识别出项目中使用的架构模式（如MVC、分层架构、微服务架构等），并提供相关的建议和洞察。\n\n该工具主要通过以下步骤工作：\n1. 分析目录结构，识别出项目中的层、模块和组织模式\n2. 检测项目中使用的架构模式\n3. 识别项目中的组件类型\n4. 计算检测结果的置信度\n5. 生成相关的建议和洞察\n\n工具支持三种分析类型：检测架构模式、分析结构和查找组件。用户可以通过指定分析类型、范围和目标路径来控制工具的行为。\n\n该工具使用Rust语言实现，并遵循Rig框架的工具接口标准。它通过实现Tool trait来集成到Rig框架中，使其可以作为一个可调用的工具服务。",
+    "summary": "ArchitectureDetectorTool 是一个用于分析和检测软件项目架构模式的工具组件，通过分析目录结构和文件组织方式识别架构模式并提供相关建议。",
+    "main_functions": [
+      "分析项目目录结构",
+      "检测架构模式",
+      "识别组件类型",
+      "计算检测结果的置信度",
+      "生成建议和洞察"
+    ],
+    "technical_features": [
+      "支持多种架构模式检测（MVC、分层架构、微服务架构等）",
+      "提供三种分析类型（检测架构模式、分析结构、查找组件）",
+      "支持不同的分析范围（全局、目录、文件）",
+      "使用Rust语言实现",
+      "遵循Rig框架的工具接口标准"
+    ],
+    "role_in_project": "ArchitectureDetectorTool 在项目中扮演着架构分析和建议的角色。它帮助开发者理解项目的架构模式，识别组件类型，并提供改进建议。该工具可以作为一个独立的工具使用，也可以集成到更大的架构分析系统中，为项目的架构评估和改进提供支持。",
+    "component_type": "util",
+    "confidence": 0.95
+  },
+  "prompt_hash": "35df7520029097aca37db65540ca871d"
+}

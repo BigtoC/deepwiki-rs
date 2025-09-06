@@ -1,0 +1,31 @@
+[package]
+name = "deepwiki-rs"
+version = "0.1.0"
+edition = "2024"
+
+email = "dokhell@hotmail.com"
+description = "deepwiki-rs(also known as Litho) is a high-performance automatic generation engine for C4 architecture documentation, developed using Rust. It can intelligently analyze project structures, identify core components, parse dependency relationships, and leverage large language models (LLMs) to automatically generate professional architecture documentation."
+license = "MIT"
+repository = "https://github.com/sopaco/deepwiki-rs"
+
+[dependencies]
+clap = { version = "4.5", features = ["derive"] }
+rig-core = "0.19"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tokio = { version = "1.47", features = ["full"] }
+walkdir = "2.5"
+regex = "1.11"
+anyhow = "1"
+chrono = { version = "0.4", features = ["serde"] }
+thiserror = "2"
+async-trait = "0.1"
+toml = "0.9"
+rand = "0.9"
+reqwest = { version = "0.12", features = ["json", "stream"] }
+pathdiff = "0.2.3"
+markdown = "1.0"
+futures = "0.3"
+uuid = { version = "1.0", features = ["v4", "serde"] }
+glob = "0.3"
+md-5 = "0.10"
