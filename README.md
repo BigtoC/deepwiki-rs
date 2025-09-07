@@ -21,7 +21,7 @@
 > [!WARNING]
 > Here be dragons! As we plan to ship a torrent of features in the following months, future updates will contain breaking changes. With SGNetworks evolving, we'll annotate changes and highlight migration paths as we encounter them.
 > 
-> The major refactoring version of Litho 1.0 is currently underway. It will be the most accurate, high-performance, and efficient Davin DeepWiki-like solution among open-source options.. The new version introduces an excellent engineering architecture design, along with proper support for different technology stacks, languages, and frameworks. It offers better accuracy and performance. We still need some time—please support us, and stay tuned.
+> The major refactoring version of Litho 1.0 is currently underway. It will be the most accurate, high-performance, and efficient Davin DeepWiki-like solution among open-source options. The new version introduces an excellent engineering architecture design, along with proper support for different technology stacks, languages, and frameworks. It offers better accuracy and performance. We still need some time—please support us, and stay tuned.
 
 > 🚀 Help me develop this software better by [sponsoring on GitHub](https://github.com/sponsors/sopaco)
 
