@@ -65,22 +65,51 @@ graph TD
 **Litho**采用模块化架构设计，注重可扩展性和性能。系统由多个协同工作的关键组件组成：
 
 ```mermaid
-graph TD
-    subgraph Litho
-        LithoCore --> LLMClient
-        LithoCore --> MetadataExtractor
-        LithoCore --> DocumentGenerator
-        LithoCore --> ReactAgent
-        LithoCore --> Tools
-        LithoCore --> Utils
-    end
+flowchart TB
+    %% 定义主要模块
+    Main_Entry_Point((Main Entry Point))
+    Metadata_Extractor(Metadata Extractor)
+    LLM_Manager(LLM Manager)
+    Document_Generator(Document Generator)
+    React_Agent(React Agent)
 
-    subgraph 外部系统
-        LLMClient --> LLMService
-        DocumentGenerator --> Markdown
-        DocumentGenerator --> HTML
-        DocumentGenerator --> PDF
-    end
+    %% 子模块
+    Project_Structure(Project Structure)
+    Dependencies(Dependencies)
+    Core_Components(Core Components)
+    LLM_Service(LLM Service)
+    Markdown_Generator(Markdown Generator)
+    HTML_Generator(HTML Generator)
+    ReAct_Pattern(ReAct Pattern)
+
+    %% 外部系统
+    External_LLM_API(External LLM API)
+    Markdown_Files(Markdown Files)
+    HTML_Files(HTML Files)
+
+    %% 连接关系
+    Main_Entry_Point --> Metadata_Extractor
+    Main_Entry_Point --> LLM_Manager
+    Main_Entry_Point --> Document_Generator
+    Main_Entry_Point --> React_Agent
+
+    Metadata_Extractor --> Project_Structure
+    Metadata_Extractor --> Dependencies
+    Metadata_Extractor --> Core_Components
+
+    LLM_Manager --> LLM_Service
+    LLM_Service --> External_LLM_API
+
+    Document_Generator --> Markdown_Generator
+    Document_Generator --> HTML_Generator
+    Markdown_Generator --> Markdown_Files
+    HTML_Generator --> HTML_Files
+
+    React_Agent --> ReAct_Pattern
+
+    %% 外部系统说明
+    classDef external fill:#666,stroke:#444,stroke-width:1px,color:#fff
+    class External_LLM_API,Markdown_Files,HTML_Files external
 ```
 
 ## 核心组件
@@ -91,6 +120,25 @@ graph TD
 - **ReAct代理**：实现ReAct模式，用于系统地探索和分析代码库。
 - **工具集**：提供各种实用工具，用于代码分析、架构检测和文件探索。
 - **实用工具**：提供文件系统操作、字符串处理等通用实用功能。
+
+```mermaid
+sequenceDiagram
+    participant MetadataExtractor
+    participant Structure
+    participant Dependencies
+    participant Components
+    participant LLMService
+
+    MetadataExtractor->>Structure: extract_structure()
+    Structure-->>MetadataExtractor: ProjectStructure
+    MetadataExtractor->>Dependencies: extract_dependencies()
+    Dependencies-->>MetadataExtractor: ProjectDependencies
+    MetadataExtractor->>Components: identify_core_components_with_llm()
+    Components->>LLMService: (Components-->>MetadataExtractor)
+    LLMService-->>Components: (Document Snippets)
+    Components-->>MetadataExtractor: CoreComponent list
+    MetadataExtractor->>MetadataExtractor: create ProjectMetadata
+```
 
 # 🖥️ 快速开始
 

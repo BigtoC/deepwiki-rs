@@ -23,3 +23,5 @@ target
 # Litho(deepwiki-rs) Generated Documents
 # .litho/
 # litho.docs/
+
+.idea/

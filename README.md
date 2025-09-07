@@ -69,22 +69,51 @@ graph TD
 **Litho** is built with a modular architecture designed for extensibility and performance. The system consists of several key components working together:
 
 ```mermaid
-graph TD
-    subgraph Litho
-        LithoCore --> LLMClient
-        LithoCore --> MetadataExtractor
-        LithoCore --> DocumentGenerator
-        LithoCore --> ReactAgent
-        LithoCore --> Tools
-        LithoCore --> Utils
-    end
+flowchart TB
+    %% 定义主要模块
+    Main_Entry_Point((Main Entry Point))
+    Metadata_Extractor(Metadata Extractor)
+    LLM_Manager(LLM Manager)
+    Document_Generator(Document Generator)
+    React_Agent(React Agent)
 
-    subgraph ExternalSystems
-        LLMClient --> LLMService
-        DocumentGenerator --> Markdown
-        DocumentGenerator --> HTML
-        DocumentGenerator --> PDF
-    end
+    %% 子模块
+    Project_Structure(Project Structure)
+    Dependencies(Dependencies)
+    Core_Components(Core Components)
+    LLM_Service(LLM Service)
+    Markdown_Generator(Markdown Generator)
+    HTML_Generator(HTML Generator)
+    ReAct_Pattern(ReAct Pattern)
+
+    %% 外部系统
+    External_LLM_API(External LLM API)
+    Markdown_Files(Markdown Files)
+    HTML_Files(HTML Files)
+
+    %% 连接关系
+    Main_Entry_Point --> Metadata_Extractor
+    Main_Entry_Point --> LLM_Manager
+    Main_Entry_Point --> Document_Generator
+    Main_Entry_Point --> React_Agent
+
+    Metadata_Extractor --> Project_Structure
+    Metadata_Extractor --> Dependencies
+    Metadata_Extractor --> Core_Components
+
+    LLM_Manager --> LLM_Service
+    LLM_Service --> External_LLM_API
+
+    Document_Generator --> Markdown_Generator
+    Document_Generator --> HTML_Generator
+    Markdown_Generator --> Markdown_Files
+    HTML_Generator --> HTML_Files
+
+    React_Agent --> ReAct_Pattern
+
+    %% 外部系统说明
+    classDef external fill:#666,stroke:#444,stroke-width:1px,color:#fff
+    class External_LLM_API,Markdown_Files,HTML_Files external
 ```
 
 ## Core Components
@@ -95,6 +124,25 @@ graph TD
 - **ReAct Agent**: Implements the ReAct pattern for systematic exploration and analysis of codebases.
 - **Tools**: Provides various utility tools for code analysis, architecture detection, and file exploration.
 - **Utils**: Offers common utilities for file system operations, string processing, and more.
+
+```mermaid
+sequenceDiagram
+    participant MetadataExtractor
+    participant Structure
+    participant Dependencies
+    participant Components
+    participant LLMService
+
+    MetadataExtractor->>Structure: extract_structure()
+    Structure-->>MetadataExtractor: ProjectStructure
+    MetadataExtractor->>Dependencies: extract_dependencies()
+    Dependencies-->>MetadataExtractor: ProjectDependencies
+    MetadataExtractor->>Components: identify_core_components_with_llm()
+    Components->>LLMService: (Components-->>MetadataExtractor)
+    LLMService-->>Components: (Document Snippets)
+    Components-->>MetadataExtractor: CoreComponent list
+    MetadataExtractor->>MetadataExtractor: create ProjectMetadata
+```
 
 # 🖥 Getting Started
 
