@@ -10,7 +10,7 @@
 </p>
 
 <p align="center">🛠️ A high-performance, <strong>AI-driven</strong> architecture documentation generator based on <strong>Rust</strong>.</p>
-<p align="center">📚 Automatically generates professional <strong>C4 architecture documentation</strong> for any software project.</p>
+<p align="center">📚 Automatically generates professional <strong>documentation</strong> for any software project.</p>
 <p align="center">
   <a href="https://crates.io/crates/deepwiki-rs"><img src="https://img.shields.io/crates/v/deepwiki-rs.svg?color=dca282" /></a>
   <a href=""><img src="https://img.shields.io/badge/built_with-Rust-dca282.svg?logo=rust" /></a>
@@ -27,7 +27,7 @@
 
 
 # 👋 What's Litho
-**Litho** (also known as deepwiki-rs) is a powerful Rust-based tool designed to automate the generation of software architecture documentation. Leveraging advanced AI capabilities, Litho intelligently analyzes project structures, identifies core components, parses dependency relationships, and generates professional C4 architecture documentation automatically.
+**Litho** (also known as deepwiki-rs) is a powerful Rust-based tool designed to automate the generation of software architecture documentation. Leveraging advanced AI capabilities, Litho intelligently analyzes project structures, identifies core components, parses dependency relationships, and generates professional documentation automatically.
 
 **Litho** is completely free and open-source, making it an ideal solution for teams looking to maintain up-to-date architecture documentation without the manual effort. By using large language models (LLMs), Litho provides insightful analysis and clear documentation that helps developers understand complex codebases more easily.
 
@@ -39,7 +39,7 @@
 
 # 🌠 Key Features
 
-- **Automated Documentation Generation**: Automatically generates comprehensive C4 architecture documentation by analyzing project code, reducing manual documentation efforts.
+- **Automated Documentation Generation**: Automatically generates comprehensive documentation by analyzing project code, reducing manual documentation efforts.
 - **AI-Powered Analysis**: Utilizes large language models (LLMs) with ReAct pattern for intelligent analysis, accurately identifying core components and architectural patterns in projects.
 - **Multi-Format Output**: Supports generating documentation in multiple formats including Markdown and HTML to meet different needs and scenarios.
 - **Extensibility**: Modular design with a plugin system supports extension and customization for different project types and requirements.
