@@ -24,4 +24,10 @@ target
 # .litho/
 # litho.docs/
 
+# IDE Project Settings
 .idea/
+
+**/.DS_Store
+
+# Litho Generated Cached
+.litho/cache/

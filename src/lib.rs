@@ -1,14 +1,14 @@
 pub mod config;
-pub mod generator;
-pub mod llm;
-pub mod metadata;
-pub mod react;
+pub mod cli;
+pub mod agents;
 pub mod tools;
+pub mod cache;
+pub mod extractors;
+pub mod workflow;
 pub mod utils;
+pub mod llm;
 
 // 重新导出主要的公共接口
 pub use config::Config;
-pub use generator::{Document, DocumentGenerator, DocumentGeneratorManager};
-pub use llm::{LLMService, OpenAILikeLLMService, RetryConfig, SmartRetryExecutor};
-pub use metadata::{ProjectMetadata, MetadataExtractor};
-pub use react::{LithoReactAgent, ProjectAnalysis, ReactConfig};
+pub use workflow::{WorkflowEngine, WorkflowResult};
+pub use agents::{PreprocessingAgent, ResearchAgent, DocumentationAgent};
