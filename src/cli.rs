@@ -42,6 +42,10 @@ pub struct Cli {
     #[arg(short, long)]
     pub verbose: bool,
 
+    /// 文档生成模式 (standard, c4)
+    #[arg(long, default_value = "c4")]
+    pub doc_mode: String,
+
     /// LLM模型名称
     #[arg(long)]
     pub model: Option<String>,
@@ -81,6 +85,9 @@ impl Cli {
         config.internal_path = self.project_path.join(".litho");
         config.document_format = self.format;
         config.project_name = self.name;
+        
+        // 设置文档生成模式
+        config.doc_mode = self.doc_mode;
 
         // 覆盖LLM配置
         if let Some(model) = self.model {

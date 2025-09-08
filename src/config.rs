@@ -22,6 +22,9 @@ pub struct Config {
     /// 文档格式 (markdown, html)
     pub document_format: String,
 
+    /// 文档生成模式 (standard, c4)
+    pub doc_mode: String,
+
     /// 是否分析依赖关系
     pub analyze_dependencies: bool,
 
@@ -140,6 +143,7 @@ impl Default for Config {
             output_path: PathBuf::from("./litho.docs"),
             internal_path: PathBuf::from("./.litho"),
             document_format: "markdown".to_string(),
+            doc_mode: "c4".to_string(),
             analyze_dependencies: true,
             identify_components: true,
             max_depth: 10,
