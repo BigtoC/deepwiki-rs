@@ -91,6 +91,8 @@ pub struct LLMConfig {
 
     /// 超时时间（秒）
     pub timeout_seconds: u64,
+
+    pub enable_preset_tools: bool
 }
 
 /// 缓存配置
@@ -214,6 +216,7 @@ impl Default for LLMConfig {
             retry_attempts: 5,
             retry_delay_ms: 5000,
             timeout_seconds: 300,
+            enable_preset_tools: false,
         }
     }
 }

@@ -28,7 +28,7 @@ pub struct ResearchResult {
 
 impl ResearchAgent {
     pub async fn new(config: Config) -> Result<Self> {
-        let llm_client = LLMClient::new(config.llm.clone())?;
+        let llm_client = LLMClient::new(config.clone())?;
         let cache_manager = CacheManager::new(config.cache.clone());
         let research_extractor = ResearchExtractor::new(cache_manager.clone());
 

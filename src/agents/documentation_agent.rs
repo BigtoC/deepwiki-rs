@@ -39,7 +39,7 @@ pub struct Document {
 
 impl DocumentationAgent {
     pub async fn new(config: Config) -> Result<Self> {
-        let llm_client = LLMClient::new(config.llm.clone())?;
+        let llm_client = LLMClient::new(config.clone())?;
         let cache_manager = CacheManager::new(config.cache.clone());
         let documentation_extractor = DocumentationExtractor::new(cache_manager.clone());
 

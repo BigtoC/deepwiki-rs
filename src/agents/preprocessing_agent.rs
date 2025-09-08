@@ -48,7 +48,7 @@ pub struct RelationshipInfo {
 impl PreprocessingAgent {
     pub async fn new(config: Config) -> Result<Self> {
         // 创建LLM客户端
-        let llm_client = LLMClient::new(config.llm.clone())?;
+        let llm_client = LLMClient::new(config.clone())?;
 
         // 创建缓存管理器
         let cache_manager = CacheManager::new(config.cache.clone());

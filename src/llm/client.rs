@@ -1,22 +1,20 @@
 use anyhow::Result;
 use rig::{
-    client::{CompletionClient, ProviderClient},
-    completion::Prompt,
-    providers::mistral::Client,
+    client::{CompletionClient, ProviderClient}, completion::{CompletionModel, Prompt}, providers::mistral::Client
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::future::Future;
 
-use crate::config::LLMConfig;
+use crate::{agents::agent_tools::{file_explorer::AgentToolFileExplorer, file_reader::AgentToolFileReader}, config::LLMConfig, config::Config};
 
 pub struct LLMClient {
-    config: LLMConfig,
+    config: Config,
     client: Client,
 }
 
 impl LLMClient {
-    pub fn new(config: LLMConfig) -> Result<Self> {
+    pub fn new(config: Config) -> Result<Self> {
         let client = Client::from_env();
 
         Ok(Self { client, config })
@@ -28,8 +26,9 @@ impl LLMClient {
         F: Fn() -> Fut,
         Fut: Future<Output = Result<T, anyhow::Error>>,
     {
-        let max_retries = self.config.retry_attempts;
-        let retry_delay_ms = self.config.retry_delay_ms;
+        let llm_config = &self.config.llm;
+        let max_retries = llm_config.retry_attempts;
+        let retry_delay_ms = llm_config.retry_delay_ms;
         let mut retries = 0;
 
         loop {
@@ -55,13 +54,13 @@ impl LLMClient {
     where
         T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,
     {
-        let config = &self.config;
+        let llm_config = &self.config.llm;
 
         let extractor = self
             .client
-            .extractor::<T>(&config.model)
+            .extractor::<T>(&llm_config.model)
             .preamble(system_prompt)
-            .max_tokens(config.max_tokens.into())
+            .max_tokens(llm_config.max_tokens.into())
             .build();
 
         self.retry_with_backoff(|| async {
@@ -70,15 +69,22 @@ impl LLMClient {
     }
 
     pub async fn prompt(&self, system_prompt: &str, user_prompt: &str) -> Result<String> {
-        let config = &self.config;
+        let llm_config = &self.config.llm;
 
-        let agent = self
+        let mut agent_builder = self
             .client
-            .agent(&config.model)
+            .agent(&llm_config.model)
             .preamble(system_prompt)
-            .max_tokens(config.max_tokens.into())
-            .temperature(config.temperature.into())
-            .build();
+            .max_tokens(llm_config.max_tokens.into())
+            .temperature(llm_config.temperature.into());
+
+        if llm_config.enable_preset_tools {
+            let file_explorer = AgentToolFileExplorer::new(self.config.clone());
+            let file_reader = AgentToolFileReader::new(self.config.clone());
+            agent_builder = agent_builder.tool(file_explorer).tool(file_reader);
+        }
+
+        let agent = agent_builder.build();
 
         self.retry_with_backoff(|| async {
             agent.prompt(user_prompt).await.map_err(|e| e.into())

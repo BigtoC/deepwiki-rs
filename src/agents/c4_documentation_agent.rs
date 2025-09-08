@@ -1,5 +1,5 @@
 use anyhow::Result;
-use crate::llm::{LLMClient, MockLLMClient};
+use crate::llm::LLMClient;
 use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 use std::time::Instant;
@@ -13,11 +13,9 @@ use crate::utils::FileUtils;
 /// C4架构文档生成Agent
 pub struct C4DocumentationAgent {
     llm_client: Option<LLMClient>,
-    mock_client: Option<MockLLMClient>,
     config: Config,
     cache_manager: CacheManager,
-    documentation_extractor: DocumentationExtractor,
-    use_mock: bool,
+    documentation_extractor: DocumentationExtractor
 }
 
 /// C4文档生成结果
@@ -170,27 +168,16 @@ pub struct CodeAnalysis {
 
 impl C4DocumentationAgent {
     pub async fn new(config: Config) -> Result<Self> {
-        // 检查是否使用模拟模式
-        let use_mock = std::env::var("LITHO_MOCK_MODE").unwrap_or_default() == "true" 
-            || std::env::var("MISTRAL_API_KEY").is_err();
-        
-        let (llm_client, mock_client) = if use_mock {
-            println!("🔧 使用模拟模式 (未检测到MISTRAL_API_KEY或启用了LITHO_MOCK_MODE)");
-            (None, Some(MockLLMClient::new(config.llm.clone())?))
-        } else {
-            (Some(LLMClient::new(config.llm.clone())?), None)
-        };
+        let llm_client = Some(LLMClient::new(config.clone())?);
         
         let cache_manager = CacheManager::new(config.cache.clone());
         let documentation_extractor = DocumentationExtractor::new(cache_manager.clone());
 
         Ok(Self {
             llm_client,
-            mock_client,
             config,
             cache_manager,
             documentation_extractor,
-            use_mock,
         })
     }
 
@@ -243,11 +230,7 @@ impl C4DocumentationAgent {
         
         let system_msg = "你是一个专业的技术文档专家，专门创建符合C4架构风格的项目概述文档。请根据项目分析结果生成结构化的项目概述。";
         
-        let result = if self.use_mock {
-            self.mock_client.as_ref().unwrap().extract::<AIProjectOverview>(system_msg, &prompt).await
-        } else {
-            self.llm_client.as_ref().unwrap().extract::<AIProjectOverview>(system_msg, &prompt).await
-        };
+        let result = self.llm_client.as_ref().unwrap().extract::<AIProjectOverview>(system_msg, &prompt).await;
         
         match result {
             Ok(ai_overview) => {
@@ -276,11 +259,7 @@ impl C4DocumentationAgent {
         
         let system_msg = "你是一个专业的软件架构师，专门创建符合C4架构风格的架构文档。请根据项目分析结果生成结构化的架构文档。";
         
-        let result = if self.use_mock {
-            self.mock_client.as_ref().unwrap().extract::<AIArchitectureAnalysis>(system_msg, &prompt).await
-        } else {
-            self.llm_client.as_ref().unwrap().extract::<AIArchitectureAnalysis>(system_msg, &prompt).await
-        };
+        let result = self.llm_client.as_ref().unwrap().extract::<AIArchitectureAnalysis>(system_msg, &prompt).await;
         
         match result {
             Ok(ai_architecture) => {
@@ -333,11 +312,7 @@ impl C4DocumentationAgent {
         
         let system_msg = "你是一个专业的技术文档专家，专门创建详细的组件文档。请根据组件分析结果生成结构化的组件文档。";
         
-        let result = if self.use_mock {
-            self.mock_client.as_ref().unwrap().extract::<AIComponentAnalysis>(system_msg, &prompt).await
-        } else {
-            self.llm_client.as_ref().unwrap().extract::<AIComponentAnalysis>(system_msg, &prompt).await
-        };
+        let result = self.llm_client.as_ref().unwrap().extract::<AIComponentAnalysis>(system_msg, &prompt).await;
         
         match result {
             Ok(ai_component) => {
