@@ -7,8 +7,8 @@
 
 本目录包含 2 个配置组件组件：
 
-- [react.rs](react.rs.md)
 - [config.rs](config.rs.md)
+- [react.rs](react.rs.md)
 
 ## 组件特征
 - **主要职责**: 配置组件，管理应用程序的配置信息

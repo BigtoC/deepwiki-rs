@@ -11,8 +11,8 @@
 - [agent_builder.rs](agent_builder.rs.md)
 - [preprocessing_agent.rs](preprocessing_agent.rs.md)
 - [file_explorer.rs](file_explorer.rs.md)
-- [mod.rs](mod.rs.md)
 - [research_agent.rs](research_agent.rs.md)
+- [mod.rs](mod.rs.md)
 
 ## 组件特征
 - **主要职责**: 智能Agent，基于大模型的人工智能分析模块

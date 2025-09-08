@@ -7,9 +7,9 @@
 
 本目录包含 3 个入口组件组件：
 
-- [lib.rs](lib.rs.md)
 - [main.rs](main.rs.md)
 - [cli.rs](cli.rs.md)
+- [lib.rs](lib.rs.md)
 
 ## 组件特征
 - **主要职责**: 应用程序的主要入口点，负责启动和初始化系统

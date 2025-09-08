@@ -7,11 +7,11 @@
 
 本目录包含 5 个文档组件组件：
 
-- [c4_documentation_agent.rs](c4_documentation_agent.rs.md)
 - [categorized_documentation_agent.rs](categorized_documentation_agent.rs.md)
-- [documentation_agent.rs](documentation_agent.rs.md)
 - [documentation_extractor.rs](documentation_extractor.rs.md)
 - [ai_documentation_types.rs](ai_documentation_types.rs.md)
+- [c4_documentation_agent.rs](c4_documentation_agent.rs.md)
+- [documentation_agent.rs](documentation_agent.rs.md)
 
 ## 组件特征
 - **主要职责**: 文档组件，包含项目文档和说明

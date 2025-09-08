@@ -5,18 +5,19 @@
 
 ## 组件列表
 
-本目录包含 6 个工具组件组件：
+本目录包含 7 个工具组件组件：
 
 - [dependency_analyzer.rs](dependency_analyzer.rs.md)
-- [mod.rs](mod.rs.md)
-- [mod.rs](mod.rs.md)
-- [mod.rs](mod.rs.md)
 - [file_utils.rs](file_utils.rs.md)
+- [component_utils.rs](component_utils.rs.md)
 - [markdown_utils.rs](markdown_utils.rs.md)
+- [mod.rs](mod.rs.md)
+- [mod.rs](mod.rs.md)
+- [mod.rs](mod.rs.md)
 
 ## 组件特征
 - **主要职责**: 工具类组件，提供通用的辅助功能
-- **组件数量**: 6
+- **组件数量**: 7
 - **平均重要性**: 待计算
 
 ## 使用指南

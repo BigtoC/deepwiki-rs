@@ -7,9 +7,9 @@
 
 本目录包含 3 个模型组件组件：
 
-- [types.rs](types.rs.md)
 - [ai_analysis_types.rs](ai_analysis_types.rs.md)
 - [ai_research_types.rs](ai_research_types.rs.md)
+- [types.rs](types.rs.md)
 
 ## 组件特征
 - **主要职责**: 数据模型组件，定义数据结构和业务实体
