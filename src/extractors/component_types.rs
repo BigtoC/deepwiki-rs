@@ -28,6 +28,8 @@ pub enum ComponentType {
     Config,
     /// 中间件组件
     Middleware,
+    /// 插件
+    Plugin,
     /// 路由组件
     Router,
     /// 数据库组件
@@ -57,6 +59,7 @@ impl ComponentType {
             ComponentType::Util => "工具组件",
             ComponentType::Config => "配置组件",
             ComponentType::Middleware => "中间件组件",
+            ComponentType::Plugin => "插件",
             ComponentType::Router => "路由组件",
             ComponentType::Database => "数据库组件",
             ComponentType::Api => "API组件",
@@ -80,6 +83,7 @@ impl ComponentType {
             ComponentType::Util => "Util",
             ComponentType::Config => "Config",
             ComponentType::Middleware => "Middleware",
+            ComponentType::Plugin => "Plugin",
             ComponentType::Router => "Router",
             ComponentType::Database => "Database",
             ComponentType::Api => "Api",
@@ -103,6 +107,7 @@ impl ComponentType {
             ComponentType::Util => "工具类组件，提供通用的辅助功能",
             ComponentType::Config => "配置组件，管理应用程序的配置信息",
             ComponentType::Middleware => "中间件组件，提供请求处理的中间层逻辑",
+            ComponentType::Plugin => "插件，用于支持由系统内外部对功能做扩展",
             ComponentType::Router => "路由组件，管理应用程序的路由和导航",
             ComponentType::Database => "数据库相关组件，处理数据持久化",
             ComponentType::Api => "API接口组件，提供外部接口服务",
@@ -159,6 +164,9 @@ impl ComponentTypeMapper {
         if path_lower.contains("/middleware/") || path_lower.contains("/middlewares/") {
             return ComponentType::Middleware;
         }
+        if path_lower.contains("/plugin/") {
+            return ComponentType::Plugin;
+        }
         if path_lower.contains("/routes/") || path_lower.contains("/router/") || path_lower.contains("/routing/") {
             return ComponentType::Router;
         }
@@ -202,6 +210,9 @@ impl ComponentTypeMapper {
         }
         if name_lower.contains("middleware") {
             return ComponentType::Middleware;
+        }
+        if name_lower.contains("plugin") {
+            return ComponentType::Plugin;
         }
         if name_lower.contains("route") {
             return ComponentType::Router;
