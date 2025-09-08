@@ -464,10 +464,30 @@ impl DocumentationAgent {
     ) -> Result<crate::extractors::documentation_extractor::DocumentInfo> {
         let prompt = self.build_technical_specification_prompt(preprocessing_result, research_result);
         
+        // 检查缓存
+        if let Ok(Some(cached_spec)) = self.cache_manager.get::<AITechnicalSpecification>("technical_specification", &prompt).await {
+            println!("   📋 使用缓存的技术规范");
+            let content = self.generate_technical_specification_content(&cached_spec, preprocessing_result);
+            return Ok(crate::extractors::documentation_extractor::DocumentInfo {
+                title: "技术规范".to_string(),
+                filename: "technical_specification.md".to_string(),
+                content,
+                doc_type: "specification".to_string(),
+                priority: 0.8,
+            });
+        }
+
+        println!("   🤖 正在生成AI技术规范");
+        
         let system_msg = "你是一个专业的技术架构师，专门创建详细的技术规范文档。请根据项目分析结果生成结构化的技术规范。";
         
         match self.llm_client.extract::<AITechnicalSpecification>(system_msg, &prompt).await {
             Ok(ai_spec) => {
+                // 缓存结果
+                if let Err(e) = self.cache_manager.set("technical_specification", &prompt, &ai_spec).await {
+                    eprintln!("缓存技术规范失败: {}", e);
+                }
+                
                 let content = self.generate_technical_specification_content(&ai_spec, preprocessing_result);
                 
                 Ok(crate::extractors::documentation_extractor::DocumentInfo {
@@ -488,10 +508,30 @@ impl DocumentationAgent {
     async fn generate_testing_guide(&self, preprocessing_result: &PreprocessingResult) -> Result<crate::extractors::documentation_extractor::DocumentInfo> {
         let prompt = self.build_testing_guide_prompt(preprocessing_result);
         
+        // 检查缓存
+        if let Ok(Some(cached_guide)) = self.cache_manager.get::<AITestingGuide>("testing_guide", &prompt).await {
+            println!("   📋 使用缓存的测试指南");
+            let content = self.generate_testing_guide_content(&cached_guide, preprocessing_result);
+            return Ok(crate::extractors::documentation_extractor::DocumentInfo {
+                title: "测试指南".to_string(),
+                filename: "testing_guide.md".to_string(),
+                content,
+                doc_type: "guide".to_string(),
+                priority: 0.7,
+            });
+        }
+
+        println!("   🤖 正在生成AI测试指南");
+        
         let system_msg = "你是一个专业的软件测试专家，专门创建全面的测试指南和策略。请根据项目分析结果生成结构化的测试指南。";
         
         match self.llm_client.extract::<AITestingGuide>(system_msg, &prompt).await {
             Ok(ai_guide) => {
+                // 缓存结果
+                if let Err(e) = self.cache_manager.set("testing_guide", &prompt, &ai_guide).await {
+                    eprintln!("缓存测试指南失败: {}", e);
+                }
+                
                 let content = self.generate_testing_guide_content(&ai_guide, preprocessing_result);
                 
                 Ok(crate::extractors::documentation_extractor::DocumentInfo {
@@ -512,10 +552,30 @@ impl DocumentationAgent {
     async fn generate_performance_analysis(&self, preprocessing_result: &PreprocessingResult) -> Result<crate::extractors::documentation_extractor::DocumentInfo> {
         let prompt = self.build_performance_analysis_prompt(preprocessing_result);
         
+        // 检查缓存
+        if let Ok(Some(cached_analysis)) = self.cache_manager.get::<AIPerformanceAnalysis>("performance_analysis", &prompt).await {
+            println!("   📋 使用缓存的性能分析");
+            let content = self.generate_performance_analysis_content(&cached_analysis, preprocessing_result);
+            return Ok(crate::extractors::documentation_extractor::DocumentInfo {
+                title: "性能分析报告".to_string(),
+                filename: "performance_analysis.md".to_string(),
+                content,
+                doc_type: "analysis".to_string(),
+                priority: 0.6,
+            });
+        }
+
+        println!("   🤖 正在生成AI性能分析");
+        
         let system_msg = "你是一个专业的性能分析专家，专门分析软件系统的性能特征和优化建议。请根据项目分析结果生成结构化的性能分析报告。";
         
         match self.llm_client.extract::<AIPerformanceAnalysis>(system_msg, &prompt).await {
             Ok(ai_analysis) => {
+                // 缓存结果
+                if let Err(e) = self.cache_manager.set("performance_analysis", &prompt, &ai_analysis).await {
+                    eprintln!("缓存性能分析失败: {}", e);
+                }
+                
                 let content = self.generate_performance_analysis_content(&ai_analysis, preprocessing_result);
                 
                 Ok(crate::extractors::documentation_extractor::DocumentInfo {
@@ -536,10 +596,30 @@ impl DocumentationAgent {
     async fn generate_security_analysis(&self, preprocessing_result: &PreprocessingResult) -> Result<crate::extractors::documentation_extractor::DocumentInfo> {
         let prompt = self.build_security_analysis_prompt(preprocessing_result);
         
+        // 检查缓存
+        if let Ok(Some(cached_analysis)) = self.cache_manager.get::<AISecurityAnalysis>("security_analysis", &prompt).await {
+            println!("   📋 使用缓存的安全分析");
+            let content = self.generate_security_analysis_content(&cached_analysis, preprocessing_result);
+            return Ok(crate::extractors::documentation_extractor::DocumentInfo {
+                title: "安全分析报告".to_string(),
+                filename: "security_analysis.md".to_string(),
+                content,
+                doc_type: "analysis".to_string(),
+                priority: 0.5,
+            });
+        }
+
+        println!("   🤖 正在生成AI安全分析");
+        
         let system_msg = "你是一个专业的网络安全专家，专门分析软件系统的安全风险和防护措施。请根据项目分析结果生成结构化的安全分析报告。";
         
         match self.llm_client.extract::<AISecurityAnalysis>(system_msg, &prompt).await {
             Ok(ai_analysis) => {
+                // 缓存结果
+                if let Err(e) = self.cache_manager.set("security_analysis", &prompt, &ai_analysis).await {
+                    eprintln!("缓存安全分析失败: {}", e);
+                }
+                
                 let content = self.generate_security_analysis_content(&ai_analysis, preprocessing_result);
                 
                 Ok(crate::extractors::documentation_extractor::DocumentInfo {

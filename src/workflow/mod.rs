@@ -179,6 +179,9 @@ impl WorkflowEngine {
         println!("\n🎉 工作流执行完成!");
         println!("📊 总耗时: {:.2}秒", total_time);
 
+        // 显示缓存性能摘要
+        self.preprocessing_agent.get_cache_manager().print_performance_summary();
+
         Ok(result)
     }
 

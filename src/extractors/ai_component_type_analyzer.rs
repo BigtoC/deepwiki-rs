@@ -5,6 +5,7 @@ use std::path::Path;
 
 use crate::extractors::component_types::{ComponentType, ComponentTypeMapper};
 use crate::llm::LLMClient;
+use crate::cache::CacheManager;
 
 /// AI组件类型分析结果
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
@@ -17,11 +18,12 @@ pub struct AIComponentTypeAnalysis {
 /// AI组件类型分析器
 pub struct AIComponentTypeAnalyzer {
     llm_client: LLMClient,
+    cache_manager: CacheManager,
 }
 
 impl AIComponentTypeAnalyzer {
-    pub fn new(llm_client: LLMClient) -> Self {
-        Self { llm_client }
+    pub fn new(llm_client: LLMClient, cache_manager: CacheManager) -> Self {
+        Self { llm_client, cache_manager }
     }
 
     /// 使用AI分析组件类型
@@ -33,6 +35,14 @@ impl AIComponentTypeAnalyzer {
     ) -> Result<AIComponentTypeAnalysis> {
         let prompt = self.build_component_type_analysis_prompt(file_path, file_content, file_name);
         
+        // 检查缓存
+        if let Ok(Some(cached_analysis)) = self.cache_manager.get::<AIComponentTypeAnalysis>("ai_component_type", &prompt).await {
+            println!("   📋 使用缓存的组件类型分析: {}", file_name);
+            return Ok(cached_analysis);
+        }
+
+        println!("   🤖 正在进行AI组件类型分析: {}", file_name);
+        
         let system_msg = r#"你是一个专业的代码架构分析师，专门分析代码文件的组件类型。"#;
 
         let analysis = self
@@ -40,6 +50,11 @@ impl AIComponentTypeAnalyzer {
             .extract::<AIComponentTypeAnalysis>(system_msg, &prompt)
             .await
             .map_err(|e| anyhow::anyhow!("AI组件类型分析失败: {}", e))?;
+
+        // 缓存结果
+        if let Err(e) = self.cache_manager.set("ai_component_type", &prompt, &analysis).await {
+            eprintln!("缓存AI组件类型分析结果失败: {}", e);
+        }
 
         Ok(analysis)
     }
@@ -51,9 +66,10 @@ impl AIComponentTypeAnalyzer {
         file_content: &str,
         file_name: &str,
     ) -> String {
-        // 截取文件内容的前1000个字符用于分析
-        let content_preview = if file_content.len() > 1000 {
-            format!("{}...", &file_content[..1000])
+        // 安全地截取文件内容的前1000个字符用于分析
+        let content_preview = if file_content.chars().count() > 1000 {
+            let truncated: String = file_content.chars().take(1000).collect();
+            format!("{}...", truncated)
         } else {
             file_content.to_string()
         };

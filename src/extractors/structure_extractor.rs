@@ -84,7 +84,7 @@ pub struct RelationshipInfo {
 impl StructureExtractor {
     pub fn new(cache_manager: CacheManager, llm_client: Option<LLMClient>) -> Self {
         let ai_analyzer = llm_client.map(|client| 
-            crate::extractors::ai_component_type_analyzer::AIComponentTypeAnalyzer::new(client)
+            crate::extractors::ai_component_type_analyzer::AIComponentTypeAnalyzer::new(client, cache_manager.clone())
         );
         
         Self {

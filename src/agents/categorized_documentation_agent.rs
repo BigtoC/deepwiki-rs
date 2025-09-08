@@ -106,6 +106,21 @@ impl CategorizedDocumentationAgent {
     ) -> Result<ComponentDocument> {
         let prompt = self.build_component_document_prompt(component, analysis);
         
+        // 检查缓存
+        if let Ok(Some(cached_content)) = self.cache_manager.get::<String>("component_document", &prompt).await {
+            println!("   📋 使用缓存的组件文档: {}", component.name);
+            let filename = format!("{}.md", component.name.replace("/", "_").replace(" ", "_"));
+            return Ok(ComponentDocument {
+                component_name: component.name.clone(),
+                component_type: component.component_type.clone(),
+                file_path: component.file_path.clone(),
+                content: cached_content,
+                filename,
+            });
+        }
+
+        println!("   🤖 正在生成组件文档: {}", component.name);
+        
         let system_msg = format!(
             "你是一个专业的技术文档编写专家，专门为{}类型的组件编写详细的技术文档。请生成结构化、专业的组件文档。",
             component.component_type.display_name()
@@ -116,6 +131,11 @@ impl CategorizedDocumentationAgent {
             .prompt(&system_msg, &prompt)
             .await
             .map_err(|e| anyhow::anyhow!("生成组件文档失败: {}", e))?;
+
+        // 缓存结果
+        if let Err(e) = self.cache_manager.set("component_document", &prompt, &content).await {
+            eprintln!("缓存组件文档失败: {}", e);
+        }
 
         let filename = format!("{}.md", component.name.replace("/", "_").replace(" ", "_"));
 
@@ -395,11 +415,24 @@ CoreComponents/
                 .join("\n")
         );
 
+        // 检查缓存
+        if let Ok(Some(cached_summary)) = self.cache_manager.get::<String>("categorized_summary", &prompt).await {
+            println!("   📋 使用缓存的分类文档总结");
+            return Ok(cached_summary);
+        }
+
+        println!("   🤖 正在生成分类文档总结");
+
         let summary = self
             .llm_client
             .prompt("你是一个专业的技术文档总结专家", &prompt)
             .await
             .map_err(|e| anyhow::anyhow!("生成文档总结失败: {}", e))?;
+
+        // 缓存结果
+        if let Err(e) = self.cache_manager.set("categorized_summary", &prompt, &summary).await {
+            eprintln!("缓存分类文档总结失败: {}", e);
+        }
 
         Ok(summary)
     }

@@ -2,12 +2,33 @@
 pub struct TextUtils;
 
 impl TextUtils {
-    /// 截断文本到指定长度
+    /// 截断文本到指定长度（安全处理Unicode字符）
     pub fn truncate(text: &str, max_length: usize) -> String {
-        if text.len() <= max_length {
+        if text.chars().count() <= max_length {
             text.to_string()
         } else {
-            format!("{}...", &text[..max_length.saturating_sub(3)])
+            let truncated: String = text.chars().take(max_length.saturating_sub(3)).collect();
+            format!("{}...", truncated)
+        }
+    }
+
+    /// 安全地截断字符串到指定字符数（不是字节数）
+    /// 这个函数确保不会在Unicode字符边界中间截断
+    pub fn safe_truncate(text: &str, max_chars: usize) -> String {
+        if text.chars().count() <= max_chars {
+            text.to_string()
+        } else {
+            text.chars().take(max_chars).collect()
+        }
+    }
+
+    /// 安全地截断字符串并添加省略号
+    pub fn safe_truncate_with_ellipsis(text: &str, max_chars: usize) -> String {
+        if text.chars().count() <= max_chars {
+            text.to_string()
+        } else {
+            let truncated: String = text.chars().take(max_chars.saturating_sub(3)).collect();
+            format!("{}...", truncated)
         }
     }
 

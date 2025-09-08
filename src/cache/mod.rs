@@ -2,15 +2,19 @@ use anyhow::Result;
 use md5::{Digest, Md5};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use std::time::{SystemTime, UNIX_EPOCH};
+use std::time::{SystemTime, UNIX_EPOCH, Instant, Duration};
 use tokio::fs;
 
 use crate::config::CacheConfig;
+
+pub mod performance_monitor;
+pub use performance_monitor::{CachePerformanceMonitor, CachePerformanceReport};
 
 /// 缓存管理器
 #[derive(Clone)]
 pub struct CacheManager {
     config: CacheConfig,
+    performance_monitor: CachePerformanceMonitor,
 }
 
 /// 缓存条目
@@ -24,7 +28,10 @@ pub struct CacheEntry<T> {
 
 impl CacheManager {
     pub fn new(config: CacheConfig) -> Self {
-        Self { config }
+        Self { 
+            config,
+            performance_monitor: CachePerformanceMonitor::new(),
+        }
     }
 
     /// 初始化缓存目录
@@ -73,19 +80,37 @@ impl CacheManager {
         let cache_path = self.get_cache_path(category, &hash);
 
         if !cache_path.exists() {
+            self.performance_monitor.record_cache_miss(category);
             return Ok(None);
         }
 
-        let content = fs::read_to_string(&cache_path).await?;
-        let entry: CacheEntry<T> = serde_json::from_str(&content)?;
+        match fs::read_to_string(&cache_path).await {
+            Ok(content) => {
+                match serde_json::from_str::<CacheEntry<T>>(&content) {
+                    Ok(entry) => {
+                        if self.is_expired(entry.timestamp) {
+                            // 删除过期缓存
+                            let _ = fs::remove_file(&cache_path).await;
+                            self.performance_monitor.record_cache_miss(category);
+                            return Ok(None);
+                        }
 
-        if self.is_expired(entry.timestamp) {
-            // 删除过期缓存
-            let _ = fs::remove_file(&cache_path).await;
-            return Ok(None);
+                        // 估算节省的推理时间（基于缓存的复杂度）
+                        let estimated_inference_time = self.estimate_inference_time(&content);
+                        self.performance_monitor.record_cache_hit(category, estimated_inference_time);
+                        Ok(Some(entry.data))
+                    }
+                    Err(e) => {
+                        self.performance_monitor.record_cache_error(category, &format!("反序列化失败: {}", e));
+                        Ok(None)
+                    }
+                }
+            }
+            Err(e) => {
+                self.performance_monitor.record_cache_error(category, &format!("读取文件失败: {}", e));
+                Ok(None)
+            }
         }
-
-        Ok(Some(entry.data))
     }
 
     /// 设置缓存
@@ -116,10 +141,24 @@ impl CacheManager {
             prompt_hash: hash,
         };
 
-        let content = serde_json::to_string_pretty(&entry)?;
-        fs::write(&cache_path, content).await?;
-
-        Ok(())
+        match serde_json::to_string_pretty(&entry) {
+            Ok(content) => {
+                match fs::write(&cache_path, content).await {
+                    Ok(_) => {
+                        self.performance_monitor.record_cache_write(category);
+                        Ok(())
+                    }
+                    Err(e) => {
+                        self.performance_monitor.record_cache_error(category, &format!("写入文件失败: {}", e));
+                        Err(e.into())
+                    }
+                }
+            }
+            Err(e) => {
+                self.performance_monitor.record_cache_error(category, &format!("序列化失败: {}", e));
+                Err(e.into())
+            }
+        }
     }
 
     /// 清除指定类别的缓存
@@ -169,6 +208,31 @@ impl CacheManager {
         }
 
         Ok(stats)
+    }
+
+    /// 估算推理时间（基于内容复杂度）
+    fn estimate_inference_time(&self, content: &str) -> Duration {
+        // 基于内容长度估算推理时间
+        let content_length = content.len();
+        let base_time = 2.0; // 基础推理时间2秒
+        let complexity_factor = (content_length as f64 / 1000.0).min(10.0); // 最多10倍复杂度
+        let estimated_seconds = base_time + complexity_factor;
+        Duration::from_secs_f64(estimated_seconds)
+    }
+
+    /// 获取性能监控器
+    pub fn get_performance_monitor(&self) -> &CachePerformanceMonitor {
+        &self.performance_monitor
+    }
+
+    /// 打印性能摘要
+    pub fn print_performance_summary(&self) {
+        self.performance_monitor.print_performance_summary();
+    }
+
+    /// 生成性能报告
+    pub fn generate_performance_report(&self) -> CachePerformanceReport {
+        self.performance_monitor.generate_report()
     }
 }
 

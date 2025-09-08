@@ -228,12 +228,31 @@ impl C4DocumentationAgent {
     ) -> Result<C4Document> {
         let prompt = self.build_overview_prompt(preprocessing_result, research_result);
         
+        // 检查缓存
+        if let Ok(Some(cached_overview)) = self.cache_manager.get::<AIProjectOverview>("c4_overview", &prompt).await {
+            println!("   📋 使用缓存的项目概述");
+            let content = self.generate_overview_content(&cached_overview, preprocessing_result);
+            return Ok(C4Document {
+                title: "项目概述".to_string(),
+                filename: "Overview.md".to_string(),
+                content,
+                doc_type: "overview".to_string(),
+            });
+        }
+
+        println!("   🤖 正在生成AI项目概述");
+        
         let system_msg = "你是一个专业的技术文档专家，专门创建符合C4架构风格的项目概述文档。请根据项目分析结果生成结构化的项目概述。";
         
         let result = self.llm_client.as_ref().unwrap().extract::<AIProjectOverview>(system_msg, &prompt).await;
         
         match result {
             Ok(ai_overview) => {
+                // 缓存结果
+                if let Err(e) = self.cache_manager.set("c4_overview", &prompt, &ai_overview).await {
+                    eprintln!("缓存C4概述结果失败: {}", e);
+                }
+                
                 let content = self.generate_overview_content(&ai_overview, preprocessing_result);
                 
                 Ok(C4Document {
@@ -257,12 +276,31 @@ impl C4DocumentationAgent {
     ) -> Result<C4Document> {
         let prompt = self.build_architecture_prompt(preprocessing_result, research_result);
         
+        // 检查缓存
+        if let Ok(Some(cached_architecture)) = self.cache_manager.get::<AIArchitectureAnalysis>("c4_architecture", &prompt).await {
+            println!("   📋 使用缓存的架构分析");
+            let content = self.generate_architecture_content(&cached_architecture, preprocessing_result);
+            return Ok(C4Document {
+                title: "架构文档".to_string(),
+                filename: "Architecture.md".to_string(),
+                content,
+                doc_type: "architecture".to_string(),
+            });
+        }
+
+        println!("   🤖 正在生成AI架构分析");
+        
         let system_msg = "你是一个专业的软件架构师，专门创建符合C4架构风格的架构文档。请根据项目分析结果生成结构化的架构文档。";
         
         let result = self.llm_client.as_ref().unwrap().extract::<AIArchitectureAnalysis>(system_msg, &prompt).await;
         
         match result {
             Ok(ai_architecture) => {
+                // 缓存结果
+                if let Err(e) = self.cache_manager.set("c4_architecture", &prompt, &ai_architecture).await {
+                    eprintln!("缓存C4架构分析结果失败: {}", e);
+                }
+                
                 let content = self.generate_architecture_content(&ai_architecture, preprocessing_result);
                 
                 Ok(C4Document {
@@ -310,12 +348,39 @@ impl C4DocumentationAgent {
     ) -> Result<C4ComponentDoc> {
         let prompt = self.build_component_prompt(component, preprocessing_result);
         
+        // 检查缓存
+        if let Ok(Some(cached_component)) = self.cache_manager.get::<AIComponentAnalysis>("c4_component", &prompt).await {
+            println!("   📋 使用缓存的组件分析: {}", component.name);
+            let content = self.generate_component_content(&cached_component, component);
+            return Ok(C4ComponentDoc {
+                component_name: component.name.clone(),
+                filename: format!("{}.md", component.name.replace(".rs", "").replace("/", "_")),
+                content,
+                functionality: cached_component.functionality_description,
+                workflow: cached_component.workflow_steps.iter()
+                    .map(|step| format!("{}. {}", step.step_number, step.description))
+                    .collect::<Vec<_>>()
+                    .join("\n"),
+                internal_architecture: format!("主要类: {}\n关键方法: {}\n数据结构: {}",
+                    cached_component.internal_structure.main_classes.join(", "),
+                    cached_component.internal_structure.key_methods.join(", "),
+                    cached_component.internal_structure.data_structures.join(", ")),
+            });
+        }
+
+        println!("   🤖 正在生成AI组件分析: {}", component.name);
+        
         let system_msg = "你是一个专业的技术文档专家，专门创建详细的组件文档。请根据组件分析结果生成结构化的组件文档。";
         
         let result = self.llm_client.as_ref().unwrap().extract::<AIComponentAnalysis>(system_msg, &prompt).await;
         
         match result {
             Ok(ai_component) => {
+                // 缓存结果
+                if let Err(e) = self.cache_manager.set("c4_component", &prompt, &ai_component).await {
+                    eprintln!("缓存C4组件分析结果失败: {}", e);
+                }
+                
                 let content = self.generate_component_content(&ai_component, component);
                 
                 Ok(C4ComponentDoc {
@@ -1120,8 +1185,9 @@ impl C4DocumentationAgent {
         
         for component in preprocessing_result.core_components.iter().take(5) {
             if let Ok(content) = std::fs::read_to_string(&component.file_path) {
-                let truncated = if content.len() > 500 {
-                    format!("{}...", &content[..500])
+                let truncated = if content.chars().count() > 500 {
+                    let truncated_content: String = content.chars().take(500).collect();
+                    format!("{}...", truncated_content)
                 } else {
                     content
                 };
@@ -1143,8 +1209,9 @@ impl C4DocumentationAgent {
         
         for component in preprocessing_result.core_components.iter().take(8) {
             if let Ok(content) = std::fs::read_to_string(&component.file_path) {
-                let truncated = if content.len() > 800 {
-                    format!("{}...", &content[..800])
+                let truncated = if content.chars().count() > 800 {
+                    let truncated_content: String = content.chars().take(800).collect();
+                    format!("{}...", truncated_content)
                 } else {
                     content
                 };
@@ -1237,8 +1304,9 @@ impl C4DocumentationAgent {
     fn extract_component_source_code(&self, component: &crate::extractors::CoreComponent) -> String {
         match std::fs::read_to_string(&component.file_path) {
             Ok(content) => {
-                if content.len() > 1000 {
-                    format!("{}...\n\n// 文件较大，仅显示前1000字符", &content[..1000])
+                if content.chars().count() > 1000 {
+                    let truncated_content: String = content.chars().take(1000).collect();
+                    format!("{}...\n\n// 文件较大，仅显示前1000字符", truncated_content)
                 } else {
                     content
                 }
