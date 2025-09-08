@@ -907,7 +907,7 @@ impl PreprocessingAgent {
                 .collect::<Vec<_>>()
                 .join(", "),
             core_components.iter()
-                .take(10) // 限制显示前10个组件
+                .take(20) // 限制显示前20个组件
                 .map(|c| format!("- {} ({}): {}", c.name, c.component_type.display_name(), c.file_path.display()))
                 .collect::<Vec<_>>()
                 .join("\n")
@@ -1091,12 +1091,12 @@ impl PreprocessingAgent {
                 .collect::<Vec<_>>()
                 .join(", "),
             core_components.iter()
-                .take(5)
+                .take(20)
                 .map(|c| format!("- {} ({}): 重要性 {:.2}", c.name, c.component_type.display_name(), c.importance_score))
                 .collect::<Vec<_>>()
                 .join("\n"),
             all_recommendations.iter()
-                .take(10)
+                .take(20)
                 .map(|r| format!("- {}", r))
                 .collect::<Vec<_>>()
                 .join("\n")

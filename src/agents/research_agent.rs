@@ -346,7 +346,7 @@ impl ResearchAgent {
                 .project_structure
                 .file_types
                 .keys()
-                .take(5)
+                .take(3)
                 .cloned()
                 .collect::<Vec<_>>()
                 .join(", ")

@@ -8,7 +8,7 @@ use crate::cache::CacheManager;
 use crate::config::Config;
 use crate::agents::{preprocessing_agent::PreprocessingResult, research_agent::ResearchResult};
 use crate::extractors::DocumentationExtractor;
-use crate::utils::FileUtils;
+use crate::utils::{FileUtils, ComponentSorter};
 
 /// C4架构文档生成Agent
 pub struct C4DocumentationAgent {
@@ -323,12 +323,12 @@ impl C4DocumentationAgent {
     ) -> Result<Vec<C4ComponentDoc>> {
         let mut component_docs = Vec::new();
         
-        // 选择最重要的核心组件（重要性分数 > 0.7）
-        let important_components: Vec<_> = preprocessing_result.core_components
-            .iter()
-            .filter(|c| c.importance_score > 0.7)
-            .take(10) // 限制最多10个组件
-            .collect();
+        // 🔧 修复：使用工具函数过滤并排序组件（重要性分数 > 0.7，最多10个）
+        let important_components = ComponentSorter::filter_and_sort_components(
+            &preprocessing_result.core_components, 
+            0.7, 
+            Some(10)
+        );
 
         for component in important_components {
             println!("   📝 生成组件文档: {}", component.name);
@@ -1079,7 +1079,11 @@ impl C4DocumentationAgent {
         content.push_str("3. 结果输出和后处理\n\n");
 
         content.push_str(&MarkdownUtils::heading(2, "核心模块详解"));
-        for component in preprocessing_result.core_components.iter().take(5) {
+        
+        // 🔧 修复：使用工具函数获取Top5组件
+        let top_components = ComponentSorter::get_top_n_components(&preprocessing_result.core_components, 5);
+        
+        for component in top_components {
             content.push_str(&MarkdownUtils::heading(3, &component.name));
             content.push_str(&format!("- **类型**: {}\n", component.component_type));
             content.push_str(&format!("- **重要性**: {:.2}\n\n", component.importance_score));
@@ -1183,7 +1187,10 @@ impl C4DocumentationAgent {
     fn extract_key_code_snippets(&self, preprocessing_result: &PreprocessingResult) -> String {
         let mut snippets = Vec::new();
         
-        for component in preprocessing_result.core_components.iter().take(5) {
+        // 🔧 修复：使用工具函数获取Top20组件
+        let top_components = ComponentSorter::get_top_n_components(&preprocessing_result.core_components, 20);
+        
+        for component in top_components {
             if let Ok(content) = std::fs::read_to_string(&component.file_path) {
                 let truncated = if content.chars().count() > 500 {
                     let truncated_content: String = content.chars().take(500).collect();
@@ -1207,7 +1214,10 @@ impl C4DocumentationAgent {
     fn extract_detailed_code_snippets(&self, preprocessing_result: &PreprocessingResult) -> String {
         let mut snippets = Vec::new();
         
-        for component in preprocessing_result.core_components.iter().take(8) {
+        // 🔧 修复：使用工具函数获取Top8组件
+        let top_components = ComponentSorter::get_top_n_components(&preprocessing_result.core_components, 8);
+        
+        for component in top_components {
             if let Ok(content) = std::fs::read_to_string(&component.file_path) {
                 let truncated = if content.chars().count() > 800 {
                     let truncated_content: String = content.chars().take(800).collect();

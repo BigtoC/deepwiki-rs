@@ -1,710 +1,552 @@
 # 架构文档
 
 ## 整体架构
-该项目采用模块化架构，分为多个核心模块，每个模块负责特定的功能。项目使用Rust语言，并采用TOML配置文件。主要模块包括依赖分析、LLM客户端、缓存管理、文件操作、文档生成、研究报告生成、组件分析等。项目采用分层架构，数据流主要围绕LLMClient、CacheManager和各种代理组件进行。
+该系统采用分层架构，主要分为三层：
+1. 表示层：包含CLI接口，负责用户交互
+2. 业务逻辑层：包含核心组件、Agent和工具，负责核心业务逻辑
+3. 数据层：包含缓存和输出文件，负责数据存储
+
+系统采用模块化设计，核心组件包括WorkflowEngine、ConfigManager、DependencyAnalyzer、LLMClient和CacheManager。Agent模块负责特定功能的实现，工具模块提供辅助功能。
 
 ### 系统架构图
 ```mermaid
-systemDiagram
-    direction TB
+// 系统架构图
+flowchart TD
+    subgraph System
+        subgraph Presentation
+            CLI[CLI Interface]
+        end
+        
+        subgraph BusinessLogic
+            subgraph CoreComponents
+                WorkflowEngine[Workflow Engine]
+                ConfigManager[Config Manager]
+                DependencyAnalyzer[Dependency Analyzer]
+                LLMClient[LLM Client]
+                CacheManager[Cache Manager]
+            end
+            
+            subgraph Agents
+                PreprocessingAgent[Preprocessing Agent]
+                ResearchAgent[Research Agent]
+                DocumentationAgent[Documentation Agent]
+                C4DocumentationAgent[C4 Documentation Agent]
+                CategorizedDocumentationAgent[Categorized Documentation Agent]
+            end
+            
+            subgraph Tools
+                FileExplorer[File Explorer]
+                FileReader[File Reader]
+                ComponentExtractor[Component Extractor]
+                AIComponentTypeAnalyzer[AI Component Type Analyzer]
+                ResearchExtractor[Research Extractor]
+                DocumentationExtractor[Documentation Extractor]
+            end
+        end
+        
+        subgraph Data
+            Cache[Cache Storage]
+            Output[Output Files]
+        end
+    end
     
-    [CLI] --> [WorkflowEngine]
-    [WorkflowEngine] --> [DocumentationAgent]
-    [WorkflowEngine] --> [PreprocessingAgent]
-    [WorkflowEngine] --> [ResearchAgent]
-    [WorkflowEngine] --> [C4DocumentationAgent]
-    [WorkflowEngine] --> [CategorizedDocumentationAgent]
+    CLI --> WorkflowEngine
+    WorkflowEngine --> ConfigManager
+    WorkflowEngine --> PreprocessingAgent
+    WorkflowEngine --> ResearchAgent
+    WorkflowEngine --> DocumentationAgent
+    WorkflowEngine --> C4DocumentationAgent
     
-    [DocumentationAgent] --> [LLMClient]
-    [DocumentationAgent] --> [CacheManager]
-    [DocumentationAgent] --> [FileUtils]
+    PreprocessingAgent --> FileExplorer
+    PreprocessingAgent --> FileReader
+    PreprocessingAgent --> ComponentExtractor
     
-    [PreprocessingAgent] --> [LLMClient]
-    [PreprocessingAgent] --> [CacheManager]
-    [PreprocessingAgent] --> [FileExplorer]
-    [PreprocessingAgent] --> [FileReader]
+    ResearchAgent --> ResearchExtractor
+    DocumentationAgent --> DocumentationExtractor
+    C4DocumentationAgent --> DocumentationExtractor
     
-    [ResearchAgent] --> [LLMClient]
-    [ResearchAgent] --> [CacheManager]
+    ComponentExtractor --> AIComponentTypeAnalyzer
     
-    [C4DocumentationAgent] --> [LLMClient]
-    [C4DocumentationAgent] --> [CacheManager]
-    [C4DocumentationAgent] --> [DocumentationExtractor]
+    ConfigManager --> CacheManager
+    LLMClient --> CacheManager
+    DependencyAnalyzer --> CacheManager
     
-    [CategorizedDocumentationAgent] --> [LLMClient]
-    [CategorizedDocumentationAgent] --> [CacheManager]
-    [CategorizedDocumentationAgent] --> [FileUtils]
-    
-    [LLMClient] --> [ReActExecutor]
-    [LLMClient] --> [AgentBuilder]
-    [LLMClient] --> [PerformanceMonitor]
-    
-    [CacheManager] --> [PerformanceMonitor]
-    
-    [StructureExtractor] --> [LanguageProcessorManager]
-    [StructureExtractor] --> [ComponentTypeEnhancer]
-    [StructureExtractor] --> [LLMClient]
-    
-    [ComponentExtractor] --> [CacheManager]
-    [ComponentExtractor] --> [ComponentTypeEnhancer]
-    
-    [ResearchExtractor] --> [CacheManager]
-    
-    [DocumentationExtractor] --> [CacheManager]
-    [DocumentationExtractor] --> [MarkdownUtils]
-    
-    [LanguageProcessorManager] --> [TypeScriptProcessor]
-    [LanguageProcessorManager] --> [JavaProcessor]
-    [LanguageProcessorManager] --> [ReactProcessor]
-    [LanguageProcessorManager] --> [RustProcessor]
-    [LanguageProcessorManager] --> [VueProcessor]
-    [LanguageProcessorManager] --> [JavaScriptProcessor]
-    [LanguageProcessorManager] --> [KotlinProcessor]
-    [LanguageProcessorManager] --> [PythonProcessor]
-    [LanguageProcessorManager] --> [SvelteProcessor]
-    
-    [FileExplorer] --> [Config]
-    [FileReader] --> [Config]
-    [MarkdownUtils] --> [Config]
-    [StructureExtractor] --> [Config]
-    [ComponentExtractor] --> [Config]
-    [ResearchExtractor] --> [Config]
-    [DocumentationExtractor] --> [Config]
-    [LLMClient] --> [Config]
-    [CacheManager] --> [Config]
-    [PerformanceMonitor] --> [Config]
-    
-    [Config] --> [ConfigFile]
-    
-    [CLI] --> [Config]
-    
-    style [CLI] fill:#f9f,stroke:#333
-    style [WorkflowEngine] fill:#bbf,stroke:#333
-    style [DocumentationAgent] fill:#bfb,stroke:#333
-    style [PreprocessingAgent] fill:#bfb,stroke:#333
-    style [ResearchAgent] fill:#bfb,stroke:#333
-    style [C4DocumentationAgent] fill:#bfb,stroke:#333
-    style [CategorizedDocumentationAgent] fill:#bfb,stroke:#333
-    style [LLMClient] fill:#fbf,stroke:#333
-    style [ReActExecutor] fill:#fbf,stroke:#333
-    style [AgentBuilder] fill:#fbf,stroke:#333
-    style [PerformanceMonitor] fill:#fbf,stroke:#333
-    style [CacheManager] fill:#f9f,stroke:#333
-    style [FileExplorer] fill:#f9f,stroke:#333
-    style [FileReader] fill:#f9f,stroke:#333
-    style [FileUtils] fill:#f9f,stroke:#333
-    style [StructureExtractor] fill:#f9f,stroke:#333
-    style [ComponentExtractor] fill:#f9f,stroke:#333
-    style [ResearchExtractor] fill:#f9f,stroke:#333
-    style [DocumentationExtractor] fill:#f9f,stroke:#333
-    style [LanguageProcessorManager] fill:#f9f,stroke:#333
-    style [TypeScriptProcessor] fill:#f9f,stroke:#333
-    style [JavaProcessor] fill:#f9f,stroke:#333
-    style [ReactProcessor] fill:#f9f,stroke:#333
-    style [RustProcessor] fill:#f9f,stroke:#333
-    style [VueProcessor] fill:#f9f,stroke:#333
-    style [JavaScriptProcessor] fill:#f9f,stroke:#333
-    style [KotlinProcessor] fill:#f9f,stroke:#333
-    style [PythonProcessor] fill:#f9f,stroke:#333
-    style [SvelteProcessor] fill:#f9f,stroke:#333
-    style [MarkdownUtils] fill:#f9f,stroke:#333
-    style [Config] fill:#9f9,stroke:#333
-    style [ConfigFile] fill:#9f9,stroke:#333
+    CacheManager --> Cache
+    DocumentationAgent --> Output
+    C4DocumentationAgent --> Output
 ```
 
 ### 架构模式
 - 模块化架构
 - 分层架构
 - 微内核架构
+- Agent模式
 
 ### 设计原则
 - 单一职责原则
 - 开闭原则
 - 依赖倒置原则
-- 接口隔离原则
 - 里氏替换原则
+- 接口隔离原则
+- 模块化设计
+- 分层架构
+- 微内核架构
+- Agent模式
 
 ### 数据流分析
-数据流主要围绕LLMClient、CacheManager和各种代理组件进行。数据从文件系统通过FileExplorer和FileReader被读取，然后由各种代理组件处理和增强。LLMClient用于与外部LLM服务通信，而CacheManager用于缓存和检索数据。数据流通常是从文件系统到代理组件，然后到LLMClient，最后返回到代理组件进行进一步处理和存储。
+系统采用分层架构，数据从CLI层流向业务逻辑层，最终生成输出文件。核心数据流包括：
+1. 配置数据从CLI流向ConfigManager
+2. 项目结构数据从FileExplorer流向PreprocessingAgent
+3. 分析结果从各Agent流向DocumentationExtractor
+4. 最终知识库数据从DocumentationAgent/C4DocumentationAgent流向输出文件
 
 ## 核心流程
 ### 整体流程图
 ```mermaid
 flowchart TD
-    A[开始] --> B[解析命令行参数]
-    B --> C[初始化工作流引擎]
-    C --> D[执行工作流]
-    D --> E[生成文档]
-    E --> F[生成研究报告]
-    F --> G[生成C4文档]
-    G --> H[生成分类文档]
-    H --> I[保存结果]
-    I --> J[生成摘要]
-    J --> K[结束]
+    subgraph KnowledgeBaseGeneration
+        A[Start] --> B[Parse CLI Arguments]
+        B --> C[Create Configuration]
+        C --> D[Initialize Workflow Engine]
+        D --> E[Execute Workflow]
+        
+        subgraph WorkflowExecution
+            E --> F[Preprocess Project]
+            F --> G[Research Project]
+            G --> H[Generate Documentation]
+            H --> I[Generate C4 Documentation]
+        end
+        
+        subgraph PreprocessProject
+            F --> F1[Explore Files]
+            F1 --> F2[Read Files]
+            F2 --> F3[Extract Components]
+            F3 --> F4[Analyze Components with AI]
+            F4 --> F5[Generate Architecture Insights]
+        end
+        
+        subgraph ResearchProject
+            G --> G1[Generate Research Reports]
+            G1 --> G2[Enhance Reports with AI]
+            G2 --> G3[Generate Comprehensive Insights]
+            G3 --> G4[Generate Recommendations]
+        end
+        
+        subgraph GenerateDocumentation
+            H --> H1[Generate Technical Specification]
+            H1 --> H2[Generate Testing Guide]
+            H2 --> H3[Generate Performance Analysis]
+            H3 --> H4[Generate Security Analysis]
+        end
+        
+        subgraph GenerateC4Documentation
+            I --> I1[Generate Overview Document]
+            I1 --> I2[Generate Architecture Document]
+            I2 --> I3[Generate Component Documents]
+            I3 --> I4[Save C4 Documents]
+        end
+    end
+    
+    I4 --> J[End]
 ```
 
-### 项目结构提取
-**描述**: 项目结构提取流程
+### 知识库生成流程
+**描述**: 从项目启动到知识库生成的完整流程
 
 **流程图**:
 ```mermaid
 flowchart TD
-    A[开始] --> B[初始化结构提取器]
-    B --> C[配置结构提取器]
-    C --> D[提取项目结构]
-    D --> E[分析文件和目录]
-    E --> F[确定组件类型]
-    F --> G[提取文件依赖关系]
-    G --> H[生成项目结构报告]
-    H --> I[结束]
+    A[Start] --> B[Parse CLI Arguments]
+    B --> C[Create Configuration]
+    C --> D[Initialize Workflow Engine]
+    D --> E[Execute Workflow]
+    E --> F[Generate Knowledge Base]
+    F --> G[End]
 ```
 
 **处理步骤**:
-1. 初始化结构提取器
-2. 配置结构提取器
-3. 提取项目结构
-4. 分析文件和目录
-5. 确定组件类型
-6. 提取文件依赖关系
-7. 生成项目结构报告
+1. 解析命令行参数
+2. 创建配置
+3. 初始化工作流引擎
+4. 执行工作流
+5. 生成知识库
 
 **涉及组件**:
-- StructureExtractor
-- LanguageProcessorManager
-- ComponentTypeEnhancer
-- LLMClient
+- main.rs
+- cli.rs
+- config.rs
+- workflow.rs
+- WorkflowEngine
 - Config
-
-### 组件分析
-**描述**: 组件分析流程
-
-**流程图**:
-```mermaid
-flowchart TD
-    A[开始] --> B[初始化组件提取器]
-    B --> C[配置组件提取器]
-    C --> D[分析组件]
-    D --> E[提取接口信息]
-    E --> F[提取依赖关系]
-    F --> G[计算复杂度指标]
-    G --> H[评估质量]
-    H --> I[提取职责]
-    I --> J[生成建议]
-    J --> K[生成组件分析报告]
-    K --> L[结束]
-```
-
-**处理步骤**:
-1. 初始化组件提取器
-2. 配置组件提取器
-3. 分析组件
-4. 提取接口信息
-5. 提取依赖关系
-6. 计算复杂度指标
-7. 评估质量
-8. 提取职责
-9. 生成建议
-10. 生成组件分析报告
-
-**涉及组件**:
-- ComponentExtractor
-- CacheManager
-- ComponentTypeEnhancer
-
-### 文档生成
-**描述**: 文档生成流程
-
-**流程图**:
-```mermaid
-flowchart TD
-    A[开始] --> B[初始化文档生成器]
-    B --> C[配置文档生成器]
-    C --> D[生成文档]
-    D --> E[增强文档]
-    E --> F[生成技术规范]
-    F --> G[生成测试指南]
-    G --> H[生成性能分析]
-    H --> I[生成安全分析]
-    I --> J[保存文档]
-    J --> K[生成文档摘要]
-    K --> L[结束]
-```
-
-**处理步骤**:
-1. 初始化文档生成器
-2. 配置文档生成器
-3. 生成文档
-4. 增强文档
-5. 生成技术规范
-6. 生成测试指南
-7. 生成性能分析
-8. 生成安全分析
-9. 保存文档
-10. 生成文档摘要
-
-**涉及组件**:
-- DocumentationAgent
-- LLMClient
-- CacheManager
-- FileUtils
-
-### C4文档生成
-**描述**: C4文档生成流程
-
-**流程图**:
-```mermaid
-flowchart TD
-    A[开始] --> B[初始化C4文档生成器]
-    B --> C[配置C4文档生成器]
-    C --> D[生成C4文档]
-    D --> E[生成概览文档]
-    E --> F[生成架构文档]
-    F --> G[生成核心组件文档]
-    G --> H[生成组件文档]
-    H --> I[保存C4文档]
-    I --> J[生成C4文档摘要]
-    J --> K[结束]
-```
-
-**处理步骤**:
-1. 初始化C4文档生成器
-2. 配置C4文档生成器
-3. 生成C4文档
-4. 生成概览文档
-5. 生成架构文档
-6. 生成核心组件文档
-7. 生成组件文档
-8. 保存C4文档
-9. 生成C4文档摘要
-
-**涉及组件**:
-- C4DocumentationAgent
-- LLMClient
-- CacheManager
-- DocumentationExtractor
-- FileUtils
-
-### 研究报告生成
-**描述**: 研究报告生成流程
-
-**流程图**:
-```mermaid
-flowchart TD
-    A[开始] --> B[初始化研究代理]
-    B --> C[配置研究代理]
-    C --> D[生成研究报告]
-    D --> E[增强报告]
-    E --> F[生成全面洞察]
-    F --> G[生成建议]
-    G --> H[生成研究摘要]
-    H --> I[结束]
-```
-
-**处理步骤**:
-1. 初始化研究代理
-2. 配置研究代理
-3. 生成研究报告
-4. 增强报告
-5. 生成全面洞察
-6. 生成建议
-7. 生成研究摘要
-
-**涉及组件**:
-- ResearchAgent
-- LLMClient
-- CacheManager
-
-### 分类文档生成
-**描述**: 分类文档生成流程
-
-**流程图**:
-```mermaid
-flowchart TD
-    A[开始] --> B[初始化分类文档生成器]
-    B --> C[配置分类文档生成器]
-    C --> D[生成分类文档]
-    D --> E[生成组件文档]
-    E --> F[保存分类文档]
-    F --> G[生成类型README]
-    G --> H[生成主README]
-    H --> I[生成文档摘要]
-    I --> J[结束]
-```
-
-**处理步骤**:
-1. 初始化分类文档生成器
-2. 配置分类文档生成器
-3. 生成分类文档
-4. 生成组件文档
-5. 保存分类文档
-6. 生成类型README
-7. 生成主README
-8. 生成文档摘要
-
-**涉及组件**:
-- CategorizedDocumentationAgent
-- LLMClient
-- CacheManager
-- FileUtils
-
-### 预处理
-**描述**: 预处理流程
-
-**流程图**:
-```mermaid
-flowchart TD
-    A[开始] --> B[初始化预处理代理]
-    B --> C[配置预处理代理]
-    C --> D[预处理]
-    D --> E[分析组件]
-    E --> F[增强组件分析]
-    F --> G[分析关系]
-    G --> H[生成架构洞察]
-    H --> I[生成摘要]
-    I --> J[结束]
-```
-
-**处理步骤**:
-1. 初始化预处理代理
-2. 配置预处理代理
-3. 预处理
-4. 分析组件
-5. 增强组件分析
-6. 分析关系
-7. 生成架构洞察
-8. 生成摘要
-
-**涉及组件**:
-- PreprocessingAgent
-- LLMClient
-- CacheManager
-- FileExplorer
-- FileReader
+- Cli
 
 ## 核心模块详解
-### dependency_analyzer.rs
-**用途**: 分析项目的依赖关系
+### CLI模块
+**用途**: 解析命令行参数并创建配置对象
 
 **主要职责**:
-- 分析项目的依赖关系
+- 解析命令行参数
+- 创建配置对象
+
+**提供接口**:
+- to_config()
+
+**实现细节**:
+使用clap库解析命令行参数，创建Config对象
+
+### Config模块
+**用途**: 管理项目配置
+
+**主要职责**:
+- 加载配置文件
+- 提供配置访问方法
+- 管理内部路径
+
+**提供接口**:
+- from_file()
+- get_internal_path()
+- get_process_data_path()
+
+**实现细节**:
+使用serde进行序列化/反序列化，管理项目配置
+
+### DependencyAnalyzer模块
+**用途**: 分析项目依赖关系
+
+**主要职责**:
+- 发现源文件
+- 分析文件依赖
 - 构建依赖图
 - 检测循环依赖
 
 **提供接口**:
-- DependencyAnalyzerTool
-- DependencyAnalyzerArgs
-- Dependency
+- analyze_dependencies()
+- build_dependency_graph()
+- find_circular_dependencies()
 
 **实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用HashMap和HashSet进行数据存储。使用PathBuf进行路径处理。使用正则表达式进行模式匹配。
+使用walkdir库遍历文件系统，使用正则表达式分析依赖关系
 
 **关键算法**:
-- 依赖分析
-- 循环依赖检测
-- 模块分析
+- 依赖分析算法
+- 循环检测算法
 
-### types.rs
-**用途**: 定义LLM客户端使用的数据类型
+### LLMClient模块
+**用途**: 提供LLM服务接口
 
 **主要职责**:
-- 定义消息格式
-- 定义请求和响应格式
+- 与LLM服务通信
+- 执行ReAct模式
+- 管理Agent工具
 
 **提供接口**:
-- ChatMessage
-- ChatRequest
-- ChatResponse
+- prompt()
+- prompt_with_react()
 
 **实现细节**:
-使用serde进行序列化和反序列化。
+使用rig库与LLM服务通信，实现ReAct模式
 
 **关键算法**:
-- 消息格式化
+- ReAct执行算法
 
-### error.rs
-**用途**: 定义LLM客户端的错误类型
-
-**主要职责**:
-- 定义错误类型
-- 实现错误转换
-
-**提供接口**:
-- LLMError
-
-**实现细节**:
-使用thiserror::Error进行错误定义。
-
-**关键算法**:
-- 错误分类
-
-### react.rs
-**用途**: 定义ReAct模式相关的类型和配置
-
-**主要职责**:
-- 定义ReAct配置
-- 定义ReAct响应
-
-**提供接口**:
-- ReActConfig
-- ReActResponse
-
-**实现细节**:
-使用serde进行序列化和反序列化。
-
-**关键算法**:
-- ReAct模式配置
-
-### mod.rs
-**用途**: 提供统一的LLM服务接口
-
-**主要职责**:
-- 创建LLM客户端
-- 提供LLM服务接口
-
-**提供接口**:
-- LLMClient
-
-**实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用rig库进行LLM客户端功能。
-
-**关键算法**:
-- LLM客户端
-
-### react_executor.rs
-**用途**: 执行ReAct模式的多轮对话逻辑
-
-**主要职责**:
-- 执行ReAct循环逻辑
-
-**提供接口**:
-- ReActExecutor
-
-**实现细节**:
-使用anyhow::Result进行错误处理，使用rig库进行LLM客户端功能。
-
-**关键算法**:
-- ReAct执行器
-
-### agent_builder.rs
-**用途**: 构建不同类型的Agent
-
-**主要职责**:
-- 构建Agent
-
-**提供接口**:
-- AgentBuilder
-
-**实现细节**:
-使用anyhow::Result进行错误处理，使用rig库进行LLM客户端功能。
-
-**关键算法**:
-- Agent构建器
-
-### performance_monitor.rs
-**用途**: 监控缓存性能
-
-**主要职责**:
-- 记录缓存命中和未命中
-- 生成性能报告
-
-**提供接口**:
-- CachePerformanceMonitor
-
-**实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用HashMap进行数据存储。使用AtomicU64和Arc进行性能监控。
-
-**关键算法**:
-- 性能监控
-
-### mod.rs
+### CacheManager模块
 **用途**: 管理缓存
 
 **主要职责**:
-- 初始化缓存
-- 管理缓存条目
+- 缓存读写
+- 缓存清理
+- 缓存统计
+
+**提供接口**:
+- get()
+- set()
+- clear_category()
+- clear_all()
+
+**实现细节**:
+使用tokio异步I/O，管理缓存读写
+
+**关键算法**:
+- 缓存策略算法
+
+### PerformanceMonitor模块
+**用途**: 监控缓存性能
+
+**主要职责**:
+- 记录缓存命中/未命中
 - 生成性能报告
+- 估算成本节省
 
 **提供接口**:
-- CacheManager
+- record_cache_hit()
+- record_cache_miss()
+- generate_report()
 
 **实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用md5进行哈希。使用PathBuf进行路径处理。
+使用tokio异步I/O，管理缓存性能监控
 
 **关键算法**:
-- 缓存管理
+- 性能监控算法
 
-### config.rs
-**用途**: 管理配置
-
-**主要职责**:
-- 从文件加载配置
-- 获取路径
-
-**提供接口**:
-- Config
-
-**实现细节**:
-使用anyhow::{Context, Result}进行错误处理，使用serde进行序列化和反序列化。使用PathBuf进行路径处理。
-
-**关键算法**:
-- 配置管理
-
-### preprocessing_agent.rs
-**用途**: 预处理项目数据
-
-**主要职责**:
-- 预处理
-- 分析组件
-- 生成摘要
-
-**提供接口**:
-- PreprocessingAgent
-
-**实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用std::time::Instant进行时间测量。
-
-**关键算法**:
-- 预处理
-
-### file_explorer.rs
-**用途**: 提供文件浏览功能
+### FileExplorer模块
+**用途**: 探索文件系统
 
 **主要职责**:
 - 列出目录
 - 查找文件
-- 生成洞察
+- 计算文件重要性
 
 **提供接口**:
-- AgentToolFileExplorer
+- list_directory()
+- find_files()
 
 **实现细节**:
-使用anyhow::Result进行错误处理，使用rig::tool::Tool进行工具定义。使用serde进行序列化和反序列化。使用HashMap进行数据存储。
+使用walkdir库遍历文件系统，使用正则表达式匹配文件
 
 **关键算法**:
-- 文件浏览
+- 文件匹配算法
 
-### file_reader.rs
-**用途**: 提供文件读取功能
+### FileReader模块
+**用途**: 读取文件内容
 
 **主要职责**:
 - 读取文件内容
+- 检测二进制文件
 
 **提供接口**:
-- AgentToolFileReader
+- read_file_content()
 
 **实现细节**:
-使用anyhow::Result进行错误处理，使用rig::tool::Tool进行工具定义。使用serde进行序列化和反序列化。
+使用tokio异步I/O读取文件内容
 
 **关键算法**:
-- 文件读取
+- 二进制文件检测算法
 
-### c4_documentation_agent.rs
+### ComponentExtractor模块
+**用途**: 提取和分析组件信息
+
+**主要职责**:
+- 分析组件
+- 提取接口
+- 计算复杂度
+- 评估质量
+
+**提供接口**:
+- analyze_components()
+- extract_interfaces()
+- calculate_complexity_metrics()
+
+**实现细节**:
+使用正则表达式提取组件信息，使用LLM增强分析
+
+**关键算法**:
+- 接口提取算法
+- 复杂度计算算法
+
+### AIComponentTypeAnalyzer模块
+**用途**: 使用AI分析组件类型
+
+**主要职责**:
+- 分析组件类型
+- 增强组件类型
+
+**提供接口**:
+- analyze_component_type()
+
+**实现细节**:
+使用LLM生成组件类型分析
+
+**关键算法**:
+- 组件类型分析算法
+
+### ResearchExtractor模块
+**用途**: 生成研究报告
+
+**主要职责**:
+- 生成核心功能报告
+- 生成架构报告
+- 生成依赖报告
+- 生成质量报告
+
+**提供接口**:
+- generate_reports()
+
+**实现细节**:
+使用LLM生成研究报告
+
+**关键算法**:
+- 研究报告生成算法
+
+### DocumentationExtractor模块
 **用途**: 生成C4文档
 
 **主要职责**:
-- 生成C4文档
-- 生成概览文档
-- 生成架构文档
-- 生成组件文档
+- 生成上下文图
+- 生成容器图
+- 生成组件图
+- 生成代码图
 
 **提供接口**:
-- C4DocumentationAgent
+- generate_c4_documentation()
 
 **实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用schemars::JsonSchema进行JSON模式定义。使用std::time::Instant进行时间测量。
+使用LLM生成C4文档
 
 **关键算法**:
-- C4文档生成
+- C4文档生成算法
 
-### research_agent.rs
+### PreprocessingAgent模块
+**用途**: 预处理项目信息
+
+**主要职责**:
+- 预处理项目信息
+- 分析组件
+- 生成架构洞察
+
+**提供接口**:
+- preprocess()
+- analyze_components_with_ai()
+
+**实现细节**:
+使用LLM增强预处理结果
+
+**关键算法**:
+- 预处理算法
+- AI增强算法
+
+### ResearchAgent模块
 **用途**: 生成研究报告
 
 **主要职责**:
 - 生成研究报告
 - 增强报告
-- 生成全面洞察
+- 生成综合洞察
 - 生成建议
 
 **提供接口**:
-- ResearchAgent
+- generate_research()
+- enhance_report_with_ai()
 
 **实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用std::time::Instant进行时间测量。
+使用LLM生成研究报告
 
 **关键算法**:
-- 研究报告生成
+- 研究报告生成算法
+- AI增强算法
 
-### categorized_documentation_agent.rs
+### CategorizedDocumentationAgent模块
 **用途**: 生成分类文档
 
 **主要职责**:
 - 生成分类文档
-- 生成组件文档
-- 生成类型README
-- 生成主README
+- 保存分类文档
 
 **提供接口**:
-- CategorizedDocumentationAgent
+- generate_categorized_documentation()
 
 **实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用HashMap进行数据存储。使用PathBuf进行路径处理。
+使用LLM生成分类文档
 
 **关键算法**:
-- 分类文档生成
+- 分类文档生成算法
 
-### documentation_agent.rs
-**用途**: 生成文档
+### C4DocumentationAgent模块
+**用途**: 生成C4文档
+
+**主要职责**:
+- 生成概览文档
+- 生成架构文档
+- 生成组件文档
+- 保存C4文档
+
+**提供接口**:
+- generate_c4_documentation()
+
+**实现细节**:
+使用LLM生成C4文档
+
+**关键算法**:
+- C4文档生成算法
+
+### DocumentationAgent模块
+**用途**: 生成标准文档
 
 **主要职责**:
 - 生成文档
 - 增强文档
-- 生成技术规范
+- 生成技术规格
 - 生成测试指南
 - 生成性能分析
 - 生成安全分析
 
 **提供接口**:
-- DocumentationAgent
+- generate_documentation()
+- enhance_document_with_ai()
 
 **实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用std::time::Instant进行时间测量。
+使用LLM生成标准文档
 
 **关键算法**:
-- 文档生成
+- 文档生成算法
+- AI增强算法
 
-### file_utils.rs
-**用途**: 提供文件操作功能
+### FileUtils模块
+**用途**: 提供文件操作工具
 
 **主要职责**:
-- 写入文件
-- 检查文件类型
+- 安全写入文件
+- 检测测试文件
+- 检测测试目录
 
 **提供接口**:
-- FileUtils
+- write_file_safe()
+- is_test_file()
+- is_test_directory()
 
 **实现细节**:
-使用std::path::Path进行路径处理。使用anyhow::Result进行错误处理。使用tokio::fs进行文件操作。
+使用tokio异步I/O，管理文件操作
 
 **关键算法**:
-- 文件操作
+- 文件安全写入算法
 
-### markdown_utils.rs
+### ComponentSorter模块
+**用途**: 提供组件排序功能
+
+**主要职责**:
+- 按重要性排序组件
+- 获取前N个组件
+
+**提供接口**:
+- sort_components_by_importance()
+- get_top_n_components()
+
+**实现细节**:
+提供组件排序功能
+
+**关键算法**:
+- 组件排序算法
+
+### MarkdownUtils模块
 **用途**: 提供Markdown格式化功能
 
 **主要职责**:
-- 生成Markdown元素
+- 生成Markdown标题
+- 生成Markdown代码块
+- 生成Markdown表格
 
 **提供接口**:
-- MarkdownUtils
+- heading()
+- code_block()
+- table()
 
 **实现细节**:
-使用serde进行序列化和反序列化。
+提供Markdown格式化功能
 
 **关键算法**:
-- Markdown格式化
+- Markdown格式化算法
 
-### mod.rs
-**用途**: 执行工作流
+### WorkflowEngine模块
+**用途**: 管理工作流执行
 
 **主要职责**:
 - 执行工作流
@@ -712,390 +554,11 @@ flowchart TD
 - 生成摘要
 
 **提供接口**:
-- WorkflowEngine
+- execute()
 
 **实现细节**:
-使用anyhow::Result进行错误处理。使用std::time::Instant进行时间测量。使用tokio::fs进行文件操作。
+使用tokio异步I/O，管理工作流执行
 
 **关键算法**:
-- 工作流引擎
-
-### main.rs
-**用途**: 程序入口
-
-**主要职责**:
-- 解析命令行参数
-- 执行工作流
-
-**提供接口**:
-- Cli
-
-**实现细节**:
-使用clap::Parser进行命令行解析。使用std::time::Instant进行时间测量。
-
-**关键算法**:
-- 命令行解析
-
-### component_types.rs
-**用途**: 定义组件类型
-
-**主要职责**:
-- 映射组件类型
-
-**提供接口**:
-- ComponentTypeMapper
-
-**实现细节**:
-使用serde进行序列化和反序列化。使用schemars::JsonSchema进行JSON模式定义。使用std::fmt进行格式化。
-
-**关键算法**:
-- 组件类型映射
-
-### component_extractor.rs
-**用途**: 提取和分析组件
-
-**主要职责**:
-- 分析组件
-- 提取接口信息
-- 提取依赖关系
-- 计算复杂度指标
-- 评估质量
-- 提取职责
-- 生成建议
-
-**提供接口**:
-- ComponentExtractor
-
-**实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用PathBuf进行路径处理。
-
-**关键算法**:
-- 组件提取
-
-### ai_analysis_types.rs
-**用途**: 定义AI分析类型
-
-**主要职责**:
-- 定义AI分析类型
-
-**提供接口**:
-- AIComponentAnalysis
-- CodeQualityAssessment
-- DependencyAnalysis
-- AIArchitectureInsights
-- DesignPrincipleAssessment
-- AIProjectSummary
-- AIRelationshipAnalysis
-- ComponentRelationship
-- CouplingAnalysis
-
-**实现细节**:
-使用schemars::JsonSchema进行JSON模式定义。使用serde进行序列化和反序列化。
-
-**关键算法**:
-- AI分析
-
-### ai_component_type_analyzer.rs
-**用途**: 分析和增强组件类型
-
-**主要职责**:
-- 分析组件类型
-- 增强组件类型
-
-**提供接口**:
-- AIComponentTypeAnalysis
-- AIComponentTypeAnalyzer
-- ComponentTypeEnhancer
-
-**实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用schemars::JsonSchema进行JSON模式定义。
-
-**关键算法**:
-- 组件类型分析
-
-### ai_research_types.rs
-**用途**: 定义研究增强类型
-
-**主要职责**:
-- 定义研究增强类型
-
-**提供接口**:
-- AIResearchEnhancement
-- AIComprehensiveInsights
-- AIRecommendations
-
-**实现细节**:
-使用serde进行序列化和反序列化。使用schemars::JsonSchema进行JSON模式定义。
-
-**关键算法**:
-- 研究增强
-
-### research_extractor.rs
-**用途**: 生成研究报告
-
-**主要职责**:
-- 生成研究报告
-- 生成核心功能报告
-- 生成架构报告
-- 生成依赖报告
-- 生成质量报告
-
-**提供接口**:
-- ResearchExtractor
-
-**实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。使用HashMap进行数据存储。
-
-**关键算法**:
-- 研究报告生成
-
-### documentation_extractor.rs
-**用途**: 生成文档
-
-**主要职责**:
-- 生成C4文档
-- 生成概览文档
-- 生成架构文档
-- 生成API文档
-- 生成开发指南
-- 生成部署指南
-
-**提供接口**:
-- DocumentationExtractor
-
-**实现细节**:
-使用anyhow::Result进行错误处理，使用serde进行序列化和反序列化。
-
-**关键算法**:
-- 文档生成
-
-### typescript.rs
-**用途**: 处理TypeScript文件
-
-**主要职责**:
-- 提取依赖关系
-- 确定组件类型
-
-**提供接口**:
-- TypeScriptProcessor
-
-**实现细节**:
-使用regex::Regex进行正则表达式匹配。使用std::path::Path进行路径处理。
-
-**关键算法**:
-- TypeScript处理
-
-### java.rs
-**用途**: 处理Java文件
-
-**主要职责**:
-- 提取依赖关系
-- 确定组件类型
-
-**提供接口**:
-- JavaProcessor
-
-**实现细节**:
-使用regex::Regex进行正则表达式匹配。使用std::path::Path进行路径处理。
-
-**关键算法**:
-- Java处理
-
-### react.rs
-**用途**: 处理React文件
-
-**主要职责**:
-- 提取依赖关系
-- 确定组件类型
-
-**提供接口**:
-- ReactProcessor
-
-**实现细节**:
-使用regex::Regex进行正则表达式匹配。使用std::path::Path进行路径处理。
-
-**关键算法**:
-- React处理
-
-### mod.rs
-**用途**: 管理语言处理器
-
-**主要职责**:
-- 获取处理器
-- 提取依赖关系
-- 确定组件类型
-
-**提供接口**:
-- LanguageProcessorManager
-
-**实现细节**:
-使用std::path::Path进行路径处理。使用serde进行序列化和反序列化。
-
-**关键算法**:
-- 语言处理器管理
-
-### rust.rs
-**用途**: 处理Rust文件
-
-**主要职责**:
-- 提取依赖关系
-- 确定组件类型
-
-**提供接口**:
-- RustProcessor
-
-**实现细节**:
-使用regex::Regex进行正则表达式匹配。使用std::path::Path进行路径处理。
-
-**关键算法**:
-- Rust处理
-
-### vue.rs
-**用途**: 处理Vue文件
-
-**主要职责**:
-- 提取依赖关系
-- 确定组件类型
-
-**提供接口**:
-- VueProcessor
-
-**实现细节**:
-使用regex::Regex进行正则表达式匹配。使用std::path::Path进行路径处理。
-
-**关键算法**:
-- Vue处理
-
-### javascript.rs
-**用途**: 处理JavaScript文件
-
-**主要职责**:
-- 提取依赖关系
-- 确定组件类型
-
-**提供接口**:
-- JavaScriptProcessor
-
-**实现细节**:
-使用regex::Regex进行正则表达式匹配。使用std::path::Path进行路径处理。
-
-**关键算法**:
-- JavaScript处理
-
-### kotlin.rs
-**用途**: 处理Kotlin文件
-
-**主要职责**:
-- 提取依赖关系
-- 确定组件类型
-
-**提供接口**:
-- KotlinProcessor
-
-**实现细节**:
-使用regex::Regex进行正则表达式匹配。使用std::path::Path进行路径处理。
-
-**关键算法**:
-- Kotlin处理
-
-### python.rs
-**用途**: 处理Python文件
-
-**主要职责**:
-- 提取依赖关系
-- 确定组件类型
-
-**提供接口**:
-- PythonProcessor
-
-**实现细节**:
-使用regex::Regex进行正则表达式匹配。使用std::path::Path进行路径处理。
-
-**关键算法**:
-- Python处理
-
-### svelte.rs
-**用途**: 处理Svelte文件
-
-**主要职责**:
-- 提取依赖关系
-- 确定组件类型
-
-**提供接口**:
-- SvelteProcessor
-
-**实现细节**:
-使用regex::Regex进行正则表达式匹配。使用std::path::Path进行路径处理。
-
-**关键算法**:
-- Svelte处理
-
-### ai_documentation_types.rs
-**用途**: 定义文档增强类型
-
-**主要职责**:
-- 定义文档增强类型
-
-**提供接口**:
-- AIDocumentEnhancement
-- DocumentSection
-- AITechnicalSpecification
-- TechStackAnalysis
-- ArchitectureStandards
-- CodingStandards
-- QualityStandards
-- AITestingGuide
-- TestingStrategy
-- TestType
-- TestTool
-- CoverageTargets
-- AIPerformanceAnalysis
-- PerformanceOverview
-- PerformanceBottleneck
-- OptimizationRecommendation
-- AISecurityAnalysis
-- SecurityOverview
-- SecurityRisk
-- SecurityRecommendation
-- ComplianceCheck
-
-**实现细节**:
-使用serde进行序列化和反序列化。使用schemars::JsonSchema进行JSON模式定义。
-
-**关键算法**:
-- 文档增强
-
-### structure_extractor.rs
-**用途**: 提取项目结构
-
-**主要职责**:
-- 提取项目结构
-- 分析文件和目录
-- 确定组件类型
-- 提取文件依赖关系
-
-**提供接口**:
-- StructureExtractor
-
-**实现细节**:
-使用anyhow::Result进行错误处理。使用futures::future::BoxFuture进行异步处理。使用serde进行序列化和反序列化。使用HashMap进行数据存储。使用std::fs::Metadata进行文件元数据处理。使用PathBuf进行路径处理。
-
-**关键算法**:
-- 项目结构提取
-
-### cli.rs
-**用途**: 解析命令行参数
-
-**主要职责**:
-- 解析命令行参数
-- 转换为配置
-
-**提供接口**:
-- Cli
-
-**实现细节**:
-使用crate::config::Config进行配置管理。使用clap::Parser进行命令行解析。使用PathBuf进行路径处理。
-
-**关键算法**:
-- 命令行解析
+- 工作流执行算法
 

@@ -461,7 +461,10 @@ impl StructureExtractor {
         let mut core_components = Vec::new();
 
         // 基于重要性分数筛选核心文件
-        let core_files: Vec<_> = structure.files.iter().filter(|f| f.is_core).collect();
+        let mut core_files: Vec<_> = structure.files.iter().filter(|f| f.is_core).collect();
+        
+        // 🔧 修复：按重要性分数降序排列，确保最重要的组件优先处理
+        core_files.sort_by(|a, b| b.importance_score.partial_cmp(&a.importance_score).unwrap_or(std::cmp::Ordering::Equal));
 
         for file in core_files {
             let component_type = self.determine_component_type(file).await;

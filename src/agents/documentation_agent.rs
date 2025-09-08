@@ -285,7 +285,7 @@ impl DocumentationAgent {
                 .join(", "),
             preprocessing_result.core_components
                 .iter()
-                .take(5)
+                .take(20)
                 .map(|c| format!("- {}: {}", c.name, c.component_type))
                 .collect::<Vec<_>>()
                 .join("\n"),
@@ -722,7 +722,7 @@ impl DocumentationAgent {
             preprocessing_result.component_analyses
                 .iter()
                 .filter(|a| a.complexity_metrics.cyclomatic_complexity > 10.0)
-                .take(5)
+                .take(20)
                 .map(|a| format!("- {}: 复杂度 {:.1}", a.component.name, a.complexity_metrics.cyclomatic_complexity))
                 .collect::<Vec<_>>()
                 .join("\n")
@@ -873,7 +873,7 @@ impl DocumentationAgent {
             high_complexity_components.len(),
             high_complexity_components
                 .iter()
-                .take(10)
+                .take(20)
                 .map(|a| format!("- {}: 复杂度 {:.1}, 代码行数 {}", 
                     a.component.name, 
                     a.complexity_metrics.cyclomatic_complexity,
@@ -882,7 +882,7 @@ impl DocumentationAgent {
                 .join("\n"),
             preprocessing_result.component_analyses
                 .iter()
-                .take(5)
+                .take(20)
                 .map(|a| format!("- {}: 质量分数 {:.1}/10", 
                     a.component.name, 
                     a.quality_assessment.overall_score * 10.0))
@@ -1072,13 +1072,13 @@ impl DocumentationAgent {
                 .join(", "),
             preprocessing_result.core_components
                 .iter()
-                .take(10)
+                .take(20)
                 .map(|c| format!("- {}: {}", c.name, c.component_type))
                 .collect::<Vec<_>>()
                 .join("\n"),
             preprocessing_result.component_analyses
                 .iter()
-                .take(5)
+                .take(20)
                 .map(|a| format!("- {}: 质量 {:.1}/10, 复杂度 {:.1}", 
                     a.component.name, 
                     a.quality_assessment.overall_score * 10.0,
