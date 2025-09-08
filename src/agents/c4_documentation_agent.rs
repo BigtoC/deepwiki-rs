@@ -1,22 +1,23 @@
 use anyhow::Result;
-use crate::llm::LLMClient;
+use crate::llm::{LLMClient, MockLLMClient};
 use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
 use std::time::Instant;
-use std::path::Path;
 
 use crate::cache::CacheManager;
 use crate::config::Config;
 use crate::agents::{preprocessing_agent::PreprocessingResult, research_agent::ResearchResult};
-use crate::extractors::{DocumentationExtractor, C4Documentation};
+use crate::extractors::DocumentationExtractor;
 use crate::utils::FileUtils;
 
 /// C4架构文档生成Agent
 pub struct C4DocumentationAgent {
-    llm_client: LLMClient,
+    llm_client: Option<LLMClient>,
+    mock_client: Option<MockLLMClient>,
     config: Config,
     cache_manager: CacheManager,
     documentation_extractor: DocumentationExtractor,
+    use_mock: bool,
 }
 
 /// C4文档生成结果
@@ -73,10 +74,13 @@ pub struct TechnologyStack {
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct AIArchitectureAnalysis {
     pub overall_architecture: String,
+    pub architecture_diagram: String, // Mermaid架构图
     pub core_processes: Vec<CoreProcess>,
+    pub process_flow_diagram: String, // Mermaid流程图
     pub module_breakdown: Vec<ModuleDescription>,
     pub architecture_patterns: Vec<String>,
     pub design_principles: Vec<String>,
+    pub data_flow_analysis: String,
 }
 
 /// 核心流程
@@ -86,6 +90,7 @@ pub struct CoreProcess {
     pub description: String,
     pub steps: Vec<String>,
     pub involved_components: Vec<String>,
+    pub flow_diagram: String, // 该流程的Mermaid图
 }
 
 /// 模块描述
@@ -95,6 +100,8 @@ pub struct ModuleDescription {
     pub purpose: String,
     pub responsibilities: Vec<String>,
     pub interfaces: Vec<String>,
+    pub implementation_details: String, // 基于源码的实现细节
+    pub key_algorithms: Vec<String>,
 }
 
 /// AI增强的组件分析
@@ -103,9 +110,11 @@ pub struct AIComponentAnalysis {
     pub functionality_description: String,
     pub key_responsibilities: Vec<String>,
     pub workflow_steps: Vec<WorkflowStep>,
+    pub workflow_diagram: String, // Mermaid工作流程图
     pub internal_structure: InternalStructure,
     pub dependencies: Vec<String>,
     pub interfaces_provided: Vec<String>,
+    pub code_analysis: CodeAnalysis, // 基于源码的深度分析
 }
 
 /// 工作流程步骤
@@ -115,6 +124,7 @@ pub struct WorkflowStep {
     pub description: String,
     pub inputs: Vec<String>,
     pub outputs: Vec<String>,
+    pub implementation_note: String, // 实现细节说明
 }
 
 /// 内部结构
@@ -124,19 +134,63 @@ pub struct InternalStructure {
     pub key_methods: Vec<String>,
     pub data_structures: Vec<String>,
     pub design_patterns: Vec<String>,
+    pub algorithm_analysis: Vec<String>, // 算法分析
+}
+
+/// 代码分析结果，适用于多种编程语言
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct CodeAnalysis {
+    /// 类型定义（类、结构体、接口等），可能为空
+    pub type_definitions: Option<Vec<String>>,
+    
+    /// 枚举或常量定义，可能为空
+    pub enum_or_constants: Option<Vec<String>>,
+    
+    /// 接口实现或继承关系，可能为空
+    pub interface_implementations: Option<Vec<String>>,
+    
+    /// 关键函数或方法定义，可能为空
+    pub key_functions: Option<Vec<String>>,
+    
+    /// 错误处理机制描述，可能为空
+    pub error_handling: Option<String>,
+    
+    /// 性能特征分析，可能为空
+    pub performance_characteristics: Option<String>,
+    
+    /// 设计模式识别，可能为空
+    pub design_patterns: Option<Vec<String>>,
+    
+    /// 数据流分析，可能为空
+    pub data_flow_analysis: Option<String>,
+    
+    /// 算法复杂度分析，可能为空
+    pub algorithm_complexity: Option<String>,
 }
 
 impl C4DocumentationAgent {
     pub async fn new(config: Config) -> Result<Self> {
-        let llm_client = LLMClient::new(config.llm.clone())?;
+        // 检查是否使用模拟模式
+        let use_mock = std::env::var("LITHO_MOCK_MODE").unwrap_or_default() == "true" 
+            || std::env::var("MISTRAL_API_KEY").is_err();
+        
+        let (llm_client, mock_client) = if use_mock {
+            println!("🔧 使用模拟模式 (未检测到MISTRAL_API_KEY或启用了LITHO_MOCK_MODE)");
+            (None, Some(MockLLMClient::new(config.llm.clone())?))
+        } else {
+            (Some(LLMClient::new(config.llm.clone())?), None)
+        };
+        
         let cache_manager = CacheManager::new(config.cache.clone());
         let documentation_extractor = DocumentationExtractor::new(cache_manager.clone());
 
         Ok(Self {
             llm_client,
+            mock_client,
             config,
             cache_manager,
             documentation_extractor,
+            use_mock,
         })
     }
 
@@ -189,7 +243,13 @@ impl C4DocumentationAgent {
         
         let system_msg = "你是一个专业的技术文档专家，专门创建符合C4架构风格的项目概述文档。请根据项目分析结果生成结构化的项目概述。";
         
-        match self.llm_client.extract::<AIProjectOverview>(system_msg, &prompt).await {
+        let result = if self.use_mock {
+            self.mock_client.as_ref().unwrap().extract::<AIProjectOverview>(system_msg, &prompt).await
+        } else {
+            self.llm_client.as_ref().unwrap().extract::<AIProjectOverview>(system_msg, &prompt).await
+        };
+        
+        match result {
             Ok(ai_overview) => {
                 let content = self.generate_overview_content(&ai_overview, preprocessing_result);
                 
@@ -216,7 +276,13 @@ impl C4DocumentationAgent {
         
         let system_msg = "你是一个专业的软件架构师，专门创建符合C4架构风格的架构文档。请根据项目分析结果生成结构化的架构文档。";
         
-        match self.llm_client.extract::<AIArchitectureAnalysis>(system_msg, &prompt).await {
+        let result = if self.use_mock {
+            self.mock_client.as_ref().unwrap().extract::<AIArchitectureAnalysis>(system_msg, &prompt).await
+        } else {
+            self.llm_client.as_ref().unwrap().extract::<AIArchitectureAnalysis>(system_msg, &prompt).await
+        };
+        
+        match result {
             Ok(ai_architecture) => {
                 let content = self.generate_architecture_content(&ai_architecture, preprocessing_result);
                 
@@ -267,7 +333,13 @@ impl C4DocumentationAgent {
         
         let system_msg = "你是一个专业的技术文档专家，专门创建详细的组件文档。请根据组件分析结果生成结构化的组件文档。";
         
-        match self.llm_client.extract::<AIComponentAnalysis>(system_msg, &prompt).await {
+        let result = if self.use_mock {
+            self.mock_client.as_ref().unwrap().extract::<AIComponentAnalysis>(system_msg, &prompt).await
+        } else {
+            self.llm_client.as_ref().unwrap().extract::<AIComponentAnalysis>(system_msg, &prompt).await
+        };
+        
+        match result {
             Ok(ai_component) => {
                 let content = self.generate_component_content(&ai_component, component);
                 
@@ -298,6 +370,12 @@ impl C4DocumentationAgent {
         preprocessing_result: &PreprocessingResult,
         research_result: &ResearchResult,
     ) -> String {
+        // 获取核心源码片段
+        let code_snippets = self.extract_key_code_snippets(preprocessing_result);
+        
+        // 获取依赖关系信息
+        let dependency_info = self.extract_dependency_relationships(preprocessing_result);
+        
         format!(
             r#"请基于以下项目分析结果生成符合C4架构风格的项目概述：
 
@@ -307,7 +385,10 @@ impl C4DocumentationAgent {
 - 核心组件数: {}
 - 主要文件类型: {}
 
-## 核心组件
+## 核心组件及其源码
+{}
+
+## 模块依赖关系
 {}
 
 ## 调研洞察
@@ -318,11 +399,15 @@ impl C4DocumentationAgent {
 
 ## 要求
 请生成结构化的项目概述，包括：
-1. 项目概述 - 简洁明了的项目描述
-2. 核心功能与作用 - 项目的主要功能和业务价值
-3. 技术选型 - 技术栈选择及其理由
+1. 项目概述 - 基于源码分析的项目描述和架构特点
+2. 核心功能与作用 - 基于代码实现分析的主要功能
+3. 技术选型 - 基于实际代码的技术栈分析
 
-确保内容准确、实用，符合C4架构文档风格。"#,
+**重要**: 
+- 专注于项目的技术架构和实现细节
+- 基于提供的源码片段进行分析
+- 不要包含优化建议或测试指南
+- 重点分析代码结构和设计模式"#,
             preprocessing_result.project_structure.root_path.display(),
             preprocessing_result.project_structure.total_files,
             preprocessing_result.core_components.len(),
@@ -331,12 +416,8 @@ impl C4DocumentationAgent {
                 .map(|(ext, count)| format!("{}: {}", ext, count))
                 .collect::<Vec<_>>()
                 .join(", "),
-            preprocessing_result.core_components
-                .iter()
-                .take(10)
-                .map(|c| format!("- {}: {} (重要性: {:.2})", c.name, c.component_type, c.importance_score))
-                .collect::<Vec<_>>()
-                .join("\n"),
+            code_snippets,
+            dependency_info,
             research_result.insights.join("\n- "),
             preprocessing_result.architecture_insights.join("\n- ")
         )
@@ -347,18 +428,29 @@ impl C4DocumentationAgent {
         preprocessing_result: &PreprocessingResult,
         research_result: &ResearchResult,
     ) -> String {
+        // 获取详细的源码片段
+        let detailed_code_snippets = self.extract_detailed_code_snippets(preprocessing_result);
+        
+        // 获取模块间依赖关系
+        let dependency_graph = self.extract_dependency_graph(preprocessing_result);
+        
+        // 获取接口和数据流信息
+        let interface_info = self.extract_interface_information(preprocessing_result);
+        
         format!(
             r#"请基于以下项目分析结果生成符合C4架构风格的架构文档：
 
 ## 项目架构信息
 - 核心组件数: {}
 - 组件分析数: {}
-- 平均代码质量: {:.1}/10
 
-## 核心组件详情
+## 核心组件源码分析
 {}
 
-## 组件分析
+## 模块依赖关系图
+{}
+
+## 接口和数据流
 {}
 
 ## 调研洞察
@@ -366,35 +458,32 @@ impl C4DocumentationAgent {
 
 ## 要求
 请生成结构化的架构文档，包括：
-1. 整体架构 - 系统的整体架构设计和模式
-2. 核心流程 - 主要业务流程和数据流
-3. 核心模块详解 - 各个核心模块的职责和交互
 
-确保内容详细、准确，符合C4架构文档风格。"#,
+1. **整体架构** - 包含完整的Mermaid架构图，展示：
+   - 系统的分层结构
+   - 核心模块及其关系
+   - 数据流向和控制流
+   
+2. **核心流程** - 包含详细的Mermaid流程图，展示：
+   - 主要业务流程的完整步骤
+   - 模块间的调用关系
+   - 数据处理流水线
+   
+3. **核心模块详解** - 基于源码分析的模块说明：
+   - 各模块的具体职责和实现方式
+   - 模块间的接口和交互机制
+   - 关键数据结构和算法
+
+**重要要求**:
+- 必须包含Mermaid图表（架构图和流程图）
+- 基于提供的源码进行深度分析
+- 专注于技术实现细节，不要包含优化建议
+- 分析要准确反映代码的实际结构"#,
             preprocessing_result.core_components.len(),
             preprocessing_result.component_analyses.len(),
-            if !preprocessing_result.component_analyses.is_empty() {
-                preprocessing_result.component_analyses.iter()
-                    .map(|a| a.quality_assessment.overall_score)
-                    .sum::<f64>() / preprocessing_result.component_analyses.len() as f64 * 10.0
-            } else {
-                0.0
-            },
-            preprocessing_result.core_components
-                .iter()
-                .take(15)
-                .map(|c| format!("- {}: {} (路径: {})", c.name, c.component_type, c.file_path.display()))
-                .collect::<Vec<_>>()
-                .join("\n"),
-            preprocessing_result.component_analyses
-                .iter()
-                .take(10)
-                .map(|a| format!("- {}: 质量 {:.1}/10, 复杂度 {:.1}", 
-                    a.component.name, 
-                    a.quality_assessment.overall_score * 10.0,
-                    a.complexity_metrics.cyclomatic_complexity))
-                .collect::<Vec<_>>()
-                .join("\n"),
+            detailed_code_snippets,
+            dependency_graph,
+            interface_info,
             research_result.insights.join("\n- ")
         )
     }
@@ -409,33 +498,51 @@ impl C4DocumentationAgent {
             .iter()
             .find(|a| a.component.name == component.name);
 
+        // 获取组件的源码内容
+        let source_code = self.extract_component_source_code(component);
+        
+        // 获取组件的依赖关系
+        let component_dependencies = self.extract_component_dependencies(component, preprocessing_result);
+
         let analysis_info = if let Some(analysis) = component_analysis {
             format!(
                 "## 组件分析
 - 代码行数: {}
 - 圈复杂度: {:.1}
-- 质量评分: {:.1}/10
 - 接口数: {}
 
-## 接口信息
-{}",
+## 接口详情
+{}
+
+## 源码片段
+```rust
+{}
+```",
                 analysis.complexity_metrics.lines_of_code,
                 analysis.complexity_metrics.cyclomatic_complexity,
-                analysis.quality_assessment.overall_score * 10.0,
                 analysis.interfaces.len(),
                 analysis.interfaces
                     .iter()
-                    .take(5)
-                    .map(|i| format!("- {}: {} ({})", i.name, i.interface_type, i.visibility))
+                    .map(|i| format!("- {}: {} ({}) - {}", i.name, i.interface_type, i.visibility, i.description.as_deref().unwrap_or("无描述")))
                     .collect::<Vec<_>>()
-                    .join("\n")
+                    .join("\n"),
+                source_code
             )
         } else {
-            "## 组件分析\n暂无详细分析数据".to_string()
+            format!(
+                "## 组件分析
+暂无详细分析数据
+
+## 源码片段
+```rust
+{}
+```", 
+                source_code
+            )
         };
 
         format!(
-            r#"请基于以下组件信息生成详细的组件文档：
+            r#"请基于以下组件信息和源码生成详细的组件文档：
 
 ## 组件基本信息
 - 组件名: {}
@@ -445,18 +552,39 @@ impl C4DocumentationAgent {
 
 {}
 
+## 组件依赖关系
+{}
+
 ## 要求
 请生成结构化的组件文档，包括：
-1. 模块功能与作用 - 该组件的主要功能和在系统中的作用
-2. 工作流程 - 组件的主要工作流程和处理步骤
-3. 内部架构与结构 - 组件的内部结构、主要类和方法
 
-确保内容详细、准确，适合开发者理解和维护。"#,
+1. **模块功能与作用** - 基于源码分析：
+   - 该组件的具体功能实现
+   - 在整个系统中的作用和定位
+   - 核心业务逻辑说明
+
+2. **工作流程** - 包含Mermaid流程图：
+   - 组件的主要处理流程
+   - 方法调用顺序和逻辑
+   - 数据处理步骤
+
+3. **内部架构与结构** - 详细技术分析：
+   - 主要结构体和枚举定义
+   - 关键方法和函数实现
+   - 数据结构和算法选择
+   - 设计模式应用
+
+**重要要求**:
+- 基于提供的源码进行深度分析
+- 包含Mermaid流程图展示工作流程
+- 专注于技术实现细节
+- 不要包含优化建议或测试相关内容"#,
             component.name,
             component.component_type,
             component.file_path.display(),
             component.importance_score,
-            analysis_info
+            analysis_info,
+            component_dependencies
         )
     }
 
@@ -540,7 +668,7 @@ impl C4DocumentationAgent {
     fn generate_architecture_content(
         &self,
         ai_architecture: &AIArchitectureAnalysis,
-        preprocessing_result: &PreprocessingResult,
+        _preprocessing_result: &PreprocessingResult,
     ) -> String {
         use crate::utils::MarkdownUtils;
 
@@ -552,6 +680,12 @@ impl C4DocumentationAgent {
         // 整体架构
         content.push_str(&MarkdownUtils::heading(2, "整体架构"));
         content.push_str(&format!("{}\n\n", ai_architecture.overall_architecture));
+
+        // 架构图
+        if !ai_architecture.architecture_diagram.is_empty() {
+            content.push_str(&MarkdownUtils::heading(3, "系统架构图"));
+            content.push_str(&format!("{}\n\n", ai_architecture.architecture_diagram));
+        }
 
         if !ai_architecture.architecture_patterns.is_empty() {
             content.push_str(&MarkdownUtils::heading(3, "架构模式"));
@@ -569,11 +703,29 @@ impl C4DocumentationAgent {
             content.push_str("\n");
         }
 
+        // 数据流分析
+        if !ai_architecture.data_flow_analysis.is_empty() {
+            content.push_str(&MarkdownUtils::heading(3, "数据流分析"));
+            content.push_str(&format!("{}\n\n", ai_architecture.data_flow_analysis));
+        }
+
         // 核心流程
         content.push_str(&MarkdownUtils::heading(2, "核心流程"));
+        
+        // 整体流程图
+        if !ai_architecture.process_flow_diagram.is_empty() {
+            content.push_str(&MarkdownUtils::heading(3, "整体流程图"));
+            content.push_str(&format!("{}\n\n", ai_architecture.process_flow_diagram));
+        }
         for process in &ai_architecture.core_processes {
             content.push_str(&MarkdownUtils::heading(3, &process.name));
             content.push_str(&format!("**描述**: {}\n\n", process.description));
+            
+            // 流程图
+            if !process.flow_diagram.is_empty() {
+                content.push_str("**流程图**:\n");
+                content.push_str(&format!("{}\n\n", process.flow_diagram));
+            }
             
             content.push_str("**处理步骤**:\n");
             for (i, step) in process.steps.iter().enumerate() {
@@ -611,6 +763,21 @@ impl C4DocumentationAgent {
                 }
                 content.push_str("\n");
             }
+
+            // 实现细节
+            if !module.implementation_details.is_empty() {
+                content.push_str("**实现细节**:\n");
+                content.push_str(&format!("{}\n\n", module.implementation_details));
+            }
+
+            // 关键算法
+            if !module.key_algorithms.is_empty() {
+                content.push_str("**关键算法**:\n");
+                for algorithm in &module.key_algorithms {
+                    content.push_str(&format!("- {}\n", algorithm));
+                }
+                content.push_str("\n");
+            }
         }
 
         content
@@ -642,6 +809,13 @@ impl C4DocumentationAgent {
 
         // 工作流程
         content.push_str(&MarkdownUtils::heading(2, "工作流程"));
+        
+        // 工作流程图
+        if !ai_component.workflow_diagram.is_empty() {
+            content.push_str(&MarkdownUtils::heading(3, "工作流程图"));
+            content.push_str(&format!("{}\n\n", ai_component.workflow_diagram));
+        }
+        
         for step in &ai_component.workflow_steps {
             content.push_str(&MarkdownUtils::heading(3, &format!("步骤 {}: {}", step.step_number, step.description)));
             
@@ -660,11 +834,80 @@ impl C4DocumentationAgent {
                 }
                 content.push_str("\n");
             }
+
+            // 实现细节
+            if !step.implementation_note.is_empty() {
+                content.push_str("**实现细节**:\n");
+                content.push_str(&format!("{}\n\n", step.implementation_note));
+            }
         }
 
         // 内部架构与结构
         content.push_str(&MarkdownUtils::heading(2, "内部架构与结构"));
         
+        // 代码分析
+        content.push_str(&MarkdownUtils::heading(3, "代码结构分析"));
+        
+        if let Some(type_defs) = &ai_component.code_analysis.type_definitions {
+            if !type_defs.is_empty() {
+                content.push_str("**类型定义**:\n");
+                for type_def in type_defs {
+                    content.push_str(&format!("- {}\n", type_def));
+                }
+                content.push_str("\n");
+            }
+        }
+
+        if let Some(enums) = &ai_component.code_analysis.enum_or_constants {
+            if !enums.is_empty() {
+                content.push_str("**枚举/常量定义**:\n");
+                for enum_def in enums {
+                    content.push_str(&format!("- {}\n", enum_def));
+                }
+                content.push_str("\n");
+            }
+        }
+
+        if let Some(interfaces) = &ai_component.code_analysis.interface_implementations {
+            if !interfaces.is_empty() {
+                content.push_str("**接口实现/继承关系**:\n");
+                for interface_impl in interfaces {
+                    content.push_str(&format!("- {}\n", interface_impl));
+                }
+                content.push_str("\n");
+            }
+        }
+
+        if let Some(functions) = &ai_component.code_analysis.key_functions {
+            if !functions.is_empty() {
+                content.push_str("**关键函数/方法**:\n");
+                for function in functions {
+                    content.push_str(&format!("- {}\n", function));
+                }
+                content.push_str("\n");
+            }
+        }
+
+        if let Some(patterns) = &ai_component.code_analysis.design_patterns {
+            if !patterns.is_empty() {
+                content.push_str("**设计模式**:\n");
+                for pattern in patterns {
+                    content.push_str(&format!("- {}\n", pattern));
+                }
+                content.push_str("\n");
+            }
+        }
+
+        if let Some(data_flow) = &ai_component.code_analysis.data_flow_analysis {
+            content.push_str("**数据流分析**:\n");
+            content.push_str(&format!("{}\n\n", data_flow));
+        }
+
+        if let Some(complexity) = &ai_component.code_analysis.algorithm_complexity {
+            content.push_str("**算法复杂度**:\n");
+            content.push_str(&format!("{}\n\n", complexity));
+        }
+
         if !ai_component.internal_structure.main_classes.is_empty() {
             content.push_str(&MarkdownUtils::heading(3, "主要类/结构"));
             for class in &ai_component.internal_structure.main_classes {
@@ -697,6 +940,27 @@ impl C4DocumentationAgent {
             content.push_str("\n");
         }
 
+        // 算法分析
+        if !ai_component.internal_structure.algorithm_analysis.is_empty() {
+            content.push_str(&MarkdownUtils::heading(3, "算法分析"));
+            for algorithm in &ai_component.internal_structure.algorithm_analysis {
+                content.push_str(&format!("- {}\n", algorithm));
+            }
+            content.push_str("\n");
+        }
+
+        // 性能特征
+        if let Some(perf_chars) = &ai_component.code_analysis.performance_characteristics {
+            content.push_str(&MarkdownUtils::heading(3, "性能特征"));
+            content.push_str(&format!("{}\n\n", perf_chars));
+        }
+
+        // 错误处理
+        if let Some(error_handling) = &ai_component.code_analysis.error_handling {
+            content.push_str(&MarkdownUtils::heading(3, "错误处理"));
+            content.push_str(&format!("{}\n\n", error_handling));
+        }
+
         // 依赖关系
         if !ai_component.dependencies.is_empty() {
             content.push_str(&MarkdownUtils::heading(2, "依赖关系"));
@@ -720,8 +984,8 @@ impl C4DocumentationAgent {
 
     async fn generate_basic_overview_document(
         &self,
-        preprocessing_result: &PreprocessingResult,
-        research_result: &ResearchResult,
+        _preprocessing_result: &PreprocessingResult,
+        _research_result: &ResearchResult,
     ) -> Result<C4Document> {
         use crate::utils::MarkdownUtils;
 
@@ -852,8 +1116,8 @@ impl C4DocumentationAgent {
 
     fn generate_c4_documentation_summary(
         &self,
-        overview_doc: &C4Document,
-        architecture_doc: &C4Document,
+        _overview_doc: &C4Document,
+        _architecture_doc: &C4Document,
         core_components: &[C4ComponentDoc],
     ) -> String {
         format!(
@@ -872,5 +1136,154 @@ impl C4DocumentationAgent {
 ✅ 所有文档已按C4架构风格保存到输出目录"#,
             core_components.len()
         )
+    }
+
+    // 新增的辅助方法用于提取源码和依赖关系
+    
+    fn extract_key_code_snippets(&self, preprocessing_result: &PreprocessingResult) -> String {
+        let mut snippets = Vec::new();
+        
+        for component in preprocessing_result.core_components.iter().take(5) {
+            if let Ok(content) = std::fs::read_to_string(&component.file_path) {
+                let truncated = if content.len() > 500 {
+                    format!("{}...", &content[..500])
+                } else {
+                    content
+                };
+                
+                snippets.push(format!(
+                    "### {} ({})\n```rust\n{}\n```",
+                    component.name,
+                    component.component_type,
+                    truncated
+                ));
+            }
+        }
+        
+        snippets.join("\n\n")
+    }
+    
+    fn extract_detailed_code_snippets(&self, preprocessing_result: &PreprocessingResult) -> String {
+        let mut snippets = Vec::new();
+        
+        for component in preprocessing_result.core_components.iter().take(8) {
+            if let Ok(content) = std::fs::read_to_string(&component.file_path) {
+                let truncated = if content.len() > 800 {
+                    format!("{}...", &content[..800])
+                } else {
+                    content
+                };
+                
+                snippets.push(format!(
+                    "### {} ({})\n**路径**: {}\n**重要性**: {:.2}\n```rust\n{}\n```",
+                    component.name,
+                    component.component_type,
+                    component.file_path.display(),
+                    component.importance_score,
+                    truncated
+                ));
+            }
+        }
+        
+        snippets.join("\n\n")
+    }
+    
+    fn extract_dependency_relationships(&self, preprocessing_result: &PreprocessingResult) -> String {
+        let mut deps = Vec::new();
+        
+        for analysis in &preprocessing_result.component_analyses {
+            if !analysis.dependencies.is_empty() {
+                let dep_names: Vec<String> = analysis.dependencies
+                    .iter()
+                    .map(|d| d.name.clone())
+                    .collect();
+                deps.push(format!(
+                    "- **{}** 依赖于: {}",
+                    analysis.component.name,
+                    dep_names.join(", ")
+                ));
+            }
+        }
+        
+        if deps.is_empty() {
+            "暂无详细依赖关系数据".to_string()
+        } else {
+            deps.join("\n")
+        }
+    }
+    
+    fn extract_dependency_graph(&self, preprocessing_result: &PreprocessingResult) -> String {
+        let mut graph_info = Vec::new();
+        
+        // 构建依赖关系图信息
+        for analysis in &preprocessing_result.component_analyses {
+            for dep in &analysis.dependencies {
+                graph_info.push(format!("{} --> {}", analysis.component.name, dep.name));
+            }
+        }
+        
+        if graph_info.is_empty() {
+            "暂无模块依赖关系数据".to_string()
+        } else {
+            format!(
+                "```mermaid\ngraph TD\n{}\n```\n\n依赖关系说明:\n{}",
+                graph_info.iter().map(|g| format!("    {}", g)).collect::<Vec<_>>().join("\n"),
+                graph_info.join("\n- ")
+            )
+        }
+    }
+    
+    fn extract_interface_information(&self, preprocessing_result: &PreprocessingResult) -> String {
+        let mut interfaces = Vec::new();
+        
+        for analysis in &preprocessing_result.component_analyses {
+            if !analysis.interfaces.is_empty() {
+                let interface_list = analysis.interfaces
+                    .iter()
+                    .map(|i| format!("  - {}: {} ({})", i.name, i.interface_type, i.visibility))
+                    .collect::<Vec<_>>()
+                    .join("\n");
+                
+                interfaces.push(format!(
+                    "**{}**:\n{}",
+                    analysis.component.name,
+                    interface_list
+                ));
+            }
+        }
+        
+        if interfaces.is_empty() {
+            "暂无详细接口信息".to_string()
+        } else {
+            interfaces.join("\n\n")
+        }
+    }
+    
+    fn extract_component_source_code(&self, component: &crate::extractors::CoreComponent) -> String {
+        match std::fs::read_to_string(&component.file_path) {
+            Ok(content) => {
+                if content.len() > 1000 {
+                    format!("{}...\n\n// 文件较大，仅显示前1000字符", &content[..1000])
+                } else {
+                    content
+                }
+            }
+            Err(_) => "无法读取源码文件".to_string()
+        }
+    }
+    
+    fn extract_component_dependencies(&self, component: &crate::extractors::CoreComponent, preprocessing_result: &PreprocessingResult) -> String {
+        if let Some(analysis) = preprocessing_result.component_analyses.iter().find(|a| a.component.name == component.name) {
+            if analysis.dependencies.is_empty() {
+                "该组件暂无明确的依赖关系".to_string()
+            } else {
+                format!(
+                    "该组件依赖于以下模块:\n{}",
+                    analysis.dependencies.iter().map(|d| format!("- {} ({})", d.name, d.dependency_type)).collect::<Vec<_>>().join("\n")
+                )
+            }
+        } else {
+            "暂无依赖关系分析数据".to_string()
+        }
     }
 }
