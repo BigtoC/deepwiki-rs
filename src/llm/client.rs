@@ -1,122 +1,87 @@
 use anyhow::Result;
-use reqwest::Client;
-use std::env;
+use rig::{
+    client::{CompletionClient, ProviderClient},
+    completion::Prompt,
+    providers::mistral::Client,
+};
+use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
+use std::future::Future;
 
 use crate::config::LLMConfig;
-use super::types::*;
 
 pub struct LLMClient {
-    client: Client,
     config: LLMConfig,
-    api_key: String,
+    client: Client,
 }
 
 impl LLMClient {
     pub fn new(config: LLMConfig) -> Result<Self> {
-        let api_key = env::var("MISTRAL_API_KEY")
-            .or_else(|_| env::var("OPENAI_API_KEY"))
-            .map_err(|_| anyhow::anyhow!("请设置 MISTRAL_API_KEY 或 OPENAI_API_KEY 环境变量"))?;
+        let client = Client::from_env();
 
-        Ok(Self {
-            client: Client::new(),
-            config,
-            api_key,
-        })
+        Ok(Self { client, config })
     }
 
-    pub async fn chat(&self, prompt: &str) -> Result<String> {
-        let messages = vec![
-            ChatMessage {
-                role: "system".to_string(),
-                content: "你是一个专业的软件架构分析师。".to_string(),
-            },
-            ChatMessage {
-                role: "user".to_string(),
-                content: prompt.to_string(),
-            },
-        ];
+    /// 通用重试逻辑，用于处理异步操作的重试机制
+    async fn retry_with_backoff<T, F, Fut>(&self, operation: F) -> Result<T>
+    where
+        F: Fn() -> Fut,
+        Fut: Future<Output = Result<T, anyhow::Error>>,
+    {
+        let max_retries = self.config.retry_attempts;
+        let retry_delay_ms = self.config.retry_delay_ms;
+        let mut retries = 0;
 
-        let request = ChatRequest {
-            model: self.config.model.clone(),
-            messages,
-            max_tokens: Some(self.config.max_tokens),
-            temperature: Some(self.config.temperature),
-        };
-
-        let url = if self.config.model.contains("mistral") {
-            "https://api.mistral.ai/v1/chat/completions"
-        } else {
-            "https://api.openai.com/v1/chat/completions"
-        };
-
-        let response = self
-            .client
-            .post(url)
-            .header("Authorization", format!("Bearer {}", self.api_key))
-            .header("Content-Type", "application/json")
-            .json(&request)
-            .send()
-            .await?;
-
-        if !response.status().is_success() {
-            let error_text = response.text().await?;
-            return Err(anyhow::anyhow!("LLM API 错误: {}", error_text));
-        }
-
-        let chat_response: ChatResponse = response.json().await?;
-        
-        if let Some(choice) = chat_response.choices.first() {
-            Ok(choice.message.content.clone())
-        } else {
-            Err(anyhow::anyhow!("LLM 响应为空"))
+        loop {
+            match operation().await {
+                Ok(result) => return Ok(result),
+                Err(err) => {
+                    retries += 1;
+                    #[cfg(debug_assertions)]
+                    eprintln!(
+                        "调用模型服务出错，重试中 (第 {} / {}次尝试): {}",
+                        retries, max_retries, err
+                    );
+                    if retries >= max_retries {
+                        return Err(err);
+                    }
+                    tokio::time::sleep(std::time::Duration::from_millis(retry_delay_ms)).await;
+                }
+            }
         }
     }
 
-    pub async fn chat_with_system(&self, system_prompt: &str, user_prompt: &str) -> Result<String> {
-        let messages = vec![
-            ChatMessage {
-                role: "system".to_string(),
-                content: system_prompt.to_string(),
-            },
-            ChatMessage {
-                role: "user".to_string(),
-                content: user_prompt.to_string(),
-            },
-        ];
+    pub async fn extract<T>(&self, system_prompt: &str, user_prompt: &str) -> Result<T>
+    where
+        T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,
+    {
+        let config = &self.config;
 
-        let request = ChatRequest {
-            model: self.config.model.clone(),
-            messages,
-            max_tokens: Some(self.config.max_tokens),
-            temperature: Some(self.config.temperature),
-        };
-
-        let url = if self.config.model.contains("mistral") {
-            "https://api.mistral.ai/v1/chat/completions"
-        } else {
-            "https://api.openai.com/v1/chat/completions"
-        };
-
-        let response = self
+        let extractor = self
             .client
-            .post(url)
-            .header("Authorization", format!("Bearer {}", self.api_key))
-            .header("Content-Type", "application/json")
-            .json(&request)
-            .send()
-            .await?;
+            .extractor::<T>(&config.model)
+            .preamble(system_prompt)
+            .max_tokens(config.max_tokens.into())
+            .build();
 
-        if !response.status().is_success() {
-            let error_text = response.text().await?;
-            return Err(anyhow::anyhow!("LLM API 错误: {}", error_text));
-        }
+        self.retry_with_backoff(|| async {
+            extractor.extract(user_prompt).await.map_err(|e| e.into())
+        }).await
+    }
 
-        let chat_response: ChatResponse = response.json().await?;
-        
-        if let Some(choice) = chat_response.choices.first() {
-            Ok(choice.message.content.clone())
-        } else {
-            Err(anyhow::anyhow!("LLM 响应为空"))
-        }
+    pub async fn prompt(&self, system_prompt: &str, user_prompt: &str) -> Result<String> {
+        let config = &self.config;
+
+        let agent = self
+            .client
+            .agent(&config.model)
+            .preamble(system_prompt)
+            .max_tokens(config.max_tokens.into())
+            .temperature(config.temperature.into())
+            .build();
+
+        self.retry_with_backoff(|| async {
+            agent.prompt(user_prompt).await.map_err(|e| e.into())
+        }).await
     }
 }

@@ -180,7 +180,7 @@ impl PreprocessingAgent {
         let prompt_clone = prompt.clone();
         let ai_response = self
             .llm_client
-            .chat_with_system(&system_msg, &prompt_clone)
+            .prompt(&system_msg, &prompt_clone)
             .await
             .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
 

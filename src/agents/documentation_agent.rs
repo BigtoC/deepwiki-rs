@@ -135,7 +135,7 @@ impl DocumentationAgent {
         let system_msg = "你是一个专业的技术文档编写专家，专门创建清晰、全面、易懂的软件项目文档。".to_string();
         let prompt_clone = prompt.clone();
         let ai_response = self.llm_client
-            .chat_with_system(&system_msg, &prompt_clone)
+            .prompt(&system_msg, &prompt_clone)
             .await
             .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
 
