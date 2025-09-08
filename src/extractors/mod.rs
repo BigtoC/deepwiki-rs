@@ -6,12 +6,16 @@ pub mod language_processors;
 pub mod ai_analysis_types;
 pub mod ai_research_types;
 pub mod ai_documentation_types;
+pub mod component_types;
+pub mod ai_component_type_analyzer;
 
 pub use structure_extractor::{StructureExtractor, ProjectStructure, CoreComponent};
 pub use component_extractor::{ComponentExtractor, ComponentAnalysis};
 pub use research_extractor::{ResearchExtractor, ResearchReport};
 pub use documentation_extractor::{DocumentationExtractor, C4Documentation};
 pub use language_processors::LanguageProcessorManager;
+pub use component_types::{ComponentType, ComponentTypeMapper};
+pub use ai_component_type_analyzer::{AIComponentTypeAnalyzer, ComponentTypeEnhancer, AIComponentTypeAnalysis};
 pub use ai_analysis_types::*;
 pub use ai_research_types::*;
 pub use ai_documentation_types::*;

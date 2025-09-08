@@ -209,7 +209,7 @@ graph TB
             .iter()
             .map(|c| vec![
                 c.name.clone(),
-                c.component_type.clone(),
+                c.component_type.display_name().to_string(),
                 format!("{:.2}", c.importance_score),
                 c.file_path.to_string_lossy().to_string()
             ])

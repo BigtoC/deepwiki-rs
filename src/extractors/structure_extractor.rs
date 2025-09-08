@@ -8,11 +8,15 @@ use std::path::PathBuf;
 
 use crate::cache::CacheManager;
 use crate::extractors::language_processors::LanguageProcessorManager;
+use crate::extractors::component_types::{ComponentType, ComponentTypeMapper};
+use crate::extractors::ai_component_type_analyzer::ComponentTypeEnhancer;
+use crate::llm::LLMClient;
 
 /// 项目结构提取器
 pub struct StructureExtractor {
     cache_manager: CacheManager,
     language_processor: LanguageProcessorManager,
+    component_type_enhancer: ComponentTypeEnhancer,
 }
 
 /// 项目结构信息
@@ -59,7 +63,7 @@ pub struct CoreComponent {
     /// 文件路径
     pub file_path: PathBuf,
     /// 组件类型
-    pub component_type: String,
+    pub component_type: ComponentType,
     /// 重要性分数
     pub importance_score: f64,
     pub dependencies: Vec<String>,
@@ -78,10 +82,15 @@ pub struct RelationshipInfo {
 }
 
 impl StructureExtractor {
-    pub fn new(cache_manager: CacheManager) -> Self {
-        Self { 
+    pub fn new(cache_manager: CacheManager, llm_client: Option<LLMClient>) -> Self {
+        let ai_analyzer = llm_client.map(|client| 
+            crate::extractors::ai_component_type_analyzer::AIComponentTypeAnalyzer::new(client)
+        );
+        
+        Self {
             cache_manager,
             language_processor: LanguageProcessorManager::new(),
+            component_type_enhancer: ComponentTypeEnhancer::new(ai_analyzer),
         }
     }
 
@@ -387,7 +396,7 @@ impl StructureExtractor {
         let core_files: Vec<_> = structure.files.iter().filter(|f| f.is_core).collect();
 
         for file in core_files {
-            let component_type = self.determine_component_type(file);
+            let component_type = self.determine_component_type(file).await;
             let dependencies = self.extract_file_dependencies(file).await?;
 
             core_components.push(CoreComponent {
@@ -405,55 +414,24 @@ impl StructureExtractor {
         Ok(core_components)
     }
 
-    fn determine_component_type(&self, file: &FileInfo) -> String {
-        // TODO：这个函数的实现需要修改：
-        // 1、增加基于architecture meta配置文件和AI分析的方式来决定组件类型，优先级为architecture meta预设 > AI分析 > 硬编码规则分析。
-        // 2、基于architecture meta配置文件，该文件由于deepwiki-rs定义并，由目标项目的开发者来自行配置。配置中包含layout_pattern字段，基于blob pattern来描述对应的核心组件位置和组件类型。
-        // 3、基于AI的分析，这个可以提前把所有文件预先通过AI分析一下，给出一些summary重点信息结果，在全流程复用这类数据。
-        // 4、硬编码规则分析仅当AI分析失败后才使用。
+    async fn determine_component_type(&self, file: &FileInfo) -> ComponentType {
+        // 读取文件内容
+        let file_content = std::fs::read_to_string(&file.path).ok();
         
-        // 尝试读取文件内容进行智能分析
-        if let Ok(content) = std::fs::read_to_string(&file.path) {
-            // 使用语言处理器进行智能组件类型判断
-            let component_type = self.language_processor.determine_component_type(&file.path, &content);
-            if component_type != "unknown" {
-                return component_type;
+        // 使用增强的组件类型分析器
+        match self.component_type_enhancer.enhance_component_type(
+            &file.path,
+            &file.name,
+            file_content.as_deref(),
+        ).await {
+            Ok(component_type) => component_type,
+            Err(_) => {
+                // 回退到基础规则映射
+                ComponentTypeMapper::map_by_path_and_name(
+                    &file.path.to_string_lossy(),
+                    &file.name,
+                )
             }
-        }
-        
-        // 回退到基于路径和文件名的简单规则
-        let name_lower = file.name.to_lowercase();
-        let path_str = file.path.to_string_lossy().to_lowercase();
-        
-        // 通用规则（适用于所有语言）
-        if name_lower.contains("main") || name_lower.contains("index") {
-            "entry_point".to_string()
-        } else if name_lower.contains("config") || name_lower.contains("setting") {
-            "configuration".to_string()
-        } else if name_lower.contains("util") || name_lower.contains("helper") {
-            "utility".to_string()
-        } else if name_lower.contains("test") || path_str.contains("test") {
-            "test".to_string()
-        } else if path_str.contains("model") || path_str.contains("entity") {
-            "model".to_string()
-        } else if path_str.contains("view") || path_str.contains("ui") {
-            "view".to_string()
-        } else if path_str.contains("controller") {
-            "controller".to_string()
-        } else if path_str.contains("service") {
-            "service".to_string()
-        } else if path_str.contains("api") || path_str.contains("endpoint") {
-            "api".to_string()
-        } else if path_str.contains("middleware") {
-            "middleware".to_string()
-        } else if path_str.contains("router") || path_str.contains("route") {
-            "router".to_string()
-        } else if path_str.contains("store") || path_str.contains("state") {
-            "state_management".to_string()
-        } else if path_str.contains("lib") || path_str.contains("library") {
-            "library".to_string()
-        } else {
-            "module".to_string()
         }
     }
 

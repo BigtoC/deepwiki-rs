@@ -24,6 +24,7 @@ use react_executor::ReActExecutor;
 use agent_builder::AgentBuilder;
 
 /// LLM客户端 - 提供统一的LLM服务接口
+#[derive(Clone)]
 pub struct LLMClient {
     config: Config,
     client: Client,

@@ -6,7 +6,7 @@ use std::time::Instant;
 use crate::agents::documentation_agent::DocumentationResult;
 use crate::agents::c4_documentation_agent::C4DocumentationResult;
 use crate::agents::research_agent::ResearchResult;
-use crate::agents::{DocumentationAgent, PreprocessingAgent, ResearchAgent, c4_documentation_agent::C4DocumentationAgent};
+use crate::agents::{DocumentationAgent, PreprocessingAgent, ResearchAgent, c4_documentation_agent::C4DocumentationAgent, CategorizedDocumentationAgent};
 use crate::config::Config;
 
 /// 工作流引擎
@@ -132,6 +132,26 @@ impl WorkflowEngine {
             
             doc_count
         };
+
+        // 阶段4: 生成分类组件文档
+        println!("\n📁 阶段4: 生成分类组件文档");
+        let categorized_agent = CategorizedDocumentationAgent::new(
+            self.config.clone(),
+            self.preprocessing_agent.get_llm_client().clone(),
+            self.preprocessing_agent.get_cache_manager().clone(),
+        );
+        
+        let categorized_result = categorized_agent
+            .generate_categorized_documentation(
+                &preprocessing_result.core_components,
+                &preprocessing_result.component_analyses,
+                &preprocessing_result.project_structure,
+            )
+            .await?;
+        
+        println!("✅ 分类文档生成完成:");
+        println!("   - 组件类型: {}", categorized_result.categorized_documents.len());
+        println!("   - 总文档数: {}", categorized_result.total_documents);
         
         stage_times.documentation = documentation_start.elapsed().as_secs_f64();
 

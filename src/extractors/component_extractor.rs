@@ -599,25 +599,41 @@ impl ComponentExtractor {
         let mut responsibilities = Vec::new();
 
         // 基于组件类型推断职责
-        match component.component_type.as_str() {
-            "entry_point" => {
+        match component.component_type {
+            crate::extractors::ComponentType::Entry => {
                 responsibilities.push("应用程序启动和初始化".to_string());
                 responsibilities.push("命令行参数处理".to_string());
             }
-            "configuration" => {
+            crate::extractors::ComponentType::Config => {
                 responsibilities.push("配置管理和加载".to_string());
                 responsibilities.push("环境变量处理".to_string());
             }
-            "utility" => {
+            crate::extractors::ComponentType::Util => {
                 responsibilities.push("提供通用工具函数".to_string());
                 responsibilities.push("辅助功能实现".to_string());
             }
-            "service" => {
+            crate::extractors::ComponentType::Service => {
                 responsibilities.push("业务逻辑处理".to_string());
                 responsibilities.push("数据处理和转换".to_string());
             }
+            crate::extractors::ComponentType::Page => {
+                responsibilities.push("用户界面展示".to_string());
+                responsibilities.push("页面交互处理".to_string());
+            }
+            crate::extractors::ComponentType::Controller => {
+                responsibilities.push("请求处理和路由".to_string());
+                responsibilities.push("业务逻辑协调".to_string());
+            }
+            crate::extractors::ComponentType::Model => {
+                responsibilities.push("数据模型定义".to_string());
+                responsibilities.push("数据验证和处理".to_string());
+            }
+            crate::extractors::ComponentType::Api => {
+                responsibilities.push("API接口定义".to_string());
+                responsibilities.push("外部服务集成".to_string());
+            }
             _ => {
-                responsibilities.push(format!("{}模块的核心功能", component.component_type));
+                responsibilities.push(format!("{}模块的核心功能", component.component_type.display_name()));
             }
         }
 

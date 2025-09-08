@@ -116,7 +116,7 @@ impl ResearchAgent {
         println!("   🤖 正在进行AI调研分析: {}", report.title);
 
         // 执行AI分析，使用extract函数自动提取结构化数据
-        let system_msg = "你是一个专业的软件架构研究员，专门深入分析软件项目的架构、设计和质量。请按照指定的JSON格式返回分析结果。".to_string();
+        let system_msg = "你是一个专业的软件架构研究员，专门深入分析软件项目的架构、设计和质量。".to_string();
         let ai_enhancement = self
             .llm_client
             .extract::<AIResearchEnhancement>(&system_msg, &prompt)
@@ -239,7 +239,7 @@ impl ResearchAgent {
 
         // 使用AI生成综合洞察
         let prompt = self.build_comprehensive_insights_prompt(reports, preprocessing_result);
-        let system_msg = "你是一个专业的软件架构分析师，专门生成项目的综合洞察。请按照指定的JSON格式返回分析结果。".to_string();
+        let system_msg = "你是一个专业的软件架构分析师，专门生成项目的综合洞察。".to_string();
         
         match self
             .llm_client
@@ -413,7 +413,7 @@ impl ResearchAgent {
 
         // 使用AI生成综合建议
         let prompt = self.build_recommendations_prompt(reports, preprocessing_result);
-        let system_msg = "你是一个专业的软件架构顾问，专门为项目提供改进建议。请按照指定的JSON格式返回建议。".to_string();
+        let system_msg = "你是一个专业的软件架构顾问，专门为项目提供改进建议。".to_string();
         
         match self
             .llm_client

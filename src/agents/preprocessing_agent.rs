@@ -6,8 +6,8 @@ use std::time::Instant;
 use crate::cache::CacheManager;
 use crate::config::Config;
 use crate::extractors::{
-    ComponentAnalysis, ComponentExtractor, CoreComponent, ProjectStructure, StructureExtractor, LanguageProcessorManager,
-    AIComponentAnalysis, AIArchitectureInsights, AIProjectSummary, AIRelationshipAnalysis,
+    ComponentAnalysis, ComponentExtractor, CoreComponent, ProjectStructure, StructureExtractor,
+    LanguageProcessorManager, AIComponentAnalysis, AIArchitectureInsights, AIProjectSummary, AIRelationshipAnalysis
 };
 use crate::tools::{
     DependencyAnalyzerTool,
@@ -55,7 +55,7 @@ impl PreprocessingAgent {
         cache_manager.init().await?;
 
         // 创建提取器
-        let structure_extractor = StructureExtractor::new(cache_manager.clone());
+        let structure_extractor = StructureExtractor::new(cache_manager.clone(), Some(llm_client.clone()));
         let component_extractor = ComponentExtractor::new(cache_manager.clone());
 
         Ok(Self {
@@ -66,6 +66,16 @@ impl PreprocessingAgent {
             component_extractor,
             language_processor: LanguageProcessorManager::new(),
         })
+    }
+
+    /// 获取LLM客户端
+    pub fn get_llm_client(&self) -> &LLMClient {
+        &self.llm_client
+    }
+
+    /// 获取缓存管理器
+    pub fn get_cache_manager(&self) -> &CacheManager {
+        &self.cache_manager
     }
 
     /// 执行项目预处理
@@ -176,7 +186,7 @@ impl PreprocessingAgent {
         println!("   🤖 正在进行AI分析: {}", analysis.component.name);
 
         // 使用rig框架的extract功能进行结构化AI分析
-        let system_msg = "你是一个专业的软件架构分析师，专门分析代码组件的功能、职责和质量。请基于提供的源代码进行深度分析，并以结构化的JSON格式返回分析结果。";
+        let system_msg = "你是一个专业的软件架构分析师，专门分析代码组件的功能、职责和质量。请基于提供的源代码进行深度分析。";
         
         let ai_analysis = self
             .llm_client
@@ -239,7 +249,7 @@ impl PreprocessingAgent {
 分析要基于实际代码内容，提供具体且可操作的洞察。"#,
             analysis.component.name,
             analysis.component.file_path.display(),
-            analysis.component.component_type,
+            analysis.component.component_type.display_name(),
             analysis.component.importance_score,
             analysis.responsibilities.join(", "),
             analysis.interfaces.len(),
@@ -737,7 +747,7 @@ impl PreprocessingAgent {
             core_components.iter()
                 .map(|c| format!("- {} ({}): {} - 职责: {}", 
                     c.name, 
-                    c.component_type, 
+                    c.component_type.display_name(),
                     c.file_path.display(),
                     c.dependencies.join(", ")
                 ))
@@ -856,7 +866,7 @@ impl PreprocessingAgent {
         let mut component_types = std::collections::HashMap::new();
         for component in core_components {
             *component_types
-                .entry(component.component_type.clone())
+                .entry(component.component_type.display_name().to_string())
                 .or_insert(0) += 1;
         }
 
@@ -898,7 +908,7 @@ impl PreprocessingAgent {
                 .join(", "),
             core_components.iter()
                 .take(10) // 限制显示前10个组件
-                .map(|c| format!("- {} ({}): {}", c.name, c.component_type, c.file_path.display()))
+                .map(|c| format!("- {} ({}): {}", c.name, c.component_type.display_name(), c.file_path.display()))
                 .collect::<Vec<_>>()
                 .join("\n")
         )
@@ -1011,7 +1021,7 @@ impl PreprocessingAgent {
         let mut component_types = std::collections::HashMap::new();
         for component in core_components {
             *component_types
-                .entry(component.component_type.clone())
+                .entry(component.component_type.display_name().to_string())
                 .or_insert(0) += 1;
         }
 
@@ -1082,7 +1092,7 @@ impl PreprocessingAgent {
                 .join(", "),
             core_components.iter()
                 .take(5)
-                .map(|c| format!("- {} ({}): 重要性 {:.2}", c.name, c.component_type, c.importance_score))
+                .map(|c| format!("- {} ({}): 重要性 {:.2}", c.name, c.component_type.display_name(), c.importance_score))
                 .collect::<Vec<_>>()
                 .join("\n"),
             all_recommendations.iter()
