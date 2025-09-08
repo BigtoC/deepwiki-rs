@@ -54,9 +54,13 @@ pub struct FileInfo {
 /// 核心组件
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct CoreComponent {
+    /// 组件名称
     pub name: String,
+    /// 文件路径
     pub file_path: PathBuf,
+    /// 组件类型
     pub component_type: String,
+    /// 重要性分数
     pub importance_score: f64,
     pub dependencies: Vec<String>,
     pub description: Option<String>,

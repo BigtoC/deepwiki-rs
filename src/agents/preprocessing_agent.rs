@@ -7,9 +7,10 @@ use crate::cache::CacheManager;
 use crate::config::Config;
 use crate::extractors::{
     ComponentAnalysis, ComponentExtractor, CoreComponent, ProjectStructure, StructureExtractor, LanguageProcessorManager,
+    AIComponentAnalysis, AIArchitectureInsights, AIProjectSummary, AIRelationshipAnalysis,
 };
 use crate::tools::{
-    ArchitectureDetectorTool, CodeAnalyzerTool, DependencyAnalyzerTool, FileExplorerTool,
+    DependencyAnalyzerTool,
 };
 
 /// 项目预处理Agent
@@ -174,19 +175,18 @@ impl PreprocessingAgent {
 
         println!("   🤖 正在进行AI分析: {}", analysis.component.name);
 
-        // 执行AI分析
-        let system_msg =
-            "你是一个专业的软件架构分析师，专门分析代码组件的功能、职责和质量。".to_string();
-        let prompt_clone = prompt.clone();
-        let ai_response = self
+        // 使用rig框架的extract功能进行结构化AI分析
+        let system_msg = "你是一个专业的软件架构分析师，专门分析代码组件的功能、职责和质量。请基于提供的源代码进行深度分析，并以结构化的JSON格式返回分析结果。";
+        
+        let ai_analysis = self
             .llm_client
-            .prompt(&system_msg, &prompt_clone)
+            .extract::<AIComponentAnalysis>(system_msg, &prompt)
             .await
             .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
 
-        // 解析AI响应并增强分析结果
+        // 将AI分析结果合并到现有分析中
         let mut enhanced_analysis = analysis.clone();
-        self.parse_ai_component_response(&ai_response, &mut enhanced_analysis);
+        self.merge_ai_analysis_results(&ai_analysis, &mut enhanced_analysis);
 
         // 缓存结果 - 直接使用prompt作为key
         self.cache_manager
@@ -204,8 +204,7 @@ impl PreprocessingAgent {
         let dependency_code = self.read_dependency_source_code(analysis);
 
         format!(
-            r#"
-请基于以下源代码分析代码组件的详细信息：
+            r#"请基于以下源代码对组件进行深度分析：
 
 ## 组件基本信息
 - 组件名称: {}
@@ -229,26 +228,15 @@ impl PreprocessingAgent {
 ## 依赖组件代码片段
 {}
 
-## 请基于源代码提供以下深度分析：
+请基于源代码进行深度分析，重点关注：
+1. 组件的详细功能描述和业务逻辑
+2. 核心职责识别（3-5个）
+3. 在系统架构中的角色定位
+4. 代码质量评估（结构、命名、最佳实践等）
+5. 依赖关系合理性分析
+6. 具体的改进建议
 
-1. **详细描述**: 基于源代码，这个组件的主要功能和作用是什么？具体实现了哪些业务逻辑？
-
-2. **核心职责**: 通过分析代码结构和函数，列出这个组件的3-5个核心职责
-
-3. **架构角色**: 在整个系统架构中扮演什么角色？是数据层、业务层、表示层还是其他？
-
-4. **代码质量评估**: 
-   - 代码结构和组织如何？
-   - 命名规范是否清晰？
-   - 是否遵循最佳实践？
-   - 有哪些优点和需要改进的地方？
-
-5. **依赖关系分析**: 分析与其他组件的依赖关系，是否合理？
-
-6. **改进建议**: 基于代码分析，提供3-5个具体的改进建议
-
-请用结构化的格式回答，每个部分用明确的标题分隔。分析要具体且基于实际代码内容。
-"#,
+分析要基于实际代码内容，提供具体且可操作的洞察。"#,
             analysis.component.name,
             analysis.component.file_path.display(),
             analysis.component.component_type,
@@ -494,91 +482,68 @@ impl PreprocessingAgent {
         self.language_processor.is_important_line(file_path, line)
     }
 
-    fn parse_ai_component_response(&self, response: &str, analysis: &mut ComponentAnalysis) {
-        // 解析AI响应并更新分析结果
-        if let Some(description_start) = response.find("详细描述") {
-            if let Some(description_end) = response[description_start..].find("\n\n") {
-                let description = response[description_start..description_start + description_end]
-                    .lines()
-                    .skip(1)
-                    .collect::<Vec<_>>()
-                    .join(" ")
-                    .trim()
-                    .to_string();
-                if !description.is_empty() {
-                    analysis.detailed_description = description;
-                }
-            }
+    fn merge_ai_analysis_results(&self, ai_analysis: &AIComponentAnalysis, analysis: &mut ComponentAnalysis) {
+        // 更新详细描述
+        if !ai_analysis.detailed_description.is_empty() {
+            analysis.detailed_description = ai_analysis.detailed_description.clone();
         }
 
-        // 解析核心职责
-        if let Some(responsibilities_start) = response.find("核心职责") {
-            if let Some(responsibilities_end) = response[responsibilities_start..].find("\n\n") {
-                let responsibilities_text = &response
-                    [responsibilities_start..responsibilities_start + responsibilities_end];
-                let new_responsibilities: Vec<String> = responsibilities_text
-                    .lines()
-                    .skip(1)
-                    .filter_map(|line| {
-                        let line = line.trim();
-                        if line.starts_with('-')
-                            || line.starts_with('•')
-                            || line.chars().next().map_or(false, |c| c.is_numeric())
-                        {
-                            Some(
-                                line.trim_start_matches('-')
-                                    .trim_start_matches('•')
-                                    .trim_start_matches(char::is_numeric)
-                                    .trim_start_matches('.')
-                                    .trim()
-                                    .to_string(),
-                            )
-                        } else {
-                            None
-                        }
-                    })
-                    .collect();
-
-                if !new_responsibilities.is_empty() {
-                    analysis.responsibilities = new_responsibilities;
-                }
-            }
+        // 更新核心职责
+        if !ai_analysis.core_responsibilities.is_empty() {
+            analysis.responsibilities = ai_analysis.core_responsibilities.clone();
         }
 
-        // 解析改进建议
-        if let Some(suggestions_start) = response.find("改进建议") {
-            let suggestions_text = &response[suggestions_start..];
-            let new_recommendations: Vec<String> = suggestions_text
-                .lines()
-                .skip(1)
-                .filter_map(|line| {
-                    let line = line.trim();
-                    if line.starts_with('-')
-                        || line.starts_with('•')
-                        || line.chars().next().map_or(false, |c| c.is_numeric())
-                    {
-                        Some(
-                            line.trim_start_matches('-')
-                                .trim_start_matches('•')
-                                .trim_start_matches(char::is_numeric)
-                                .trim_start_matches('.')
-                                .trim()
-                                .to_string(),
-                        )
-                    } else {
-                        None
-                    }
-                })
-                .take(5)
-                .collect();
-
-            if !new_recommendations.is_empty() {
-                analysis.recommendations = new_recommendations;
-            }
+        // 更新改进建议
+        if !ai_analysis.improvement_suggestions.is_empty() {
+            analysis.recommendations = ai_analysis.improvement_suggestions.clone();
         }
+
+        // 根据AI分析结果更新质量评估
+        let ai_quality = &ai_analysis.code_quality_assessment;
+        
+        // 更新质量分数（将1-10的评分转换为0-1的分数）
+        analysis.quality_assessment.overall_score = (
+            ai_quality.structure_score as f64 + ai_quality.naming_score as f64
+        ) / 20.0; // 平均后转换为0-1范围
+
+        // 更新可维护性评分
+        analysis.quality_assessment.maintainability = ai_quality.structure_score as f64 / 10.0;
+        
+        // 更新可读性评分
+        analysis.quality_assessment.readability = ai_quality.naming_score as f64 / 10.0;
+
+        // 添加AI发现的质量问题
+        for area in &ai_quality.areas_for_improvement {
+            analysis.quality_assessment.issues.push(crate::extractors::component_extractor::QualityIssue {
+                severity: "medium".to_string(),
+                category: "ai_analysis".to_string(),
+                description: area.clone(),
+                suggestion: "参考AI分析建议进行改进".to_string(),
+                line_number: None,
+            });
+        }
+
+        println!("   ✅ AI分析结果已合并到组件分析中: {}", analysis.component.name);
     }
 
     async fn analyze_relationships(
+        &self,
+        core_components: &[CoreComponent],
+        project_structure: &ProjectStructure,
+    ) -> Result<Vec<RelationshipInfo>> {
+        let mut relationships = Vec::new();
+
+        // 首先进行静态关系分析
+        relationships.extend(self.analyze_static_relationships(core_components, project_structure).await?);
+
+        // 然后使用AI增强关系分析
+        let ai_relationships = self.analyze_relationships_with_ai(core_components, &relationships).await?;
+        relationships.extend(ai_relationships);
+
+        Ok(relationships)
+    }
+
+    async fn analyze_static_relationships(
         &self,
         core_components: &[CoreComponent],
         project_structure: &ProjectStructure,
@@ -702,49 +667,192 @@ impl PreprocessingAgent {
         Ok(relationships)
     }
 
+    async fn analyze_relationships_with_ai(
+        &self,
+        core_components: &[CoreComponent],
+        static_relationships: &[RelationshipInfo],
+    ) -> Result<Vec<RelationshipInfo>> {
+        // 构建关系分析提示
+        let prompt = self.build_relationship_analysis_prompt(core_components, static_relationships);
+
+        // 尝试从缓存获取
+        if let Some(cached_relationships) = self
+            .cache_manager
+            .get::<Vec<RelationshipInfo>>("ai_relationships", &prompt)
+            .await?
+        {
+            println!("   ✅ 使用缓存的AI关系分析结果");
+            return Ok(cached_relationships);
+        }
+
+        println!("   🤖 正在进行AI关系分析...");
+
+        // 使用rig框架的extract功能进行关系分析
+        let system_msg = "你是一个专业的软件架构分析师，专门分析组件间的关系模式、耦合度和架构质量。请基于组件信息和现有关系进行深度分析。";
+        
+        let ai_analysis = self
+            .llm_client
+            .extract::<AIRelationshipAnalysis>(system_msg, &prompt)
+            .await
+            .map_err(|e| anyhow::anyhow!("AI关系分析失败: {}", e))?;
+
+        // 将AI分析结果转换为RelationshipInfo
+        let mut ai_relationships = Vec::new();
+        for rel in &ai_analysis.identified_relationships {
+            ai_relationships.push(RelationshipInfo {
+                source: rel.source_component.clone(),
+                target: rel.target_component.clone(),
+                relationship_type: format!("ai_{}", rel.relationship_type),
+                strength: rel.relationship_strength as f64 / 10.0, // 转换为0-1范围
+                description: format!("AI分析: {} (强度: {}/10)", rel.description, rel.relationship_strength),
+            });
+        }
+
+        // 缓存结果
+        self.cache_manager
+            .set("ai_relationships", &prompt, &ai_relationships)
+            .await?;
+
+        Ok(ai_relationships)
+    }
+
+    fn build_relationship_analysis_prompt(&self, core_components: &[CoreComponent], static_relationships: &[RelationshipInfo]) -> String {
+        format!(
+            r#"请基于以下组件信息和现有关系分析组件间的深层关系：
+
+## 核心组件列表
+{}
+
+## 已识别的静态关系
+{}
+
+请分析并识别：
+1. 组件间的逻辑关系（聚合、组合、继承等）
+2. 架构层次关系（上下层依赖、同层协作等）
+3. 数据流关系（数据传递、状态共享等）
+4. 控制流关系（调用链、事件驱动等）
+5. 整体耦合度评估和优化建议
+
+分析要基于组件的类型、职责和现有依赖关系。"#,
+            core_components.iter()
+                .map(|c| format!("- {} ({}): {} - 职责: {}", 
+                    c.name, 
+                    c.component_type, 
+                    c.file_path.display(),
+                    c.dependencies.join(", ")
+                ))
+                .collect::<Vec<_>>()
+                .join("\n"),
+            static_relationships.iter()
+                .map(|r| format!("- {} -> {} ({}): {}", 
+                    r.source, 
+                    r.target, 
+                    r.relationship_type, 
+                    r.description
+                ))
+                .collect::<Vec<_>>()
+                .join("\n")
+        )
+    }
+
     async fn generate_architecture_insights(
         &self,
         project_structure: &ProjectStructure,
         core_components: &[CoreComponent],
     ) -> Result<Vec<String>> {
+        // 构建架构分析提示
+        let prompt = self.build_architecture_analysis_prompt(project_structure, core_components);
+
+        // 尝试从缓存获取
+        if let Some(cached_insights) = self
+            .cache_manager
+            .get::<Vec<String>>("architecture_insights", &prompt)
+            .await?
+        {
+            println!("   ✅ 使用缓存的架构洞察结果");
+            return Ok(cached_insights);
+        }
+
+        println!("   🤖 正在生成AI架构洞察...");
+
+        // 使用rig框架的extract功能进行架构分析
+        let system_msg = "你是一个资深的软件架构师，专门分析项目架构模式、设计原则和架构质量。请基于项目结构和组件信息进行深度架构分析。";
+        
+        let ai_insights = self
+            .llm_client
+            .extract::<AIArchitectureInsights>(system_msg, &prompt)
+            .await
+            .map_err(|e| anyhow::anyhow!("架构洞察生成失败: {}", e))?;
+
+        // 将AI洞察转换为字符串列表
         let mut insights = Vec::new();
+        
+        // 添加架构模式洞察
+        if !ai_insights.architecture_patterns.is_empty() {
+            insights.push(format!("识别的架构模式: {}", ai_insights.architecture_patterns.join(", ")));
+        }
 
-        // 项目规模洞察
-        insights.push(format!(
-            "项目包含 {} 个文件和 {} 个目录，属于{}规模项目",
-            project_structure.total_files,
-            project_structure.total_directories,
-            if project_structure.total_files > 100 {
-                "大型"
-            } else if project_structure.total_files > 20 {
-                "中型"
-            } else {
-                "小型"
-            }
-        ));
+        // 添加设计原则评估
+        for principle in &ai_insights.design_principles {
+            insights.push(format!(
+                "{}: 遵循程度 {}/10 - {}",
+                principle.principle_name,
+                principle.adherence_score,
+                principle.assessment_notes
+            ));
+        }
 
-        // 技术栈洞察
-        let mut tech_insights = Vec::new();
+        // 添加架构优势
+        for strength in &ai_insights.architectural_strengths {
+            insights.push(format!("架构优势: {}", strength));
+        }
+
+        // 添加架构问题
+        for concern in &ai_insights.architectural_concerns {
+            insights.push(format!("架构关注点: {}", concern));
+        }
+
+        // 添加改进建议
+        for recommendation in &ai_insights.architectural_recommendations {
+            insights.push(format!("架构建议: {}", recommendation));
+        }
+
+        // 缓存结果
+        self.cache_manager
+            .set("architecture_insights", &prompt, &insights)
+            .await?;
+
+        Ok(insights)
+    }
+
+    fn build_architecture_analysis_prompt(&self, project_structure: &ProjectStructure, core_components: &[CoreComponent]) -> String {
+        // 收集技术栈信息
+        let mut tech_stack = Vec::new();
         for (ext, count) in &project_structure.file_types {
             if *count > 5 {
                 match ext.as_str() {
-                    "rs" => tech_insights.push("Rust".to_string()),
-                    "py" => tech_insights.push("Python".to_string()),
-                    "js" => tech_insights.push("JavaScript".to_string()),
-                    "jsx" => tech_insights.push("JavaScript".to_string()),
-                    "ts" => tech_insights.push("TypeScript".to_string()),
-                    "tsx" => tech_insights.push("TypeScript".to_string()),
-                    "java" => tech_insights.push("Java".to_string()),
-                    "kt" => tech_insights.push("Kotlin".to_string()),
+                    "rs" => tech_stack.push(format!("Rust ({} files)", count)),
+                    "py" => tech_stack.push(format!("Python ({} files)", count)),
+                    "js" => tech_stack.push(format!("JavaScript ({} files)", count)),
+                    "jsx" => tech_stack.push(format!("React JSX ({} files)", count)),
+                    "ts" => tech_stack.push(format!("TypeScript ({} files)", count)),
+                    "tsx" => tech_stack.push(format!("React TSX ({} files)", count)),
+                    "java" => tech_stack.push(format!("Java ({} files)", count)),
+                    "kt" => tech_stack.push(format!("Kotlin ({} files)", count)),
+                    "vue" => tech_stack.push(format!("Vue ({} files)", count)),
+                    "svelte" => tech_stack.push(format!("Svelte ({} files)", count)),
                     _ => {}
                 }
             }
         }
-        if !tech_insights.is_empty() {
-            insights.push(format!("主要技术栈: {}", tech_insights.join(", ")));
-        }
 
-        // 组件分布洞察
+        // 收集目录结构信息
+        let directory_names: Vec<String> = project_structure.directories
+            .iter()
+            .map(|d| d.name.clone())
+            .collect();
+
+        // 收集组件类型分布
         let mut component_types = std::collections::HashMap::new();
         for component in core_components {
             *component_types
@@ -752,35 +860,48 @@ impl PreprocessingAgent {
                 .or_insert(0) += 1;
         }
 
-        for (comp_type, count) in component_types {
-            insights.push(format!("发现 {} 个 {} 类型的核心组件", count, comp_type));
-        }
+        format!(
+            r#"请基于以下项目信息进行深度架构分析：
 
-        // 架构模式洞察
-        let has_src_dir = project_structure
-            .directories
-            .iter()
-            .any(|d| d.name == "src");
-        let has_lib_dir = project_structure
-            .directories
-            .iter()
-            .any(|d| d.name == "lib");
-        let has_tests_dir = project_structure
-            .directories
-            .iter()
-            .any(|d| d.name == "tests" || d.name == "test");
+## 项目规模
+- 总文件数: {}
+- 总目录数: {}
+- 核心组件数: {}
 
-        if has_src_dir {
-            insights.push("采用标准的源码目录结构".to_string());
-        }
-        if has_lib_dir {
-            insights.push("包含库代码组织结构".to_string());
-        }
-        if has_tests_dir {
-            insights.push("具备测试代码组织".to_string());
-        }
+## 技术栈
+{}
 
-        Ok(insights)
+## 目录结构
+主要目录: {}
+
+## 核心组件分布
+{}
+
+## 组件详情
+{}
+
+请分析项目的架构特征，包括：
+1. 识别使用的架构模式（如MVC、分层架构、微服务、模块化等）
+2. 评估设计原则的遵循情况（单一职责、开闭原则、依赖倒置等）
+3. 识别架构优势和潜在问题
+4. 提供具体的架构改进建议
+
+分析要基于实际的项目结构和组件信息。"#,
+            project_structure.total_files,
+            project_structure.total_directories,
+            core_components.len(),
+            if tech_stack.is_empty() { "未识别到主要技术栈".to_string() } else { tech_stack.join(", ") },
+            directory_names.join(", "),
+            component_types.iter()
+                .map(|(t, c)| format!("{}: {} 个", t, c))
+                .collect::<Vec<_>>()
+                .join(", "),
+            core_components.iter()
+                .take(10) // 限制显示前10个组件
+                .map(|c| format!("- {} ({}): {}", c.name, c.component_type, c.file_path.display()))
+                .collect::<Vec<_>>()
+                .join("\n")
+        )
     }
 
     async fn generate_summary(
@@ -789,6 +910,86 @@ impl PreprocessingAgent {
         core_components: &[CoreComponent],
         component_analyses: &[ComponentAnalysis],
     ) -> Result<String> {
+        // 构建项目摘要分析提示
+        let prompt = self.build_project_summary_prompt(project_structure, core_components, component_analyses);
+
+        // 尝试从缓存获取
+        if let Some(cached_summary) = self
+            .cache_manager
+            .get::<String>("project_summary", &prompt)
+            .await?
+        {
+            println!("   ✅ 使用缓存的项目摘要");
+            return Ok(cached_summary);
+        }
+
+        println!("   🤖 正在生成AI项目摘要...");
+
+        // 使用rig框架的extract功能生成项目摘要
+        let system_msg = "你是一个专业的项目分析师，专门生成项目的综合评估摘要。请基于项目结构、组件分析和质量评估生成全面的项目摘要。";
+        
+        let ai_summary = self
+            .llm_client
+            .extract::<AIProjectSummary>(system_msg, &prompt)
+            .await
+            .map_err(|e| anyhow::anyhow!("项目摘要生成失败: {}", e))?;
+
+        // 格式化AI生成的摘要
+        let formatted_summary = format!(
+            r#"项目预处理摘要:
+
+📊 整体评估:
+{}
+
+🏗️ 架构成熟度: {}/10
+💎 代码质量: {}/10
+
+🎯 技术栈分析:
+{}
+
+💪 项目优势:
+{}
+
+⚠️ 主要挑战:
+{}
+
+🚀 优先改进建议:
+{}
+
+📈 发展建议:
+{}"#,
+            ai_summary.overall_assessment,
+            ai_summary.architecture_maturity_score,
+            ai_summary.overall_code_quality_score,
+            ai_summary.technology_stack_analysis,
+            ai_summary.project_strengths.iter()
+                .map(|s| format!("- {}", s))
+                .collect::<Vec<_>>()
+                .join("\n"),
+            ai_summary.main_challenges.iter()
+                .map(|c| format!("- {}", c))
+                .collect::<Vec<_>>()
+                .join("\n"),
+            ai_summary.priority_improvements.iter()
+                .map(|i| format!("- {}", i))
+                .collect::<Vec<_>>()
+                .join("\n"),
+            ai_summary.development_recommendations.iter()
+                .map(|r| format!("- {}", r))
+                .collect::<Vec<_>>()
+                .join("\n")
+        );
+
+        // 缓存结果
+        self.cache_manager
+            .set("project_summary", &prompt, &formatted_summary)
+            .await?;
+
+        Ok(formatted_summary)
+    }
+
+    fn build_project_summary_prompt(&self, project_structure: &ProjectStructure, core_components: &[CoreComponent], component_analyses: &[ComponentAnalysis]) -> String {
+        // 计算平均质量分数
         let avg_quality = if !component_analyses.is_empty() {
             component_analyses
                 .iter()
@@ -799,61 +1000,96 @@ impl PreprocessingAgent {
             0.0
         };
 
-        let summary = format!(
-            r#"项目预处理摘要:
+        // 收集技术栈信息
+        let tech_stack: Vec<String> = project_structure.file_types
+            .iter()
+            .filter(|(_, count)| **count > 5)
+            .map(|(ext, count)| format!(".{} ({} files)", ext, count))
+            .collect();
 
-📊 项目规模:
+        // 收集组件类型分布
+        let mut component_types = std::collections::HashMap::new();
+        for component in core_components {
+            *component_types
+                .entry(component.component_type.clone())
+                .or_insert(0) += 1;
+        }
+
+        // 收集质量问题
+        let total_issues: usize = component_analyses
+            .iter()
+            .map(|a| a.quality_assessment.issues.len())
+            .sum();
+
+        // 收集改进建议
+        let all_recommendations: Vec<String> = component_analyses
+            .iter()
+            .flat_map(|a| a.recommendations.iter().cloned())
+            .collect();
+
+        format!(
+            r#"请基于以下项目分析数据生成综合项目摘要：
+
+## 项目规模统计
 - 总文件数: {}
 - 总目录数: {}
 - 核心组件数: {}
+- 平均代码质量: {:.2}/1.0
 
-🏗️ 架构特征:
-- 平均代码质量: {:.1}/10
-- 主要文件类型: {}
-
-🎯 核心组件:
+## 技术栈分布
 {}
 
-💡 关键洞察:
-- 项目结构{}
-- 代码组织{}
-- 质量水平{}"#,
+## 组件类型分布
+{}
+
+## 质量评估概况
+- 总质量问题数: {}
+- 质量问题类型: {}
+
+## 组件分析摘要
+{}
+
+## 改进建议汇总
+{}
+
+请生成一个全面的项目评估摘要，包括：
+1. 项目整体评估和特点
+2. 技术栈分析和适用性
+3. 架构成熟度评分（1-10）
+4. 代码质量总体评分（1-10）
+5. 项目优势和亮点
+6. 主要挑战和风险点
+7. 优先改进建议
+8. 项目发展建议
+
+评估要客观、具体，并提供可操作的建议。"#,
             project_structure.total_files,
             project_structure.total_directories,
             core_components.len(),
-            avg_quality * 10.0,
-            project_structure
-                .file_types
-                .iter()
-                .map(|(ext, count)| format!(".{} ({})", ext, count))
-                .take(3)
+            avg_quality,
+            if tech_stack.is_empty() { "未识别到主要技术栈".to_string() } else { tech_stack.join(", ") },
+            component_types.iter()
+                .map(|(t, c)| format!("{}: {} 个", t, c))
                 .collect::<Vec<_>>()
                 .join(", "),
-            core_components
-                .iter()
+            total_issues,
+            component_analyses.iter()
+                .flat_map(|a| a.quality_assessment.issues.iter())
+                .map(|i| i.category.clone())
+                .collect::<std::collections::HashSet<_>>()
+                .into_iter()
+                .collect::<Vec<_>>()
+                .join(", "),
+            core_components.iter()
                 .take(5)
-                .map(|c| format!("- {} ({})", c.name, c.component_type))
+                .map(|c| format!("- {} ({}): 重要性 {:.2}", c.name, c.component_type, c.importance_score))
                 .collect::<Vec<_>>()
                 .join("\n"),
-            if project_structure.total_files > 50 {
-                "复杂"
-            } else {
-                "简洁"
-            },
-            if core_components.len() > 10 {
-                "模块化程度高"
-            } else {
-                "相对集中"
-            },
-            if avg_quality > 0.7 {
-                "较高"
-            } else if avg_quality > 0.5 {
-                "中等"
-            } else {
-                "需要改进"
-            }
-        );
-
-        Ok(summary)
+            all_recommendations.iter()
+                .take(10)
+                .map(|r| format!("- {}", r))
+                .collect::<Vec<_>>()
+                .join("\n")
+        )
     }
 }

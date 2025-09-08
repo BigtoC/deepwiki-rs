@@ -3,9 +3,9 @@ use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
 use std::time::Instant;
 
-use crate::agents::{PreprocessingAgent, ResearchAgent, DocumentationAgent};
-use crate::agents::research_agent::ResearchResult;
 use crate::agents::documentation_agent::DocumentationResult;
+use crate::agents::research_agent::ResearchResult;
+use crate::agents::{DocumentationAgent, PreprocessingAgent, ResearchAgent};
 use crate::config::Config;
 
 /// 工作流引擎
@@ -38,10 +38,10 @@ pub struct StageTimings {
 impl WorkflowEngine {
     pub async fn new(config: Config) -> Result<Self> {
         println!("🚀 初始化工作流引擎...");
-        
+
         // 创建预处理Agent
         let preprocessing_agent = PreprocessingAgent::new(config.clone()).await?;
-        
+
         Ok(Self {
             config,
             preprocessing_agent,
@@ -57,8 +57,8 @@ impl WorkflowEngine {
             documentation: 0.0,
         };
 
-        println!("🔄 开始执行DeepWiki工作流...");
-        
+        println!("🔄 启动Litho分析引擎...");
+
         // 清理输出目录，确保只有最新的文档
         self.prepare_output_directories().await?;
 
@@ -69,15 +69,23 @@ impl WorkflowEngine {
         stage_times.preprocessing = preprocessing_start.elapsed().as_secs_f64();
 
         println!("✅ 预处理完成:");
-        println!("   - 处理文件: {}", preprocessing_result.project_structure.total_files);
-        println!("   - 核心组件: {}", preprocessing_result.core_components.len());
+        println!(
+            "   - 处理文件: {}",
+            preprocessing_result.project_structure.total_files
+        );
+        println!(
+            "   - 核心组件: {}",
+            preprocessing_result.core_components.len()
+        );
         println!("   - 耗时: {:.2}秒", stage_times.preprocessing);
 
         // 阶段2: 调研文档生成
         println!("\n📚 阶段2: 调研文档生成");
         let research_start = Instant::now();
         let research_agent = ResearchAgent::new(self.config.clone()).await?;
-        let research_result = research_agent.generate_research(&preprocessing_result).await?;
+        let research_result = research_agent
+            .generate_research(&preprocessing_result)
+            .await?;
         stage_times.research = research_start.elapsed().as_secs_f64();
 
         println!("✅ 调研文档生成完成:");
@@ -98,7 +106,12 @@ impl WorkflowEngine {
         println!("   - 耗时: {:.2}秒", stage_times.documentation);
 
         // 保存结果到输出目录
-        self.save_results(&preprocessing_result, &research_result, &documentation_result).await?;
+        self.save_results(
+            &preprocessing_result,
+            &research_result,
+            &documentation_result,
+        )
+        .await?;
 
         let total_time = start_time.elapsed().as_secs_f64();
 
@@ -110,7 +123,11 @@ impl WorkflowEngine {
             total_time,
             stage_times,
             success: true,
-            summary: self.generate_workflow_summary(&preprocessing_result, &research_result, &documentation_result),
+            summary: self.generate_workflow_summary(
+                &preprocessing_result,
+                &research_result,
+                &documentation_result,
+            ),
         };
 
         println!("\n🎉 工作流执行完成!");
@@ -125,7 +142,7 @@ impl WorkflowEngine {
 
         // 确保输出目录存在
         fs::create_dir_all(&self.config.output_path).await?;
-        
+
         // 确保内部工作目录存在
         fs::create_dir_all(&self.config.internal_path).await?;
         fs::create_dir_all(&self.config.get_process_data_path()).await?;
@@ -142,10 +159,11 @@ impl WorkflowEngine {
                             // 只删除可能是之前生成的文档文件
                             if let Some(filename) = path.file_name() {
                                 let filename_str = filename.to_string_lossy();
-                                if filename_str.starts_with("README") || 
-                                   filename_str.contains("architecture") ||
-                                   filename_str.contains("component") ||
-                                   filename_str.contains("api") {
+                                if filename_str.starts_with("README")
+                                    || filename_str.contains("architecture")
+                                    || filename_str.contains("component")
+                                    || filename_str.contains("api")
+                                {
                                     let _ = fs::remove_file(&path).await; // 忽略删除错误
                                 }
                             }
@@ -196,7 +214,11 @@ impl WorkflowEngine {
                 "document_format": self.config.document_format
             }
         });
-        fs::write(workflow_info_path, serde_json::to_string_pretty(&workflow_info)?).await?;
+        fs::write(
+            workflow_info_path,
+            serde_json::to_string_pretty(&workflow_info)?,
+        )
+        .await?;
 
         // 保存最终文档到输出目录（用户可见）
         for document in &documentation_result.documents {
@@ -206,7 +228,11 @@ impl WorkflowEngine {
 
         // 保存工作流摘要到输出目录下的`litho_work_summary.md`
         let summary_path = self.config.output_path.join("litho_work_summary.md");
-        let summary_content = self.generate_markdown_summary(preprocessing_result, research_result, documentation_result);
+        let summary_content = self.generate_markdown_summary(
+            preprocessing_result,
+            research_result,
+            documentation_result,
+        );
         fs::write(summary_path, summary_content).await?;
 
         println!("📁 过程数据已保存到: {}", process_data_path.display());
@@ -237,7 +263,7 @@ impl WorkflowEngine {
         documentation_result: &DocumentationResult,
     ) -> String {
         format!(
-            r#"# DeepWiki 工作流执行摘要
+            r#"# Litho 引擎执行摘要
 
 ## 项目信息
 - **项目路径**: {}
@@ -280,19 +306,30 @@ impl WorkflowEngine {
             preprocessing_result.project_structure.total_directories,
             preprocessing_result.core_components.len(),
             preprocessing_result.processing_time,
-            preprocessing_result.core_components.iter()
-                .map(|c| format!("- **{}** ({}): {}", c.name, c.component_type, c.file_path.display()))
+            preprocessing_result
+                .core_components
+                .iter()
+                .map(|c| format!(
+                    "- **{}** ({}): {}",
+                    c.name,
+                    c.component_type,
+                    c.file_path.display()
+                ))
                 .collect::<Vec<_>>()
                 .join("\n"),
             research_result.reports.len(),
             0.0, // research time placeholder
-            research_result.reports.iter()
+            research_result
+                .reports
+                .iter()
                 .map(|r| format!("- **{}**: {}", r.title, r.summary))
                 .collect::<Vec<_>>()
                 .join("\n"),
             documentation_result.documents.len(),
             0.0, // documentation time placeholder
-            documentation_result.documents.iter()
+            documentation_result
+                .documents
+                .iter()
                 .map(|d| format!("- **{}** ({})", d.title, d.filename))
                 .collect::<Vec<_>>()
                 .join("\n"),

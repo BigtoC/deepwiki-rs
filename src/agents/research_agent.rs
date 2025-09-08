@@ -6,7 +6,7 @@ use std::time::Instant;
 use crate::agents::preprocessing_agent::PreprocessingResult;
 use crate::cache::CacheManager;
 use crate::config::Config;
-use crate::extractors::{ResearchExtractor, ResearchReport};
+use crate::extractors::{ResearchExtractor, ResearchReport, AIResearchEnhancement, AIComprehensiveInsights, AIRecommendations};
 
 /// 调研Agent
 pub struct ResearchAgent {
@@ -115,19 +115,16 @@ impl ResearchAgent {
 
         println!("   🤖 正在进行AI调研分析: {}", report.title);
 
-        // 执行AI分析
-        let system_msg =
-            "你是一个专业的软件架构研究员，专门深入分析软件项目的架构、设计和质量。".to_string();
-        let prompt_clone = prompt.clone();
-        let ai_response = self
+        // 执行AI分析，使用extract函数自动提取结构化数据
+        let system_msg = "你是一个专业的软件架构研究员，专门深入分析软件项目的架构、设计和质量。请按照指定的JSON格式返回分析结果。".to_string();
+        let ai_enhancement = self
             .llm_client
-            .prompt(&system_msg, &prompt_clone)
+            .extract::<AIResearchEnhancement>(&system_msg, &prompt)
             .await
             .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
 
-        // 解析AI响应并增强报告
-        let mut enhanced_report = report.clone();
-        self.parse_ai_research_response(&ai_response, &mut enhanced_report);
+        // 使用AI分析结果增强报告
+        let enhanced_report = self.merge_ai_enhancement_results(report, &ai_enhancement);
 
         // 缓存结果 - 直接使用prompt作为key
         self.cache_manager
@@ -162,15 +159,17 @@ impl ResearchAgent {
 **现有建议**:
 {}
 
-## 请提供以下深度分析：
+## 分析要求
 
-1. **深度洞察**: 基于项目特征，提供3-5个深层次的技术洞察
-2. **架构评估**: 评估当前架构的优势和潜在问题
-3. **技术债务**: 识别可能存在的技术债务和风险点
-4. **改进路径**: 提供具体的改进建议和实施路径
-5. **最佳实践**: 推荐相关的最佳实践和设计模式
+请基于以上信息，提供以下结构化的深度分析：
 
-请用结构化的格式回答，每个部分用明确的标题分隔。
+1. **深度洞察** (deep_insights): 基于项目特征，提供3-5个深层次的技术洞察，每个洞察应该具体且有价值
+2. **架构评估** (architecture_assessment): 评估当前架构的优势和潜在问题，提供详细的分析内容
+3. **技术债务** (technical_debt): 识别可能存在的技术债务和风险点，列出具体的问题
+4. **改进路径** (improvement_paths): 提供具体的改进建议和实施路径，包含可操作的步骤
+5. **最佳实践** (best_practices): 推荐相关的最佳实践和设计模式，适合当前项目
+
+请确保分析内容专业、具体且有实际指导价值。
 "#,
             preprocessing_result.project_structure.total_files,
             preprocessing_result.core_components.len(),
@@ -190,89 +189,40 @@ impl ResearchAgent {
         )
     }
 
-    fn parse_ai_research_response(&self, response: &str, report: &mut ResearchReport) {
-        // 解析深度洞察
-        if let Some(insights_start) = response.find("深度洞察") {
-            if let Some(insights_end) = response[insights_start..].find("\n\n") {
-                let insights_text = &response[insights_start..insights_start + insights_end];
-                let new_insights: Vec<String> = insights_text
-                    .lines()
-                    .skip(1)
-                    .filter_map(|line| {
-                        let line = line.trim();
-                        if line.starts_with('-')
-                            || line.starts_with('•')
-                            || line.chars().next().map_or(false, |c| c.is_numeric())
-                        {
-                            Some(
-                                line.trim_start_matches('-')
-                                    .trim_start_matches('•')
-                                    .trim_start_matches(char::is_numeric)
-                                    .trim_start_matches('.')
-                                    .trim()
-                                    .to_string(),
-                            )
-                        } else {
-                            None
-                        }
-                    })
-                    .collect();
+    fn merge_ai_enhancement_results(
+        &self,
+        report: &ResearchReport,
+        ai_enhancement: &AIResearchEnhancement,
+    ) -> ResearchReport {
+        let mut enhanced_report = report.clone();
 
-                if !new_insights.is_empty() {
-                    report.insights.extend(new_insights);
-                }
+        // 合并深度洞察
+        enhanced_report.insights.extend(ai_enhancement.deep_insights.clone());
+
+        // 合并改进建议
+        enhanced_report.recommendations.extend(ai_enhancement.improvement_paths.clone());
+        enhanced_report.recommendations.extend(ai_enhancement.best_practices.clone());
+
+        // 更新内容，添加AI增强分析
+        let mut ai_content = String::new();
+        
+        if !ai_enhancement.architecture_assessment.is_empty() {
+            ai_content.push_str(&format!("## 架构评估\n{}\n\n", ai_enhancement.architecture_assessment));
+        }
+        
+        if !ai_enhancement.technical_debt.is_empty() {
+            ai_content.push_str("## 技术债务分析\n");
+            for debt in &ai_enhancement.technical_debt {
+                ai_content.push_str(&format!("- {}\n", debt));
             }
+            ai_content.push('\n');
         }
 
-        // 解析改进建议
-        if let Some(improvements_start) = response.find("改进路径") {
-            if let Some(improvements_end) = response[improvements_start..].find("\n\n") {
-                let improvements_text =
-                    &response[improvements_start..improvements_start + improvements_end];
-                let new_recommendations: Vec<String> = improvements_text
-                    .lines()
-                    .skip(1)
-                    .filter_map(|line| {
-                        let line = line.trim();
-                        if line.starts_with('-')
-                            || line.starts_with('•')
-                            || line.chars().next().map_or(false, |c| c.is_numeric())
-                        {
-                            Some(
-                                line.trim_start_matches('-')
-                                    .trim_start_matches('•')
-                                    .trim_start_matches(char::is_numeric)
-                                    .trim_start_matches('.')
-                                    .trim()
-                                    .to_string(),
-                            )
-                        } else {
-                            None
-                        }
-                    })
-                    .collect();
-
-                if !new_recommendations.is_empty() {
-                    report.recommendations.extend(new_recommendations);
-                }
-            }
+        if !ai_content.is_empty() {
+            enhanced_report.content = format!("{}\n\n## AI增强分析\n{}", enhanced_report.content, ai_content);
         }
 
-        // 更新内容
-        if let Some(content_start) = response.find("架构评估") {
-            if let Some(content_end) = response[content_start..].find("\n\n") {
-                let content = response[content_start..content_start + content_end]
-                    .lines()
-                    .skip(1)
-                    .collect::<Vec<_>>()
-                    .join("\n")
-                    .trim()
-                    .to_string();
-                if !content.is_empty() {
-                    report.content = format!("{}\n\n## AI增强分析\n{}", report.content, content);
-                }
-            }
-        }
+        enhanced_report
     }
 
     async fn generate_comprehensive_insights(
@@ -286,6 +236,114 @@ impl ResearchAgent {
         for report in reports {
             insights.extend(report.insights.clone());
         }
+
+        // 使用AI生成综合洞察
+        let prompt = self.build_comprehensive_insights_prompt(reports, preprocessing_result);
+        let system_msg = "你是一个专业的软件架构分析师，专门生成项目的综合洞察。请按照指定的JSON格式返回分析结果。".to_string();
+        
+        match self
+            .llm_client
+            .extract::<AIComprehensiveInsights>(&system_msg, &prompt)
+            .await
+        {
+            Ok(ai_insights) => {
+                insights.extend(ai_insights.cross_report_insights);
+                insights.extend(ai_insights.quality_insights);
+                insights.extend(ai_insights.complexity_insights);
+                insights.extend(ai_insights.tech_stack_insights);
+            }
+            Err(e) => {
+                println!("⚠️ AI综合洞察生成失败，使用基础分析: {}", e);
+                // 回退到基础分析
+                insights.extend(self.generate_basic_insights(reports, preprocessing_result));
+            }
+        }
+
+        Ok(insights)
+    }
+
+    fn build_comprehensive_insights_prompt(
+        &self,
+        reports: &[ResearchReport],
+        preprocessing_result: &PreprocessingResult,
+    ) -> String {
+        let avg_quality = if !preprocessing_result.component_analyses.is_empty() {
+            preprocessing_result
+                .component_analyses
+                .iter()
+                .map(|a| a.quality_assessment.overall_score)
+                .sum::<f64>()
+                / preprocessing_result.component_analyses.len() as f64
+        } else {
+            0.0
+        };
+
+        let avg_complexity = if !preprocessing_result.component_analyses.is_empty() {
+            preprocessing_result
+                .component_analyses
+                .iter()
+                .map(|a| a.complexity_metrics.cyclomatic_complexity)
+                .sum::<f64>()
+                / preprocessing_result.component_analyses.len() as f64
+        } else {
+            0.0
+        };
+
+        format!(
+            r#"
+请基于以下项目调研数据，生成综合性的技术洞察：
+
+## 项目概况
+- 总文件数: {}
+- 核心组件数: {}
+- 调研报告数: {}
+- 平均代码质量: {:.1}/10
+- 平均圈复杂度: {:.1}
+
+## 调研报告摘要
+{}
+
+## 技术栈分析
+主要技术: {}
+
+## 分析要求
+
+请提供以下四个维度的综合洞察：
+
+1. **跨报告综合洞察** (cross_report_insights): 基于所有调研报告的综合性发现，识别项目的整体特征和模式
+2. **质量评估洞察** (quality_insights): 基于代码质量分析的深度洞察，包括质量趋势和改进空间
+3. **架构复杂度洞察** (complexity_insights): 基于架构复杂度的分析，包括复杂度分布和优化建议
+4. **技术栈洞察** (tech_stack_insights): 基于技术栈的分析，包括技术选型评估和发展建议
+
+每个洞察应该具体、有价值且具有指导意义。
+"#,
+            preprocessing_result.project_structure.total_files,
+            preprocessing_result.core_components.len(),
+            reports.len(),
+            avg_quality * 10.0,
+            avg_complexity,
+            reports
+                .iter()
+                .map(|r| format!("- {}: {}", r.title, r.summary))
+                .collect::<Vec<_>>()
+                .join("\n"),
+            preprocessing_result
+                .project_structure
+                .file_types
+                .keys()
+                .take(5)
+                .cloned()
+                .collect::<Vec<_>>()
+                .join(", ")
+        )
+    }
+
+    fn generate_basic_insights(
+        &self,
+        reports: &[ResearchReport],
+        preprocessing_result: &PreprocessingResult,
+    ) -> Vec<String> {
+        let mut insights = Vec::new();
 
         // 添加跨报告的综合洞察
         insights.push(format!("项目包含 {} 个调研维度的深度分析", reports.len()));
@@ -338,7 +396,7 @@ impl ResearchAgent {
             }
         ));
 
-        Ok(insights)
+        insights
     }
 
     async fn generate_recommendations(
@@ -352,6 +410,116 @@ impl ResearchAgent {
         for report in reports {
             recommendations.extend(report.recommendations.clone());
         }
+
+        // 使用AI生成综合建议
+        let prompt = self.build_recommendations_prompt(reports, preprocessing_result);
+        let system_msg = "你是一个专业的软件架构顾问，专门为项目提供改进建议。请按照指定的JSON格式返回建议。".to_string();
+        
+        match self
+            .llm_client
+            .extract::<AIRecommendations>(&system_msg, &prompt)
+            .await
+        {
+            Ok(ai_recommendations) => {
+                recommendations.extend(ai_recommendations.architecture_recommendations);
+                recommendations.extend(ai_recommendations.quality_recommendations);
+                recommendations.extend(ai_recommendations.performance_recommendations);
+                recommendations.extend(ai_recommendations.maintainability_recommendations);
+            }
+            Err(e) => {
+                println!("⚠️ AI建议生成失败，使用基础建议: {}", e);
+                // 回退到基础建议
+                recommendations.extend(self.generate_basic_recommendations(reports, preprocessing_result));
+            }
+        }
+
+        // 去重
+        recommendations.sort();
+        recommendations.dedup();
+
+        Ok(recommendations)
+    }
+
+    fn build_recommendations_prompt(
+        &self,
+        reports: &[ResearchReport],
+        preprocessing_result: &PreprocessingResult,
+    ) -> String {
+        let low_quality_components = preprocessing_result
+            .component_analyses
+            .iter()
+            .filter(|a| a.quality_assessment.overall_score < 0.5)
+            .count();
+
+        let high_complexity_components = preprocessing_result
+            .component_analyses
+            .iter()
+            .filter(|a| a.complexity_metrics.cyclomatic_complexity > 10.0)
+            .count();
+
+        format!(
+            r#"
+请基于以下项目分析数据，生成具体的改进建议：
+
+## 项目概况
+- 总文件数: {}
+- 核心组件数: {}
+- 低质量组件数: {}
+- 高复杂度组件数: {}
+
+## 调研报告建议汇总
+{}
+
+## 项目特征
+- 主要技术栈: {}
+- 项目规模: {}
+
+## 建议要求
+
+请提供以下四个维度的具体改进建议：
+
+1. **架构改进建议** (architecture_recommendations): 针对架构设计的具体改进建议，包括模块化、解耦等
+2. **代码质量改进建议** (quality_recommendations): 针对代码质量的具体改进建议，包括重构、测试等
+3. **性能优化建议** (performance_recommendations): 针对性能优化的具体建议，包括算法、资源使用等
+4. **维护性改进建议** (maintainability_recommendations): 针对代码维护性的改进建议，包括文档、规范等
+
+每个建议应该具体、可操作且有明确的实施路径。
+"#,
+            preprocessing_result.project_structure.total_files,
+            preprocessing_result.core_components.len(),
+            low_quality_components,
+            high_complexity_components,
+            reports
+                .iter()
+                .flat_map(|r| &r.recommendations)
+                .take(10)
+                .map(|r| format!("- {}", r))
+                .collect::<Vec<_>>()
+                .join("\n"),
+            preprocessing_result
+                .project_structure
+                .file_types
+                .keys()
+                .take(3)
+                .cloned()
+                .collect::<Vec<_>>()
+                .join(", "),
+            if preprocessing_result.project_structure.total_files > 100 {
+                "大型项目"
+            } else if preprocessing_result.project_structure.total_files > 50 {
+                "中型项目"
+            } else {
+                "小型项目"
+            }
+        )
+    }
+
+    fn generate_basic_recommendations(
+        &self,
+        _reports: &[ResearchReport],
+        preprocessing_result: &PreprocessingResult,
+    ) -> Vec<String> {
+        let mut recommendations = Vec::new();
 
         // 添加基于整体分析的建议
         if preprocessing_result.core_components.len() > 20 {
@@ -376,11 +544,7 @@ impl ResearchAgent {
             ));
         }
 
-        // 去重
-        recommendations.sort();
-        recommendations.dedup();
-
-        Ok(recommendations)
+        recommendations
     }
 
     fn generate_research_summary(

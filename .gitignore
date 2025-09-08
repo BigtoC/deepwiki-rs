@@ -29,5 +29,5 @@ target
 
 **/.DS_Store
 
-# Litho Generated Cached
+# Litho Generated Cache
 .litho/cache/

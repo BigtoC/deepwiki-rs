@@ -14,10 +14,14 @@ pub struct ComponentExtractor {
 /// 组件分析结果
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ComponentAnalysis {
+    /// 组件基本信息
     pub component: CoreComponent,
     pub detailed_description: String,
+    /// 职责
     pub responsibilities: Vec<String>,
+    /// 包含的接口
     pub interfaces: Vec<InterfaceInfo>,
+    /// 依赖信息
     pub dependencies: Vec<DependencyInfo>,
     pub complexity_metrics: ComponentComplexity,
     pub quality_assessment: QualityAssessment,

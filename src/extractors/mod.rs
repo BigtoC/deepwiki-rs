@@ -3,9 +3,15 @@ pub mod component_extractor;
 pub mod research_extractor;
 pub mod documentation_extractor;
 pub mod language_processors;
+pub mod ai_analysis_types;
+pub mod ai_research_types;
+pub mod ai_documentation_types;
 
 pub use structure_extractor::{StructureExtractor, ProjectStructure, CoreComponent};
 pub use component_extractor::{ComponentExtractor, ComponentAnalysis};
 pub use research_extractor::{ResearchExtractor, ResearchReport};
 pub use documentation_extractor::{DocumentationExtractor, C4Documentation};
 pub use language_processors::LanguageProcessorManager;
+pub use ai_analysis_types::*;
+pub use ai_research_types::*;
+pub use ai_documentation_types::*;
