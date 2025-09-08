@@ -290,6 +290,11 @@ impl AgentToolFileExplorer {
             }
         }
 
+        // 检查测试文件（如果不包含测试文件）
+        if !self.config.include_tests && crate::utils::is_test_file(path) {
+            return true;
+        }
+
         // 检查隐藏文件
         if !self.config.include_hidden && file_name.starts_with('.') {
             return true;

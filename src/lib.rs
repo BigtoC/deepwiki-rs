@@ -8,6 +8,9 @@ pub mod workflow;
 pub mod utils;
 pub mod llm;
 
+#[cfg(test)]
+mod test_config_fix;
+
 // 重新导出主要的公共接口
 pub use config::Config;
 pub use workflow::{WorkflowEngine, WorkflowResult};

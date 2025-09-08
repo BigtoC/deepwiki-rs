@@ -130,11 +130,6 @@ impl Config {
     pub fn get_process_data_path(&self) -> PathBuf {
         self.get_internal_path("process")
     }
-
-    /// 获取临时文件存储路径
-    pub fn get_temp_path(&self) -> PathBuf {
-        self.get_internal_path("temp")
-    }
 }
 
 impl Default for Config {

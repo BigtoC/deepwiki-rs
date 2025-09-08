@@ -7,6 +7,7 @@ use std::fs::Metadata;
 use std::path::PathBuf;
 
 use crate::cache::CacheManager;
+use crate::config::Config;
 use crate::extractors::language_processors::LanguageProcessorManager;
 use crate::extractors::component_types::{ComponentType, ComponentTypeMapper};
 use crate::extractors::ai_component_type_analyzer::ComponentTypeEnhancer;
@@ -17,6 +18,7 @@ pub struct StructureExtractor {
     cache_manager: CacheManager,
     language_processor: LanguageProcessorManager,
     component_type_enhancer: ComponentTypeEnhancer,
+    config: Config,
 }
 
 /// 项目结构信息
@@ -82,7 +84,7 @@ pub struct RelationshipInfo {
 }
 
 impl StructureExtractor {
-    pub fn new(cache_manager: CacheManager, llm_client: Option<LLMClient>) -> Self {
+    pub fn new(cache_manager: CacheManager, llm_client: Option<LLMClient>, config: Config) -> Self {
         let ai_analyzer = llm_client.map(|client| 
             crate::extractors::ai_component_type_analyzer::AIComponentTypeAnalyzer::new(client, cache_manager.clone())
         );
@@ -91,6 +93,7 @@ impl StructureExtractor {
             cache_manager,
             language_processor: LanguageProcessorManager::new(),
             component_type_enhancer: ComponentTypeEnhancer::new(ai_analyzer),
+            config,
         }
     }
 
@@ -167,21 +170,24 @@ impl StructureExtractor {
                 let file_type = entry.file_type().await?;
 
                 if file_type.is_file() {
-                    if let Ok(metadata) = std::fs::metadata(&path) {
-                        let file_info = self.create_file_info(&path, root_path, &metadata)?;
+                    // 检查是否应该忽略此文件
+                    if !self.should_ignore_file(&path) {
+                        if let Ok(metadata) = std::fs::metadata(&path) {
+                            let file_info = self.create_file_info(&path, root_path, &metadata)?;
 
-                        // 更新统计信息
-                        if let Some(ext) = &file_info.extension {
-                            *file_types.entry(ext.clone()).or_insert(0) += 1;
+                            // 更新统计信息
+                            if let Some(ext) = &file_info.extension {
+                                *file_types.entry(ext.clone()).or_insert(0) += 1;
+                            }
+
+                            let size_category = self.categorize_file_size(file_info.size);
+                            *size_distribution.entry(size_category).or_insert(0) += 1;
+
+                            dir_file_count += 1;
+                            dir_total_size += file_info.size;
+
+                            files.push(file_info);
                         }
-
-                        let size_category = self.categorize_file_size(file_info.size);
-                        *size_distribution.entry(size_category).or_insert(0) += 1;
-
-                        dir_file_count += 1;
-                        dir_total_size += file_info.size;
-
-                        files.push(file_info);
                     }
                 } else if file_type.is_dir() {
                     let dir_name = path
@@ -279,28 +285,90 @@ impl StructureExtractor {
     }
 
     fn should_ignore_directory(&self, dir_name: &str) -> bool {
-        let ignored_dirs = [
-            // 版本控制
-            ".git", ".svn", ".hg",
-            // 依赖目录
-            "node_modules", "vendor", "deps",
-            // 构建输出
-            "target", "build", "dist", "out", "bin", "obj",
-            // 缓存目录
-            "__pycache__", ".pytest_cache", ".cache", ".tmp", "tmp",
-            // IDE 配置
-            ".idea", ".vscode", ".vs", ".eclipse", ".settings",
-            // 前端工具
-            ".next", ".nuxt", ".svelte-kit", ".vite", ".parcel-cache",
-            // Android/Kotlin
-            ".gradle", "gradle", ".android", "build",
-            // iOS
-            "Pods", "DerivedData",
-            // 其他
-            "coverage", ".coverage", "logs", "log",
-        ];
+        let dir_name_lower = dir_name.to_lowercase();
+        
+        // 检查Config中配置的排除目录
+        for excluded_dir in &self.config.excluded_dirs {
+            if dir_name_lower == excluded_dir.to_lowercase() {
+                return true;
+            }
+        }
+        
+        // 检查是否为测试目录（如果不包含测试文件）
+        if !self.config.include_tests && crate::utils::is_test_directory(dir_name) {
+            return true;
+        }
+        
+        // 检查隐藏目录
+        if !self.config.include_hidden && dir_name.starts_with('.') {
+            return true;
+        }
+        
+        false
+    }
 
-        ignored_dirs.contains(&dir_name) || dir_name.starts_with('.')
+    fn should_ignore_file(&self, path: &PathBuf) -> bool {
+        let file_name = path.file_name()
+            .and_then(|n| n.to_str())
+            .unwrap_or("")
+            .to_lowercase();
+        
+        let _path_str = path.to_string_lossy().to_lowercase();
+
+        // 检查排除的文件
+        for excluded_file in &self.config.excluded_files {
+            if excluded_file.contains('*') {
+                // 简单的通配符匹配
+                let pattern = excluded_file.replace('*', "");
+                if file_name.contains(&pattern.to_lowercase()) {
+                    return true;
+                }
+            } else if file_name == excluded_file.to_lowercase() {
+                return true;
+            }
+        }
+
+        // 检查排除的扩展名
+        if let Some(extension) = path.extension().and_then(|e| e.to_str()) {
+            if self.config.excluded_extensions.contains(&extension.to_lowercase()) {
+                return true;
+            }
+        }
+
+        // 检查包含的扩展名（如果指定了）
+        if !self.config.included_extensions.is_empty() {
+            if let Some(extension) = path.extension().and_then(|e| e.to_str()) {
+                if !self.config.included_extensions.contains(&extension.to_lowercase()) {
+                    return true;
+                }
+            } else {
+                return true; // 没有扩展名且指定了包含列表
+            }
+        }
+
+        // 检查测试文件（如果不包含测试文件）
+        if !self.config.include_tests && crate::utils::is_test_file(path) {
+            return true;
+        }
+
+        // 检查隐藏文件
+        if !self.config.include_hidden && file_name.starts_with('.') {
+            return true;
+        }
+
+        // 检查文件大小
+        if let Ok(metadata) = std::fs::metadata(path) {
+            if metadata.len() > self.config.max_file_size {
+                return true;
+            }
+        }
+
+        // 检查二进制文件
+        if crate::utils::is_binary_file_path(path) {
+            return true;
+        }
+
+        false
     }
 
     fn calculate_importance_scores(

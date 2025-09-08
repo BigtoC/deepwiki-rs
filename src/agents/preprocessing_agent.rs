@@ -55,7 +55,7 @@ impl PreprocessingAgent {
         cache_manager.init().await?;
 
         // 创建提取器
-        let structure_extractor = StructureExtractor::new(cache_manager.clone(), Some(llm_client.clone()));
+        let structure_extractor = StructureExtractor::new(cache_manager.clone(), Some(llm_client.clone()), config.clone());
         let component_extractor = ComponentExtractor::new(cache_manager.clone());
 
         Ok(Self {

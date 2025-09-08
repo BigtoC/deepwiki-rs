@@ -78,7 +78,7 @@ impl CachePerformanceMonitor {
             Ordering::Relaxed,
         );
         
-        // 估算节省的成本（基于GPT-4的定价）
+        // 估算节省的成本（基于GPT-5 mini的定价）
         let estimated_cost_saved = self.estimate_cost_saved(inference_time_saved);
         self.metrics.total_cost_saved.fetch_add(
             (estimated_cost_saved * 1000.0) as u64, // 存储为毫美元
@@ -169,14 +169,14 @@ impl CachePerformanceMonitor {
         }
     }
 
-    /// 估算节省的成本（基于GPT-4定价）
+    /// 估算节省的成本（基于GPT-5 mini定价）
     fn estimate_cost_saved(&self, inference_time: Duration) -> f64 {
         // 假设平均每次推理需要1000个token输入，500个token输出
-        // GPT-4 定价：输入 $0.03/1K tokens，输出 $0.06/1K tokens
+        // GPT-5 mini 定价：输入 $0.025/1K tokens，输出 $0.2/1K tokens
         let input_tokens = 1000.0;
         let output_tokens = 500.0;
-        let input_cost_per_1k = 0.03;
-        let output_cost_per_1k = 0.06;
+        let input_cost_per_1k = 0.025;
+        let output_cost_per_1k = 0.2;
         
         let total_cost = (input_tokens / 1000.0) * input_cost_per_1k + 
                         (output_tokens / 1000.0) * output_cost_per_1k;

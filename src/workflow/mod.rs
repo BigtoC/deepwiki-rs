@@ -195,7 +195,6 @@ impl WorkflowEngine {
         // 确保内部工作目录存在
         fs::create_dir_all(&self.config.internal_path).await?;
         fs::create_dir_all(&self.config.get_process_data_path()).await?;
-        fs::create_dir_all(&self.config.get_temp_path()).await?;
 
         // 清理输出目录中的旧文档文件（保留用户可能手动添加的文件）
         if self.config.output_path.exists() {
