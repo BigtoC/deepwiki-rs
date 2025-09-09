@@ -104,7 +104,8 @@ impl WorkflowEngine {
                 .generate_c4_documentation(&preprocessing_result, &research_result)
                 .await?;
             
-            let doc_count = 2 + c4_documentation_result.core_components.len(); // Overview + Architecture + Components
+            let doc_count = 2 + c4_documentation_result.core_components.len() + 
+                c4_documentation_result.deep_dive_result.as_ref().map(|dd| dd.documents.len()).unwrap_or(0); // Overview + Architecture + Components + DeepDive
             
             // 保存C4文档结果
             self.save_c4_results(
@@ -259,7 +260,8 @@ impl WorkflowEngine {
             "execution_time": chrono::Utc::now().to_rfc3339(),
             "processed_files": preprocessing_result.project_structure.total_files,
             "core_components": preprocessing_result.core_components.len(),
-            "generated_documents": 2 + c4_documentation_result.core_components.len(),
+            "generated_documents": 2 + c4_documentation_result.core_components.len() + 
+                c4_documentation_result.deep_dive_result.as_ref().map(|dd| dd.documents.len()).unwrap_or(0),
             "doc_mode": "c4",
             "config": {
                 "project_path": self.config.project_path,
@@ -276,8 +278,10 @@ impl WorkflowEngine {
         // C4文档已经在生成过程中保存到了正确的位置
         // Overview.md, Architecture.md, CoreComponents/*.md
 
-        // 保存工作流摘要到输出目录下的`litho_work_summary.md`
-        let summary_path = self.config.output_path.join("litho_work_summary.md");
+        // 保存工作流摘要到输出目录下的`{project_name}_work_summary.md`
+        let project_name = self.config.get_project_name();
+        let summary_filename = format!("{}_work_summary.md", project_name);
+        let summary_path = self.config.output_path.join(&summary_filename);
         let summary_content = self.generate_c4_markdown_summary(
             preprocessing_result,
             research_result,
@@ -338,8 +342,10 @@ impl WorkflowEngine {
             fs::write(doc_path, &document.content).await?;
         }
 
-        // 保存工作流摘要到输出目录下的`litho_work_summary.md`
-        let summary_path = self.config.output_path.join("litho_work_summary.md");
+        // 保存工作流摘要到输出目录下的`{project_name}_work_summary.md`
+        let project_name = self.config.get_project_name();
+        let summary_filename = format!("{}_work_summary.md", project_name);
+        let summary_path = self.config.output_path.join(&summary_filename);
         let summary_content = self.generate_markdown_summary(
             preprocessing_result,
             research_result,
@@ -374,10 +380,13 @@ impl WorkflowEngine {
         research_result: &ResearchResult,
         c4_documentation_result: &C4DocumentationResult,
     ) -> String {
+        let project_name = self.config.get_project_name();
+        
         format!(
-            r#"# Litho 引擎执行摘要 (C4架构模式)
+            r#"# {} 引擎执行摘要 (C4架构模式)
 
 ## 项目信息
+- **项目名称**: {}
 - **项目路径**: {}
 - **生成时间**: {}
 - **总处理时间**: {:.2}秒
@@ -403,6 +412,7 @@ impl WorkflowEngine {
 - **Overview.md**: 项目概述文档
 - **Architecture.md**: 架构文档
 - **CoreComponents/**: {} 个核心组件文档
+- **DeepDive/**: {} 个深度分析主题
 - **处理时间**: {:.2}秒
 
 ### 生成的C4文档结构
@@ -410,13 +420,20 @@ impl WorkflowEngine {
 - **Architecture.md**: 包含整体架构、核心流程、核心模块详解
 - **CoreComponents/**: 各个核心模块的详细文档
   {}
+- **DeepDive/**: 深度分析主题文档
+  {}
 
 ## 架构洞察
 {}
 
+## DeepDive主题摘要
+{}
+
 ---
-*由 Litho (DeepWiki-RS) 自动生成 - C4架构文档模式*
+*由 {} (DeepWiki-RS) 自动生成 - C4架构文档模式*
 "#,
+            project_name, // 在标题中使用项目名称
+            project_name, // 明确显示项目名称
             self.config.project_path.display(),
             chrono::Utc::now().format("%Y-%m-%d %H:%M:%S UTC"),
             c4_documentation_result.processing_time,
@@ -444,6 +461,7 @@ impl WorkflowEngine {
                 .collect::<Vec<_>>()
                 .join("\n"),
             c4_documentation_result.core_components.len(),
+            c4_documentation_result.deep_dive_result.as_ref().map(|dd| dd.topics.len()).unwrap_or(0),
             c4_documentation_result.processing_time,
             c4_documentation_result
                 .core_components
@@ -451,7 +469,17 @@ impl WorkflowEngine {
                 .map(|c| format!("  - **{}**: {}", c.component_name, c.filename))
                 .collect::<Vec<_>>()
                 .join("\n"),
-            preprocessing_result.architecture_insights.join("\n- ")
+            c4_documentation_result.deep_dive_result.as_ref()
+                .map(|dd| dd.topics.iter()
+                    .map(|t| format!("  - **{}**: {:.1}/10 研究价值", t.name, t.research_value))
+                    .collect::<Vec<_>>()
+                    .join("\n"))
+                .unwrap_or_else(|| "  无DeepDive主题".to_string()),
+            preprocessing_result.architecture_insights.join("\n- "),
+            c4_documentation_result.deep_dive_result.as_ref()
+                .map(|dd| dd.summary.clone())
+                .unwrap_or_else(|| "未生成DeepDive分析".to_string()),
+            project_name // 在底部署名中使用项目名称
         )
     }
 

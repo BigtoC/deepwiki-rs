@@ -121,6 +121,204 @@ impl Config {
         Ok(config)
     }
 
+    /// 获取项目名称，优先使用配置的project_name，否则自动推断
+    pub fn get_project_name(&self) -> String {
+        // 优先使用配置的项目名称
+        if let Some(ref name) = self.project_name {
+            if !name.trim().is_empty() {
+                return name.clone();
+            }
+        }
+        
+        // 如果没有配置或配置为空，则自动推断
+        self.infer_project_name()
+    }
+    
+    /// 自动推断项目名称
+    fn infer_project_name(&self) -> String {
+        // 尝试从项目配置文件中提取项目名称
+        if let Some(name) = self.extract_project_name_from_config_files() {
+            return name;
+        }
+        
+        // 从项目路径推断
+        self.project_path
+            .file_name()
+            .unwrap_or_default()
+            .to_string_lossy()
+            .to_string()
+    }
+    
+    /// 从项目配置文件中提取项目名称
+    fn extract_project_name_from_config_files(&self) -> Option<String> {
+        // 尝试从 Cargo.toml 提取（Rust项目）
+        if let Some(name) = self.extract_from_cargo_toml() {
+            return Some(name);
+        }
+        
+        // 尝试从 package.json 提取（Node.js项目）
+        if let Some(name) = self.extract_from_package_json() {
+            return Some(name);
+        }
+        
+        // 尝试从 pyproject.toml 提取（Python项目）
+        if let Some(name) = self.extract_from_pyproject_toml() {
+            return Some(name);
+        }
+        
+        // 尝试从 pom.xml 提取（Java Maven项目）
+        if let Some(name) = self.extract_from_pom_xml() {
+            return Some(name);
+        }
+        
+        None
+    }
+    
+    /// 从 Cargo.toml 提取项目名称
+    pub fn extract_from_cargo_toml(&self) -> Option<String> {
+        let cargo_path = self.project_path.join("Cargo.toml");
+        if !cargo_path.exists() {
+            return None;
+        }
+        
+        match std::fs::read_to_string(&cargo_path) {
+            Ok(content) => {
+                // 查找 [package] 段落下的 name
+                let mut in_package_section = false;
+                for line in content.lines() {
+                    let line = line.trim();
+                    if line == "[package]" {
+                        in_package_section = true;
+                        continue;
+                    }
+                    if line.starts_with('[') && in_package_section {
+                        in_package_section = false;
+                        continue;
+                    }
+                    if in_package_section && line.starts_with("name") && line.contains("=") {
+                        if let Some(name_part) = line.split('=').nth(1) {
+                            let name = name_part.trim().trim_matches('"').trim_matches('\'');
+                            if !name.is_empty() {
+                                return Some(name.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+            Err(_) => return None,
+        }
+        None
+    }
+    
+    /// 从 package.json 提取项目名称
+    pub fn extract_from_package_json(&self) -> Option<String> {
+        let package_path = self.project_path.join("package.json");
+        if !package_path.exists() {
+            return None;
+        }
+        
+        match std::fs::read_to_string(&package_path) {
+            Ok(content) => {
+                // 简单的JSON解析，查找 "name": "..."
+                for line in content.lines() {
+                    let line = line.trim();
+                    if line.starts_with("\"name\"") && line.contains(":") {
+                        if let Some(name_part) = line.split(':').nth(1) {
+                            let name = name_part.trim()
+                                .trim_matches(',')
+                                .trim_matches('"')
+                                .trim_matches('\'');
+                            if !name.is_empty() {
+                                return Some(name.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+            Err(_) => return None,
+        }
+        None
+    }
+    
+    /// 从 pyproject.toml 提取项目名称
+    pub fn extract_from_pyproject_toml(&self) -> Option<String> {
+        let pyproject_path = self.project_path.join("pyproject.toml");
+        if !pyproject_path.exists() {
+            return None;
+        }
+        
+        match std::fs::read_to_string(&pyproject_path) {
+            Ok(content) => {
+                // 查找 [project] 或 [tool.poetry] 下的 name
+                let mut in_project_section = false;
+                let mut in_poetry_section = false;
+                
+                for line in content.lines() {
+                    let line = line.trim();
+                    if line == "[project]" {
+                        in_project_section = true;
+                        in_poetry_section = false;
+                        continue;
+                    }
+                    if line == "[tool.poetry]" {
+                        in_poetry_section = true;
+                        in_project_section = false;
+                        continue;
+                    }
+                    if line.starts_with('[') && (in_project_section || in_poetry_section) {
+                        in_project_section = false;
+                        in_poetry_section = false;
+                        continue;
+                    }
+                    if (in_project_section || in_poetry_section) && line.starts_with("name") && line.contains("=") {
+                        if let Some(name_part) = line.split('=').nth(1) {
+                            let name = name_part.trim().trim_matches('"').trim_matches('\'');
+                            if !name.is_empty() {
+                                return Some(name.to_string());
+                            }
+                        }
+                    }
+                }
+            }
+            Err(_) => return None,
+        }
+        None
+    }
+    
+    /// 从 pom.xml 提取项目名称
+    fn extract_from_pom_xml(&self) -> Option<String> {
+        let pom_path = self.project_path.join("pom.xml");
+        if !pom_path.exists() {
+            return None;
+        }
+        
+        match std::fs::read_to_string(&pom_path) {
+            Ok(content) => {
+                // 简单的XML解析，查找 <artifactId> 或 <name>
+                let lines: Vec<&str> = content.lines().collect();
+                for line in lines {
+                    let line = line.trim();
+                    // 优先使用 <name> 标签
+                    if line.starts_with("<name>") && line.ends_with("</name>") {
+                        let name = line.trim_start_matches("<name>").trim_end_matches("</name>");
+                        if !name.is_empty() {
+                            return Some(name.to_string());
+                        }
+                    }
+                    // 其次使用 <artifactId> 标签
+                    if line.starts_with("<artifactId>") && line.ends_with("</artifactId>") {
+                        let name = line.trim_start_matches("<artifactId>").trim_end_matches("</artifactId>");
+                        if !name.is_empty() {
+                            return Some(name.to_string());
+                        }
+                    }
+                }
+            }
+            Err(_) => return None,
+        }
+        None
+    }
+
     /// 获取内部工作目录的子路径
     pub fn get_internal_path(&self, subdir: &str) -> PathBuf {
         self.internal_path.join(subdir)
@@ -129,6 +327,11 @@ impl Config {
     /// 获取过程数据存储路径
     pub fn get_process_data_path(&self) -> PathBuf {
         self.get_internal_path("process")
+    }
+
+    /// 获取缓存路径
+    pub fn get_cache_path(&self) -> PathBuf {
+        self.cache.cache_dir.clone()
     }
 }
 

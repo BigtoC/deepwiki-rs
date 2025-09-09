@@ -127,9 +127,4 @@ impl LLMClient {
             agent.prompt(user_prompt).await.map_err(|e| e.into())
         }).await
     }
-
-    /// 获取配置信息
-    pub fn config(&self) -> &Config {
-        &self.config
-    }
 }

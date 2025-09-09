@@ -24,6 +24,7 @@ pub struct C4DocumentationResult {
     pub overview_doc: C4Document,
     pub architecture_doc: C4Document,
     pub core_components: Vec<C4ComponentDoc>,
+    pub deep_dive_result: Option<crate::agents::deep_dive_agent::DeepDiveResult>,
     pub processing_time: f64,
     pub summary: String,
 }
@@ -52,10 +53,17 @@ pub struct C4ComponentDoc {
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct AIProjectOverview {
+    /// 项目名称（必须明确）
+    pub project_name: String,
+    /// 项目总体描述（必须包含项目名称和核心定位）
     pub project_summary: String,
+    /// 核心功能列表
     pub core_functionality: Vec<String>,
+    /// 关键特性
     pub key_features: Vec<String>,
+    /// 技术栈信息
     pub technology_stack: TechnologyStack,
+    /// 业务价值
     pub business_value: String,
 }
 
@@ -203,12 +211,16 @@ impl C4DocumentationAgent {
         println!("🔧 生成核心组件文档...");
         let core_components = self.generate_core_components_docs(preprocessing_result).await?;
 
-        // 4. 保存所有文档
+        // 4. 生成DeepDive深度分析文档
+        println!("🔍 生成DeepDive深度分析文档...");
+        let deep_dive_result = self.generate_deep_dive_docs(preprocessing_result, research_result).await?;
+
+        // 5. 保存所有文档
         println!("💾 保存文档文件...");
         self.save_c4_documents(&overview_doc, &architecture_doc, &core_components).await?;
 
         let processing_time = start_time.elapsed().as_secs_f64();
-        let summary = self.generate_c4_documentation_summary(&overview_doc, &architecture_doc, &core_components);
+        let summary = self.generate_c4_documentation_summary_with_deep_dive(&overview_doc, &architecture_doc, &core_components, &deep_dive_result);
 
         println!("✅ C4架构文档生成完成，耗时 {:.2}秒", processing_time);
 
@@ -216,6 +228,7 @@ impl C4DocumentationAgent {
             overview_doc,
             architecture_doc,
             core_components,
+            deep_dive_result: Some(deep_dive_result),
             processing_time,
             summary,
         })
@@ -416,10 +429,14 @@ impl C4DocumentationAgent {
         // 获取依赖关系信息
         let dependency_info = self.extract_dependency_relationships(preprocessing_result);
         
+        // 获取项目名称
+        let project_name = self.config.get_project_name();
+        
         format!(
             r#"请基于以下项目分析结果生成符合C4架构风格的项目概述：
 
 ## 项目基本信息
+- 项目名称: {}
 - 项目路径: {}
 - 文件总数: {}
 - 核心组件数: {}
@@ -439,15 +456,19 @@ impl C4DocumentationAgent {
 
 ## 要求
 请生成结构化的项目概述，包括：
-1. 项目概述 - 基于源码分析的项目描述和架构特点
-2. 核心功能与作用 - 基于代码实现分析的主要功能
-3. 技术选型 - 基于实际代码的技术栈分析
+1. 项目概述 - 基于源码分析的项目描述和架构特点，**必须明确提及项目名称"{}"并说明其核心价值和定位**
+2. 核心功能与作用 - 基于代码实现分析的主要功能，**重点说明{}项目的特色功能和应用场景**
+3. 技术选型 - 基于实际代码的技术栈分析，**说明{}项目选择这些技术的原因**
 
 **重要**: 
+- **在项目概述的开头必须明确说明"{}"项目是什么、做什么用的**
+- **确保生成的文档能够让读者清楚地了解{}项目的核心价值和应用场景**
 - 专注于项目的技术架构和实现细节
 - 基于提供的源码片段进行分析
 - 不要包含优化建议或测试指南
-- 重点分析代码结构和设计模式"#,
+- 重点分析代码结构和设计模式
+- **避免使用"该项目"等模糊表述，直接使用项目名称"{}"**"#,
+            project_name, // 新增：项目名称
             preprocessing_result.project_structure.root_path.display(),
             preprocessing_result.project_structure.total_files,
             preprocessing_result.core_components.len(),
@@ -459,7 +480,13 @@ impl C4DocumentationAgent {
             code_snippets,
             dependency_info,
             research_result.insights.join("\n- "),
-            preprocessing_result.architecture_insights.join("\n- ")
+            preprocessing_result.architecture_insights.join("\n- "),
+            project_name, // 强调项目名称
+            project_name, // 强调项目名称  
+            project_name, // 强调项目名称
+            project_name, // 强调项目名称
+            project_name, // 强调项目名称
+            project_name  // 强调项目名称
         )
     }
 
@@ -640,7 +667,7 @@ impl C4DocumentationAgent {
         content.push_str(&MarkdownUtils::heading(1, "项目概述"));
         content.push_str("\n");
 
-        // 项目概述
+        // 项目概述 - 确保包含项目名称
         content.push_str(&MarkdownUtils::heading(2, "项目概述"));
         content.push_str(&format!("{}\n\n", ai_overview.project_summary));
 
@@ -1338,5 +1365,31 @@ impl C4DocumentationAgent {
         } else {
             "暂无依赖关系分析数据".to_string()
         }
+    }
+
+    /// 生成DeepDive深度分析文档
+    async fn generate_deep_dive_docs(
+        &self,
+        preprocessing_result: &PreprocessingResult,
+        research_result: &ResearchResult,
+    ) -> Result<crate::agents::deep_dive_agent::DeepDiveResult> {
+        let deep_dive_agent = crate::agents::deep_dive_agent::DeepDiveAgent::new(self.config.clone()).await?;
+        deep_dive_agent.generate_deep_dive_documentation(preprocessing_result, research_result).await
+    }
+
+    /// 生成包含DeepDive的C4文档摘要
+    fn generate_c4_documentation_summary_with_deep_dive(
+        &self,
+        overview_doc: &C4Document,
+        architecture_doc: &C4Document,
+        core_components: &[C4ComponentDoc],
+        deep_dive_result: &crate::agents::deep_dive_agent::DeepDiveResult,
+    ) -> String {
+        format!(
+            "C4架构文档生成完成：Overview.md、Architecture.md、{}个核心组件文档、{}个DeepDive深度分析主题。{}",
+            core_components.len(),
+            deep_dive_result.topics.len(),
+            deep_dive_result.summary
+        )
     }
 }

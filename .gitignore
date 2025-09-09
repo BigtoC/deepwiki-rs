@@ -31,3 +31,7 @@ target
 
 # Litho Generated Cache
 .litho/cache/
+
+examples/
+test_output/
+test_project_name_output/
