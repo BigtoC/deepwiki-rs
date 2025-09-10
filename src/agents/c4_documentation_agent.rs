@@ -57,13 +57,13 @@ pub struct AIProjectOverview {
     pub project_name: String,
     /// 项目总体描述（必须包含项目名称和核心定位）
     pub project_summary: String,
-    /// 核心功能列表
+    /// 核心功能列表，要包含功能名称和对功能的具体作用描述，用“功能名称：具体描述”的格式表达。
     pub core_functionality: Vec<String>,
-    /// 关键特性
+    /// 关键特性，要包含特性名称和解释说明，用“特性名称：解释说明”的格式表达。
     pub key_features: Vec<String>,
     /// 技术栈信息
     pub technology_stack: TechnologyStack,
-    /// 业务价值
+    /// 项目价值
     pub business_value: String,
 }
 
@@ -72,7 +72,6 @@ pub struct AIProjectOverview {
 pub struct TechnologyStack {
     pub primary_languages: Vec<String>,
     pub frameworks: Vec<String>,
-    pub tools: Vec<String>,
     pub rationale: String,
 }
 
@@ -527,7 +526,7 @@ impl C4DocumentationAgent {
 
 ## 要求
 请生成结构化的项目概述，包括：
-1. 项目概述 - 基于源码分析的项目描述和架构特点，**必须明确提及项目名称"{}"并说明其核心价值和定位**
+1. 项目介绍 - 基于源码分析的项目描述和架构特点，**必须明确提及项目名称"{}"并说明其核心价值和定位**
 2. 核心功能与作用 - 基于代码实现分析的主要功能，**重点说明{}项目的特色功能和应用场景**
 3. 技术选型 - 基于实际代码的技术栈分析，**说明{}项目选择这些技术的原因**
 
@@ -750,7 +749,7 @@ impl C4DocumentationAgent {
         content.push_str("\n");
 
         // 项目概述 - 确保包含项目名称
-        content.push_str(&MarkdownUtils::heading(2, "项目概述"));
+        content.push_str(&MarkdownUtils::heading(2, "项目介绍"));
         content.push_str(&format!("{}\n\n", ai_overview.project_summary));
 
         // 核心功能与作用
@@ -780,22 +779,14 @@ impl C4DocumentationAgent {
         content.push_str("\n");
 
         if !ai_overview.technology_stack.frameworks.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "框架和库"));
+            content.push_str(&MarkdownUtils::heading(3, "使用的核心框架和库"));
             for framework in &ai_overview.technology_stack.frameworks {
                 content.push_str(&format!("- {}\n", framework));
             }
             content.push_str("\n");
         }
 
-        if !ai_overview.technology_stack.tools.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "开发工具"));
-            for tool in &ai_overview.technology_stack.tools {
-                content.push_str(&format!("- {}\n", tool));
-            }
-            content.push_str("\n");
-        }
-
-        content.push_str(&MarkdownUtils::heading(3, "技术选型理由"));
+        content.push_str(&MarkdownUtils::heading(3, "技术选型评价"));
         content.push_str(&format!("{}\n\n", ai_overview.technology_stack.rationale));
 
         // 项目统计
@@ -1205,7 +1196,7 @@ impl C4DocumentationAgent {
 
         // 获取TopN组件
         let top_components =
-            ComponentSorter::get_top_n_components(&preprocessing_result.core_components, 20);
+            ComponentSorter::get_top_n_components(&preprocessing_result.core_components, 50);
 
         for component in top_components {
             content.push_str(&MarkdownUtils::heading(3, &component.name));
@@ -1358,8 +1349,8 @@ impl C4DocumentationAgent {
 
         for component in top_components {
             if let Ok(content) = std::fs::read_to_string(&component.file_path) {
-                let truncated = if content.chars().count() > 800 {
-                    let truncated_content: String = content.chars().take(800).collect();
+                let truncated = if content.chars().count() > 2000 {
+                    let truncated_content: String = content.chars().take(2000).collect();
                     format!("{}...", truncated_content)
                 } else {
                     content
