@@ -20,10 +20,10 @@ pub struct DeepDiveAgent {
 /// AI识别的DeepDive主题
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct AIDeepDiveTopic {
-    /// 主题名称
+    /// 主题名称（体现项目的核心功能或特色）
     pub name: String,
     
-    /// 主题描述
+    /// 主题描述（体现在项目中的作用与价值）
     pub description: String,
     
     /// 研究价值评分 (1-10)
@@ -35,16 +35,16 @@ pub struct AIDeepDiveTopic {
     /// 项目特色程度 (1-10)
     pub uniqueness_score: f64,
     
-    /// 相关组件
+    /// 相关的核心组件名称列表
     pub related_components: Vec<String>,
     
-    /// 关键技术点
+    /// 涉及的关键技术点
     pub key_technologies: Vec<String>,
     
-    /// 研究重点
+    /// 研究重点（3-5个要点，具体到实现层面）
     pub research_focus: Vec<String>,
     
-    /// 分析理由
+    /// 推荐这个主题的理由
     pub rationale: String,
 }
 
@@ -58,7 +58,7 @@ pub struct AIDeepDiveTopics {
 /// AI生成的DeepDive分析
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct AIDeepDiveAnalysis {
-    /// 主题概述（必须包含项目名称和具体功能描述）
+    /// 主题概述（主题立意要贴合项目的主要功能）
     pub topic_overview: String,
     
     /// 核心架构设计（详细描述架构组成和设计原理）
@@ -250,21 +250,10 @@ impl DeepDiveAgent {
 {}
 
 请识别出最值得深入研究的技术主题，每个主题必须：
-1. **明确体现{}项目的特色功能**：主题名称和描述必须包含项目名称和具体功能特征
+1. **明确体现{}项目的特色功能**：主题名称贴合这个项目的核心功能
 2. **具有项目针对性**：避免通用技术概念，聚焦于{}项目的独特实现
 3. **技术深度足够**：能够展现项目的核心技术能力和设计思路
-4. **实用价值高**：对理解{}项目的架构和实现有重要意义
-
-返回格式应该包含一个topics数组，每个主题包含：
-- name: 主题名称（必须包含项目特色，如"Litho项目中的XXX技术实现"）
-- description: 主题描述（明确说明在{}项目中的作用和价值）
-- research_value: 研究价值评分 (1-10)
-- complexity_score: 技术复杂度评分 (1-10)
-- uniqueness_score: 项目特色程度 (1-10)
-- related_components: 相关的核心组件名称列表
-- key_technologies: 涉及的关键技术点
-- research_focus: 研究重点（3-5个要点，必须具体到{}项目的实现）
-- rationale: 选择这个主题的理由（说明为什么这是{}项目的特色功能）"#,
+4. **实用价值高**：对理解{}项目的架构和实现有重要意义"#,
             project_name,
             project_name,
             project_structure_info,
@@ -272,9 +261,6 @@ impl DeepDiveAgent {
             research_insights,
             architecture_insights,
             research_result.summary,
-            project_name,
-            project_name,
-            project_name,
             project_name,
             project_name,
             project_name
