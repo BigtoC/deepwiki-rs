@@ -30,8 +30,10 @@ target
 **/.DS_Store
 
 # Litho Generated Cache
-.litho/cache/
+.litho/cache
 
-examples/
-test_output/
-test_project_name_output/
+# Litho Generated Document Snippets (for research purpose)
+.litho/process
+
+# Litho Generated Documents
+.litho.docs/

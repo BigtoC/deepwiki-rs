@@ -3,7 +3,7 @@
     "root_path": ".",
     "directories": [
       {
-        "path": "./test_output/CoreComponents/Widget",
+        "path": "./test_project_name_output2/CoreComponents/Widget",
         "name": "Widget",
         "file_count": 0,
         "subdirectory_count": 0,
@@ -11,7 +11,7 @@
         "importance_score": 0.0
       },
       {
-        "path": "./test_output/CoreComponents/Util",
+        "path": "./test_project_name_output2/CoreComponents/Util",
         "name": "Util",
         "file_count": 0,
         "subdirectory_count": 0,
@@ -19,7 +19,7 @@
         "importance_score": 0.0
       },
       {
-        "path": "./test_output/CoreComponents/Config",
+        "path": "./test_project_name_output2/CoreComponents/Config",
         "name": "Config",
         "file_count": 0,
         "subdirectory_count": 0,
@@ -27,7 +27,7 @@
         "importance_score": 0.0
       },
       {
-        "path": "./test_output/CoreComponents/Entry",
+        "path": "./test_project_name_output2/CoreComponents/Entry",
         "name": "Entry",
         "file_count": 0,
         "subdirectory_count": 0,
@@ -35,7 +35,7 @@
         "importance_score": 0.0
       },
       {
-        "path": "./test_output/CoreComponents/Agent",
+        "path": "./test_project_name_output2/CoreComponents/Agent",
         "name": "Agent",
         "file_count": 0,
         "subdirectory_count": 0,
@@ -43,7 +43,7 @@
         "importance_score": 0.0
       },
       {
-        "path": "./test_output/CoreComponents/Model",
+        "path": "./test_project_name_output2/CoreComponents/Model",
         "name": "Model",
         "file_count": 0,
         "subdirectory_count": 0,
@@ -51,7 +51,7 @@
         "importance_score": 0.0
       },
       {
-        "path": "./test_output/CoreComponents/Doc",
+        "path": "./test_project_name_output2/CoreComponents/Doc",
         "name": "Doc",
         "file_count": 0,
         "subdirectory_count": 0,
@@ -59,7 +59,7 @@
         "importance_score": 0.0
       },
       {
-        "path": "./test_output/CoreComponents/Feature",
+        "path": "./test_project_name_output2/CoreComponents/Feature",
         "name": "Feature",
         "file_count": 0,
         "subdirectory_count": 0,
@@ -67,7 +67,7 @@
         "importance_score": 0.0
       },
       {
-        "path": "./test_output/CoreComponents/Service",
+        "path": "./test_project_name_output2/CoreComponents/Service",
         "name": "Service",
         "file_count": 0,
         "subdirectory_count": 0,
@@ -75,7 +75,7 @@
         "importance_score": 0.0
       },
       {
-        "path": "./test_output/CoreComponents",
+        "path": "./test_project_name_output2/CoreComponents",
         "name": "CoreComponents",
         "file_count": 0,
         "subdirectory_count": 9,
@@ -83,7 +83,7 @@
         "importance_score": 0.4
       },
       {
-        "path": "./test_output/DeepDive",
+        "path": "./test_project_name_output2/DeepDive",
         "name": "DeepDive",
         "file_count": 0,
         "subdirectory_count": 0,
@@ -91,18 +91,10 @@
         "importance_score": 0.0
       },
       {
-        "path": "./test_output",
-        "name": "test_output",
+        "path": "./test_project_name_output2",
+        "name": "test_project_name_output2",
         "file_count": 0,
         "subdirectory_count": 2,
-        "total_size": 0,
-        "importance_score": 0.0
-      },
-      {
-        "path": "./test_project_name_output",
-        "name": "test_project_name_output",
-        "file_count": 0,
-        "subdirectory_count": 0,
         "total_size": 0,
         "importance_score": 0.0
       },
@@ -117,6 +109,14 @@
       {
         "path": "./assets",
         "name": "assets",
+        "file_count": 0,
+        "subdirectory_count": 0,
+        "total_size": 0,
+        "importance_score": 0.0
+      },
+      {
+        "path": "./test_auto_inferred_output",
+        "name": "test_auto_inferred_output",
         "file_count": 0,
         "subdirectory_count": 0,
         "total_size": 0,
@@ -183,7 +183,7 @@
         "name": "workflow",
         "file_count": 1,
         "subdirectory_count": 0,
-        "total_size": 21282,
+        "total_size": 21558,
         "importance_score": 0.0
       },
       {
@@ -505,12 +505,12 @@
       {
         "path": "src/workflow/mod.rs",
         "name": "mod.rs",
-        "size": 21282,
+        "size": 21558,
         "extension": "rs",
         "is_core": true,
         "importance_score": 0.8,
         "complexity_score": 0.0,
-        "last_modified": "1757417108"
+        "last_modified": "1757419188"
       },
       {
         "path": "src/main.rs",
@@ -740,8 +740,8 @@
       "toml": 1
     },
     "size_distribution": {
-      "small": 31,
       "medium": 13,
+      "small": 31,
       "tiny": 8
     }
   },
@@ -809,7 +809,7 @@
     {
       "name": "mod.rs",
       "file_path": "src/llm/client/mod.rs",
-      "component_type": "other",
+      "component_type": "service",
       "importance_score": 0.8,
       "dependencies": [
         "crate::config::Config",
@@ -825,7 +825,7 @@
     {
       "name": "react_executor.rs",
       "file_path": "src/llm/client/react_executor.rs",
-      "component_type": "feature",
+      "component_type": "agent",
       "importance_score": 0.8,
       "dependencies": [
         "super::react::{ReActConfig, ReActResponse}"
@@ -1294,7 +1294,7 @@
     {
       "name": "mod.rs",
       "file_path": "src/agents/agent_tools/mod.rs",
-      "component_type": "other",
+      "component_type": "agent",
       "importance_score": 0.6,
       "dependencies": [],
       "description": null,
@@ -1304,7 +1304,7 @@
     {
       "name": "mod.rs",
       "file_path": "src/agents/mod.rs",
-      "component_type": "other",
+      "component_type": "agent",
       "importance_score": 0.6,
       "dependencies": [],
       "description": null,
@@ -1372,7 +1372,7 @@
     {
       "name": "mod.rs",
       "file_path": "src/extractors/mod.rs",
-      "component_type": "other",
+      "component_type": "feature",
       "importance_score": 0.6,
       "dependencies": [],
       "description": null,
@@ -1402,12 +1402,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "详细分析 main.rs",
+      "detailed_description": "该组件是系统的入口点，负责应用程序的启动和初始化。它首先解析命令行参数，然后创建配置对象。接下来，它初始化工作流引擎并执行完整的工作流。在工作流执行完成后，它会展示执行结果的统计信息，包括处理文件数、核心组件数、生成文档数以及总耗时。",
       "responsibilities": [
         "应用程序启动和初始化",
         "命令行参数处理",
-        "异步操作处理",
-        "错误处理和异常管理"
+        "工作流引擎创建和执行",
+        "执行结果统计和展示"
       ],
       "interfaces": [
         {
@@ -1466,16 +1466,42 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.74,
+        "overall_score": 0.85,
         "maintainability": 0.9,
         "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.7,
-        "issues": []
+        "issues": [
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "可以添加更详细的错误处理和日志记录",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "可以考虑将命令行参数解析和配置创建分离到单独的模块",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "可以添加更全面的单元测试",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          }
+        ]
       },
       "recommendations": [
-        "代码质量良好，继续保持"
+        "考虑将命令行参数解析和配置创建分离到单独的模块",
+        "添加更详细的错误处理和日志记录",
+        "增加单元测试以覆盖各种场景",
+        "考虑将工作流引擎的创建和执行分离到单独的函数以提高代码的可测试性",
+        "添加配置验证以确保在初始化阶段捕获任何配置问题"
       ]
     },
     {
@@ -1489,11 +1515,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "详细分析 config.rs",
+      "detailed_description": "该组件是一个功能全面的配置管理系统，主要负责从文件加载和解析配置，管理项目名称和路径，并支持多种项目类型（Rust、Node.js、Python、Java等）。它包含三个主要配置结构：Config、LLMConfig和CacheConfig，分别管理不同方面的配置参数。组件能够智能推断项目名称，处理各种路径，并管理缓存配置。",
       "responsibilities": [
-        "配置管理和加载",
-        "环境变量处理",
-        "错误处理和异常管理"
+        "配置文件加载和解析",
+        "项目名称推断和管理",
+        "路径管理和处理",
+        "多种项目类型支持",
+        "缓存配置管理"
       ],
       "interfaces": [
         {
@@ -1763,9 +1791,9 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.6199999999999999,
-        "maintainability": 0.6,
-        "readability": 0.5,
+        "overall_score": 0.75,
+        "maintainability": 0.7,
+        "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.7,
@@ -1776,12 +1804,44 @@
             "description": "圈复杂度过高",
             "suggestion": "考虑将函数拆分为更小的函数",
             "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "高圈复杂度函数需要拆分",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "错误处理可以更一致",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "缺少详细的文档注释",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "可以增加更多单元测试",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
           }
         ]
       },
       "recommendations": [
-        "降低圈复杂度，拆分复杂函数",
-        "考虑将大文件拆分为多个模块"
+        "将高圈复杂度的函数拆分为更小的函数",
+        "增加更一致的错误处理",
+        "添加更详细的文档注释",
+        "增加单元测试覆盖率",
+        "考虑实现配置热加载功能",
+        "添加配置验证功能"
       ]
     },
     {
@@ -1795,12 +1855,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "详细分析 dependency_analyzer.rs",
+      "detailed_description": "该组件是一个功能强大的依赖分析工具，主要用于分析项目中的依赖关系。它支持多种编程语言，包括Rust、Python、JavaScript/TypeScript、Java等。组件的核心功能包括发现源文件、分析文件依赖、构建依赖图、检测循环依赖、提取外部依赖、计算依赖指标以及生成依赖洞察。",
       "responsibilities": [
-        "提供通用工具函数",
-        "辅助功能实现",
-        "异步操作处理",
-        "错误处理和异常管理"
+        "分析多种编程语言的依赖关系",
+        "构建依赖图",
+        "检测循环依赖",
+        "计算依赖指标",
+        "生成依赖洞察"
       ],
       "interfaces": [
         {
@@ -2338,9 +2399,9 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.5399999999999999,
-        "maintainability": 0.6,
-        "readability": 0.5,
+        "overall_score": 0.75,
+        "maintainability": 0.7,
+        "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.3,
@@ -2358,14 +2419,35 @@
             "description": "注释不足",
             "suggestion": "增加代码注释以提高可读性",
             "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "代码圈复杂度较高，部分函数需要拆分",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "部分错误处理不够全面",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "缺少详细的文档注释",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
           }
         ]
       },
       "recommendations": [
-        "建议重构以提高代码质量",
-        "降低圈复杂度，拆分复杂函数",
-        "考虑将大文件拆分为多个模块",
-        "增加代码注释和文档"
+        "将复杂函数拆分为更小的函数以降低圈复杂度",
+        "增强错误处理以覆盖更多边界情况",
+        "添加详细的文档注释以提高代码可读性",
+        "考虑使用更轻量级的依赖库以减少依赖项"
       ]
     },
     {
@@ -2379,11 +2461,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "详细分析 error.rs",
+      "detailed_description": "该组件定义了LLM客户端中所有可能遇到的错误类型，包括配置错误、网络错误、API错误等。它使用thiserror宏简化了自定义错误类型的实现，并提供了从其他错误类型到LLMError的转换实现。组件还定义了一个统一的结果类型LLMResult，用于在整个客户端中表示操作结果。",
       "responsibilities": [
-        "数据模型定义",
-        "数据验证和处理",
-        "错误处理和异常管理"
+        "定义LLM客户端的所有错误类型",
+        "实现错误类型之间的转换",
+        "提供统一的错误处理类型LLMResult",
+        "处理来自不同来源的错误并转换为标准化的LLMError"
       ],
       "interfaces": [
         {
@@ -2436,16 +2519,34 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.78,
+        "overall_score": 0.9,
         "maintainability": 0.9,
-        "readability": 0.8,
+        "readability": 0.9,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.9,
-        "issues": []
+        "issues": [
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "可以考虑为每个错误类型添加更详细的上下文信息",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "可以添加更多的错误转换实现，以支持更多的错误类型转换",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          }
+        ]
       },
       "recommendations": [
-        "代码质量良好，继续保持"
+        "为每个错误类型添加更详细的上下文信息，以便更好地进行错误调试",
+        "考虑添加更多的错误转换实现，以支持更多的错误类型转换",
+        "可以考虑为错误类型添加更详细的文档注释，以便更好地理解每个错误类型的含义和使用场景",
+        "可以考虑添加错误代码或错误级别，以便更好地进行错误分类和处理"
       ]
     },
     {
@@ -2459,12 +2560,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件定义了ReAct（Reasoning and Acting）模式相关的核心类型和配置。主要包含两个主要结构：ReActConfig和ReActResponse。ReActConfig用于配置ReAct模式的执行参数，包括最大迭代次数、是否启用详细日志以及是否在达到最大迭代次数时返回部分结果。ReActResponse用于封装ReAct模式的执行结果，包括最终响应内容、实际使用的迭代次数、是否因为达到最大迭代次数而停止以及工具调用的历史记录。组件提供了多种构造函数来创建不同类型的响应实例，包括成功完成的响应和因达到最大深度而停止的响应。",
+      "detailed_description": "react.rs 组件主要负责 ReAct（Reasoning and Acting）模式的配置管理和响应处理。它定义了两个主要的结构体：ReActConfig 和 ReActResponse。ReActConfig 用于配置 ReAct 模式的行为，包括最大迭代次数、是否启用详细日志以及是否在达到最大迭代次数时返回部分结果。ReActResponse 用于封装 ReAct 模式的执行结果，包括最终响应内容、实际使用的迭代次数、是否因为达到最大迭代次数而停止以及工具调用历史。组件提供了多种方法来创建不同类型的响应，包括成功完成的响应和因达到最大深度而停止的响应。",
       "responsibilities": [
-        "定义和管理ReAct模式的配置参数",
-        "提供ReAct响应结果的结构定义",
-        "创建不同类型的响应实例",
-        "管理工具调用的历史记录"
+        "定义和管理 ReAct 模式的配置参数",
+        "创建和管理 ReAct 响应结果",
+        "提供不同类型的响应创建方法",
+        "管理工具调用历史"
       ],
       "interfaces": [
         {
@@ -2594,39 +2695,38 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑添加更多的文档注释，特别是关于ReAct模式的详细说明",
+            "description": "可以增加更多的文档注释，特别是关于函数参数和返回值的详细说明",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的单元测试来验证不同配置下的行为",
+            "description": "可以考虑添加更多的单元测试来覆盖不同的配置场景和边界条件",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑添加更多的构造函数来简化对象的创建过程",
+            "description": "可以考虑添加更多的错误处理逻辑，特别是在处理工具调用历史时",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑添加更多的文档注释，特别是关于ReAct模式的详细说明",
-        "可以添加更多的单元测试来验证不同配置下的行为",
-        "可以考虑添加更多的构造函数来简化对象的创建过程",
-        "可以考虑添加更多的错误处理机制，以应对潜在的运行时错误",
-        "可以考虑添加更多的日志记录功能，以便更好地调试和监控"
+        "增加更多的文档注释，特别是关于函数参数和返回值的详细说明",
+        "添加更多的单元测试来覆盖不同的配置场景和边界条件",
+        "考虑添加更多的错误处理逻辑，特别是在处理工具调用历史时",
+        "考虑引入日志记录机制，以便在调试和监控时提供更多的信息"
       ]
     },
     {
       "component": {
         "name": "mod.rs",
         "file_path": "src/llm/client/mod.rs",
-        "component_type": "other",
+        "component_type": "service",
         "importance_score": 0.8,
         "dependencies": [
           "crate::config::Config",
@@ -2639,13 +2739,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是LLM客户端的核心实现，提供了统一的LLM服务接口。它主要负责处理与LLM模型的交互，包括数据提取、智能对话和多轮对话等功能。组件实现了异步操作处理和错误重试机制，支持多种对话模式（如ReAct模式）。",
+      "detailed_description": "该组件是一个LLM客户端，提供了统一的LLM服务接口。它主要负责处理业务逻辑和数据转换，支持异步操作和错误处理。组件实现了多种对话模式，包括使用ReAct模式进行多轮对话和简化的单轮对话。它通过配置管理和错误重试机制来确保服务的稳定性和可靠性。",
       "responsibilities": [
         "提供统一的LLM服务接口",
-        "处理异步操作和重试逻辑",
-        "管理错误和异常",
-        "支持多种对话模式",
-        "构建和管理Agent"
+        "处理业务逻辑和数据转换",
+        "管理异步操作和错误处理",
+        "支持多种对话模式"
       ],
       "interfaces": [
         {
@@ -2842,8 +2941,8 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.75,
-        "maintainability": 0.7,
+        "overall_score": 0.8,
+        "maintainability": 0.8,
         "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
@@ -2859,39 +2958,38 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "错误处理可以更详细",
+            "description": "错误处理可以更细化",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少单元测试",
+            "description": "缺少详细的代码注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分函数过于庞大",
+            "description": "可以增加更多的单元测试",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "增加更详细的错误处理和日志记录",
-        "添加单元测试和集成测试",
-        "拆分过于庞大的函数",
-        "考虑使用更抽象的客户端接口以提高灵活性",
-        "添加性能监控和指标收集"
+        "增加更详细的代码注释",
+        "添加更多的单元测试",
+        "优化错误处理机制",
+        "考虑添加性能监控"
       ]
     },
     {
       "component": {
         "name": "react_executor.rs",
         "file_path": "src/llm/client/react_executor.rs",
-        "component_type": "feature",
+        "component_type": "agent",
         "importance_score": 0.8,
         "dependencies": [
           "super::react::{ReActConfig, ReActResponse}"
@@ -2900,12 +2998,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "ReActExecutor组件实现了ReAct模式的多轮对话逻辑。它通过execute方法启动对话，支持最大迭代次数配置，并处理不同的完成情况。组件能够处理成功完成、达到最大迭代次数和其他错误情况。在达到最大迭代次数时，它可以提取部分结果。组件还包括一个辅助方法extract_partial_result，用于从聊天历史中提取部分结果和工具调用信息。",
+      "detailed_description": "react_executor.rs组件实现了一个ReAct执行器，负责执行基于ReAct模式的多轮对话逻辑。该组件通过execute方法启动对话过程，根据配置参数控制对话的最大迭代次数和是否返回部分结果。在对话过程中，它处理来自用户的提示，并管理工具调用信息。组件还包含一个辅助方法extract_partial_result，用于从聊天历史中提取部分结果。错误处理方面，组件考虑了多种错误情况，包括达到最大迭代次数和其他异常情况。",
       "responsibilities": [
         "执行ReAct模式的多轮对话逻辑",
-        "处理异步操作",
-        "管理错误和异常",
-        "提取和处理部分结果"
+        "处理异步操作和错误管理",
+        "提取和处理聊天历史中的部分结果",
+        "管理工具调用信息",
+        "根据配置参数控制对话行为"
       ],
       "interfaces": [
         {
@@ -3016,31 +3115,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码结构可以进一步模块化",
+            "description": "代码结构可以进一步模块化，将部分功能拆分为独立方法",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "错误处理可以更详细",
+            "description": "错误处理可以更详细，提供更具体的错误信息",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "日志记录可以更系统化",
+            "description": "可以添加更多的日志记录选项，以便调试和监控",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "将对话逻辑和结果提取逻辑分离到不同的方法中",
-        "增加更详细的错误处理和日志记录",
-        "考虑使用更通用的模型接口而不是特定的Mistral模型",
-        "增加单元测试来覆盖不同的对话场景和错误情况"
+        "将extract_partial_result方法拆分为更小的方法，以提高代码可读性和可维护性",
+        "添加更详细的日志记录，特别是在错误处理和关键决策点",
+        "考虑使用更通用的错误类型，而不仅仅是anyhow::Error",
+        "添加单元测试和集成测试以覆盖主要功能路径",
+        "考虑使用更抽象的接口来减少对特定实现的依赖"
       ]
     },
     {
@@ -3054,11 +3154,11 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "AgentBuilder是一个负责创建和配置LLM Agent的构建器模式实现。它提供了三种主要的构建方法：\n1. build_agent_with_tools：创建带有预设工具（文件浏览器和文件读取器）的标准Agent\n2. build_simple_agent：创建不包含任何工具的简单Agent\n3. build_custom_agent：创建可配置工具和参数的自定义Agent\n\n每种构建方法都使用配置中的LLM参数（如模型名称、最大令牌数、温度等）来配置Agent。构建器模式使得Agent的创建过程更加灵活和可配置，符合开闭原则。",
+      "detailed_description": "该组件是智能Agent模块的核心构建器，主要负责创建和配置不同类型的Agent实例。它提供了三种构建方式：标准Agent（带预设工具）、简单Agent（不带工具）和自定义Agent（可配置工具和参数）。组件通过Client和Config参数进行初始化，并提供了对LLM和项目配置的访问方法。构建过程主要包括设置系统提示、最大令牌数、温度参数以及可选的工具集成。",
       "responsibilities": [
-        "构建标准Agent（带工具）",
-        "构建简单Agent（无工具）",
-        "构建自定义Agent（可配置工具和参数）",
+        "构建带有预设工具的标准Agent",
+        "构建不带工具的简单Agent",
+        "构建可配置的自定义Agent",
         "提供对LLM和项目配置的访问"
       ],
       "interfaces": [
@@ -3246,31 +3346,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的错误处理和输入验证",
+            "description": "可以增加更多的错误处理和输入验证",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑将重复的代码提取到辅助方法中",
+            "description": "可以提取一些重复的代码逻辑到辅助方法中",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的文档注释，特别是关于构建过程的详细说明",
+            "description": "可以增加更多的文档注释，特别是关于构建过程的详细说明",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑添加更多的构建选项，如自定义工具集或高级配置参数",
-        "实现构建过程的链式调用，使API更加流畅",
-        "添加构建过程的日志记录，便于调试和监控",
-        "考虑实现构建过程的并行化，以提高性能"
+        "增加更多的错误处理和输入验证",
+        "提取重复的代码逻辑到辅助方法中",
+        "增加更多的文档注释，特别是关于构建过程的详细说明",
+        "考虑将工具集成逻辑抽象为独立的模块",
+        "评估rig库的依赖是否可以减少或替换"
       ]
     },
     {
@@ -3286,13 +3387,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件实现了一个缓存性能监控器，主要功能包括记录缓存命中、未命中、写入和错误操作，并生成详细的性能报告。它使用原子操作确保线程安全，并提供了计算性能改进和节省成本的功能。组件还包括一个估算节省成本的方法，基于GPT-5 mini的定价模型。",
+      "detailed_description": "该组件实现了一个缓存性能监控器，主要功能包括记录缓存命中、未命中、写入和错误等事件，并提供详细的性能报告。它使用原子操作来确保线程安全，并提供了估算节省的推理时间和成本的功能。组件还包括生成性能报告和打印性能摘要的功能，以便用户可以直观地了解缓存的性能表现。",
       "responsibilities": [
-        "监控缓存性能指标",
-        "记录缓存操作",
-        "生成性能报告",
-        "计算性能改进",
-        "提供性能摘要"
+        "缓存性能指标的记录和统计",
+        "生成详细的性能报告",
+        "计算和估算性能改进",
+        "提供性能数据的可视化输出",
+        "管理和重置性能监控指标"
       ],
       "interfaces": [
         {
@@ -3606,7 +3707,7 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少文档注释",
+            "description": "缺少详细的文档注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
@@ -3615,9 +3716,9 @@
       "recommendations": [
         "实现分类统计功能",
         "增强错误处理机制",
-        "添加更多文档注释",
-        "优化序列化/反序列化性能",
-        "考虑使用更具体的错误类型"
+        "添加更详细的文档注释",
+        "优化性能报告的生成方式",
+        "考虑添加更多的性能指标"
       ]
     },
     {
@@ -3633,12 +3734,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件实现了一个异步缓存管理系统，主要功能包括缓存数据的存储和检索、缓存过期管理、性能监控和报告生成。它使用MD5哈希来生成缓存键，并支持按类别组织缓存数据。组件还提供了缓存统计信息收集功能，可以生成详细的性能报告。",
+      "detailed_description": "该组件实现了一个功能完善的缓存管理系统。它支持创建、读取、更新缓存数据，并提供了缓存过期机制。组件使用MD5哈希值作为缓存键，支持多种数据类型通过泛型实现。它还包含了性能监控功能，可以记录缓存命中、缓存未命中和缓存错误等事件。组件通过异步I/O操作提高了性能，并提供了详细的缓存统计信息。",
       "responsibilities": [
-        "缓存数据的存储和检索",
-        "缓存过期管理",
-        "性能监控和报告生成",
-        "缓存统计信息收集"
+        "管理缓存数据的存储和检索",
+        "处理异步缓存操作",
+        "监控缓存性能",
+        "管理缓存生命周期",
+        "提供缓存统计信息"
       ],
       "interfaces": [
         {
@@ -3975,25 +4077,33 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "某些函数过于庞大，可以拆分",
+            "description": "某些函数的职责过于庞大",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少详细的文档注释",
+            "description": "缺乏详细的代码注释",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "可以增加更多的单元测试",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "增加更详细的文档注释",
-        "拆分过于庞大的函数",
-        "实现更细化的错误处理机制",
-        "考虑添加缓存大小限制功能",
-        "增加缓存命中率优化策略"
+        "增加更详细的错误处理和日志记录",
+        "拆分一些过于庞大的函数",
+        "增加更多的代码注释和文档",
+        "增加单元测试和集成测试",
+        "考虑实现缓存数据的压缩功能",
+        "考虑添加缓存数据的加密功能"
       ]
     },
     {
@@ -4011,13 +4121,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是一个智能Agent，主要负责项目的预处理工作。它通过多个步骤来完成其任务：首先提取项目结构，包括文件和目录信息；然后识别项目中的核心组件；接着使用AI技术对这些核心组件进行深度分析；之后分析组件间的关系；最后生成架构洞察和项目摘要。组件使用了异步编程模式来提高性能，并且有效地利用了缓存机制来减少重复计算。",
+      "detailed_description": "PreprocessingAgent是一个智能Agent，负责项目预处理的核心功能。它通过一系列步骤对项目进行分析和处理，包括提取项目结构、识别核心组件、使用AI分析核心组件、分析组件关系、生成架构洞察和摘要。该组件使用了异步编程和缓存机制来提高性能，并提供了详细的日志输出来跟踪处理进度。",
       "responsibilities": [
-        "提取项目结构信息",
-        "识别和分析核心组件",
-        "使用AI增强组件分析",
-        "分析组件间的关系",
-        "生成项目架构洞察和摘要"
+        "项目结构提取",
+        "核心组件识别",
+        "组件分析（静态和AI增强）",
+        "组件关系分析",
+        "架构洞察生成和摘要生成"
       ],
       "interfaces": [
         {
@@ -4720,7 +4830,7 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "错误处理可以更细化",
+            "description": "部分错误处理可以更全面",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
@@ -4728,10 +4838,12 @@
       },
       "recommendations": [
         "将大型函数拆分为更小的、更专注的函数",
-        "降低圈复杂度，特别是在分析和生成函数中",
-        "添加更详细的模块级注释，解释每个主要函数的目的和用法",
-        "考虑使用依赖注入来提高组件的灵活性和可测试性",
-        "实现更细粒度的错误处理，提供更具体的错误信息"
+        "降低圈复杂度",
+        "添加更详细的模块级注释",
+        "改进错误处理机制",
+        "考虑将部分功能模块化以提高复用性",
+        "增加单元测试以确保代码的健壮性",
+        "考虑使用更轻量级的依赖注入方式"
       ]
     },
     {
@@ -4748,11 +4860,11 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件实现了一个功能强大的文件系统探索工具，主要功能包括：\n1. 列出目录内容（递归和非递归两种模式）\n2. 按模式搜索文件\n3. 获取文件详细信息\n4. 计算文件重要性评分\n5. 生成文件系统洞察\n\n组件使用异步编程实现高效的文件系统操作，并提供了详细的文件信息结构。它支持忽略特定文件和目录，并能处理各种文件系统操作错误。",
+      "detailed_description": "该组件实现了一个功能强大的文件系统探索工具，主要提供三个核心功能：目录列表、文件搜索和文件信息获取。它能够递归或非递归地遍历文件系统，创建详细的文件信息结构，并根据文件内容和元数据计算重要性评分。组件还能生成关于文件系统的洞察信息，如文件类型分布等。",
       "responsibilities": [
         "文件系统探索和遍历",
-        "文件信息提取和分析",
-        "文件模式匹配和搜索",
+        "文件信息提取与分析",
+        "文件模式匹配搜索",
         "文件重要性评估",
         "生成文件系统洞察"
       ],
@@ -5151,7 +5263,7 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "错误处理可以更规范化",
+            "description": "错误处理可以更规范",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
@@ -5165,12 +5277,12 @@
         ]
       },
       "recommendations": [
-        "将大型函数拆分为更小的、更专注的函数",
-        "实现更详细的模块和函数级注释",
-        "考虑使用更现代的错误处理模式",
-        "添加更全面的单元测试",
-        "考虑实现并行文件处理以提高性能",
-        "添加缓存机制以减少重复文件系统操作"
+        "将大型函数拆分为更小的单元",
+        "实现更详细的模块注释和文档",
+        "考虑使用更规范的错误处理模式",
+        "添加更多单元测试覆盖复杂逻辑",
+        "考虑实现并行处理以提高性能",
+        "添加缓存机制以提高重复操作的性能"
       ]
     },
     {
@@ -5186,13 +5298,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件实现了一个文件读取工具，主要功能包括：\n1. 读取文件内容，支持指定行范围和最大行数限制\n2. 自动处理大文件和二进制文件\n3. 提供结构化的文件读取结果\n4. 实现了Tool trait，可以集成到智能Agent系统中\n5. 处理文件路径解析，基于项目根目录\n6. 实现了文件内容的部分读取功能\n7. 提供了文件读取结果的结构化输出\n8. 实现了二进制文件检测功能\n9. 提供了文件读取结果的结构化输出",
+      "detailed_description": "该组件实现了一个文件读取工具，主要功能包括：\n1. 读取文件内容，支持指定行范围和最大行数限制\n2. 自动检测并处理二进制文件\n3. 处理大文件时自动限制读取行数\n4. 提供详细的文件读取结果信息（如文件大小、编码等）",
       "responsibilities": [
-        "提供文件内容读取服务",
-        "处理文件路径解析",
-        "实现文件内容的部分读取",
-        "处理二进制文件检测",
-        "提供文件读取结果结构化输出"
+        "文件内容读取",
+        "文件类型检测",
+        "文件内容处理",
+        "错误处理和异常管理"
       ],
       "interfaces": [
         {
@@ -5385,198 +5496,33 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
+            "description": "缺少文件读取超时处理",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
+            "description": "缺少文件读取进度反馈",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码检测",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少文件内容的编码转换",
+            "description": "缺少文件内容缓存机制",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "增加更详细的错误处理",
-        "添加文件内容的编码检测和转换功能",
-        "增加文件内容缓存机制",
-        "优化大文件处理性能",
-        "增加文件内容的压缩/解压功能",
-        "增加文件内容的加密/解密功能",
-        "增加文件内容的校验和计算功能",
-        "增加文件内容的行号显示功能",
-        "增加文件内容的语法高亮功能",
-        "增加文件内容的行内搜索功能",
-        "增加文件内容的行内替换功能",
-        "增加文件内容的行内注释功能",
-        "增加文件内容的行内删除功能",
-        "增加文件内容的行内插入功能",
-        "增加文件内容的行内复制功能",
-        "增加文件内容的行内粘贴功能",
-        "增加文件内容的行内剪切功能",
-        "增加文件内容的行内撤销功能",
-        "增加文件内容的行内重做功能",
-        "增加文件内容的行内保存功能",
-        "增加文件内容的行内加载功能",
-        "增加文件内容的行内比较功能",
-        "增加文件内容的行内合并功能",
-        "增加文件内容的行内分割功能"
+        "增加文件读取超时处理",
+        "实现文件内容缓存机制",
+        "增强错误处理机制",
+        "添加文件读取进度反馈",
+        "优化大文件处理逻辑",
+        "增加文件内容验证"
       ]
     },
     {
@@ -5597,13 +5543,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "DeepDiveAgent组件是一个智能Agent模块，主要负责生成DeepDive文档。它通过异步操作处理核心功能，包括识别DeepDive主题、生成主题分析和保存文档。组件使用了LLMClient、CacheManager和Config等模块，以确保高效的异步操作和良好的错误处理机制。",
+      "detailed_description": "DeepDiveAgent 是一个智能Agent，主要负责生成深度技术分析文档。它通过分析项目的核心组件、研究洞察和架构洞察，识别出值得深入研究的技术主题，并为每个主题生成详细的分析报告。DeepDiveAgent 使用LLMClient 与大语言模型交互，使用CacheManager 管理缓存，并使用Config 管理配置。它的主要功能包括生成DeepDive文档、识别DeepDive主题、分析技术主题、创建主题文档和保存文档。",
       "responsibilities": [
-        "生成DeepDive文档",
-        "识别DeepDive主题",
-        "构建主题识别提示词",
-        "生成主题分析",
-        "保存DeepDive文档"
+        "生成深度技术分析文档",
+        "识别技术主题",
+        "分析技术主题",
+        "管理缓存和持久化文档"
       ],
       "interfaces": [
         {
@@ -5981,8 +5926,8 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.75,
-        "maintainability": 0.7,
+        "overall_score": 0.8,
+        "maintainability": 0.8,
         "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
@@ -6005,31 +5950,30 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码行数较多，建议拆分成更小的模块",
+            "description": "代码中存在一些较长的函数，可以考虑拆分以提高可维护性",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分函数的圈复杂度较高",
+            "description": "某些错误处理可以更详细",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以增加更多的单元测试",
+            "description": "可以增加更多的单元测试来提高代码覆盖率",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "拆分代码成更小的模块",
-        "降低部分函数的圈复杂度",
-        "增加单元测试",
-        "优化依赖的模块以提高性能"
+        "考虑将某些长函数拆分为更小的函数以提高可维护性",
+        "增加更多的单元测试以提高代码覆盖率",
+        "考虑使用更详细的错误处理机制以提高代码的健壮性"
       ]
     },
     {
@@ -6049,11 +5993,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是一个智能Agent模块，主要负责处理智能Agent的核心功能。它通过异步操作处理来提高效率，并通过错误处理和异常管理来确保系统的稳定性。组件使用了LLMClient、CacheManager、ResearchExtractor等模块来实现其功能。",
+      "detailed_description": "该组件是一个智能Agent，主要负责生成调研报告、使用AI增强调研报告、生成综合洞察、生成改进建议和生成研究摘要。它通过调用LLMClient、CacheManager和ResearchExtractor等组件来实现这些功能。组件使用异步编程来处理操作，并使用缓存机制来提高性能。",
       "responsibilities": [
-        "智能Agent模块的核心功能",
-        "异步操作处理",
-        "错误处理和异常管理"
+        "生成调研报告",
+        "使用AI增强调研报告",
+        "生成综合洞察",
+        "生成改进建议",
+        "生成研究摘要"
       ],
       "interfaces": [
         {
@@ -6491,23 +6437,31 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "圈复杂度较高，部分函数逻辑复杂",
+            "description": "部分函数的圈复杂度较高，建议拆分",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分函数过长，建议拆分成更小的函数",
+            "description": "缺乏详细的模块级注释",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "部分错误处理可以更详细",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "拆分代码行数过多的模块",
-        "降低圈复杂度",
-        "拆分过长的函数"
+        "将大型函数拆分为更小的函数以降低圈复杂度",
+        "添加更详细的模块级注释以提高代码可读性",
+        "优化错误处理以提供更详细的错误信息",
+        "考虑将某些功能模块化以提高代码的可维护性"
       ]
     },
     {
@@ -6527,13 +6481,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "CategorizedDocumentationAgent是一个负责生成和管理分类文档的组件。它通过分析核心组件、组件分析和项目结构来生成结构化的技术文档。该组件使用LLM客户端来生成文档内容，并使用缓存管理器来缓存生成的文档。它还提供了保存分类文档的功能。",
+      "detailed_description": "CategorizedDocumentationAgent是一个专门用于生成和管理分类文档的组件。它通过分析核心组件、组件分析和项目结构来生成结构化的技术文档。该组件使用LLM客户端生成文档内容，并通过缓存机制提高性能。它能够为每个组件类型生成详细的技术文档，包括组件概述、功能详解、技术实现、接口说明、依赖关系、使用指南和维护说明。",
       "responsibilities": [
         "生成分类文档",
-        "管理组件文档",
-        "生成文档总结",
+        "管理文档缓存",
         "构建文档生成提示",
-        "保存分类文档"
+        "保存分类文档",
+        "生成文档总结"
       ],
       "interfaces": [
         {
@@ -6888,32 +6842,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码行数过多，建议拆分成更小的模块",
+            "description": "错误处理可以更全面",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分函数的圈复杂度较高",
+            "description": "某些函数过于庞大，可以拆分",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "错误处理可以更细化",
+            "description": "缺少详细的模块注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "将大型函数拆分为更小的函数以降低圈复杂度",
-        "实现更细粒度的错误处理",
-        "考虑实现文档生成的并行处理以提高性能",
-        "添加更详细的日志记录以便于调试",
-        "考虑实现文档生成的进度跟踪和取消功能"
+        "实现更全面的错误处理机制",
+        "拆分过于庞大的函数",
+        "添加详细的模块注释",
+        "优化缓存策略",
+        "考虑添加文档验证功能"
       ]
     },
     {
@@ -6929,7 +6883,7 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "file_utils.rs是一个提供通用文件操作工具函数的组件。它的主要功能包括：\n1. 安全地写入文件，自动创建必要的父目录\n2. 检测文件是否为测试文件，支持多种编程语言和测试框架的约定\n3. 检测目录是否为测试目录\n4. 识别二进制文件路径\n组件使用异步操作处理文件I/O，并提供了良好的错误处理机制。",
+      "detailed_description": "该组件提供了三个主要功能：1) 安全地写入文件，自动创建必要的目录结构；2) 检测文件是否为测试文件，支持多种编程语言的测试文件命名约定；3) 识别二进制文件类型通过文件扩展名。组件使用了异步编程模型，并包含了全面的单元测试。",
       "responsibilities": [
         "提供安全的文件写入功能",
         "检测测试文件和目录",
@@ -7082,8 +7036,8 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.8,
-        "maintainability": 0.8,
+        "overall_score": 0.75,
+        "maintainability": 0.7,
         "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
@@ -7099,31 +7053,31 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "is_test_file函数的复杂逻辑可以拆分为更小的函数",
+            "description": "函数is_test_file的复杂性较高，可以拆分为更小的函数",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的文档注释",
+            "description": "缺少文档注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的错误处理",
+            "description": "可以添加更多的错误处理和日志记录",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "将is_test_file函数拆分为更小的函数以提高可维护性",
+        "将is_test_file函数拆分为更小的函数",
         "添加更详细的文档注释",
-        "考虑添加同步版本的文件操作函数",
-        "增加更多的错误处理和日志记录"
+        "增加错误处理和日志记录",
+        "考虑为同步场景提供非异步版本"
       ]
     },
     {
@@ -7141,13 +7095,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件提供了一系列用于排序和过滤组件的工具函数。主要功能包括：\n1. 按重要性分数对组件进行排序\n2. 获取前N个重要组件\n3. 根据最小重要性分数过滤组件并排序\n该组件支持两种输入格式：CoreComponent引用向量和CoreComponent所有权向量。组件内部实现了基于重要性分数的比较逻辑，并提供了完善的单元测试来验证各种排序和过滤场景。",
+      "detailed_description": "该组件提供了多个用于排序和过滤组件的工具函数。主要功能包括：\n1. 按重要性分数降序排序组件\n2. 获取按重要性分数排序的前N个组件\n3. 过滤并排序组件\n4. 处理组件引用和直接组件对象\n\n组件实现了四个主要的公共方法，每个方法都有详细的文档注释。代码中包含了单元测试，用于验证排序和过滤功能的正确性。",
       "responsibilities": [
-        "提供基于重要性分数的组件排序功能",
-        "提供获取前N个重要组件的功能",
-        "提供组件过滤和排序的组合功能",
-        "支持不同类型的组件输入格式",
-        "提供完善的单元测试"
+        "基于重要性分数对组件进行排序",
+        "获取按重要性分数排序的前N个组件",
+        "过滤并排序组件",
+        "处理组件引用和直接组件对象"
       ],
       "interfaces": [
         {
@@ -7314,8 +7267,8 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.85,
-        "maintainability": 0.8,
+        "overall_score": 0.9,
+        "maintainability": 0.9,
         "readability": 0.9,
         "testability": 0.7,
         "reusability": 0.6,
@@ -7324,7 +7277,7 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑将重复的排序逻辑提取为一个内部方法",
+            "description": "可以考虑使用泛型来减少重复的排序逻辑",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
@@ -7338,18 +7291,18 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑使用更通用的排序接口，允许不同的排序方式",
+            "description": "可以考虑将排序逻辑提取为一个独立的trait，以便于复用",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑将重复的排序逻辑提取为一个内部方法以减少代码重复",
-        "添加对NaN值的处理以提高健壮性",
-        "考虑实现更通用的排序接口以支持不同的排序方式",
-        "可以添加更多的性能测试，特别是对于大型组件集合的排序性能",
-        "可以考虑添加日志功能以便于调试和监控"
+        "考虑将排序逻辑提取为一个独立的trait，以便于复用",
+        "添加更多的错误处理，特别是对于可能的NaN值处理",
+        "考虑使用泛型来减少重复的排序逻辑",
+        "增加对不同排序标准的支持，而不仅仅是重要性分数",
+        "考虑添加并行处理能力，以提高大规模组件集合的处理效率"
       ]
     },
     {
@@ -7363,13 +7316,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "markdown_utils.rs是一个专门用于生成和处理Markdown内容的工具组件。它提供了多个函数来创建各种Markdown元素，如标题、代码块、表格、列表、链接、图片等。该组件还能生成完整的Markdown文档，包括标题、内容、时间戳和页脚。此外，它还提供了转义特殊字符的功能，以及生成Mermaid图表和流程图的能力。",
+      "detailed_description": "该组件提供了一个全面的Markdown工具集，包含生成标题、代码块、表格、列表、链接、图片、引用块、水平分隔线、粗体和斜体文本、行内代码、目录、徽章、折叠区域、警告框、完整的Markdown文档以及转义特殊字符等功能。它还支持生成Mermaid图表和流程图。",
       "responsibilities": [
         "生成各种Markdown元素",
-        "处理Markdown内容",
+        "提供Markdown内容格式化功能",
         "创建完整的Markdown文档",
-        "提供Markdown实用工具函数",
-        "转义特殊字符"
+        "转义特殊字符",
+        "生成可视化图表"
       ],
       "interfaces": [
         {
@@ -7712,9 +7665,9 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.85,
-        "maintainability": 0.8,
-        "readability": 0.9,
+        "overall_score": 0.75,
+        "maintainability": 0.7,
+        "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.7,
@@ -7729,48 +7682,39 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "函数过多可能影响可维护性",
+            "description": "代码重复问题",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分函数逻辑可以提取为更小的函数",
+            "description": "缺乏错误处理",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少错误处理和输入验证",
+            "description": "缺乏单元测试",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少文档注释",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺少单元测试",
+            "description": "缺乏文档注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "将大型函数拆分为更小的函数",
-        "添加错误处理和输入验证",
-        "添加文档注释",
-        "添加单元测试",
-        "考虑使用枚举类型来管理不同的Markdown元素类型",
-        "考虑添加缓存机制以提高性能",
-        "考虑添加Markdown解析功能以增强功能"
+        "添加错误处理机制",
+        "编写单元测试",
+        "添加详细的文档注释",
+        "考虑添加对其他Markdown处理库的依赖以增强功能",
+        "优化代码以减少重复"
       ]
     },
     {
@@ -7790,13 +7734,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是一个工作流引擎，负责协调和执行多阶段的分析和文档生成过程。它管理从项目预处理到最终文档生成的完整流程，包括与各种代理（Agent）的交互。组件使用异步编程模型处理长时间运行的任务，并提供详细的性能监控和结果报告功能。",
+      "detailed_description": "该组件是一个工作流引擎，负责协调整个分析过程。它通过多个阶段完成工作：项目预处理、调研文档生成、知识库文档生成和分类组件文档生成。每个阶段都有详细的日志输出和性能计时。组件使用多种Agent来完成具体任务，并根据配置选择不同的文档生成模式。",
       "responsibilities": [
-        "协调和执行多阶段工作流",
-        "处理异步操作和并发任务",
-        "管理错误处理和异常情况",
-        "生成和保存各种格式的文档",
-        "监控和报告工作流性能指标"
+        "协调整个工作流的执行",
+        "处理异步操作",
+        "管理错误和异常",
+        "生成各种格式的输出文档"
       ],
       "interfaces": [
         {
@@ -8122,7 +8065,7 @@
       ],
       "complexity_metrics": {
         "cyclomatic_complexity": 10.0,
-        "lines_of_code": 562,
+        "lines_of_code": 566,
         "number_of_functions": 8,
         "number_of_classes": 3,
         "depth_of_inheritance": 0,
@@ -8154,7 +8097,14 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "函数过长，需要拆分",
+            "description": "代码过于庞大，考虑拆分成更小的模块",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "某些函数过于复杂，需要拆分",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
@@ -8168,34 +8118,18 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少详细的模块级文档",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "可以使用更多的结构化日志记录",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "可以提取重复的文件操作代码",
+            "description": "缺少详细的模块注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "将长函数拆分为更小的、更专注的函数",
-        "创建一个统一的错误处理宏或函数",
-        "为每个主要模块添加详细的文档注释",
-        "实现更结构化的日志记录系统",
-        "提取重复的文件操作代码到辅助函数",
-        "考虑使用依赖注入来减少对Agent的直接依赖",
-        "添加单元测试和集成测试来验证各个阶段的功能"
+        "将大型函数拆分为更小的函数",
+        "提高代码的可测试性",
+        "增加更详细的模块注释",
+        "考虑使用更通用的依赖注入机制",
+        "实现更一致的错误处理策略"
       ]
     },
     {
@@ -8209,12 +8143,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件定义了一个用于分类和识别UI组件的枚举类型ComponentType，包含了19种不同的组件类型。它实现了多种功能方法，包括获取组件类型的显示名称、文件夹名称和描述。组件还提供了一个ComponentTypeMapper结构体，用于基于文件路径和名称进行智能映射，将字符串类型映射到枚举类型。该组件支持序列化和反序列化，并实现了Display trait以便于调试和日志输出。",
+      "detailed_description": "该组件定义了一个详细的UI组件类型枚举，包含了各种UI组件类型如页面、控制器、小部件等。它提供了将文件路径和名称映射到组件类型的功能，并包含了组件类型的显示名称、文件夹名称和描述信息。该组件是UI组件分类和识别系统的核心部分，负责将各种UI元素分类和标识。",
       "responsibilities": [
         "定义UI组件类型枚举",
-        "提供组件类型的显示名称、文件夹名称和描述",
-        "实现基于文件路径和名称的智能组件类型映射",
-        "支持序列化和反序列化"
+        "提供组件类型映射功能",
+        "管理组件类型相关信息",
+        "支持组件类型转换和识别"
       ],
       "interfaces": [
         {
@@ -8354,9 +8288,9 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.8,
+        "overall_score": 0.75,
         "maintainability": 0.7,
-        "readability": 0.9,
+        "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.7,
@@ -8371,31 +8305,31 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "圈复杂度较高，需要拆分部分复杂的匹配逻辑",
+            "description": "减少圈复杂度",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以增加更多的文档注释",
+            "description": "增加代码注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "考虑将大的match表达式拆分为更小的函数",
+            "description": "拆分过大的函数",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑将大的match表达式拆分为更小的函数以降低圈复杂度",
-        "增加更多的文档注释，特别是对于映射逻辑",
-        "考虑添加更多的测试用例来覆盖所有组件类型和边界情况",
-        "可以考虑使用更灵活的配置方式来支持自定义组件类型映射规则"
+        "实现单元测试以覆盖所有组件类型",
+        "考虑将映射逻辑拆分为多个更小的函数以减少圈复杂度",
+        "添加更详细的文档注释，特别是关于映射逻辑的注释",
+        "考虑使用更模块化的设计，将不同的组件类型映射规则分开"
       ]
     },
     {
@@ -8412,13 +8346,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "ComponentExtractor是一个用于分析UI组件的工具，主要功能包括：\n1. 分析组件的结构和功能，提取组件的接口信息（如函数、方法、类等）和参数信息\n2. 分析组件的依赖关系，包括内部和外部依赖\n3. 计算组件的复杂度指标，如圈复杂度、代码行数、函数数量等\n4. 评估组件的质量，包括可维护性、可读性、可测试性等方面\n5. 根据质量评估结果，提供改进建议\n组件支持多种编程语言，包括Rust、Python、JavaScript/TypeScript和Java。",
+      "detailed_description": "该组件是一个UI组件分析器，主要功能包括分析UI组件的结构和接口、提取组件的依赖关系、计算组件的复杂度指标、评估组件的质量并生成改进建议。它支持多种编程语言（如Rust、Python、JavaScript、Java）的接口提取，并使用缓存机制来优化性能。组件通过正则表达式解析代码，提取接口信息，并计算各种代码质量指标。",
       "responsibilities": [
-        "分析UI组件的结构和功能",
-        "提取组件的接口信息",
-        "分析组件的依赖关系",
+        "分析UI组件的结构和接口",
+        "提取组件的依赖关系",
         "计算组件的复杂度指标",
-        "评估组件的质量并提供改进建议"
+        "评估组件的质量",
+        "生成改进建议"
       ],
       "interfaces": [
         {
@@ -9036,40 +8970,39 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码复杂度较高，圈复杂度为44.0",
+            "description": "代码圈复杂度过高",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少对某些语言（如Kotlin、JSX、TSX、Vue、Svelte）的支持",
+            "description": "缺少对某些编程语言的支持",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "某些函数过于庞大，需要拆分",
+            "description": "部分代码注释不完整",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少详细的文档注释",
+            "description": "缺少单元测试",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "拆分过于庞大的函数，提高代码可读性和可维护性",
+        "降低代码的圈复杂度",
         "实现对Kotlin、JSX、TSX、Vue、Svelte等语言的支持",
-        "优化正则表达式的使用，提高性能",
-        "增加详细的文档注释，提高代码可理解性",
-        "考虑使用更精细的错误处理机制，替代anyhow库",
-        "添加单元测试，提高代码可靠性"
+        "增加单元测试以提高代码可靠性",
+        "移除rig依赖并使用简化实现",
+        "完善代码注释，特别是复杂逻辑部分"
       ]
     },
     {
@@ -9083,12 +9016,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件定义了AI分析结果的数据模型，包括组件分析结果、代码质量评估、架构洞察、项目摘要和关系分析等。每个模型都使用Rust的derive宏实现了Serialize、Deserialize和JsonSchema trait，以便可以轻松地进行序列化和反序列化，并生成JSON模式。",
+      "detailed_description": "该组件定义了多个结构体，用于表示AI分析结果的不同方面。主要包括AI组件分析结果、代码质量评估、依赖关系分析、AI架构洞察结果、设计原则评估、AI项目摘要结果、AI关系分析结果、组件关系和耦合度分析。这些结构体通过Rust的derive宏实现了序列化和反序列化功能，便于数据交换和存储。",
       "responsibilities": [
         "定义AI分析结果的数据模型",
         "提供代码质量评估的结构化数据模型",
-        "定义架构洞察和关系分析的数据模型",
-        "提供项目摘要和关系分析的结构化数据模型"
+        "定义依赖关系分析的数据结构",
+        "提供AI架构洞察结果的数据模型",
+        "定义AI项目摘要结果的数据结构"
       ],
       "interfaces": [
         {
@@ -9190,8 +9124,8 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.85,
-        "maintainability": 0.8,
+        "overall_score": 0.9,
+        "maintainability": 0.9,
         "readability": 0.9,
         "testability": 0.7,
         "reusability": 0.6,
@@ -9207,25 +9141,17 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的文档注释来提高代码可读性",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "可以考虑添加更多的单元测试来提高代码可靠性",
+            "description": "可以添加更多的文档注释，特别是对于复杂的结构体字段",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑将某些大的结构体拆分为更小的模块",
-        "添加更多的文档注释来提高代码可读性",
-        "添加更多的单元测试来提高代码可靠性",
-        "考虑添加更多的错误处理机制",
-        "考虑添加更多的性能优化"
+        "考虑将某些大的结构体拆分为更小的模块，以提高代码的可维护性",
+        "添加更多的文档注释，特别是对于复杂的结构体字段，以便于其他开发者理解",
+        "考虑添加更多的单元测试，以确保数据模型的正确性",
+        "定期检查依赖库的版本和安全性，确保系统的稳定性和安全性"
       ]
     },
     {
@@ -9244,12 +9170,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件主要负责分析代码文件的组件类型。它通过构建组件类型分析提示，使用AI进行分析，并提供批量分析和增强分析的功能。",
+      "detailed_description": "该组件主要负责分析代码文件的组件类型。它通过构建分析提示，使用AI模型进行分析，并缓存结果以提高性能。组件还提供了批量分析功能，以及结合规则和AI的增强分析功能。",
       "responsibilities": [
         "分析代码文件的组件类型",
-        "构建组件类型分析提示",
-        "批量分析组件类型",
-        "增强组件类型分析结果"
+        "处理异步AI分析操作",
+        "管理缓存以提高性能",
+        "提供批量分析功能",
+        "结合规则和AI进行增强分析"
       ],
       "interfaces": [
         {
@@ -9505,31 +9432,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "错误处理可以更详细",
+            "description": "错误处理可以更详细，特别是在AI分析失败时",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缓存机制可以更健壮",
+            "description": "缓存机制可以添加TTL（时间生存期）功能",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "测试覆盖率可以提高",
+            "description": "测试用例不够全面，缺少异步操作的测试",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "增加更详细的错误处理",
-        "增强缓存机制的健壮性",
-        "提高测试覆盖率",
-        "优化AI分析的性能"
+        "增加更详细的错误处理和日志记录",
+        "实现缓存结果的TTL功能",
+        "扩展测试用例以覆盖更多场景",
+        "考虑添加并发控制以防止对AI服务的过度使用",
+        "优化依赖管理以提高系统的可维护性"
       ]
     },
     {
@@ -9543,12 +9471,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件定义了三个主要的数据结构：AIResearchEnhancement、AIComprehensiveInsights和AIRecommendations。这些结构体用于存储和传输AI分析模块生成的各类分析结果和建议。每个结构体包含多个字段，用于存储特定类型的分析结果。组件使用serde进行序列化和反序列化，使用schemars生成JSON模式，以便与前端或其他模块进行数据交换。",
+      "detailed_description": "该组件定义了三个主要的数据结构：AIResearchEnhancement、AIComprehensiveInsights和AIRecommendations。这些结构用于存储和传输AI生成的分析结果、洞察和建议。每个字段都有详细的注释和描述，说明其用途和预期内容。组件使用serde和schemars库来支持数据的序列化和反序列化，以及生成JSON模式。",
       "responsibilities": [
-        "定义AI分析结果的数据结构",
-        "提供数据验证和序列化功能",
-        "支持JSON模式生成",
-        "处理AI生成的各类分析结果和建议"
+        "定义AI分析结果的数据模型",
+        "提供数据验证和处理功能",
+        "组织和存储AI生成的洞察和建议",
+        "支持数据的序列化和反序列化",
+        "为其他组件提供标准化的数据格式"
       ],
       "interfaces": [
         {
@@ -9603,8 +9532,8 @@
       },
       "quality_assessment": {
         "overall_score": 0.85,
-        "maintainability": 0.8,
-        "readability": 0.9,
+        "maintainability": 0.9,
+        "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.9,
@@ -9612,24 +9541,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑将大型结构体拆分为更小的模块",
+            "description": "可以考虑为每个字段添加更详细的文档注释，特别是关于字段的预期内容和使用场景。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更详细的文档注释，特别是关于字段之间关系的说明",
+            "description": "虽然代码已经遵循了Rust的命名约定，但可以考虑更一致地使用驼峰式命名法。",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "可以考虑添加更多的单元测试来验证结构的序列化和反序列化功能。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑将大型结构体拆分为更小的模块，以提高代码的可维护性",
-        "添加更详细的文档注释，特别是关于字段之间关系的说明",
-        "考虑添加自定义的验证逻辑，以确保数据的完整性和一致性",
-        "考虑添加示例数据，以帮助开发者理解每个字段的用途和格式"
+        "为每个字段添加更详细的文档注释，特别是关于字段的预期内容和使用场景。",
+        "考虑添加更多的单元测试来验证结构的序列化和反序列化功能。",
+        "考虑使用更一致的命名约定，如驼峰式命名法。",
+        "考虑添加更多的验证逻辑来确保数据的完整性和一致性。",
+        "考虑添加更多的元数据字段，如创建时间、修改时间等，以便于跟踪数据的变化。"
       ]
     },
     {
@@ -9646,13 +9583,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "ResearchExtractor 组件是一个功能模块，主要负责从预处理结果中提取关键信息并生成各种类型的调研报告。它通过一系列异步方法生成四种主要类型的报告：核心功能分析报告、架构分析报告、组件依赖分析报告和代码质量评估报告。每种报告都包含多个章节，每个章节有标题、内容、类型和重要性评分。组件使用CacheManager来管理缓存，并从PreprocessingResult中获取输入数据。",
+      "detailed_description": "ResearchExtractor 组件是一个专门用于生成各类研究报告的功能模块。它通过分析预处理后的数据，生成关于核心功能、架构、组件依赖和代码质量的详细报告。组件采用异步处理方式，确保高效的数据处理能力。",
       "responsibilities": [
-        "从预处理结果中提取关键信息并生成结构化的调研报告",
-        "分析项目的核心功能组件和模块分布",
-        "评估项目的架构设计和模式",
-        "分析组件间的依赖关系和耦合度",
-        "评估代码质量和可维护性"
+        "生成各类研究报告",
+        "处理预处理后的数据",
+        "分析核心功能和架构",
+        "评估组件质量和依赖关系"
       ],
       "interfaces": [
         {
@@ -9864,32 +9800,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码中存在一些重复的模式，特别是在生成各种报告时",
+            "description": "错误处理可以更详细",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "错误处理可以更加细化，提供更多的上下文信息",
+            "description": "某些函数的长度较长，可以拆分",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "某些函数的参数传递可以优化，考虑使用更结构化的数据传递方式",
+            "description": "缺乏详细的模块级文档注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑将报告生成的共同逻辑提取出来，减少重复代码",
-        "增强错误处理，提供更详细的错误信息",
-        "考虑使用更结构化的数据传递方式，减少参数传递的复杂性",
-        "增加单元测试来覆盖各种报告生成场景",
-        "考虑添加缓存策略配置，使其更灵活"
+        "增加更详细的错误处理和日志记录",
+        "拆分较长的函数以提高可维护性",
+        "添加模块级文档注释以便于理解",
+        "考虑引入更高效的缓存管理策略",
+        "优化PreprocessingResult的处理方式以提高性能"
       ]
     },
     {
@@ -9908,13 +9844,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是一个文档提取和生成工具，主要负责从预处理结果和研究报告中提取信息并生成各种技术文档。它实现了C4模型的架构图生成功能，包括上下文图、容器图、组件图和代码图。此外，它还能生成项目概述、架构决策记录、API文档、开发指南和部署指南等多种类型的文档。组件使用异步处理来提高性能，并通过缓存管理器来优化文档生成过程。",
+      "detailed_description": "该组件是一个专门用于从预处理结果中提取和生成各种文档的工具。它主要负责创建C4架构图、架构决策记录、项目概览、技术栈信息和各种指南文档。组件使用异步操作处理文档生成，并利用缓存管理来提高性能。它通过结构化的方式输出文档内容，使用Serde进行序列化和反序列化。组件包含多个方法来生成不同类型的图表和文档，如上下文图、容器图、组件图和代码结构图。",
       "responsibilities": [
-        "生成C4架构文档",
-        "创建各种技术文档",
-        "处理预处理结果",
-        "管理缓存",
-        "生成架构图表"
+        "从预处理结果生成各种类型的文档",
+        "创建C4架构图和架构决策记录",
+        "生成项目概览和技术栈信息",
+        "处理和格式化文档内容",
+        "管理缓存以提高性能"
       ],
       "interfaces": [
         {
@@ -10347,7 +10283,7 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "错误处理不完善",
+            "description": "错误处理不一致",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
@@ -10361,28 +10297,25 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码注释不足",
+            "description": "复杂函数需要拆分",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "函数过于庞大",
+            "description": "缺乏代码注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "添加单元测试",
-        "实现依赖注入",
-        "提取重复代码到独立函数",
-        "改进错误处理机制",
-        "增加详细的代码注释",
-        "拆分过于庞大的函数",
-        "添加日志记录功能",
-        "实现文档生成的进度跟踪"
+        "增加单元测试以提高代码覆盖率",
+        "拆分复杂函数以提高可维护性",
+        "实现更一致的错误处理机制",
+        "添加详细的代码注释以提高可读性",
+        "考虑引入文档模板系统以提高生成文档的一致性"
       ]
     },
     {
@@ -10398,13 +10331,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "TypeScriptProcessor 组件是一个功能模块，主要负责处理 TypeScript 代码中的依赖关系和组件类型识别。它实现了 LanguageProcessor trait，提供了支持的文件扩展名列表、依赖提取、组件类型判断、重要行判断和语言名称返回等功能。组件使用了 Rust 的强类型特性，提高了代码的安全性和可靠性。它通过正则表达式匹配来提取 TypeScript 代码中的导入依赖，并根据文件名和内容模式来判断组件类型。组件还实现了异步操作处理，提高了系统的性能和响应能力。",
+      "detailed_description": "TypeScriptProcessor 组件是一个专门用于处理 TypeScript 文件的语言处理器。它的主要功能包括：\n\n1. 提取依赖关系：通过正则表达式匹配 TypeScript 文件中的导入语句，提取依赖路径和名称，并标记是否为外部依赖。\n2. 确定文件类型：根据文件名和内容，确定 TypeScript 文件的类型，如主文件、声明文件、配置文件等。\n3. 识别重要行：识别文件中的重要行，如函数定义、类定义、导入和导出语句等。\n4. 支持的扩展名：提供支持的文件扩展名列表，如 .ts 和 .tsx。",
       "responsibilities": [
-        "解析和处理 TypeScript 代码中的依赖关系。",
-        "识别和分类 TypeScript 文件的组件类型。",
-        "提供支持的文件扩展名列表。",
-        "判断代码行的重要性。",
-        "返回语言名称。"
+        "解析 TypeScript 文件内容，提取导入依赖。",
+        "确定 TypeScript 文件的类型（如主文件、声明文件、配置文件等）。",
+        "识别文件中的重要行（如函数定义、类定义等）。",
+        "提供支持的文件扩展名列表。"
       ],
       "interfaces": [
         {
@@ -10586,46 +10518,40 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑将正则表达式的编译移到构造函数之外，以避免在每次创建实例时重新编译。",
+            "description": "可以考虑将正则表达式的编译移到模块初始化之外，以避免每次创建新实例时重新编译。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的单元测试来覆盖不同的 TypeScript 文件类型和内容模式。",
+            "description": "可以添加更多的错误处理和日志记录，以便在处理不正确的输入时提供更好的调试信息。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑将依赖提取逻辑拆分为更小的函数，以提高代码的可读性和可维护性。",
+            "description": "可以考虑将一些重复的逻辑（如检查是否为外部依赖）提取到单独的方法中，以提高代码的可维护性。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的错误处理和日志记录，以帮助调试和问题排查。",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "可以考虑使用更现代的 Rust 语言特性和最佳实践来改进代码。",
+            "description": "可以考虑添加单元测试来覆盖各种 TypeScript 文件类型和导入语句的情况。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑将正则表达式的编译移到构造函数之外，以避免在每次创建实例时重新编译。",
-        "添加更多的单元测试来覆盖不同的 TypeScript 文件类型和内容模式。",
-        "考虑将依赖提取逻辑拆分为更小的函数，以提高代码的可读性和可维护性。",
-        "添加更多的错误处理和日志记录，以帮助调试和问题排查。",
-        "考虑使用更现代的 Rust 语言特性和最佳实践来改进代码。"
+        "考虑将正则表达式的编译移到模块初始化之外，以避免每次创建新实例时重新编译。",
+        "添加更多的错误处理和日志记录，以便在处理不正确的输入时提供更好的调试信息。",
+        "提取重复的逻辑到单独的方法中，以提高代码的可维护性。",
+        "添加单元测试来覆盖各种 TypeScript 文件类型和导入语句的情况。",
+        "考虑使用更高效的字符串处理方法，以提高性能。",
+        "添加文档注释，以便更好地理解代码的功能和用法。"
       ]
     },
     {
@@ -10641,12 +10567,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "JavaProcessor 组件是一个专门用于处理 Java 源代码的语言处理器。它的主要功能包括：\n\n1. 提取依赖关系：通过解析 Java 源代码中的 import 和 package 语句，提取出依赖关系。\n2. 确定组件类型：根据文件名和内容，确定 Java 文件的类型，如测试文件、接口、枚举、抽象类或普通类。\n3. 识别重要代码行：识别包含关键信息的代码行，如类定义、接口定义、访问修饰符、import 语句等。\n4. 提供支持的文件扩展名：指定该处理器支持的文件扩展名（.java）。",
+      "detailed_description": "JavaProcessor 组件是一个用于处理 Java 源代码的语言处理器。它的主要功能包括从 Java 代码中提取依赖关系、确定文件类型以及识别重要的代码行。该组件实现了 LanguageProcessor trait，并提供了支持的文件扩展名列表。在提取依赖关系时，它使用正则表达式来匹配导入和包语句，并根据匹配结果创建 Dependency 对象。在确定文件类型时，它根据文件名和代码内容来判断文件类型，如测试文件、接口、枚举等。",
       "responsibilities": [
-        "从 Java 源代码中提取依赖关系",
-        "确定 Java 文件的组件类型",
-        "识别重要的代码行",
-        "提供支持的文件扩展名"
+        "从 Java 源代码中提取依赖关系。",
+        "确定 Java 文件的类型（如测试文件、接口、枚举等）。",
+        "识别重要的代码行，如类定义、接口定义、导入语句等。",
+        "提供支持的文件扩展名列表。",
+        "返回处理的语言名称。"
       ],
       "interfaces": [
         {
@@ -10828,32 +10755,39 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码可以进一步模块化，例如将正则表达式匹配逻辑封装到单独的方法中",
+            "description": "可以考虑将正则表达式的编译移到模块初始化阶段，而不是在每次创建实例时编译。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的错误处理和日志记录",
+            "description": "可以添加更多的错误处理和日志记录，以帮助调试和维护。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的单元测试来覆盖各种 Java 语法情况",
+            "description": "可以考虑将依赖提取逻辑拆分为更小的函数，以提高代码的可读性和可维护性。",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "可以添加更多的单元测试来覆盖各种 Java 语法情况。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑将正则表达式匹配逻辑封装到单独的方法中，以提高代码的可读性和可维护性",
-        "添加更多的错误处理和日志记录，以便在出现问题时更容易进行调试",
-        "添加更多的单元测试，特别是针对不同的 Java 语法情况，以确保组件的健壮性",
-        "考虑使用更现代的正则表达式语法，以提高匹配的准确性和效率",
-        "考虑添加对 Java 模块系统的支持，以提高对现代 Java 代码的兼容性"
+        "考虑将正则表达式的编译移到模块初始化阶段，以提高性能。",
+        "添加更多的错误处理和日志记录，以帮助调试和维护。",
+        "拆分依赖提取逻辑为更小的函数，以提高代码的可读性和可维护性。",
+        "添加更多的单元测试来覆盖各种 Java 语法情况。",
+        "考虑使用更高级的语法分析工具或库来提高依赖提取的准确性。"
       ]
     },
     {
@@ -10869,13 +10803,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是一个React代码处理器，实现了LanguageProcessor trait，主要用于分析React组件和提取依赖关系。它使用正则表达式来识别导入语句、React钩子和其他React特有的模式。组件可以确定文件的类型（如React应用、页面、钩子等），并提取外部依赖。它还能识别重要的代码行，如组件定义、钩子调用和JSX返回语句。",
+      "detailed_description": "ReactProcessor组件是一个专门用于处理React代码的语言处理器。它的主要功能包括提取React代码中的依赖关系、确定React文件的组件类型以及识别React代码中的重要行。组件通过正则表达式来匹配和处理React代码中的各种模式，例如导入语句、组件定义、Hooks使用等。它支持jsx和tsx文件扩展名，并能够根据文件内容和文件名来确定组件类型，如React应用、页面、Hooks、上下文等。",
       "responsibilities": [
-        "处理React代码文件",
-        "提取依赖关系",
-        "确定组件类型",
-        "识别重要代码行",
-        "提供React语言相关信息"
+        "提取React代码中的依赖关系",
+        "确定React文件的组件类型",
+        "识别React代码中的重要行",
+        "支持特定的文件扩展名（jsx和tsx）",
+        "提供React语言处理器的基本信息"
       ],
       "interfaces": [
         {
@@ -11057,33 +10991,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码中存在多个if条件语句，可以通过策略模式或状态模式进行重构",
+            "description": "代码中存在多个长条件语句，可以拆分为更小的函数",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分方法的职责过于宽泛，可以拆分为更小的方法",
+            "description": "部分正则表达式可以提取为常量以提高可读性",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺乏单元测试和测试用例",
+            "description": "缺乏详细的代码注释和文档",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "将复杂的条件语句重构为策略模式或状态模式",
-        "将大的方法拆分为更小的、更专注的方法",
-        "添加单元测试和测试用例",
-        "考虑使用更现代的正则表达式引擎或库",
-        "添加更详细的文档注释",
-        "考虑添加缓存机制以提高性能"
+        "将长条件语句拆分为更小的函数以提高可读性和可维护性",
+        "提取正则表达式为常量以便于管理和修改",
+        "添加详细的代码注释和文档以便于其他开发者理解",
+        "考虑使用更高效的字符串匹配算法以提高性能",
+        "增加单元测试以确保组件的稳定性和可靠性"
       ]
     },
     {
@@ -11097,13 +11030,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是一个语言处理器管理器，主要负责管理多种语言处理器并提供依赖提取、组件类型判断和重要代码行识别等功能。它通过LanguageProcessor特征定义了统一的接口，支持多种编程语言的处理器，包括Rust、JavaScript、TypeScript、React、Vue、Svelte、Kotlin、Python和Java。组件通过文件扩展名匹配合适的处理器，并委托处理器执行具体的语言处理任务。",
+      "detailed_description": "该组件是一个语言处理器管理器，主要负责管理多种编程语言的处理器实例。它通过trait LanguageProcessor定义了统一的接口，包括支持的文件扩展名获取、依赖提取、组件类型判断和重要代码行识别等功能。组件内部维护了一个处理器列表，包含Rust、JavaScript、TypeScript、React、Vue、Svelte、Kotlin、Python和Java等多种语言的处理器实例。",
       "responsibilities": [
-        "管理多种语言处理器",
-        "根据文件扩展名匹配合适的处理器",
-        "提取文件依赖关系",
-        "判断组件类型",
-        "识别重要代码行"
+        "管理多种语言处理器实例",
+        "根据文件类型选择合适的处理器",
+        "协调各语言处理器的依赖提取",
+        "统一处理各种语言文件的分析请求",
+        "提供一致的接口给上层调用者"
       ],
       "interfaces": [
         {
@@ -11274,9 +11207,9 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.8,
-        "maintainability": 0.8,
-        "readability": 0.8,
+        "overall_score": 0.9,
+        "maintainability": 0.9,
+        "readability": 0.9,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.7,
@@ -11284,32 +11217,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码注释不够详细",
+            "description": "可以考虑将错误处理逻辑提取为单独的方法",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分函数可以进一步拆分以提高可读性",
+            "description": "可以添加更多的文档注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺乏单元测试",
+            "description": "可以考虑实现更详细的错误处理",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "增加更详细的代码注释",
-        "为每个函数添加单元测试",
-        "考虑将大型函数拆分为更小的函数",
-        "添加性能测试以评估处理器性能",
-        "考虑实现缓存机制以提高重复操作的性能"
+        "考虑实现处理器的懒加载以提高初始化性能",
+        "可以添加缓存机制来提高重复文件处理的效率",
+        "可以考虑实现更健壮的错误处理机制",
+        "可以添加更详细的日志记录功能",
+        "可以考虑实现处理器的热加载功能以支持动态扩展"
       ]
     },
     {
@@ -11325,12 +11258,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件实现了一个Rust语言处理器，主要功能包括：\n1. 通过正则表达式提取use和mod语句来识别依赖关系\n2. 根据文件名和内容确定Rust文件的类型（如main文件、库文件、模块文件等）\n3. 识别代码中的重要行（函数定义、结构体定义等）\n4. 提供Rust语言的元数据信息\n\n组件使用了两个正则表达式来匹配use和mod语句，并根据不同的前缀（crate::, super::, self::）来判断依赖是否为外部依赖。在确定文件类型时，组件检查了文件名和内容中的特定模式。",
+      "detailed_description": "该组件实现了Rust语言处理器接口，主要功能包括：\n1. 从Rust代码中提取use和mod语句，构建依赖关系图\n2. 根据文件名和内容确定Rust文件的组件类型（如main文件、库文件、模块文件等）\n3. 识别代码中的重要行，如函数定义、结构体定义等\n4. 提供Rust语言的基本信息\n\n核心业务逻辑包括：\n- 使用正则表达式匹配use和mod语句\n- 分析导入路径是否为外部依赖\n- 根据文件名和内容模式进行组件类型分类\n- 识别各种代码定义和重要注释",
       "responsibilities": [
         "从Rust代码中提取依赖关系",
         "确定Rust文件的组件类型",
         "识别重要的代码行",
-        "提供Rust语言处理器实现"
+        "提供Rust语言处理器的基本信息"
       ],
       "interfaces": [
         {
@@ -11512,32 +11445,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "高圈复杂度（20.0）表明函数可能需要拆分",
+            "description": "代码中存在较高的圈复杂度，特别是在extract_dependencies和determine_component_type方法中",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的错误处理和输入验证",
+            "description": "部分方法的职责过于宽泛，可以进一步拆分",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以提取一些重复的模式检查逻辑",
+            "description": "缺乏错误处理和日志记录机制",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "将提取依赖的逻辑拆分为更小的函数",
-        "添加对正则表达式匹配失败的错误处理",
-        "考虑使用更健壮的解析方法替代正则表达式",
-        "添加单元测试来覆盖不同的Rust语法情况",
-        "考虑添加缓存机制来提高性能"
+        "将extract_dependencies方法拆分为更小的方法，每个方法处理一种类型的依赖提取",
+        "增加错误处理机制，特别是对于正则表达式编译和文件路径处理",
+        "添加日志记录功能，便于调试和监控",
+        "考虑使用更现代的Rust语法解析库，如syn或rust-analyzer的API",
+        "增加单元测试和集成测试，提高代码覆盖率"
       ]
     },
     {
@@ -11553,12 +11486,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "vue.rs组件是一个专门用于处理Vue单文件组件的语言处理器。它的主要功能包括：\n\n1. 提取Vue文件中的<script>标签内容\n2. 解析Vue文件中的导入语句，识别依赖关系\n3. 根据文件名和内容确定Vue文件的组件类型\n4. 识别Vue文件中的重要行，如模板标签、组件定义、指令等\n\n组件通过正则表达式来解析Vue文件的内容，并根据特定的模式匹配来提取有用的信息。它能够处理不同类型的Vue组件，包括普通组件、Composition API组件、setup语法组件等。",
+      "detailed_description": "vue.rs 组件是一个专门用于处理 Vue.js 文件的语言处理器。它的主要功能包括：\n\n1. 解析 Vue 文件内容，提取 script 标签中的内容\n2. 识别和提取 Vue 文件中的依赖关系，包括内部和外部依赖\n3. 确定 Vue 文件的组件类型，如应用程序组件、页面组件、布局组件等\n4. 识别 Vue 文件中的重要代码行，如模板标签、组件定义、导入语句等\n\n组件使用正则表达式进行模式匹配，以提取和分析 Vue 文件的结构和内容。它还包含了对 Vue 组件类型的详细检测逻辑，能够根据文件名和内容内容确定组件类型。",
       "responsibilities": [
-        "处理Vue文件内容",
-        "提取Vue文件中的依赖关系",
-        "确定Vue文件的组件类型",
-        "识别Vue文件中的重要行"
+        "解析 Vue 文件内容并提取脚本部分",
+        "识别和提取 Vue 文件中的依赖关系",
+        "确定 Vue 文件的组件类型",
+        "识别 Vue 文件中的重要代码行"
       ],
       "interfaces": [
         {
@@ -11761,32 +11694,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "提高代码的模块化程度",
+            "description": "代码的圈复杂度较高，特别是在 determine_component_type 方法中，需要拆分成更小的函数",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "减少函数的圈复杂度",
+            "description": "可以增加更多的错误处理和输入验证",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "增加错误处理和日志记录",
+            "description": "可以提取一些重复的正则表达式模式到常量中",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "将正则表达式提取为常量",
-        "增加对Vue 3 Composition API的更全面支持",
-        "添加更详细的错误处理和日志记录",
-        "优化依赖提取逻辑以处理更复杂的导入语句",
-        "增加单元测试覆盖更多边界情况"
+        "将 determine_component_type 方法拆分为多个更小的方法，每个方法处理一种特定的组件类型检测逻辑",
+        "增加对输入内容的验证，确保传入的内容是有效的 Vue 文件内容",
+        "提取重复的正则表达式模式到常量中，以便于维护和复用",
+        "考虑使用更高效的解析方法，如使用专门的 Vue 解析器库，以提高性能和准确性",
+        "增加更详细的文档注释，特别是对于复杂的正则表达式和组件类型检测逻辑"
       ]
     },
     {
@@ -11802,12 +11735,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "JavaScriptProcessor 组件是一个用于解析和提取 JavaScript 文件中依赖关系的工具。它通过正则表达式匹配 JavaScript 文件中的 import、require 和动态 import 语句来识别依赖项。组件还能够根据文件名和内容来确定 JavaScript 文件的类型，例如主文件、配置文件、测试文件等。此外，它还能够识别文件中的重要行，如函数定义、类定义、导入/导出语句等。",
+      "detailed_description": "JavaScriptProcessor 组件是一个用于处理 JavaScript 文件的语言处理器。它的主要功能包括：\n\n1. 提取依赖关系：通过解析 JavaScript 文件内容，提取 import、require 和动态 import 语句中的依赖路径，并创建 Dependency 对象。\n2. 确定文件类型：根据文件名和内容，确定 JavaScript 文件的类型（如主文件、配置文件、测试文件、模块文件、实用程序文件等）。\n3. 识别重要行：检测 JavaScript 文件中的重要行，如函数定义、类定义、导入/导出语句和特殊注释。\n4. 提供支持的扩展名：返回该处理器支持的 JavaScript 文件扩展名列表。\n5. 返回语言名称：提供处理器的语言名称。\n\n组件使用正则表达式来匹配不同类型的 JavaScript 导入语句，并根据匹配结果创建相应的依赖对象。文件类型的确定基于文件名和内容中的特定模式。",
       "responsibilities": [
-        "解析 JavaScript 代码以识别导入和依赖关系。",
-        "提取 JavaScript 文件中的依赖项，包括静态导入、动态导入和 require 语句。",
+        "从 JavaScript 文件内容中提取依赖关系。",
         "确定 JavaScript 文件的类型（如主文件、配置文件、测试文件等）。",
-        "识别 JavaScript 文件中的重要行，如函数定义、类定义、导入/导出语句等。"
+        "识别 JavaScript 文件中的重要行。",
+        "提供支持的文件扩展名列表。",
+        "返回处理器的语言名称。"
       ],
       "interfaces": [
         {
@@ -11989,40 +11923,41 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑将正则表达式的编译移到构造函数之外，以避免每次创建实例时都要编译。",
+            "description": "代码中存在重复的模式匹配逻辑，可以通过提取公共函数来简化代码。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的单元测试来覆盖不同的 JavaScript 导入语法和边界情况。",
+            "description": "部分正则表达式可以优化以提高性能。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑使用更现代的 Rust 语法和功能，例如更广泛地使用 if let 表达式。",
+            "description": "可以添加更多的单元测试来覆盖不同的代码路径。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更详细的文档注释，特别是对于公共方法和结构体。",
+            "description": "可以添加更详细的文档注释来解释复杂的正则表达式和逻辑。",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑将正则表达式的编译移到构造函数之外，以避免每次创建实例时都要编译。",
-        "添加更多的单元测试来覆盖不同的 JavaScript 导入语法和边界情况。",
-        "考虑使用更现代的 Rust 语法和功能，例如更广泛地使用 if let 表达式。",
-        "添加更详细的文档注释，特别是对于公共方法和结构体。",
-        "考虑添加对 TypeScript 文件的支持，以扩展组件的功能范围。",
-        "可以考虑添加对 ES6 模块语法的更全面支持，例如处理导入和导出的别名。"
+        "提取重复的模式匹配逻辑到公共函数中，以减少代码重复。",
+        "优化正则表达式以提高性能和可读性。",
+        "添加更多的单元测试来覆盖不同的代码路径和边界情况。",
+        "添加详细的文档注释，特别是对于复杂的正则表达式和业务逻辑。",
+        "考虑使用更现代的 Rust 语法和功能来简化代码。",
+        "添加对 TypeScript 文件的支持，以扩展组件的功能范围。",
+        "考虑实现并发处理以提高性能。"
       ]
     },
     {
@@ -12038,12 +11973,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "KotlinProcessor 组件是一个专门用于处理 Kotlin 语言代码的模块。它实现了 LanguageProcessor trait，提供了对 Kotlin 文件的解析和分析功能。主要功能包括：\n\n1. 提取依赖关系：通过解析 import 和 package 语句来识别代码中的依赖关系，并区分内部和外部依赖。\n2. 确定文件类型：基于文件名和内容来确定文件的具体类型，如 Activity、Fragment、Service 等。\n3. 识别重要代码行：识别类定义、函数定义、属性定义等重要代码行。\n4. 支持 Kotlin 文件扩展：声明支持 .kt 文件扩展。\n\n组件使用正则表达式来匹配 import 和 package 语句，并根据特定的模式来确定文件类型。它还提供了一个方法来判断代码行是否重要，基于代码行的内容和前缀。",
+      "detailed_description": "KotlinProcessor 组件是一个专门用于处理 Kotlin 语言代码的模块。它的主要功能包括解析 Kotlin 文件内容，提取导入和包声明，确定文件的组件类型基于文件名和内容，以及识别重要代码行。组件通过正则表达式匹配来提取导入和包声明，并根据文件名后缀和文件内容来确定组件类型。此外，它还能识别重要的代码行，如类定义、函数定义等。",
       "responsibilities": [
-        "解析 Kotlin 代码文件并提取导入和包声明。",
-        "确定文件类型基于文件名和内容。",
-        "识别重要的代码行如类定义、函数定义等。",
-        "管理和维护正则表达式用于模式匹配。"
+        "解析 Kotlin 文件内容，提取导入和包声明",
+        "确定文件的组件类型基于文件名和内容",
+        "识别重要代码行，如类定义、函数定义等",
+        "管理正则表达式用于模式匹配",
+        "提供语言名称信息"
       ],
       "interfaces": [
         {
@@ -12225,42 +12161,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码中存在较高的圈复杂度，特别是在 extract_dependencies 和 determine_component_type 方法中。",
+            "description": "代码中存在较高的圈复杂度，特别是在 determine_component_type 方法中，需要拆分为更小的函数",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分逻辑可以进一步提取为独立的方法以提高可读性和可维护性。",
+            "description": "部分逻辑可以通过策略模式或工厂模式来简化和标准化",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的错误处理和日志记录以增强健壮性。",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "可以考虑使用更现代的正则表达式语法和特性。",
+            "description": "缺乏单元测试和测试用例",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "将 extract_dependencies 方法中的复杂逻辑拆分为更小的方法。",
-        "考虑使用枚举或常量来管理文件类型字符串，以提高可维护性。",
-        "添加更详细的错误处理和日志记录。",
-        "考虑使用更现代的正则表达式语法和特性。",
-        "添加单元测试来覆盖各种 Kotlin 文件类型和内容。",
-        "考虑使用更高效的正则表达式引擎或库。",
-        "添加对 Kotlin 多平台项目的支持。",
-        "考虑实现缓存机制以提高重复文件处理的性能。"
+        "将 determine_component_type 方法拆分为更小的函数，以减少圈复杂度",
+        "考虑使用策略模式或工厂模式来简化和标准化组件类型的确定逻辑",
+        "添加单元测试和测试用例以确保代码的正确性和稳定性",
+        "考虑使用更现代的正则表达式库或工具以提高性能和可维护性",
+        "添加更详细的文档和注释，特别是对于复杂的逻辑部分"
       ]
     },
     {
@@ -12276,7 +12202,7 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "PythonProcessor是一个用于分析Python代码的专门处理器。它的主要功能包括：\n1. 从Python源代码中提取导入依赖，包括常规的import语句和from...import语句\n2. 确定Python文件的类型（如包、主文件、测试文件、类、模块或脚本）\n3. 识别代码中的重要行，如类定义、函数定义、导入语句等\n4. 提供支持的文件扩展名（.py）",
+      "detailed_description": "PythonProcessor组件主要负责处理Python源代码。它通过正则表达式匹配import和from...import语句来提取模块依赖关系。组件还能根据文件名和内容确定Python文件的类型（如包、主程序、测试文件等）。此外，它提供了识别重要代码行的功能，如类定义、函数定义、导入语句等。",
       "responsibilities": [
         "从Python源代码中提取依赖关系",
         "确定Python文件的类型",
@@ -12463,33 +12389,31 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑将正则表达式的编译移到模块级别，避免在每次实例化时重复编译",
+            "description": "可以考虑将正则表达式的编译移到模块级别，避免每次创建新实例",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的文档注释，特别是对于复杂的正则表达式模式",
+            "description": "可以添加更多的文件类型判断逻辑",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑将依赖提取逻辑拆分为更小的方法，以提高代码的可读性和可维护性",
+            "description": "可以添加更详细的错误处理和日志记录",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑将正则表达式的编译移到模块级别，避免在每次实例化时重复编译",
-        "添加更多的文档注释，特别是对于复杂的正则表达式模式",
-        "考虑将依赖提取逻辑拆分为更小的方法，以提高代码的可读性和可维护性",
-        "添加单元测试来验证不同类型的Python导入语句的处理",
-        "考虑添加对相对导入的更详细处理",
-        "添加对Python类型注解的支持"
+        "考虑将正则表达式的编译移到模块级别，避免每次创建新实例",
+        "可以添加更多的文件类型判断逻辑，以支持更多的Python文件类型",
+        "可以添加更详细的错误处理和日志记录，以便于调试和维护",
+        "可以考虑添加单元测试来覆盖各种Python文件类型和导入语句的情况"
       ]
     },
     {
@@ -12505,12 +12429,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "svelte.rs 组件是一个 Svelte 语言处理器，主要负责解析 Svelte 文件内容。它通过正则表达式提取脚本部分，并分析文件内容以确定文件类型（如组件、页面、布局等）。组件还负责提取文件中的依赖关系，包括内部和外部依赖，并标记特定类型的依赖（如 Svelte 组件、存储等）。此外，它能够识别文件中重要的语法行，如 Svelte 指令、条件和循环语句等。",
+      "detailed_description": "该组件实现了SvelteProcessor结构体和LanguageProcessor trait，主要功能包括：\n\n1. 解析Svelte文件内容，提取<script>标签中的内容\n2. 识别并分类文件中的依赖关系，包括普通导入、Svelte组件、Svelte stores等\n3. 根据文件名和内容确定Svelte组件类型（如应用、页面、布局等）\n4. 识别文件中重要的代码行，如Svelte特有语法、指令、条件和循环等\n5. 提供支持的文件扩展名（.svelte）",
       "responsibilities": [
-        "解析 Svelte 文件内容并提取脚本部分",
-        "识别和分类 Svelte 文件的类型（组件、页面、布局等）",
-        "提取文件中的依赖关系",
-        "识别重要的 Svelte 语法行"
+        "解析Svelte文件内容",
+        "提取脚本内容",
+        "识别和分类依赖关系",
+        "确定Svelte组件类型",
+        "识别重要代码行"
       ],
       "interfaces": [
         {
@@ -12713,32 +12638,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "代码中存在较高的圈复杂度，特别是在 determine_component_type 方法中",
+            "description": "减少圈复杂度",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分方法的职责过于宽泛，可以进一步拆分",
+            "description": "增加错误处理",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺乏详细的错误处理和日志记录",
+            "description": "提高代码可测试性",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "将 determine_component_type 方法拆分为多个更小的方法，以减少圈复杂度",
-        "增加更详细的错误处理和日志记录",
-        "考虑使用更高效的字符串处理方法替代部分正则表达式",
-        "添加单元测试以覆盖各种 Svelte 文件类型和语法情况",
-        "考虑引入状态模式以管理不同的文件类型检测逻辑"
+        "提取复杂的正则表达式到单独的常量",
+        "增加单元测试覆盖率",
+        "实现更健壮的错误处理机制",
+        "考虑使用更现代的正则表达式引擎",
+        "提取复杂的条件逻辑到单独的方法"
       ]
     },
     {
@@ -12752,13 +12677,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件定义了多个结构体，用于表示AI文档增强、技术规范生成、测试指南生成、性能分析和安全分析的结果。每个结构体都使用了serde和schemars的宏进行序列化、反序列化和JSON模式生成。",
+      "detailed_description": "该组件定义了多个结构体，用于生成和分析AI相关的文档。它可以增强文档的标题和内容，提供技术规范分析，包括技术栈分析、架构规范、编码规范和质量标准。此外，它还能生成测试指南，分析性能和安全风险，并提供相应的优化建议和安全建议。",
       "responsibilities": [
-        "定义AI文档增强结果的数据结构",
-        "定义技术规范生成结果的数据结构",
-        "定义测试指南生成结果的数据结构",
-        "定义性能分析结果的数据结构",
-        "定义安全分析结果的数据结构"
+        "生成和增强AI相关的文档内容",
+        "分析技术规范和质量标准",
+        "提供测试指南和性能分析",
+        "评估安全风险和合规性"
       ],
       "interfaces": [
         {
@@ -12966,14 +12890,14 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少文档注释",
+            "description": "可以添加更多的文档注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的错误处理",
+            "description": "可以考虑将某些大型结构体拆分成更小的模块",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
@@ -12988,10 +12912,9 @@
       },
       "recommendations": [
         "添加更多的文档注释",
-        "添加更多的错误处理",
+        "考虑将某些大型结构体拆分成更小的模块",
         "添加更多的单元测试",
-        "考虑使用更现代的Rust特性",
-        "考虑使用更现代的依赖管理工具"
+        "考虑使用更现代的Rust特性"
       ]
     },
     {
@@ -13012,13 +12935,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "StructureExtractor组件是一个用于提取和分析项目结构的工具。它能够扫描项目目录，收集文件和目录的元数据，并计算它们的重要性分数。该组件还能识别项目中的核心组件，并确定它们的类型。它使用缓存机制来优化性能，并支持异步操作以提高效率。",
+      "detailed_description": "该组件是一个项目结构提取器，主要功能是扫描项目目录，提取项目结构信息，包括目录、文件、核心组件、组件类型和文件依赖关系。它使用异步编程进行高效的文件系统扫描，并通过缓存机制提高性能。组件通过分析文件和目录，计算重要性分数，识别核心组件，并确定组件类型。它还提取文件依赖关系，以便更好地理解项目结构。",
       "responsibilities": [
         "提取项目结构信息",
         "分析文件和目录",
         "识别核心组件",
-        "计算重要性分数",
-        "管理缓存"
+        "确定组件类型",
+        "提取文件依赖关系"
       ],
       "interfaces": [
         {
@@ -13445,21 +13368,7 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "高圈复杂度",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "部分函数过于庞大",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "缺乏详细的模块注释",
+            "description": "函数过于庞大，需要拆分",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
@@ -13469,15 +13378,36 @@
             "description": "错误处理可以更细化",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "缺乏详细的文档注释",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "缓存策略需要优化",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "异步操作可以更好地管理",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
           }
         ]
       },
       "recommendations": [
-        "拆分过大的函数",
-        "增加详细的模块注释",
-        "优化错误处理",
-        "考虑对LLMClient的依赖进行优化",
-        "评估缓存策略"
+        "将大函数拆分为更小的函数",
+        "增加更详细的文档注释",
+        "优化缓存策略",
+        "改进错误处理机制",
+        "减少不必要的依赖"
       ]
     },
     {
@@ -13493,12 +13423,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是系统的入口组件，主要负责解析命令行参数并将其转换为配置对象。它定义了丰富的命令行参数选项，包括项目路径、输出路径、配置文件路径、文档格式等。组件会根据命令行参数创建或加载配置文件，并合并命令行参数和配置文件中的设置，最终生成一个完整的配置对象。",
+      "detailed_description": "该组件是应用程序的入口点，主要负责解析命令行参数并将其转换为应用程序配置。它使用clap库定义和解析命令行参数，并提供了一个to_config方法将命令行参数转换为Config对象。组件支持多种命令行选项，包括项目路径、输出路径、配置文件路径、文档格式、日志级别等。它还支持跳过某些处理步骤，如预处理、调研和文档生成。组件还处理LLM模型的配置，包括模型名称、最大tokens数和温度参数。",
       "responsibilities": [
-        "命令行参数解析",
-        "配置文件加载和合并",
-        "应用程序初始化参数设置",
-        "配置对象生成"
+        "应用程序启动和初始化",
+        "命令行参数处理",
+        "配置管理",
+        "参数转换和验证",
+        "日志控制"
       ],
       "interfaces": [
         {
@@ -13558,9 +13489,9 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.8,
+        "overall_score": 0.85,
         "maintainability": 0.8,
-        "readability": 0.8,
+        "readability": 0.9,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.9,
@@ -13568,32 +13499,32 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的输入验证",
+            "description": "可以增加更多的错误处理和验证逻辑",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以提高代码的模块化程度",
+            "description": "可以将配置转换逻辑拆分为更小的函数",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的错误处理",
+            "description": "可以增加更多的单元测试",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "添加更多的输入验证",
-        "提高代码的模块化程度",
-        "添加更多的错误处理",
-        "考虑添加命令行参数的自动补全功能",
-        "可以添加更详细的日志记录"
+        "增加更多的参数验证逻辑，例如检查路径是否有效",
+        "将配置转换逻辑拆分为更小的函数以提高可维护性",
+        "增加更多的单元测试以覆盖不同的命令行参数组合",
+        "考虑使用更现代的错误处理方式，如thiserror库",
+        "增加对命令行参数的帮助文档生成"
       ]
     },
     {
@@ -13607,13 +13538,11 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是一个辅助工具模块，主要通过模块声明和使用语句来组织代码结构。它将依赖分析工具封装为内部模块，并通过use语句将其暴露给 crate 内部使用。组件的主要功能是提供工具函数支持，辅助其他模块实现其功能。",
+      "detailed_description": "该组件主要负责声明和使用一个内部模块dependency_analyzer，并通过pub(crate)使用了该模块中的DependencyAnalyzerTool。这意味着该组件提供了一个依赖分析工具，供同一crate内的其他模块使用。",
       "responsibilities": [
-        "提供通用工具函数",
-        "辅助功能实现",
-        "模块化代码组织",
-        "内部工具暴露",
-        "依赖分析工具提供"
+        "提供依赖分析工具",
+        "封装内部模块以便于管理",
+        "为其他模块提供通用工具函数"
       ],
       "interfaces": [],
       "dependencies": [],
@@ -13627,9 +13556,9 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.75,
-        "maintainability": 0.8,
-        "readability": 0.7,
+        "overall_score": 0.85,
+        "maintainability": 0.9,
+        "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.3,
@@ -13644,32 +13573,16 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "增加功能性代码",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "添加文档注释",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "增加接口数量",
+            "description": "代码行数过少，可能需要更多工具函数来增强其功能",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "增加功能性代码",
-        "添加文档注释",
-        "增加接口数量",
-        "考虑添加测试用例",
-        "评估未来依赖管理需求"
+        "考虑添加更多的通用工具函数以增强其功能",
+        "可以添加文档注释以便于其他开发者理解和使用该工具",
+        "可以考虑添加一些测试用例以确保工具的正确性"
       ]
     },
     {
@@ -13683,12 +13596,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "types.rs 组件主要定义了与聊天功能相关的数据结构。它包含了三个主要的数据结构：ChatMessage、ChatRequest 和 ChatResponse。ChatMessage 表示一个聊天消息，包含角色和内容两个字段。ChatRequest 表示一个聊天请求，包含模型名称、消息列表、最大令牌数和温度等字段。ChatResponse 表示一个聊天响应，包含选择列表。",
+      "detailed_description": "该组件定义了与聊天功能相关的数据模型，包括ChatMessage、ChatRequest、ChatResponse、Choice和ResponseMessage。这些结构体用于描述聊天请求和响应的数据格式。组件使用Serde库进行序列化和反序列化，以便在系统内部和外部API之间传输数据。",
       "responsibilities": [
-        "定义聊天消息的数据结构",
-        "定义聊天请求的数据结构",
-        "定义聊天响应的数据结构",
-        "支持数据序列化和反序列化"
+        "定义与聊天功能相关的数据模型",
+        "处理聊天请求和响应的序列化和反序列化",
+        "确保数据格式的正确性和标准化",
+        "提供必要的数据结构以支持聊天功能的实现"
       ],
       "interfaces": [
         {
@@ -13761,31 +13674,31 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑为 ChatMessage 中的 role 字段使用枚举类型来限制和验证有效值",
+            "description": "可以添加更多的文档注释，特别是对于结构体字段的用途和含义",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更多的文档注释来解释每个字段的用途和预期值",
+            "description": "可以考虑为结构体添加默认值或构造函数，以便更方便地创建实例",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑为 ChatRequest 中的可选字段添加默认值",
+            "description": "可以考虑添加更多的数据验证逻辑，例如检查字符串是否为空，数值是否在合理范围内",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "为 ChatMessage 中的 role 字段使用枚举类型来限制和验证有效值",
-        "添加更多的文档注释来解释每个字段的用途和预期值",
-        "为 ChatRequest 中的可选字段添加默认值",
-        "考虑添加数据验证方法来确保数据的正确性"
+        "添加更详细的文档注释，特别是对于结构体字段的用途和含义",
+        "考虑为结构体添加默认值或构造函数，以便更方便地创建实例",
+        "添加更多的数据验证逻辑，例如检查字符串是否为空，数值是否在合理范围内",
+        "考虑添加单元测试以确保数据模型的正确性和稳定性"
       ]
     },
     {
@@ -13799,11 +13712,11 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该模块主要负责导出LLM客户端和类型定义。它通过pub mod声明了两个子模块：client和types。然后，它通过pub use重新导出了这些模块中的公共项，包括LLMClient、ReActConfig、ReActResponse、LLMError和LLMResult等类型和结构。这使得这些类型和结构可以在父模块中直接使用，而无需显式引用子模块。",
+      "detailed_description": "该组件主要负责定义模型相关的模块，并重新导出client和types模块中的公共项。它通过pub mod client和pub mod types声明了两个子模块，并通过pub use语句重新导出了这些模块中的公共项。",
       "responsibilities": [
-        "定义和导出LLM客户端模块",
-        "导出类型定义",
-        "提供LLM相关的错误类型和结果类型"
+        "定义模型相关的模块",
+        "重新导出客户端和类型模块中的公共项",
+        "为其他模块提供必要的模型类型和客户端功能"
       ],
       "interfaces": [],
       "dependencies": [],
@@ -13817,9 +13730,9 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.85,
-        "maintainability": 0.8,
-        "readability": 0.9,
+        "overall_score": 1.0,
+        "maintainability": 1.0,
+        "readability": 1.0,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.3,
@@ -13834,23 +13747,16 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺乏模块内部结构的文档注释",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "可以添加更详细的模块级别的文档",
+            "description": "由于代码行数较少，目前没有明显的改进点",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "添加模块级别的文档注释，解释模块的用途和主要功能",
-        "考虑添加更详细的结构化文档注释，以便更好地理解模块的用途和功能",
-        "虽然代码量小，但可以考虑添加基本的测试用例以确保导出的功能正确"
+        "考虑添加文档注释以解释模块的用途和公共项的用途",
+        "考虑添加单元测试以确保模块的正确性",
+        "考虑添加显式的依赖声明以便更好地管理依赖关系"
       ]
     },
     {
@@ -13864,7 +13770,7 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件作为系统的入口文件，主要负责模块组织和公共接口的重新导出。它通过pub mod声明了多个子模块，并通过pub use重新导出了关键的公共接口。",
+      "detailed_description": "该组件作为系统的入口文件，主要负责：\n1. 组织和暴露系统的主要模块结构\n2. 重新导出核心公共接口\n3. 作为模块初始化的协调入口\n组件通过模块声明和重新导出机制将系统分为几个主要功能区域：配置、CLI处理、各种代理、工具、缓存、提取器和工作流引擎。",
       "responsibilities": [
         "系统入口和模块组织",
         "公共接口重新导出",
@@ -13882,8 +13788,8 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.9,
-        "maintainability": 0.9,
+        "overall_score": 0.85,
+        "maintainability": 0.8,
         "readability": 0.9,
         "testability": 0.7,
         "reusability": 0.6,
@@ -13913,28 +13819,30 @@
         ]
       },
       "recommendations": [
-        "可以添加更详细的模块文档注释",
-        "可以考虑添加基本的错误处理机制",
-        "可以考虑添加系统初始化的基本框架",
-        "可以考虑添加基本的日志记录功能"
+        "考虑添加基本的系统初始化函数",
+        "为每个模块添加详细的文档注释",
+        "考虑添加基本的错误处理机制",
+        "可以添加模块初始化顺序的验证"
       ]
     },
     {
       "component": {
         "name": "mod.rs",
         "file_path": "src/agents/agent_tools/mod.rs",
-        "component_type": "other",
+        "component_type": "agent",
         "importance_score": 0.6,
         "dependencies": [],
         "description": null,
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件主要负责导出两个子模块：file_explorer和file_reader。这两个模块可能提供文件操作相关的功能。由于代码非常简洁，主要功能是模块的导出和组织。",
+      "detailed_description": "该组件主要通过模块声明来组织和暴露智能Agent模块的功能子模块。具体来说，它声明了两个子模块：file_explorer和file_reader。这些子模块可能分别实现了文件探索和文件读取的功能。通过这种模块化的设计，组件促进了代码的组织和功能分离，使得智能Agent的功能可以更清晰地被定义和管理。",
       "responsibilities": [
-        "导出file_explorer模块",
-        "导出file_reader模块",
-        "提供文件操作相关功能的入口"
+        "组织和管理智能Agent模块的功能子模块",
+        "提供文件探索功能",
+        "提供文件读取功能",
+        "为智能Agent提供清晰的功能接口",
+        "促进代码的模块化和功能分离"
       ],
       "interfaces": [],
       "dependencies": [],
@@ -13965,43 +13873,43 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以添加更详细的模块文档注释",
+            "description": "由于代码行数极少，目前无法进行更深入的代码质量评估",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑添加模块级别的测试",
+            "description": "考虑添加模块级的文档注释，以便更好地理解各模块的功能和用途",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "为模块添加详细的文档注释，说明各模块的用途和功能",
-        "考虑添加模块级别的测试，确保模块导出和功能正确性",
-        "在模块内部可以添加更详细的日志或错误处理机制"
+        "考虑为每个模块添加详细的文档注释，以便更好地理解各模块的功能和用途",
+        "可以考虑添加一些基本的测试用例，以确保模块的正确性和稳定性",
+        "由于代码行数极少，可以考虑是否需要添加更多的功能或细节"
       ]
     },
     {
       "component": {
         "name": "mod.rs",
         "file_path": "src/agents/mod.rs",
-        "component_type": "other",
+        "component_type": "agent",
         "importance_score": 0.6,
         "dependencies": [],
         "description": null,
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该模块主要负责组织和暴露各个子代理模块，为其他模块提供统一的接口。它通过pub mod语句声明了多个子模块，并通过pub use语句重新导出这些模块中的类型。这种设计模式使得其他模块可以通过统一的路径导入这些子模块，简化了模块间的协作。",
+      "detailed_description": "mod.rs 文件是一个 Rust 模块定义文件，主要功能是组织和暴露智能 Agent 模块的核心功能。该文件通过 pub mod 声明了多个子模块，并通过 pub use 语句将这些子模块中的特定类型或函数导出到父模块的作用域中。这使得其他模块可以通过简单的导入语句来使用这些子模块的功能。",
       "responsibilities": [
-        "组织和暴露各个子代理模块",
-        "提供统一的模块接口",
-        "管理代理模块的可见性",
-        "促进模块间的协作",
-        "简化模块导入路径"
+        "模块组织",
+        "功能暴露",
+        "命名空间管理",
+        "功能聚合",
+        "接口简化"
       ],
       "interfaces": [],
       "dependencies": [],
@@ -14015,9 +13923,9 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.9,
+        "overall_score": 0.85,
         "maintainability": 0.9,
-        "readability": 0.9,
+        "readability": 0.8,
         "testability": 0.7,
         "reusability": 0.6,
         "documentation_quality": 0.3,
@@ -14032,23 +13940,46 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑添加模块级别的文档注释",
+            "description": "增加文档注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑添加测试用例",
+            "description": "增加测试用例",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "优化模块结构",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "增加错误处理",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "增加日志记录",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "考虑为模块添加文档注释，说明各个子模块的用途和功能",
-        "考虑为模块添加测试用例，确保模块的正确性",
-        "考虑为模块添加更详细的错误处理和异常管理"
+        "增加文档注释",
+        "增加测试用例",
+        "优化模块结构",
+        "增加错误处理",
+        "增加日志记录"
       ]
     },
     {
@@ -14075,13 +14006,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是一个文档生成Agent，主要负责生成C4架构风格的文档。它通过分析代码和研究结果，生成项目概述、架构分析和组件文档。组件包含多个结构体和方法，用于处理不同类型的文档生成任务。它使用异步编程和缓存管理来提高效率，并包含详细的错误处理机制。",
+      "detailed_description": "该组件是一个专门用于生成C4架构文档的智能代理。它通过分析代码库和使用LLM（大型语言模型）来生成详细的架构文档。组件的主要功能包括生成项目概述、架构描述、核心组件文档以及深入分析。它使用结构化的数据模型来表示各种文档类型，并包含从代码中提取信息的功能。",
       "responsibilities": [
-        "生成C4架构风格的文档",
-        "提取和分析代码中的关键信息",
-        "生成项目概述、架构分析和组件文档",
-        "管理缓存和配置",
-        "处理异步操作和错误"
+        "生成C4架构文档",
+        "分析项目技术栈",
+        "创建组件详细文档",
+        "提取和处理代码信息",
+        "生成架构和流程图"
       ],
       "interfaces": [
         {
@@ -15004,21 +14935,21 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "函数过多，接口数量较多，可能需要拆分",
+            "description": "函数过多，接口数量较多（39个）",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "圈复杂度较高，需要简化逻辑",
+            "description": "圈复杂度较高（103.0）",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分函数过长，需要拆分",
+            "description": "部分函数过于庞大，需要拆分",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
@@ -15032,11 +14963,11 @@
         ]
       },
       "recommendations": [
-        "拆分过大的函数和方法",
-        "简化复杂的逻辑",
-        "标准化错误处理",
-        "考虑将部分功能模块化",
-        "优化依赖管理"
+        "将大型函数拆分为更小的单元",
+        "实现更一致的错误处理模式",
+        "考虑将某些功能模块化",
+        "添加更多的单元测试",
+        "优化对LLMClient的使用"
       ]
     },
     {
@@ -15065,13 +14996,13 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件是一个文档生成Agent，主要负责生成各种类型的技术文档。它通过调用LLMClient与大语言模型交互，使用CacheManager管理缓存，并通过DocumentationExtractor提取和生成文档。组件支持生成基础文档、C4架构文档、AI增强文档以及专业文档如测试指南、性能分析和安全分析。",
+      "detailed_description": "该组件是一个文档生成Agent，主要负责生成、增强和管理技术文档。它使用LLMClient与大型语言模型交互，使用CacheManager进行缓存管理，并使用DocumentationExtractor提取和生成各种类型的文档。组件的主要功能包括生成基础文档、C4架构文档、专业文档（如测试指南、性能分析、安全分析等），以及使用AI增强文档内容。",
       "responsibilities": [
-        "生成各种类型的技术文档",
-        "使用AI增强文档内容",
-        "管理文档的缓存和存储",
-        "生成C4架构文档",
-        "生成专业文档如测试指南、性能分析和安全分析"
+        "文档生成",
+        "文档增强",
+        "文档保存",
+        "文档分析",
+        "文档总结"
       ],
       "interfaces": [
         {
@@ -15843,31 +15774,39 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "函数过长，需要拆分",
+            "description": "减少函数长度",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "部分函数的错误处理不够全面",
+            "description": "提高代码复用性",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "缺少详细的模块注释",
+            "description": "改进错误消息",
+            "suggestion": "参考AI分析建议进行改进",
+            "line_number": null
+          },
+          {
+            "severity": "medium",
+            "category": "ai_analysis",
+            "description": "添加更多单元测试",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "拆分过长的函数以提高代码可读性和可维护性",
-        "增强错误处理机制，确保所有可能的错误情况都被处理",
-        "添加详细的模块注释，以便其他开发者能够更好地理解代码",
-        "考虑将部分功能模块化，以减少依赖并提高组件的独立性"
+        "提取重复的代码到独立函数",
+        "实现更详细的错误处理",
+        "添加更多单元测试",
+        "优化缓存策略",
+        "考虑使用更轻量级的依赖"
       ]
     },
     {
@@ -15881,12 +15820,12 @@
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "该组件主要负责提供通用工具函数，包括文件处理、Markdown处理和组件处理。通过模块化设计，将不同功能的工具函数分别放在不同的模块中，并通过pub use语句将这些模块的内容导出，方便其他模块调用。",
+      "detailed_description": "该组件主要负责组织和暴露各种工具模块的功能。它通过模块化的方式将文件工具、Markdown处理工具和组件工具分别封装在不同的模块中，并通过pub use语句统一暴露这些模块的功能。这种设计使得其他模块可以方便地使用这些工具函数，而无需直接依赖具体的实现细节。",
       "responsibilities": [
-        "提供文件处理工具函数",
+        "提供文件工具函数",
         "提供Markdown处理工具函数",
-        "提供组件处理工具函数",
-        "模块化工具函数导出"
+        "提供组件工具函数",
+        "统一暴露工具模块的功能"
       ],
       "interfaces": [],
       "dependencies": [],
@@ -15900,8 +15839,8 @@
         "cohesion_score": 0.7
       },
       "quality_assessment": {
-        "overall_score": 0.85,
-        "maintainability": 0.8,
+        "overall_score": 0.9,
+        "maintainability": 0.9,
         "readability": 0.9,
         "testability": 0.7,
         "reusability": 0.6,
@@ -15924,36 +15863,34 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "可以考虑添加一些公共的工具函数",
+            "description": "可以考虑添加一些基本的工具函数",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "可以添加更详细的文档注释，以便其他开发者更好地理解和使用这些工具函数",
-        "可以考虑添加一些公共的工具函数，例如字符串处理、日期处理等，以提高工具函数的通用性",
-        "可以考虑添加单元测试，以确保工具函数的正确性和稳定性"
+        "可以添加更详细的文档注释，说明每个模块的用途和主要功能",
+        "可以考虑添加一些基本的工具函数，例如字符串处理、日期时间处理等",
+        "可以考虑添加测试用例，确保工具函数的正确性和稳定性"
       ]
     },
     {
       "component": {
         "name": "mod.rs",
         "file_path": "src/extractors/mod.rs",
-        "component_type": "other",
+        "component_type": "feature",
         "importance_score": 0.6,
         "dependencies": [],
         "description": null,
         "functions": [],
         "interfaces": []
       },
-      "detailed_description": "mod.rs 文件是一个 Rust 模块文件，它主要负责定义和导出多个子模块和类型。这个文件看起来像是一个提取器系统的一部分，可能用于从各种来源提取和分析数据。",
+      "detailed_description": "该模块主要负责导出和组织项目中各个功能模块。它定义了多个子模块，并通过pub use语句将它们的公共接口导出。这些子模块包括结构提取、组件提取、研究提取、文档提取、语言处理器以及各种类型定义模块。该模块的主要作用是为其他部分的代码提供统一的模块访问接口，管理模块间的依赖关系，并确保模块的组织结构清晰。",
       "responsibilities": [
-        "模块导出",
-        "功能聚合",
-        "类型定义",
-        "组件类型分析",
-        "语言处理管理"
+        "导出和组织各个功能模块",
+        "提供统一的模块访问接口",
+        "管理模块间的依赖关系"
       ],
       "interfaces": [],
       "dependencies": [],
@@ -15984,46 +15921,23 @@
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "添加更多的文档注释",
+            "description": "可以添加更详细的模块文档注释",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           },
           {
             "severity": "medium",
             "category": "ai_analysis",
-            "description": "将相关的子模块和类型分组",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "确保依赖关系的合理性",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "考虑使用特征（Traits）",
-            "suggestion": "参考AI分析建议进行改进",
-            "line_number": null
-          },
-          {
-            "severity": "medium",
-            "category": "ai_analysis",
-            "description": "添加单元测试和集成测试",
+            "description": "可以考虑将相关模块分组导出",
             "suggestion": "参考AI分析建议进行改进",
             "line_number": null
           }
         ]
       },
       "recommendations": [
-        "添加文档注释",
-        "分组相关的子模块和类型",
-        "确保依赖关系的合理性",
-        "考虑使用特征（Traits）",
-        "添加单元测试和集成测试"
+        "可以添加更详细的模块文档注释",
+        "可以考虑将相关模块分组导出",
+        "可以添加模块级别的测试"
       ]
     }
   ],
@@ -18999,63 +18913,63 @@
     {
       "source": "main.rs",
       "target": "agents",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: main.rs 通过 mod 语句依赖于 agents (强度: 8/10)"
     },
     {
       "source": "main.rs",
       "target": "cache",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: main.rs 通过 mod 语句依赖于 cache (强度: 8/10)"
     },
     {
       "source": "main.rs",
       "target": "cli",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: main.rs 通过 mod 语句依赖于 cli (强度: 8/10)"
     },
     {
       "source": "main.rs",
       "target": "config",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: main.rs 通过 mod 语句依赖于 config (强度: 8/10)"
     },
     {
       "source": "main.rs",
       "target": "extractors",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: main.rs 通过 mod 语句依赖于 extractors (强度: 8/10)"
     },
     {
       "source": "main.rs",
       "target": "llm",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: main.rs 通过 mod 语句依赖于 llm (强度: 8/10)"
     },
     {
       "source": "main.rs",
       "target": "tools",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: main.rs 通过 mod 语句依赖于 tools (强度: 8/10)"
     },
     {
       "source": "main.rs",
       "target": "utils",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: main.rs 通过 mod 语句依赖于 utils (强度: 8/10)"
     },
     {
       "source": "main.rs",
       "target": "workflow",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: main.rs 通过 mod 语句依赖于 workflow (强度: 8/10)"
     },
@@ -19063,34 +18977,34 @@
       "source": "mod.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "react",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 react (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "react_executor",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 react_executor (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "agent_builder",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 agent_builder (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "error",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 error (强度: 8/10)"
     },
@@ -19098,27 +19012,27 @@
       "source": "react_executor.rs",
       "target": "super::react::{ReActConfig, ReActResponse}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: react_executor.rs 通过 use 语句依赖于 super::react::{ReActConfig, ReActResponse} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: react_executor.rs 通过 use 语句依赖于 super::react::{ReActConfig, ReActResponse} (强度: 7/10)"
     },
     {
       "source": "performance_monitor.rs",
       "target": "super::*",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: performance_monitor.rs 通过 use 语句依赖于 super::* (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: performance_monitor.rs 通过 use 语句依赖于 super::* (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "crate::config::CacheConfig",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::config::CacheConfig (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::config::CacheConfig (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "performance_monitor",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 performance_monitor (强度: 8/10)"
     },
@@ -19126,384 +19040,384 @@
       "source": "preprocessing_agent.rs",
       "target": "crate::llm::LLMClient",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: preprocessing_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: preprocessing_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 7/10)"
     },
     {
       "source": "preprocessing_agent.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: preprocessing_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: preprocessing_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "preprocessing_agent.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: preprocessing_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: preprocessing_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "file_explorer.rs",
       "target": "crate::extractors::structure_extractor::FileInfo",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: file_explorer.rs 通过 use 语句依赖于 crate::extractors::structure_extractor::FileInfo (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: file_explorer.rs 通过 use 语句依赖于 crate::extractors::structure_extractor::FileInfo (强度: 7/10)"
     },
     {
       "source": "file_explorer.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: file_explorer.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: file_explorer.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "file_reader.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: file_reader.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: file_reader.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "deep_dive_agent.rs",
       "target": "crate::llm::LLMClient",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 7/10)"
     },
     {
       "source": "deep_dive_agent.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "deep_dive_agent.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "deep_dive_agent.rs",
       "target": "crate::agents::preprocessing_agent::PreprocessingResult",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::agents::preprocessing_agent::PreprocessingResult (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::agents::preprocessing_agent::PreprocessingResult (强度: 7/10)"
     },
     {
       "source": "deep_dive_agent.rs",
       "target": "crate::agents::research_agent::ResearchResult",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::agents::research_agent::ResearchResult (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::agents::research_agent::ResearchResult (强度: 7/10)"
     },
     {
       "source": "deep_dive_agent.rs",
       "target": "crate::utils::MarkdownUtils",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: deep_dive_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
     },
     {
       "source": "research_agent.rs",
       "target": "crate::llm::LLMClient",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: research_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: research_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 7/10)"
     },
     {
       "source": "research_agent.rs",
       "target": "crate::agents::preprocessing_agent::PreprocessingResult",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: research_agent.rs 通过 use 语句依赖于 crate::agents::preprocessing_agent::PreprocessingResult (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: research_agent.rs 通过 use 语句依赖于 crate::agents::preprocessing_agent::PreprocessingResult (强度: 7/10)"
     },
     {
       "source": "research_agent.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: research_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: research_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "research_agent.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: research_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: research_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "research_agent.rs",
       "target": "crate::extractors::{ResearchExtractor, ResearchReport, AIResearchEnhancement, AIComprehensiveInsights, AIRecommendations}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: research_agent.rs 通过 use 语句依赖于 crate::extractors::{ResearchExtractor, ResearchReport, AIResearchEnhancement, AIComprehensiveInsights, AIRecommendations} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: research_agent.rs 通过 use 语句依赖于 crate::extractors::{ResearchExtractor, ResearchReport, AIResearchEnhancement, AIComprehensiveInsights, AIRecommendations} (强度: 7/10)"
     },
     {
       "source": "categorized_documentation_agent.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: categorized_documentation_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: categorized_documentation_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "categorized_documentation_agent.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: categorized_documentation_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: categorized_documentation_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "categorized_documentation_agent.rs",
       "target": "crate::extractors::{ComponentType, CoreComponent, ComponentAnalysis, ProjectStructure}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: categorized_documentation_agent.rs 通过 use 语句依赖于 crate::extractors::{ComponentType, CoreComponent, ComponentAnalysis, ProjectStructure} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: categorized_documentation_agent.rs 通过 use 语句依赖于 crate::extractors::{ComponentType, CoreComponent, ComponentAnalysis, ProjectStructure} (强度: 7/10)"
     },
     {
       "source": "categorized_documentation_agent.rs",
       "target": "crate::llm::LLMClient",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: categorized_documentation_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: categorized_documentation_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 7/10)"
     },
     {
       "source": "categorized_documentation_agent.rs",
       "target": "crate::utils::FileUtils",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: categorized_documentation_agent.rs 通过 use 语句依赖于 crate::utils::FileUtils (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: categorized_documentation_agent.rs 通过 use 语句依赖于 crate::utils::FileUtils (强度: 7/10)"
     },
     {
       "source": "file_utils.rs",
       "target": "super::*",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: file_utils.rs 通过 use 语句依赖于 super::* (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: file_utils.rs 通过 use 语句依赖于 super::* (强度: 7/10)"
     },
     {
       "source": "component_utils.rs",
       "target": "crate::extractors::CoreComponent",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: component_utils.rs 通过 use 语句依赖于 crate::extractors::CoreComponent (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: component_utils.rs 通过 use 语句依赖于 crate::extractors::CoreComponent (强度: 7/10)"
     },
     {
       "source": "component_utils.rs",
       "target": "super::*",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: component_utils.rs 通过 use 语句依赖于 super::* (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: component_utils.rs 通过 use 语句依赖于 super::* (强度: 7/10)"
     },
     {
       "source": "component_utils.rs",
       "target": "crate::extractors::{CoreComponent, ComponentType}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: component_utils.rs 通过 use 语句依赖于 crate::extractors::{CoreComponent, ComponentType} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: component_utils.rs 通过 use 语句依赖于 crate::extractors::{CoreComponent, ComponentType} (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "crate::agents::documentation_agent::DocumentationResult",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::agents::documentation_agent::DocumentationResult (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::agents::documentation_agent::DocumentationResult (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "crate::agents::c4_documentation_agent::C4DocumentationResult",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::agents::c4_documentation_agent::C4DocumentationResult (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::agents::c4_documentation_agent::C4DocumentationResult (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "crate::agents::research_agent::ResearchResult",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::agents::research_agent::ResearchResult (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::agents::research_agent::ResearchResult (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "crate::agents::{DocumentationAgent, PreprocessingAgent, ResearchAgent, c4_documentation_agent::C4DocumentationAgent, CategorizedDocumentationAgent}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::agents::{DocumentationAgent, PreprocessingAgent, ResearchAgent, c4_documentation_agent::C4DocumentationAgent, CategorizedDocumentationAgent} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::agents::{DocumentationAgent, PreprocessingAgent, ResearchAgent, c4_documentation_agent::C4DocumentationAgent, CategorizedDocumentationAgent} (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: mod.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "component_extractor.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: component_extractor.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: component_extractor.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "component_extractor.rs",
       "target": "crate::extractors::structure_extractor::{CoreComponent, ProjectStructure}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: component_extractor.rs 通过 use 语句依赖于 crate::extractors::structure_extractor::{CoreComponent, ProjectStructure} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: component_extractor.rs 通过 use 语句依赖于 crate::extractors::structure_extractor::{CoreComponent, ProjectStructure} (强度: 7/10)"
     },
     {
       "source": "ai_component_type_analyzer.rs",
       "target": "crate::extractors::component_types::{ComponentType, ComponentTypeMapper}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: ai_component_type_analyzer.rs 通过 use 语句依赖于 crate::extractors::component_types::{ComponentType, ComponentTypeMapper} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: ai_component_type_analyzer.rs 通过 use 语句依赖于 crate::extractors::component_types::{ComponentType, ComponentTypeMapper} (强度: 7/10)"
     },
     {
       "source": "ai_component_type_analyzer.rs",
       "target": "crate::llm::LLMClient",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: ai_component_type_analyzer.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: ai_component_type_analyzer.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 7/10)"
     },
     {
       "source": "ai_component_type_analyzer.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: ai_component_type_analyzer.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: ai_component_type_analyzer.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "ai_component_type_analyzer.rs",
       "target": "super::*",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: ai_component_type_analyzer.rs 通过 use 语句依赖于 super::* (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: ai_component_type_analyzer.rs 通过 use 语句依赖于 super::* (强度: 7/10)"
     },
     {
       "source": "research_extractor.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: research_extractor.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: research_extractor.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "research_extractor.rs",
       "target": "crate::agents::preprocessing_agent::PreprocessingResult",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: research_extractor.rs 通过 use 语句依赖于 crate::agents::preprocessing_agent::PreprocessingResult (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: research_extractor.rs 通过 use 语句依赖于 crate::agents::preprocessing_agent::PreprocessingResult (强度: 7/10)"
     },
     {
       "source": "documentation_extractor.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_extractor.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_extractor.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "documentation_extractor.rs",
       "target": "crate::agents::preprocessing_agent::PreprocessingResult",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_extractor.rs 通过 use 语句依赖于 crate::agents::preprocessing_agent::PreprocessingResult (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_extractor.rs 通过 use 语句依赖于 crate::agents::preprocessing_agent::PreprocessingResult (强度: 7/10)"
     },
     {
       "source": "documentation_extractor.rs",
       "target": "crate::extractors::research_extractor::ResearchReport",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_extractor.rs 通过 use 语句依赖于 crate::extractors::research_extractor::ResearchReport (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_extractor.rs 通过 use 语句依赖于 crate::extractors::research_extractor::ResearchReport (强度: 7/10)"
     },
     {
       "source": "documentation_extractor.rs",
       "target": "crate::utils::MarkdownUtils",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_extractor.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_extractor.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
     },
     {
       "source": "typescript.rs",
       "target": "super::{Dependency, LanguageProcessor}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: typescript.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: typescript.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 7/10)"
     },
     {
       "source": "java.rs",
       "target": "super::{Dependency, LanguageProcessor}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: java.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: java.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 7/10)"
     },
     {
       "source": "react.rs",
       "target": "super::{Dependency, LanguageProcessor}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: react.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: react.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "rust",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 rust (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "javascript",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 javascript (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "typescript",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 typescript (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "react",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 react (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "vue",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 vue (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "svelte",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 svelte (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "kotlin",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 kotlin (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "python",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 python (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "java",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 java (强度: 8/10)"
     },
@@ -19511,237 +19425,237 @@
       "source": "rust.rs",
       "target": "super::{Dependency, LanguageProcessor}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: rust.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: rust.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 7/10)"
     },
     {
       "source": "vue.rs",
       "target": "super::{Dependency, LanguageProcessor}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: vue.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: vue.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 7/10)"
     },
     {
       "source": "javascript.rs",
       "target": "super::{Dependency, LanguageProcessor}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: javascript.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: javascript.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 7/10)"
     },
     {
       "source": "kotlin.rs",
       "target": "super::{Dependency, LanguageProcessor}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: kotlin.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: kotlin.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 7/10)"
     },
     {
       "source": "python.rs",
       "target": "super::{Dependency, LanguageProcessor}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: python.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: python.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 7/10)"
     },
     {
       "source": "svelte.rs",
       "target": "super::{Dependency, LanguageProcessor}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: svelte.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: svelte.rs 通过 use 语句依赖于 super::{Dependency, LanguageProcessor} (强度: 7/10)"
     },
     {
       "source": "structure_extractor.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "structure_extractor.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "structure_extractor.rs",
       "target": "crate::extractors::language_processors::LanguageProcessorManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::extractors::language_processors::LanguageProcessorManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::extractors::language_processors::LanguageProcessorManager (强度: 7/10)"
     },
     {
       "source": "structure_extractor.rs",
       "target": "crate::extractors::component_types::{ComponentType, ComponentTypeMapper}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::extractors::component_types::{ComponentType, ComponentTypeMapper} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::extractors::component_types::{ComponentType, ComponentTypeMapper} (强度: 7/10)"
     },
     {
       "source": "structure_extractor.rs",
       "target": "crate::extractors::ai_component_type_analyzer::ComponentTypeEnhancer",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::extractors::ai_component_type_analyzer::ComponentTypeEnhancer (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::extractors::ai_component_type_analyzer::ComponentTypeEnhancer (强度: 7/10)"
     },
     {
       "source": "structure_extractor.rs",
       "target": "crate::llm::LLMClient",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: structure_extractor.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 7/10)"
     },
     {
       "source": "cli.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: cli.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: cli.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "dependency_analyzer",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 dependency_analyzer (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "client",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 client (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "types",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 types (强度: 8/10)"
     },
     {
       "source": "lib.rs",
       "target": "config",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: lib.rs 通过 mod 语句依赖于 config (强度: 8/10)"
     },
     {
       "source": "lib.rs",
       "target": "cli",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: lib.rs 通过 mod 语句依赖于 cli (强度: 8/10)"
     },
     {
       "source": "lib.rs",
       "target": "agents",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: lib.rs 通过 mod 语句依赖于 agents (强度: 8/10)"
     },
     {
       "source": "lib.rs",
       "target": "tools",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: lib.rs 通过 mod 语句依赖于 tools (强度: 8/10)"
     },
     {
       "source": "lib.rs",
       "target": "cache",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: lib.rs 通过 mod 语句依赖于 cache (强度: 8/10)"
     },
     {
       "source": "lib.rs",
       "target": "extractors",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: lib.rs 通过 mod 语句依赖于 extractors (强度: 8/10)"
     },
     {
       "source": "lib.rs",
       "target": "workflow",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: lib.rs 通过 mod 语句依赖于 workflow (强度: 8/10)"
     },
     {
       "source": "lib.rs",
       "target": "utils",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: lib.rs 通过 mod 语句依赖于 utils (强度: 8/10)"
     },
     {
       "source": "lib.rs",
       "target": "llm",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: lib.rs 通过 mod 语句依赖于 llm (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "file_explorer",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 file_explorer (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "file_reader",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 file_reader (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "preprocessing_agent",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 preprocessing_agent (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "research_agent",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 research_agent (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "documentation_agent",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 documentation_agent (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "c4_documentation_agent",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 c4_documentation_agent (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "categorized_documentation_agent",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 categorized_documentation_agent (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "deep_dive_agent",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 deep_dive_agent (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "agent_tools",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 agent_tools (强度: 8/10)"
     },
@@ -19749,211 +19663,293 @@
       "source": "c4_documentation_agent.rs",
       "target": "crate::llm::LLMClient",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 7/10)"
     },
     {
       "source": "c4_documentation_agent.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "c4_documentation_agent.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "c4_documentation_agent.rs",
       "target": "crate::agents::{preprocessing_agent::PreprocessingResult, research_agent::ResearchResult}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::agents::{preprocessing_agent::PreprocessingResult, research_agent::ResearchResult} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::agents::{preprocessing_agent::PreprocessingResult, research_agent::ResearchResult} (强度: 7/10)"
     },
     {
       "source": "c4_documentation_agent.rs",
       "target": "crate::extractors::DocumentationExtractor",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::extractors::DocumentationExtractor (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::extractors::DocumentationExtractor (强度: 7/10)"
     },
     {
       "source": "c4_documentation_agent.rs",
       "target": "crate::utils::{FileUtils, ComponentSorter}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::utils::{FileUtils, ComponentSorter} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::utils::{FileUtils, ComponentSorter} (强度: 7/10)"
     },
     {
       "source": "c4_documentation_agent.rs",
       "target": "crate::utils::MarkdownUtils",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "c4_documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "c4_documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "c4_documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "c4_documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "c4_documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: c4_documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
     },
     {
       "source": "documentation_agent.rs",
       "target": "crate::llm::LLMClient",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::llm::LLMClient (强度: 7/10)"
     },
     {
       "source": "documentation_agent.rs",
       "target": "crate::cache::CacheManager",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::cache::CacheManager (强度: 7/10)"
     },
     {
       "source": "documentation_agent.rs",
       "target": "crate::config::Config",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::config::Config (强度: 7/10)"
     },
     {
       "source": "documentation_agent.rs",
       "target": "crate::agents::{preprocessing_agent::PreprocessingResult, research_agent::ResearchResult}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::agents::{preprocessing_agent::PreprocessingResult, research_agent::ResearchResult} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::agents::{preprocessing_agent::PreprocessingResult, research_agent::ResearchResult} (强度: 7/10)"
     },
     {
       "source": "documentation_agent.rs",
       "target": "crate::extractors::{DocumentationExtractor, C4Documentation, AIDocumentEnhancement, AITechnicalSpecification, AITestingGuide, AIPerformanceAnalysis, AISecurityAnalysis}",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::extractors::{DocumentationExtractor, C4Documentation, AIDocumentEnhancement, AITechnicalSpecification, AITestingGuide, AIPerformanceAnalysis, AISecurityAnalysis} (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::extractors::{DocumentationExtractor, C4Documentation, AIDocumentEnhancement, AITechnicalSpecification, AITestingGuide, AIPerformanceAnalysis, AISecurityAnalysis} (强度: 7/10)"
     },
     {
       "source": "documentation_agent.rs",
       "target": "crate::utils::FileUtils",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::FileUtils (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::FileUtils (强度: 7/10)"
     },
     {
       "source": "documentation_agent.rs",
       "target": "crate::utils::MarkdownUtils",
       "relationship_type": "ai_依赖",
-      "strength": 0.8,
-      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 8/10)"
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
+    },
+    {
+      "source": "documentation_agent.rs",
+      "target": "crate::utils::MarkdownUtils",
+      "relationship_type": "ai_依赖",
+      "strength": 0.7,
+      "description": "AI分析: documentation_agent.rs 通过 use 语句依赖于 crate::utils::MarkdownUtils (强度: 7/10)"
     },
     {
       "source": "mod.rs",
       "target": "file_utils",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 file_utils (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "markdown_utils",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 markdown_utils (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "component_utils",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 component_utils (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "structure_extractor",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 structure_extractor (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "component_extractor",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 component_extractor (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "research_extractor",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 research_extractor (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "documentation_extractor",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 documentation_extractor (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "language_processors",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 language_processors (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "ai_analysis_types",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 ai_analysis_types (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "ai_research_types",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 ai_research_types (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "ai_documentation_types",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 ai_documentation_types (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "component_types",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 component_types (强度: 8/10)"
     },
     {
       "source": "mod.rs",
       "target": "ai_component_type_analyzer",
-      "relationship_type": "ai_依赖",
+      "relationship_type": "ai_聚合",
       "strength": 0.8,
       "description": "AI分析: mod.rs 通过 mod 语句依赖于 ai_component_type_analyzer (强度: 8/10)"
     }
   ],
   "architecture_insights": [
     "识别的架构模式: 分层架构, 模块化设计, 微内核架构",
-    "单一职责原则: 遵循程度 8/10 - 大多数组件遵循单一职责原则，但部分工具组件可能承担多个职责",
-    "开闭原则: 遵循程度 7/10 - 核心组件设计较为开放，但某些模块扩展性有限",
-    "依赖倒置原则: 遵循程度 6/10 - 部分高层模块直接依赖底层实现，依赖关系需要优化",
+    "单一职责原则: 遵循程度 8/10 - 大多数组件聚焦于单一功能，但部分工具组件可能承担多个职责。",
+    "开闭原则: 遵循程度 7/10 - 核心组件设计允许扩展，但部分模块可能需要更好的抽象以支持未来扩展。",
+    "依赖倒置原则: 遵循程度 6/10 - 部分高层组件直接依赖低层实现，可能需要引入接口/抽象层。",
     "架构优势: 清晰的分层结构",
     "架构优势: 模块化设计",
+    "架构优势: 丰富的工具组件支持",
     "架构优势: 智能Agent组件丰富",
-    "架构优势: 工具组件功能完善",
-    "架构关注点: 部分组件职责不够单一",
-    "架构关注点: 某些模块扩展性有限",
-    "架构关注点: 依赖关系需要优化",
-    "架构关注点: 缺乏明确的接口定义",
-    "架构建议: 优化组件职责划分",
-    "架构建议: 提高模块扩展性",
-    "架构建议: 优化依赖关系",
-    "架构建议: 定义明确的接口",
-    "架构建议: 考虑引入设计模式改进架构"
+    "架构关注点: 部分组件职责可能过重",
+    "架构关注点: 高层组件与低层实现耦合度较高",
+    "架构关注点: 缺乏统一的接口定义",
+    "架构建议: 引入接口/抽象层减少组件间耦合",
+    "架构建议: 对部分工具组件进行职责拆分",
+    "架构建议: 建立统一的API接口定义",
+    "架构建议: 考虑引入事件驱动架构提升系统灵活性"
   ],
-  "processing_time": 855.755669542,
-  "summary": "项目预处理摘要:\n\n📊 整体评估:\n该项目展示了良好的代码质量和结构化设计，但仍有改进空间。项目的核心组件和功能模块已经相对成熟，但仍存在一些复杂度和文档不足的问题。通过采取适当的改进措施，项目有望在架构成熟度和代码质量方面进一步提升。\n\n🏗️ 架构成熟度: 7/10\n💎 代码质量: 8/10\n\n🎯 技术栈分析:\n该项目主要使用Rust语言开发，技术栈单一但适用性强。Rust语言在性能和安全性方面表现优异，适合用于需要高性能和高可靠性的项目。\n\n💪 项目优势:\n- 代码质量良好\n- 组件结构清晰\n- 功能模块完善\n- 核心组件重要性高\n\n⚠️ 主要挑战:\n- 降低圈复杂度，拆分复杂函数\n- 考虑将大文件拆分为多个模块\n- 增加代码注释和文档\n- 拆分过于庞大的函数\n- 增加更详细的错误处理和日志记录\n- 添加单元测试和集成测试\n\n🚀 优先改进建议:\n- 降低圈复杂度，拆分复杂函数\n- 考虑将大文件拆分为多个模块\n- 增加代码注释和文档\n- 拆分过于庞大的函数\n- 增加更详细的错误处理和日志记录\n- 添加单元测试和集成测试\n\n📈 发展建议:\n- 代码质量良好，继续保持\n- 考虑添加更多的文档注释，特别是关于ReAct模式的详细说明\n- 可以添加更多的单元测试来验证不同配置下的行为\n- 可以考虑添加更多的构造函数来简化对象的创建过程\n- 可以考虑添加更多的错误处理机制，以应对潜在的运行时错误\n- 可以考虑添加更多的日志记录功能，以便更好地调试和监控\n- 考虑使用更抽象的客户端接口以提高灵活性\n- 添加性能监控和指标收集\n- 将对话逻辑和结果提取逻辑分离到不同的方法中"
+  "processing_time": 303.340706583,
+  "summary": "项目预处理摘要:\n\n📊 整体评估:\n该项目是一个中等规模的Rust项目，主要使用Rust语言开发，包含50个核心组件和225个质量问题。项目整体架构较为清晰，但存在一些代码复杂度较高、错误处理不够全面、文档注释不够详细等问题。项目的代码质量总体较好，但仍有提升空间。\n\n🏗️ 架构成熟度: 7/10\n💎 代码质量: 8/10\n\n🎯 技术栈分析:\n该项目主要使用Rust语言开发，技术栈单一，适用于需要高性能和安全性的场景。Rust语言的使用使得项目在性能和安全性方面具有优势，但也可能增加了开发和维护的难度。\n\n💪 项目优势:\n- 项目规模适中，核心组件数量合理\n- 代码质量总体较高，平均代码质量评分为0.81/1.0\n- 组件类型分布合理，功能模块和智能Agent数量较多，适合处理复杂任务\n- 主要组件重要性较高，核心组件如main.rs和config.rs的重要性评分较高\n\n⚠️ 主要挑战:\n- 代码复杂度较高，存在多个高圈复杂度函数\n- 错误处理不够一致和全面\n- 文档注释不够详细，影响代码可读性和维护性\n- 单元测试覆盖率不足，可能影响代码质量\n- 依赖项较多，可能影响项目的轻量级和性能\n\n🚀 优先改进建议:\n- 将高圈复杂度的函数拆分为更小的函数\n- 增加更一致的错误处理\n- 添加更详细的文档注释\n- 增加单元测试覆盖率\n- 考虑使用更轻量级的依赖库以减少依赖项\n\n📈 发展建议:\n- 考虑将命令行参数解析和配置创建分离到单独的模块\n- 添加更详细的错误处理和日志记录\n- 增加单元测试以覆盖各种场景\n- 考虑将工作流引擎的创建和执行分离到单独的函数以提高代码的可测试性\n- 添加配置验证以确保在初始化阶段捕获任何配置问题\n- 将高圈复杂度的函数拆分为更小的函数\n- 增加更一致的错误处理\n- 添加更详细的文档注释\n- 增加单元测试覆盖率\n- 考虑实现配置热加载功能\n- 添加配置验证功能\n- 将复杂函数拆分为更小的函数以降低圈复杂度\n- 增强错误处理以覆盖更多边界情况\n- 添加详细的文档注释以提高代码可读性\n- 考虑使用更轻量级的依赖库以减少依赖项\n- 为每个错误类型添加更详细的上下文信息，以便更好地进行错误调试\n- 考虑添加更多的错误转换实现，以支持更多的错误类型转换\n- 可以考虑为错误类型添加更详细的文档注释，以便更好地理解每个错误类型的含义和使用场景\n- 可以考虑添加错误代码或错误级别，以便更好地进行错误分类和处理\n- 增加更多的文档注释，特别是关于函数参数和返回值的详细说明"
 }
