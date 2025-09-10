@@ -2,7 +2,7 @@
 
 use anyhow::Result;
 use rig::{
-    client::{CompletionClient, ProviderClient}, 
+    client::{CompletionClient, ProviderClient},
     completion::Prompt,
     providers::mistral::Client,
 };
@@ -12,16 +12,15 @@ use std::future::Future;
 
 use crate::config::Config;
 
-mod react;
-mod react_executor;
 mod agent_builder;
 mod error;
+mod react;
+mod react_executor;
 
 pub use react::{ReActConfig, ReActResponse};
-pub use error::{LLMError, LLMResult};
 
-use react_executor::ReActExecutor;
 use agent_builder::AgentBuilder;
+use react_executor::ReActExecutor;
 
 /// LLM客户端 - 提供统一的LLM服务接口
 #[derive(Clone)]
@@ -34,15 +33,12 @@ impl LLMClient {
     /// 创建新的LLM客户端
     pub fn new(config: Config) -> Result<Self> {
         let client = Client::from_env();
-        
-        Ok(Self { 
-            client, 
-            config,
-        })
+
+        Ok(Self { client, config })
     }
 
     /// 获取Agent构建器
-    fn get_agent_builder(&self) -> AgentBuilder {
+    fn get_agent_builder(&self) -> AgentBuilder<'_> {
         AgentBuilder::new(&self.client, &self.config)
     }
 
@@ -91,22 +87,25 @@ impl LLMClient {
 
         self.retry_with_backoff(|| async {
             extractor.extract(user_prompt).await.map_err(|e| e.into())
-        }).await
+        })
+        .await
     }
 
     /// 智能对话方法（使用默认ReAct配置）
     pub async fn prompt(&self, system_prompt: &str, user_prompt: &str) -> Result<String> {
         let react_config = ReActConfig::default();
-        let response = self.prompt_with_react(system_prompt, user_prompt, react_config).await?;
+        let response = self
+            .prompt_with_react(system_prompt, user_prompt, react_config)
+            .await?;
         Ok(response.content)
     }
 
     /// 使用ReAct模式进行多轮对话
     pub async fn prompt_with_react(
-        &self, 
-        system_prompt: &str, 
-        user_prompt: &str, 
-        react_config: ReActConfig
+        &self,
+        system_prompt: &str,
+        user_prompt: &str,
+        react_config: ReActConfig,
     ) -> Result<ReActResponse> {
         let agent_builder = self.get_agent_builder();
         let agent = agent_builder.build_agent_with_tools(system_prompt);
@@ -115,16 +114,20 @@ impl LLMClient {
             ReActExecutor::execute(&agent, user_prompt, &react_config)
                 .await
                 .map_err(|e| e.into())
-        }).await
+        })
+        .await
     }
 
     /// 简化的单轮对话方法（不使用工具）
-    pub async fn prompt_without_react(&self, system_prompt: &str, user_prompt: &str) -> Result<String> {
+    pub async fn prompt_without_react(
+        &self,
+        system_prompt: &str,
+        user_prompt: &str,
+    ) -> Result<String> {
         let agent_builder = self.get_agent_builder();
         let agent = agent_builder.build_simple_agent(system_prompt);
 
-        self.retry_with_backoff(|| async {
-            agent.prompt(user_prompt).await.map_err(|e| e.into())
-        }).await
+        self.retry_with_backoff(|| async { agent.prompt(user_prompt).await.map_err(|e| e.into()) })
+            .await
     }
 }

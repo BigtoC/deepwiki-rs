@@ -6,7 +6,10 @@ use std::time::Instant;
 use crate::agents::preprocessing_agent::PreprocessingResult;
 use crate::cache::CacheManager;
 use crate::config::Config;
-use crate::extractors::{ResearchExtractor, ResearchReport, AIResearchEnhancement, AIComprehensiveInsights, AIRecommendations};
+use crate::extractors::{
+    AIComprehensiveInsights, AIRecommendations, AIResearchEnhancement, ResearchExtractor,
+    ResearchReport,
+};
 
 /// 调研Agent
 pub struct ResearchAgent {
@@ -106,7 +109,7 @@ impl ResearchAgent {
         // 尝试从缓存获取 - 直接使用prompt作为key，CacheManager会自动计算hash
         if let Some(cached_report) = self
             .cache_manager
-            . get::<ResearchReport>("ai_research", &prompt)
+            .get::<ResearchReport>("ai_research", &prompt)
             .await?
         {
             println!("   ✅ 使用缓存的AI调研结果: {}", report.title);
@@ -116,7 +119,8 @@ impl ResearchAgent {
         println!("   🤖 正在进行AI调研分析: {}", report.title);
 
         // 执行AI分析，使用extract函数自动提取结构化数据
-        let system_msg = "你是一个专业的软件架构研究员，专门深入分析软件项目的架构、设计和质量。".to_string();
+        let system_msg =
+            "你是一个专业的软件架构研究员，专门深入分析软件项目的架构、设计和质量。".to_string();
         let ai_enhancement = self
             .llm_client
             .extract::<AIResearchEnhancement>(&system_msg, &prompt)
@@ -197,19 +201,28 @@ impl ResearchAgent {
         let mut enhanced_report = report.clone();
 
         // 合并深度洞察
-        enhanced_report.insights.extend(ai_enhancement.deep_insights.clone());
+        enhanced_report
+            .insights
+            .extend(ai_enhancement.deep_insights.clone());
 
         // 合并改进建议
-        enhanced_report.recommendations.extend(ai_enhancement.improvement_paths.clone());
-        enhanced_report.recommendations.extend(ai_enhancement.best_practices.clone());
+        enhanced_report
+            .recommendations
+            .extend(ai_enhancement.improvement_paths.clone());
+        enhanced_report
+            .recommendations
+            .extend(ai_enhancement.best_practices.clone());
 
         // 更新内容，添加AI增强分析
         let mut ai_content = String::new();
-        
+
         if !ai_enhancement.architecture_assessment.is_empty() {
-            ai_content.push_str(&format!("## 架构评估\n{}\n\n", ai_enhancement.architecture_assessment));
+            ai_content.push_str(&format!(
+                "## 架构评估\n{}\n\n",
+                ai_enhancement.architecture_assessment
+            ));
         }
-        
+
         if !ai_enhancement.technical_debt.is_empty() {
             ai_content.push_str("## 技术债务分析\n");
             for debt in &ai_enhancement.technical_debt {
@@ -219,7 +232,10 @@ impl ResearchAgent {
         }
 
         if !ai_content.is_empty() {
-            enhanced_report.content = format!("{}\n\n## AI增强分析\n{}", enhanced_report.content, ai_content);
+            enhanced_report.content = format!(
+                "{}\n\n## AI增强分析\n{}",
+                enhanced_report.content, ai_content
+            );
         }
 
         enhanced_report
@@ -240,9 +256,13 @@ impl ResearchAgent {
         // 使用AI生成综合洞察
         let prompt = self.build_comprehensive_insights_prompt(reports, preprocessing_result);
         let system_msg = "你是一个专业的软件架构分析师，专门生成项目的综合洞察。".to_string();
-        
+
         // 检查缓存
-        if let Ok(Some(cached_insights)) = self.cache_manager.get::<AIComprehensiveInsights>("comprehensive_insights", &prompt).await {
+        if let Ok(Some(cached_insights)) = self
+            .cache_manager
+            .get::<AIComprehensiveInsights>("comprehensive_insights", &prompt)
+            .await
+        {
             println!("   📋 使用缓存的综合洞察");
             insights.extend(cached_insights.cross_report_insights);
             insights.extend(cached_insights.quality_insights);
@@ -257,10 +277,14 @@ impl ResearchAgent {
             {
                 Ok(ai_insights) => {
                     // 缓存结果
-                    if let Err(e) = self.cache_manager.set("comprehensive_insights", &prompt, &ai_insights).await {
+                    if let Err(e) = self
+                        .cache_manager
+                        .set("comprehensive_insights", &prompt, &ai_insights)
+                        .await
+                    {
                         eprintln!("缓存综合洞察失败: {}", e);
                     }
-                    
+
                     insights.extend(ai_insights.cross_report_insights);
                     insights.extend(ai_insights.quality_insights);
                     insights.extend(ai_insights.complexity_insights);
@@ -429,9 +453,13 @@ impl ResearchAgent {
         // 使用AI生成综合建议
         let prompt = self.build_recommendations_prompt(reports, preprocessing_result);
         let system_msg = "你是一个专业的软件架构顾问，专门为项目提供改进建议。".to_string();
-        
+
         // 检查缓存
-        if let Ok(Some(cached_recommendations)) = self.cache_manager.get::<AIRecommendations>("ai_recommendations", &prompt).await {
+        if let Ok(Some(cached_recommendations)) = self
+            .cache_manager
+            .get::<AIRecommendations>("ai_recommendations", &prompt)
+            .await
+        {
             println!("   📋 使用缓存的AI建议");
             recommendations.extend(cached_recommendations.architecture_recommendations);
             recommendations.extend(cached_recommendations.quality_recommendations);
@@ -446,10 +474,14 @@ impl ResearchAgent {
             {
                 Ok(ai_recommendations) => {
                     // 缓存结果
-                    if let Err(e) = self.cache_manager.set("ai_recommendations", &prompt, &ai_recommendations).await {
+                    if let Err(e) = self
+                        .cache_manager
+                        .set("ai_recommendations", &prompt, &ai_recommendations)
+                        .await
+                    {
                         eprintln!("缓存AI建议失败: {}", e);
                     }
-                    
+
                     recommendations.extend(ai_recommendations.architecture_recommendations);
                     recommendations.extend(ai_recommendations.quality_recommendations);
                     recommendations.extend(ai_recommendations.performance_recommendations);
@@ -458,7 +490,8 @@ impl ResearchAgent {
                 Err(e) => {
                     println!("⚠️ AI建议生成失败，使用基础建议: {}", e);
                     // 回退到基础建议
-                    recommendations.extend(self.generate_basic_recommendations(reports, preprocessing_result));
+                    recommendations
+                        .extend(self.generate_basic_recommendations(reports, preprocessing_result));
                 }
             }
         }

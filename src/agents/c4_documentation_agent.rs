@@ -7,7 +7,6 @@ use std::time::Instant;
 use crate::agents::{preprocessing_agent::PreprocessingResult, research_agent::ResearchResult};
 use crate::cache::CacheManager;
 use crate::config::Config;
-use crate::extractors::DocumentationExtractor;
 use crate::utils::{ComponentSorter, FileUtils};
 
 /// C4架构文档生成Agent
@@ -15,7 +14,6 @@ pub struct C4DocumentationAgent {
     llm_client: Option<LLMClient>,
     config: Config,
     cache_manager: CacheManager,
-    documentation_extractor: DocumentationExtractor,
 }
 
 /// C4文档生成结果
@@ -85,15 +83,11 @@ pub struct AIArchitectureAnalysis {
     pub architecture_diagram: String,
     #[serde(default)]
     pub core_processes: Vec<CoreProcess>,
-    /// 用Mermaid ​flowchart TB​表达的核心功能整体流程图
+    /// 用Mermaid flowchart TD表达的核心功能流程图
     #[serde(default)]
     pub process_flow_diagram: String,
     #[serde(default)]
     pub module_breakdown: Vec<ModuleDescription>,
-    #[serde(default)]
-    pub architecture_patterns: Vec<String>,
-    #[serde(default)]
-    pub design_principles: Vec<String>,
     #[serde(default)]
     pub data_flow_analysis: String,
 }
@@ -106,10 +100,10 @@ pub struct CoreProcess {
     #[serde(default)]
     /// 流程功能描述
     pub description: String,
-    /// 处理步骤
+    /// 处理步骤，格式为“步骤名：步骤描述”
     #[serde(default)]
     pub steps: Vec<String>,
-    /// 涉及到组件名称
+    /// 涉及到组件清单，对每一个组件的描述格式为“组件名：组件功能与作用描述”
     #[serde(default)]
     pub involved_components: Vec<String>,
     /// 该流程的Mermaid图
@@ -198,13 +192,11 @@ impl C4DocumentationAgent {
         let llm_client = Some(LLMClient::new(config.clone())?);
 
         let cache_manager = CacheManager::new(config.cache.clone());
-        let documentation_extractor = DocumentationExtractor::new(cache_manager.clone());
 
         Ok(Self {
             llm_client,
             config,
             cache_manager,
-            documentation_extractor,
         })
     }
 
@@ -227,13 +219,20 @@ impl C4DocumentationAgent {
         // 2. 生成Overview.md（包含架构概览）
         println!("📄 生成项目概述文档...");
         let overview_doc = self
-            .generate_overview_document_with_architecture(preprocessing_result, research_result, &architecture_analysis)
+            .generate_overview_document_with_architecture(
+                preprocessing_result,
+                research_result,
+                &architecture_analysis,
+            )
             .await?;
 
         // 3. 生成Architecture.md
         println!("🏗️ 生成架构文档...");
         let architecture_doc = self
-            .generate_architecture_document_from_analysis(preprocessing_result, &architecture_analysis)
+            .generate_architecture_document_from_analysis(
+                preprocessing_result,
+                &architecture_analysis,
+            )
             .await?;
 
         // 4. 生成核心组件文档
@@ -327,8 +326,9 @@ impl C4DocumentationAgent {
         preprocessing_result: &PreprocessingResult,
         architecture_analysis: &AIArchitectureAnalysis,
     ) -> Result<C4Document> {
-        let content = self.generate_architecture_content(architecture_analysis, preprocessing_result);
-        
+        let content =
+            self.generate_architecture_content(architecture_analysis, preprocessing_result);
+
         Ok(C4Document {
             title: "架构文档".to_string(),
             filename: "Architecture.md".to_string(),
@@ -353,7 +353,11 @@ impl C4DocumentationAgent {
             .await
         {
             println!("   📋 使用缓存的项目概述");
-            let content = self.generate_overview_content_with_architecture(&cached_overview, preprocessing_result, architecture_analysis);
+            let content = self.generate_overview_content_with_architecture(
+                &cached_overview,
+                preprocessing_result,
+                architecture_analysis,
+            );
             return Ok(C4Document {
                 title: "项目概述".to_string(),
                 filename: "Overview.md".to_string(),
@@ -384,7 +388,11 @@ impl C4DocumentationAgent {
                     eprintln!("缓存C4概述结果失败: {}", e);
                 }
 
-                let content = self.generate_overview_content_with_architecture(&ai_overview, preprocessing_result, architecture_analysis);
+                let content = self.generate_overview_content_with_architecture(
+                    &ai_overview,
+                    preprocessing_result,
+                    architecture_analysis,
+                );
 
                 Ok(C4Document {
                     title: "项目概述".to_string(),
@@ -400,69 +408,6 @@ impl C4DocumentationAgent {
             }
         }
     }
-
-    async fn generate_overview_document(
-        &self,
-        preprocessing_result: &PreprocessingResult,
-        research_result: &ResearchResult,
-    ) -> Result<C4Document> {
-        let prompt = self.build_overview_prompt(preprocessing_result, research_result);
-
-        // 检查缓存
-        if let Ok(Some(cached_overview)) = self
-            .cache_manager
-            .get::<AIProjectOverview>("c4_overview", &prompt)
-            .await
-        {
-            println!("   📋 使用缓存的项目概述");
-            let content = self.generate_overview_content(&cached_overview, preprocessing_result);
-            return Ok(C4Document {
-                title: "项目概述".to_string(),
-                filename: "Overview.md".to_string(),
-                content,
-                doc_type: "overview".to_string(),
-            });
-        }
-
-        println!("   🤖 正在生成AI项目概述");
-
-        let system_msg = "你是一个专业的技术文档专家，专门创建符合C4架构风格的项目概述文档。请根据项目分析结果生成结构化的项目概述。";
-
-        let result = self
-            .llm_client
-            .as_ref()
-            .unwrap()
-            .extract::<AIProjectOverview>(system_msg, &prompt)
-            .await;
-
-        match result {
-            Ok(ai_overview) => {
-                // 缓存结果
-                if let Err(e) = self
-                    .cache_manager
-                    .set("c4_overview", &prompt, &ai_overview)
-                    .await
-                {
-                    eprintln!("缓存C4概述结果失败: {}", e);
-                }
-
-                let content = self.generate_overview_content(&ai_overview, preprocessing_result);
-
-                Ok(C4Document {
-                    title: "项目概述".to_string(),
-                    filename: "Overview.md".to_string(),
-                    content,
-                    doc_type: "overview".to_string(),
-                })
-            }
-            Err(e) => {
-                println!("   ⚠️ AI概述生成失败，使用基础版本: {}", e);
-                self.generate_basic_overview_document(preprocessing_result, research_result)
-                    .await
-            }
-        }
-    }
-
 
     async fn generate_core_components_docs(
         &self,
@@ -629,7 +574,7 @@ impl C4DocumentationAgent {
 - 不要包含优化建议或测试指南
 - 重点分析代码结构和设计模式
 - **避免使用"该项目"等模糊表述，直接使用项目名称"{}"**"#,
-            project_name, // 新增：项目名称
+            project_name,
             preprocessing_result.project_structure.root_path.display(),
             preprocessing_result.project_structure.total_files,
             preprocessing_result.core_components.len(),
@@ -699,7 +644,7 @@ impl C4DocumentationAgent {
    - 主要业务流程的完整步骤
    - 模块间的调用关系
    - 数据处理流水线
-   - 使用标准的Mermaid flowchart语法（如：flowchart TB）
+   - 使用标准的Mermaid flowchart语法（如：flowchart TD）
 
 3. **核心模块详解** - 基于源码分析的模块说明：
    - 各模块的具体职责和实现方式
@@ -749,7 +694,7 @@ impl C4DocumentationAgent {
 {}
 
 ## 源码片段
-```rust
+```sourcecode
 {}
 ```",
                 analysis.complexity_metrics.lines_of_code,
@@ -775,7 +720,7 @@ impl C4DocumentationAgent {
 暂无详细分析数据
 
 ## 源码片段
-```rust
+```sourcecode
 {}
 ```",
                 source_code
@@ -829,77 +774,6 @@ impl C4DocumentationAgent {
         )
     }
 
-    fn generate_overview_content(
-        &self,
-        ai_overview: &AIProjectOverview,
-        preprocessing_result: &PreprocessingResult,
-    ) -> String {
-        use crate::utils::MarkdownUtils;
-
-        let mut content = String::new();
-
-        content.push_str(&MarkdownUtils::heading(1, "项目概述"));
-        content.push_str("\n");
-
-        // 项目概述 - 确保包含项目名称
-        content.push_str(&MarkdownUtils::heading(2, "项目介绍"));
-        content.push_str(&format!("{}\n\n", ai_overview.project_summary));
-
-        // 核心功能与作用
-        content.push_str(&MarkdownUtils::heading(2, "核心功能与作用"));
-        content.push_str(&MarkdownUtils::heading(3, "主要功能"));
-        for functionality in &ai_overview.core_functionality {
-            content.push_str(&format!("- {}\n", functionality));
-        }
-        content.push_str("\n");
-
-        content.push_str(&MarkdownUtils::heading(3, "关键特性"));
-        for feature in &ai_overview.key_features {
-            content.push_str(&format!("- {}\n", feature));
-        }
-        content.push_str("\n");
-
-        content.push_str(&MarkdownUtils::heading(3, "项目价值"));
-        content.push_str(&format!("{}\n\n", ai_overview.business_value));
-
-        // 技术选型
-        content.push_str(&MarkdownUtils::heading(2, "技术选型"));
-
-        content.push_str(&MarkdownUtils::heading(3, "主要编程语言"));
-        for language in &ai_overview.technology_stack.primary_languages {
-            content.push_str(&format!("- {}\n", language));
-        }
-        content.push_str("\n");
-
-        if !ai_overview.technology_stack.frameworks.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "使用的核心框架和库"));
-            for framework in &ai_overview.technology_stack.frameworks {
-                content.push_str(&format!("- {}\n", framework));
-            }
-            content.push_str("\n");
-        }
-
-        content.push_str(&MarkdownUtils::heading(3, "技术选型评价"));
-        content.push_str(&format!("{}\n\n", ai_overview.technology_stack.rationale));
-
-        // 项目统计
-        content.push_str(&MarkdownUtils::heading(2, "项目统计"));
-        content.push_str(&format!(
-            "- **文件总数**: {}\n- **核心组件数**: {}\n- **主要文件类型**: {}\n\n",
-            preprocessing_result.project_structure.total_files,
-            preprocessing_result.core_components.len(),
-            preprocessing_result
-                .project_structure
-                .file_types
-                .iter()
-                .map(|(ext, count)| format!("{}: {}", ext, count))
-                .collect::<Vec<_>>()
-                .join(", ")
-        ));
-
-        content
-    }
-
     /// 生成包含架构概览的项目概述内容
     fn generate_overview_content_with_architecture(
         &self,
@@ -937,45 +811,52 @@ impl C4DocumentationAgent {
 
         // 系统架构概览
         content.push_str(&MarkdownUtils::heading(2, "系统架构概览"));
-        
+
         // 整体架构描述
         content.push_str(&MarkdownUtils::heading(3, "整体架构描述"));
-        content.push_str(&format!("{}\n\n", architecture_analysis.overall_architecture_description));
+        content.push_str(&format!(
+            "{}\n\n",
+            architecture_analysis.overall_architecture_description
+        ));
 
         // 架构图
         if !architecture_analysis.architecture_diagram.is_empty() {
             content.push_str(&MarkdownUtils::heading(3, "系统架构图"));
-            content.push_str(&format!("{}\n\n", architecture_analysis.architecture_diagram));
+            content.push_str(&MarkdownUtils::mermaid_block(
+                &architecture_analysis.architecture_diagram,
+            ));
         }
 
         // 核心功能流程图
         if !architecture_analysis.process_flow_diagram.is_empty() {
             content.push_str(&MarkdownUtils::heading(3, "核心功能流程图"));
-            content.push_str(&format!("{}\n\n", architecture_analysis.process_flow_diagram));
+            content.push_str(&MarkdownUtils::mermaid_block(
+                &architecture_analysis.process_flow_diagram,
+            ));
         }
 
         // 核心模块
         content.push_str(&MarkdownUtils::heading(2, "核心模块"));
-        
+
         if !architecture_analysis.module_breakdown.is_empty() {
             content.push_str("| 模块名称 | 主要功能 | 核心职责 |\n");
             content.push_str("|----------|----------|----------|\n");
-            
+
             for module in &architecture_analysis.module_breakdown {
                 let responsibilities = if module.responsibilities.len() > 3 {
-                    format!("{}, {}, {}等", 
-                        module.responsibilities[0], 
-                        module.responsibilities[1], 
-                        module.responsibilities[2])
+                    format!(
+                        "{}, {}, {}等",
+                        module.responsibilities[0],
+                        module.responsibilities[1],
+                        module.responsibilities[2]
+                    )
                 } else {
                     module.responsibilities.join(", ")
                 };
-                
+
                 content.push_str(&format!(
                     "| {} | {} | {} |\n",
-                    module.name,
-                    module.purpose,
-                    responsibilities
+                    module.name, module.purpose, responsibilities
                 ));
             }
             content.push_str("\n");
@@ -1033,28 +914,17 @@ impl C4DocumentationAgent {
 
         // 整体架构描述
         content.push_str(&MarkdownUtils::heading(2, "整体架构描述"));
-        content.push_str(&format!("{}\n\n", ai_architecture.overall_architecture_description));
+        content.push_str(&format!(
+            "{}\n\n",
+            ai_architecture.overall_architecture_description
+        ));
 
         // 架构图
         if !ai_architecture.architecture_diagram.is_empty() {
             content.push_str(&MarkdownUtils::heading(3, "系统架构图"));
-            content.push_str(&format!("{}\n\n", ai_architecture.architecture_diagram));
-        }
-
-        if !ai_architecture.architecture_patterns.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "架构模式"));
-            for pattern in &ai_architecture.architecture_patterns {
-                content.push_str(&format!("- {}\n", pattern));
-            }
-            content.push_str("\n");
-        }
-
-        if !ai_architecture.design_principles.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "设计原则"));
-            for principle in &ai_architecture.design_principles {
-                content.push_str(&format!("- {}\n", principle));
-            }
-            content.push_str("\n");
+            content.push_str(&MarkdownUtils::mermaid_block(
+                &ai_architecture.architecture_diagram,
+            ));
         }
 
         // 数据流分析
@@ -1069,7 +939,9 @@ impl C4DocumentationAgent {
         // 整体流程图
         if !ai_architecture.process_flow_diagram.is_empty() {
             content.push_str(&MarkdownUtils::heading(3, "整体流程图"));
-            content.push_str(&format!("{}\n\n", ai_architecture.process_flow_diagram));
+            content.push_str(&&MarkdownUtils::mermaid_block(
+                &ai_architecture.process_flow_diagram,
+            ));
         }
         for process in &ai_architecture.core_processes {
             content.push_str(&MarkdownUtils::heading(3, &process.name));
@@ -1435,32 +1307,7 @@ impl C4DocumentationAgent {
         Ok(())
     }
 
-    fn generate_c4_documentation_summary(
-        &self,
-        _overview_doc: &C4Document,
-        _architecture_doc: &C4Document,
-        core_components: &[C4ComponentDoc],
-    ) -> String {
-        format!(
-            r#"C4架构文档生成摘要:
-
-📚 生成的文档:
-- Overview.md: 项目概述文档
-- Architecture.md: 架构文档
-- CoreComponents/: {} 个核心组件文档
-
-📄 文档结构:
-- 项目概述: 包含项目概述、核心功能与作用、技术选型
-- 架构文档: 包含整体架构、核心流程、核心模块详解
-- 组件文档: 每个核心模块的详细文档，包含功能、工作流程、内部架构
-
-✅ 所有文档已按C4架构风格保存到输出目录"#,
-            core_components.len()
-        )
-    }
-
     // 新增的辅助方法用于提取源码和依赖关系
-
     fn extract_key_code_snippets(&self, preprocessing_result: &PreprocessingResult) -> String {
         let mut snippets = Vec::new();
 
@@ -1478,7 +1325,7 @@ impl C4DocumentationAgent {
                 };
 
                 snippets.push(format!(
-                    "### {} ({})\n```rust\n{}\n```",
+                    "### {} ({})\n```sourcecode\n{}\n```",
                     component.name, component.component_type, truncated
                 ));
             }
@@ -1504,7 +1351,7 @@ impl C4DocumentationAgent {
                 };
 
                 snippets.push(format!(
-                    "### {} ({})\n**路径**: {}\n**重要性**: {:.2}\n```rust\n{}\n```",
+                    "### {} ({})\n**路径**: {}\n**重要性**: {:.2}\n```sourcecode\n{}\n```",
                     component.name,
                     component.component_type,
                     component.file_path.display(),
@@ -1657,8 +1504,8 @@ impl C4DocumentationAgent {
     /// 生成包含DeepDive的C4文档摘要
     fn generate_c4_documentation_summary_with_deep_dive(
         &self,
-        overview_doc: &C4Document,
-        architecture_doc: &C4Document,
+        _overview_doc: &C4Document,
+        _architecture_doc: &C4Document,
         core_components: &[C4ComponentDoc],
         deep_dive_result: &crate::agents::deep_dive_agent::DeepDiveResult,
     ) -> String {

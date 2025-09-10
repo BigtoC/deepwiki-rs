@@ -1,13 +1,13 @@
 use anyhow::Result;
-use serde::{Deserialize, Serialize};
 use schemars::JsonSchema;
+use serde::{Deserialize, Serialize};
 use std::time::Instant;
 
-use crate::llm::LLMClient;
-use crate::cache::CacheManager;
-use crate::config::Config;
 use crate::agents::preprocessing_agent::PreprocessingResult;
 use crate::agents::research_agent::ResearchResult;
+use crate::cache::CacheManager;
+use crate::config::Config;
+use crate::llm::LLMClient;
 use crate::utils::MarkdownUtils;
 
 /// DeepDive主题分析代理
@@ -22,28 +22,28 @@ pub struct DeepDiveAgent {
 pub struct AIDeepDiveTopic {
     /// 主题名称（体现项目的核心功能或特色）
     pub name: String,
-    
+
     /// 主题描述（体现在项目中的作用与价值）
     pub description: String,
-    
+
     /// 研究价值评分 (1-10)
     pub research_value: f64,
-    
+
     /// 技术复杂度评分 (1-10)
     pub complexity_score: f64,
-    
+
     /// 项目特色程度 (1-10)
     pub uniqueness_score: f64,
-    
+
     /// 相关的核心组件名称列表
     pub related_components: Vec<String>,
-    
+
     /// 涉及的关键技术点
     pub key_technologies: Vec<String>,
-    
+
     /// 研究重点（3-5个要点，具体到实现层面）
     pub research_focus: Vec<String>,
-    
+
     /// 推荐这个主题的理由
     pub rationale: String,
 }
@@ -60,22 +60,22 @@ pub struct AIDeepDiveTopics {
 pub struct AIDeepDiveAnalysis {
     /// 主题概述（主题立意要贴合项目的主要功能）
     pub topic_overview: String,
-    
+
     /// 核心架构设计（详细描述架构组成和设计原理）
     pub core_architecture: String,
-    
+
     /// 关键流程分析（详细描述主要业务流程和数据流）
     pub key_processes: String,
-    
+
     /// 技术实现细节（具体的实现方式和技术选型）
     pub implementation_details: String,
-    
+
     /// 源码结构分析（具体的源码位置和关键代码片段）
     pub source_code_analysis: String,
-    
+
     /// 核心算法或模式
     pub core_algorithms: Vec<String>,
-    
+
     /// 技术创新点
     pub innovation_points: Vec<String>,
 }
@@ -122,17 +122,26 @@ impl DeepDiveAgent {
         println!("🔍 开始AI驱动的DeepDive主题分析...");
 
         // 1. 使用AI识别核心功能主题
-        let topics = self.identify_deep_dive_topics(preprocessing_result, research_result).await?;
+        let topics = self
+            .identify_deep_dive_topics(preprocessing_result, research_result)
+            .await?;
         println!("✅ AI识别到 {} 个深度研究主题", topics.len());
 
         // 2. 为每个主题生成深度分析
         let mut documents = Vec::new();
         for (index, topic) in topics.iter().enumerate() {
-            println!("📝 正在分析主题 {}/{}: {}", index + 1, topics.len(), topic.name);
-            
-            let analysis = self.generate_topic_analysis(topic, preprocessing_result, research_result).await?;
+            println!(
+                "📝 正在分析主题 {}/{}: {}",
+                index + 1,
+                topics.len(),
+                topic.name
+            );
+
+            let analysis = self
+                .generate_topic_analysis(topic, preprocessing_result, research_result)
+                .await?;
             let document = self.create_topic_document(topic, &analysis).await?;
-            
+
             documents.push(document);
         }
 
@@ -159,17 +168,25 @@ impl DeepDiveAgent {
         research_result: &ResearchResult,
     ) -> Result<Vec<AIDeepDiveTopic>> {
         let prompt = self.build_topic_identification_prompt(preprocessing_result, research_result);
-        
-        if let Ok(Some(cached_topics)) = self.cache_manager.get::<AIDeepDiveTopics>("deep_dive_topics", &prompt).await {
+
+        if let Ok(Some(cached_topics)) = self
+            .cache_manager
+            .get::<AIDeepDiveTopics>("deep_dive_topics", &prompt)
+            .await
+        {
             return Ok(cached_topics.topics);
         }
 
-        let topics_wrapper = self.llm_client
+        let topics_wrapper = self
+            .llm_client
             .extract::<AIDeepDiveTopics>("", &prompt)
             .await?;
 
         // 缓存结果
-        let _ = self.cache_manager.set("deep_dive_topics", &prompt, &topics_wrapper).await;
+        let _ = self
+            .cache_manager
+            .set("deep_dive_topics", &prompt, &topics_wrapper)
+            .await;
 
         Ok(topics_wrapper.topics)
     }
@@ -181,34 +198,41 @@ impl DeepDiveAgent {
         research_result: &ResearchResult,
     ) -> String {
         // 提取项目名称（从路径中推断）
-        let project_name = self.config.project_path
+        let project_name = self
+            .config
+            .project_path
             .file_name()
             .unwrap_or_default()
             .to_string_lossy()
             .to_string();
 
         // 提取核心组件信息
-        let core_components_info = preprocessing_result.core_components
+        let core_components_info = preprocessing_result
+            .core_components
             .iter()
-            .map(|c| format!(
-                "- {}: {} (重要性: {:.2}, 类型: {})", 
-                c.name, 
-                c.file_path.display(), 
-                c.importance_score,
-                c.component_type
-            ))
+            .map(|c| {
+                format!(
+                    "- {}: {} (重要性: {:.2}, 类型: {})",
+                    c.name,
+                    c.file_path.display(),
+                    c.importance_score,
+                    c.component_type
+                )
+            })
             .collect::<Vec<_>>()
             .join("\n");
 
         // 提取研究洞察
-        let research_insights = research_result.insights
+        let research_insights = research_result
+            .insights
             .iter()
             .map(|insight| format!("- {}", insight))
             .collect::<Vec<_>>()
             .join("\n");
 
         // 提取架构洞察
-        let architecture_insights = preprocessing_result.architecture_insights
+        let architecture_insights = preprocessing_result
+            .architecture_insights
             .iter()
             .map(|insight| format!("- {}", insight))
             .collect::<Vec<_>>()
@@ -218,7 +242,9 @@ impl DeepDiveAgent {
         let project_structure_info = format!(
             "总文件数: {}, 主要文件类型: {}",
             preprocessing_result.project_structure.total_files,
-            preprocessing_result.project_structure.file_types
+            preprocessing_result
+                .project_structure
+                .file_types
                 .iter()
                 .take(5)
                 .map(|(ext, count)| format!("{}: {}", ext, count))
@@ -275,17 +301,25 @@ impl DeepDiveAgent {
         research_result: &ResearchResult,
     ) -> Result<AIDeepDiveAnalysis> {
         let prompt = self.build_topic_analysis_prompt(topic, preprocessing_result, research_result);
-        
-        if let Ok(Some(cached_analysis)) = self.cache_manager.get::<AIDeepDiveAnalysis>("deep_dive_analysis", &prompt).await {
+
+        if let Ok(Some(cached_analysis)) = self
+            .cache_manager
+            .get::<AIDeepDiveAnalysis>("deep_dive_analysis", &prompt)
+            .await
+        {
             return Ok(cached_analysis);
         }
 
-        let analysis = self.llm_client
+        let analysis = self
+            .llm_client
             .extract::<AIDeepDiveAnalysis>("", &prompt)
             .await?;
 
         // 缓存结果
-        let _ = self.cache_manager.set("deep_dive_analysis", &prompt, &analysis).await;
+        let _ = self
+            .cache_manager
+            .set("deep_dive_analysis", &prompt, &analysis)
+            .await;
 
         Ok(analysis)
     }
@@ -298,7 +332,9 @@ impl DeepDiveAgent {
         research_result: &ResearchResult,
     ) -> String {
         // 提取项目名称
-        let project_name = self.config.project_path
+        let project_name = self
+            .config
+            .project_path
             .file_name()
             .unwrap_or_default()
             .to_string_lossy()
@@ -318,16 +354,16 @@ impl DeepDiveAgent {
                         if lines.len() > 50 {
                             let mut key_lines = Vec::new();
                             let mut in_important_section = false;
-                            
+
                             for (i, line) in lines.iter().enumerate() {
                                 // 保留前20行
                                 if i < 20 {
                                     key_lines.push(*line);
                                     continue;
                                 }
-                                
+
                                 // 查找重要的函数定义、结构体、impl块等
-                                if line.trim().starts_with("pub fn") || 
+                                if line.trim().starts_with("pub fn") ||
                                    line.trim().starts_with("async fn") ||
                                    line.trim().starts_with("impl") ||
                                    line.trim().starts_with("pub struct") ||
@@ -345,16 +381,16 @@ impl DeepDiveAgent {
                                 } else if in_important_section {
                                     key_lines.push(*line);
                                 }
-                                
+
                                 // 限制总行数
                                 if key_lines.len() > 100 {
                                     break;
                                 }
                             }
-                            
-                            format!("```rust\n{}\n// ... (省略其余代码)\n```", key_lines.join("\n"))
+
+                            format!("```sourcecode\n{}\n// ... (省略其余代码)\n```", key_lines.join("\n"))
                         } else {
-                            format!("```rust\n{}\n```", content)
+                            format!("```sourcecode\n{}\n```", content)
                         }
                     })
                     .unwrap_or_else(|| "无法读取源码".to_string());
@@ -374,21 +410,26 @@ impl DeepDiveAgent {
             .join("\n\n");
 
         // 获取相关的研究洞察
-        let relevant_insights = research_result.insights
+        let relevant_insights = research_result
+            .insights
             .iter()
             .filter(|insight| {
-                topic.key_technologies.iter().any(|tech| 
-                    insight.to_lowercase().contains(&tech.to_lowercase())
-                ) || topic.related_components.iter().any(|comp|
-                    insight.contains(comp)
-                )
+                topic
+                    .key_technologies
+                    .iter()
+                    .any(|tech| insight.to_lowercase().contains(&tech.to_lowercase()))
+                    || topic
+                        .related_components
+                        .iter()
+                        .any(|comp| insight.contains(comp))
             })
             .map(|insight| format!("- {}", insight))
             .collect::<Vec<_>>()
             .join("\n");
 
         // 获取项目的整体架构信息
-        let architecture_context = preprocessing_result.architecture_insights
+        let architecture_context = preprocessing_result
+            .architecture_insights
             .iter()
             .map(|insight| format!("- {}", insight))
             .collect::<Vec<_>>()
@@ -427,27 +468,27 @@ impl DeepDiveAgent {
 
 请从以下维度对{}项目中的这个主题进行深入分析：
 
-1. **topic_overview**: 
+1. **topic_overview**:
    - 必须明确提及{}项目的名称和核心功能
    - 说明该主题在{}项目整体架构中的位置和重要性
    - 解释为什么这个功能对{}项目至关重要
 
-2. **core_architecture**: 
+2. **core_architecture**:
    - 详细描述该功能模块在{}项目中的架构设计
    - 说明与其他模块的交互关系和依赖关系
    - 分析架构设计的优势和特点
 
-3. **key_processes**: 
+3. **key_processes**:
    - 详细描述该功能的主要业务流程和数据流
    - 说明在{}项目中是如何实现这些流程的
    - 包含具体的执行步骤和关键节点
 
-4. **implementation_details**: 
+4. **implementation_details**:
    - 基于提供的源码，详细分析具体的实现方式
    - 说明关键算法、数据结构和设计模式的使用
    - 解释技术选型的原因和优势
 
-5. **source_code_analysis**: 
+5. **source_code_analysis**:
    - 基于提供的源码，指出关键代码片段的位置和作用
    - 分析重要函数、结构体、trait的设计和实现
    - 标注源码文件路径和关键代码行
@@ -463,31 +504,31 @@ impl DeepDiveAgent {
 - 提供具体的文件路径和代码位置
 - 体现{}项目的技术特色和实现细节
 - 避免泛泛而谈，要有具体的技术深度"#,
-            project_name, // 1
-            project_name, // 2
-            project_name, // 3
-            topic.name, // 4
-            topic.description, // 5
-            topic.research_value, // 6
-            topic.complexity_score, // 7
-            topic.uniqueness_score, // 8
-            topic.rationale, // 9
-            project_name, // 10
-            architecture_context, // 11
+            project_name,                      // 1
+            project_name,                      // 2
+            project_name,                      // 3
+            topic.name,                        // 4
+            topic.description,                 // 5
+            topic.research_value,              // 6
+            topic.complexity_score,            // 7
+            topic.uniqueness_score,            // 8
+            topic.rationale,                   // 9
+            project_name,                      // 10
+            architecture_context,              // 11
             topic.key_technologies.join(", "), // 12
             topic.research_focus.join("\n- "), // 13
-            project_name, // 14
-            related_components_detail, // 15
-            relevant_insights, // 16
-            project_name, // 17
-            project_name, // 18
-            project_name, // 19
-            project_name, // 20
-            project_name, // 21
-            project_name, // 22
-            project_name, // 23
-            project_name, // 24
-            project_name // 25
+            project_name,                      // 14
+            related_components_detail,         // 15
+            relevant_insights,                 // 16
+            project_name,                      // 17
+            project_name,                      // 18
+            project_name,                      // 19
+            project_name,                      // 20
+            project_name,                      // 21
+            project_name,                      // 22
+            project_name,                      // 23
+            project_name,                      // 24
+            project_name                       // 25
         )
     }
 
@@ -502,15 +543,24 @@ impl DeepDiveAgent {
         // 主题信息卡片
         content.push_str(&MarkdownUtils::heading(2, "主题概览"));
         content.push_str(&format!("{}\n\n", topic.description));
-        
+
         content.push_str("| 维度 | 评分 |\n");
         content.push_str("|------|------|\n");
         content.push_str(&format!("| 研究价值 | {:.1}/10 |\n", topic.research_value));
-        content.push_str(&format!("| 技术复杂度 | {:.1}/10 |\n", topic.complexity_score));
-        content.push_str(&format!("| 项目特色程度 | {:.1}/10 |\n", topic.uniqueness_score));
+        content.push_str(&format!(
+            "| 技术复杂度 | {:.1}/10 |\n",
+            topic.complexity_score
+        ));
+        content.push_str(&format!(
+            "| 项目特色程度 | {:.1}/10 |\n",
+            topic.uniqueness_score
+        ));
         content.push_str("\n");
 
-        content.push_str(&MarkdownUtils::alert("info", &format!("**选择理由**: {}", topic.rationale)));
+        content.push_str(&MarkdownUtils::alert(
+            "info",
+            &format!("**选择理由**: {}", topic.rationale),
+        ));
 
         // 技术概述
         content.push_str(&MarkdownUtils::heading(2, "功能概述"));
@@ -536,8 +586,12 @@ impl DeepDiveAgent {
         if !analysis.core_algorithms.is_empty() {
             content.push_str(&MarkdownUtils::heading(2, "核心算法与模式"));
             content.push_str(&MarkdownUtils::list(
-                &analysis.core_algorithms.iter().map(|s| s.as_str()).collect::<Vec<_>>(),
-                false
+                &analysis
+                    .core_algorithms
+                    .iter()
+                    .map(|s| s.as_str())
+                    .collect::<Vec<_>>(),
+                false,
             ));
         }
 
@@ -545,26 +599,45 @@ impl DeepDiveAgent {
         if !analysis.innovation_points.is_empty() {
             content.push_str(&MarkdownUtils::heading(2, "技术创新点"));
             content.push_str(&MarkdownUtils::list(
-                &analysis.innovation_points.iter().map(|s| s.as_str()).collect::<Vec<_>>(),
-                false
+                &analysis
+                    .innovation_points
+                    .iter()
+                    .map(|s| s.as_str())
+                    .collect::<Vec<_>>(),
+                false,
             ));
         }
 
         // 相关组件
         content.push_str(&MarkdownUtils::heading(2, "相关组件"));
         content.push_str(&MarkdownUtils::list(
-            &topic.related_components.iter().map(|s| s.as_str()).collect::<Vec<_>>(),
-            false
+            &topic
+                .related_components
+                .iter()
+                .map(|s| s.as_str())
+                .collect::<Vec<_>>(),
+            false,
         ));
 
         // 关键技术
         content.push_str(&MarkdownUtils::heading(2, "关键技术"));
         content.push_str(&MarkdownUtils::list(
-            &topic.key_technologies.iter().map(|s| s.as_str()).collect::<Vec<_>>(),
-            false
+            &topic
+                .key_technologies
+                .iter()
+                .map(|s| s.as_str())
+                .collect::<Vec<_>>(),
+            false,
         ));
 
-        let filename = format!("{}.md", topic.name.replace(" ", "_").replace("/", "_").replace(":", "_"));
+        let filename = format!(
+            "{}.md",
+            topic
+                .name
+                .replace(" ", "_")
+                .replace("/", "_")
+                .replace(":", "_")
+        );
 
         Ok(DeepDiveDocument {
             title: format!("深度解析: {}", topic.name),
@@ -578,7 +651,7 @@ impl DeepDiveAgent {
     /// 保存DeepDive文档
     async fn save_deep_dive_documents(&self, documents: &[DeepDiveDocument]) -> Result<()> {
         use tokio::fs;
-        
+
         let deep_dive_dir = self.config.output_path.join("DeepDive");
         fs::create_dir_all(&deep_dive_dir).await?;
 
@@ -598,7 +671,11 @@ impl DeepDiveAgent {
             topics.len(),
             topics.iter().map(|t| t.research_value).sum::<f64>() / topics.len() as f64,
             processing_time,
-            topics.iter().map(|t| t.name.as_str()).collect::<Vec<_>>().join("、")
+            topics
+                .iter()
+                .map(|t| t.name.as_str())
+                .collect::<Vec<_>>()
+                .join("、")
         )
     }
 }

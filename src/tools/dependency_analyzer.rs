@@ -1,9 +1,9 @@
 use anyhow::Result;
 // 移除rig依赖，使用简化实现
+use regex::Regex;
 use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet};
 use std::path::PathBuf;
-use regex::Regex;
 
 /// 依赖分析工具
 #[derive(Debug, Clone)]
@@ -58,9 +58,12 @@ impl DependencyAnalyzerTool {
         Self { project_root }
     }
 
-    async fn analyze_dependencies(&self, args: &DependencyAnalyzerArgs) -> Result<DependencyAnalyzerResult> {
+    async fn analyze_dependencies(
+        &self,
+        args: &DependencyAnalyzerArgs,
+    ) -> Result<DependencyAnalyzerResult> {
         let mut result = DependencyAnalyzerResult::default();
-        
+
         let file_paths = if let Some(paths) = &args.file_paths {
             paths.clone()
         } else {
@@ -73,7 +76,9 @@ impl DependencyAnalyzerTool {
         for file_path in &file_paths {
             let full_path = self.project_root.join(file_path);
             if full_path.exists() {
-                let file_deps = self.analyze_file_dependencies(&full_path, file_path).await?;
+                let file_deps = self
+                    .analyze_file_dependencies(&full_path, file_path)
+                    .await?;
                 result.dependencies.extend(file_deps);
             }
         }
@@ -124,7 +129,11 @@ impl DependencyAnalyzerTool {
         Ok(files)
     }
 
-    async fn analyze_file_dependencies(&self, file_path: &PathBuf, relative_path: &str) -> Result<Vec<Dependency>> {
+    async fn analyze_file_dependencies(
+        &self,
+        file_path: &PathBuf,
+        relative_path: &str,
+    ) -> Result<Vec<Dependency>> {
         let content = tokio::fs::read_to_string(file_path).await?;
         let mut dependencies = Vec::new();
 
@@ -132,8 +141,12 @@ impl DependencyAnalyzerTool {
 
         match language.as_str() {
             "rust" => self.analyze_rust_dependencies(&content, relative_path, &mut dependencies),
-            "python" => self.analyze_python_dependencies(&content, relative_path, &mut dependencies),
-            "javascript" | "typescript" => self.analyze_js_dependencies(&content, relative_path, &mut dependencies),
+            "python" => {
+                self.analyze_python_dependencies(&content, relative_path, &mut dependencies)
+            }
+            "javascript" | "typescript" => {
+                self.analyze_js_dependencies(&content, relative_path, &mut dependencies)
+            }
             "java" => self.analyze_java_dependencies(&content, relative_path, &mut dependencies),
             _ => {}
         }
@@ -159,7 +172,12 @@ impl DependencyAnalyzerTool {
         }
     }
 
-    fn analyze_rust_dependencies(&self, content: &str, source_file: &str, dependencies: &mut Vec<Dependency>) {
+    fn analyze_rust_dependencies(
+        &self,
+        content: &str,
+        source_file: &str,
+        dependencies: &mut Vec<Dependency>,
+    ) {
         let use_regex = Regex::new(r"use\s+([^;]+);").unwrap();
         let mod_regex = Regex::new(r"mod\s+(\w+);").unwrap();
 
@@ -167,9 +185,9 @@ impl DependencyAnalyzerTool {
             // 分析use语句
             if let Some(captures) = use_regex.captures(line) {
                 let use_path = captures.get(1).unwrap().as_str();
-                let is_external = !use_path.starts_with("crate") && 
-                                 !use_path.starts_with("super") && 
-                                 !use_path.starts_with("self");
+                let is_external = !use_path.starts_with("crate")
+                    && !use_path.starts_with("super")
+                    && !use_path.starts_with("self");
 
                 dependencies.push(Dependency {
                     source: source_file.to_string(),
@@ -195,7 +213,12 @@ impl DependencyAnalyzerTool {
         }
     }
 
-    fn analyze_python_dependencies(&self, content: &str, source_file: &str, dependencies: &mut Vec<Dependency>) {
+    fn analyze_python_dependencies(
+        &self,
+        content: &str,
+        source_file: &str,
+        dependencies: &mut Vec<Dependency>,
+    ) {
         let import_regex = Regex::new(r"(?:from\s+(\S+)\s+)?import\s+([^#\n]+)").unwrap();
 
         for (line_num, line) in content.lines().enumerate() {
@@ -222,8 +245,15 @@ impl DependencyAnalyzerTool {
         }
     }
 
-    fn analyze_js_dependencies(&self, content: &str, source_file: &str, dependencies: &mut Vec<Dependency>) {
-        let import_regex = Regex::new(r#"import\s+(?:\{[^}]+\}|\*\s+as\s+\w+|\w+)\s+from\s+['"]([^'"]+)['"]"#).unwrap();
+    fn analyze_js_dependencies(
+        &self,
+        content: &str,
+        source_file: &str,
+        dependencies: &mut Vec<Dependency>,
+    ) {
+        let import_regex =
+            Regex::new(r#"import\s+(?:\{[^}]+\}|\*\s+as\s+\w+|\w+)\s+from\s+['"]([^'"]+)['"]"#)
+                .unwrap();
         let require_regex = Regex::new(r#"require\s*\(\s*['"]([^'"]+)['"]\s*\)"#).unwrap();
 
         for (line_num, line) in content.lines().enumerate() {
@@ -257,14 +287,19 @@ impl DependencyAnalyzerTool {
         }
     }
 
-    fn analyze_java_dependencies(&self, content: &str, source_file: &str, dependencies: &mut Vec<Dependency>) {
+    fn analyze_java_dependencies(
+        &self,
+        content: &str,
+        source_file: &str,
+        dependencies: &mut Vec<Dependency>,
+    ) {
         let import_regex = Regex::new(r"import\s+(?:static\s+)?([^;]+);").unwrap();
 
         for (line_num, line) in content.lines().enumerate() {
             if let Some(captures) = import_regex.captures(line) {
                 let import_path = captures.get(1).unwrap().as_str();
-                let is_external = !import_path.starts_with("java.") && 
-                                 !import_path.starts_with("javax.");
+                let is_external =
+                    !import_path.starts_with("java.") && !import_path.starts_with("javax.");
 
                 dependencies.push(Dependency {
                     source: source_file.to_string(),
@@ -282,16 +317,21 @@ impl DependencyAnalyzerTool {
 
         for dep in dependencies {
             if !dep.is_external {
-                graph.entry(dep.source.clone())
-                     .or_insert_with(Vec::new)
-                     .push(dep.target.clone());
+                graph
+                    .entry(dep.source.clone())
+                    .or_insert_with(Vec::new)
+                    .push(dep.target.clone());
             }
         }
 
         graph
     }
 
-    fn analyze_modules(&self, dependencies: &[Dependency], file_paths: &[String]) -> Vec<ModuleInfo> {
+    fn analyze_modules(
+        &self,
+        dependencies: &[Dependency],
+        file_paths: &[String],
+    ) -> Vec<ModuleInfo> {
         let mut modules = Vec::new();
         let mut dependency_counts = HashMap::new();
         let mut dependent_counts = HashMap::new();
@@ -319,7 +359,7 @@ impl DependencyAnalyzerTool {
 
             let dep_count = dependency_counts.get(file_path).unwrap_or(&0);
             let dependent_count = dependent_counts.get(file_path).unwrap_or(&0);
-            
+
             // 计算中心性分数（简化版本）
             let centrality_score = (*dep_count + *dependent_count) as f64 / file_paths.len() as f64;
             let is_core = centrality_score > 0.1;
@@ -344,7 +384,14 @@ impl DependencyAnalyzerTool {
 
         for node in graph.keys() {
             if !visited.contains(node) {
-                self.dfs_find_cycles(node, graph, &mut visited, &mut rec_stack, &mut Vec::new(), &mut cycles);
+                self.dfs_find_cycles(
+                    node,
+                    graph,
+                    &mut visited,
+                    &mut rec_stack,
+                    &mut Vec::new(),
+                    &mut cycles,
+                );
             }
         }
 
@@ -394,21 +441,36 @@ impl DependencyAnalyzerTool {
         external_deps.into_iter().collect()
     }
 
-    fn calculate_dependency_metrics(&self, result: &DependencyAnalyzerResult) -> HashMap<String, f64> {
+    fn calculate_dependency_metrics(
+        &self,
+        result: &DependencyAnalyzerResult,
+    ) -> HashMap<String, f64> {
         let mut metrics = HashMap::new();
 
-        metrics.insert("total_dependencies".to_string(), result.dependencies.len() as f64);
-        metrics.insert("external_dependencies".to_string(), result.external_dependencies.len() as f64);
-        metrics.insert("circular_dependencies".to_string(), result.circular_dependencies.len() as f64);
+        metrics.insert(
+            "total_dependencies".to_string(),
+            result.dependencies.len() as f64,
+        );
+        metrics.insert(
+            "external_dependencies".to_string(),
+            result.external_dependencies.len() as f64,
+        );
+        metrics.insert(
+            "circular_dependencies".to_string(),
+            result.circular_dependencies.len() as f64,
+        );
         metrics.insert("total_modules".to_string(), result.modules.len() as f64);
 
         let core_modules = result.modules.iter().filter(|m| m.is_core).count();
         metrics.insert("core_modules".to_string(), core_modules as f64);
 
         if !result.modules.is_empty() {
-            let avg_dependencies = result.modules.iter()
+            let avg_dependencies = result
+                .modules
+                .iter()
                 .map(|m| m.dependencies.len())
-                .sum::<usize>() as f64 / result.modules.len() as f64;
+                .sum::<usize>() as f64
+                / result.modules.len() as f64;
             metrics.insert("avg_dependencies_per_module".to_string(), avg_dependencies);
         }
 
@@ -419,11 +481,17 @@ impl DependencyAnalyzerTool {
         let mut insights = Vec::new();
 
         insights.push(format!("总依赖关系数: {}", result.dependencies.len()));
-        insights.push(format!("外部依赖数: {}", result.external_dependencies.len()));
+        insights.push(format!(
+            "外部依赖数: {}",
+            result.external_dependencies.len()
+        ));
         insights.push(format!("模块数: {}", result.modules.len()));
 
         if !result.circular_dependencies.is_empty() {
-            insights.push(format!("发现 {} 个循环依赖", result.circular_dependencies.len()));
+            insights.push(format!(
+                "发现 {} 个循环依赖",
+                result.circular_dependencies.len()
+            ));
         } else {
             insights.push("未发现循环依赖".to_string());
         }
@@ -432,8 +500,15 @@ impl DependencyAnalyzerTool {
         insights.push(format!("核心模块数: {}", core_modules));
 
         // 找出最重要的模块
-        if let Some(most_central) = result.modules.iter().max_by(|a, b| a.centrality_score.partial_cmp(&b.centrality_score).unwrap()) {
-            insights.push(format!("最重要的模块: {} (中心性分数: {:.2})", most_central.name, most_central.centrality_score));
+        if let Some(most_central) = result
+            .modules
+            .iter()
+            .max_by(|a, b| a.centrality_score.partial_cmp(&b.centrality_score).unwrap())
+        {
+            insights.push(format!(
+                "最重要的模块: {} (中心性分数: {:.2})",
+                most_central.name, most_central.centrality_score
+            ));
         }
 
         insights

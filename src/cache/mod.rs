@@ -2,7 +2,7 @@ use anyhow::Result;
 use md5::{Digest, Md5};
 use serde::{Deserialize, Serialize};
 use std::path::PathBuf;
-use std::time::{SystemTime, UNIX_EPOCH, Instant, Duration};
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tokio::fs;
 
 use crate::config::CacheConfig;
@@ -28,7 +28,7 @@ pub struct CacheEntry<T> {
 
 impl CacheManager {
     pub fn new(config: CacheConfig) -> Self {
-        Self { 
+        Self {
             config,
             performance_monitor: CachePerformanceMonitor::new(),
         }
@@ -97,17 +97,20 @@ impl CacheManager {
 
                         // 估算节省的推理时间（基于缓存的复杂度）
                         let estimated_inference_time = self.estimate_inference_time(&content);
-                        self.performance_monitor.record_cache_hit(category, estimated_inference_time);
+                        self.performance_monitor
+                            .record_cache_hit(category, estimated_inference_time);
                         Ok(Some(entry.data))
                     }
                     Err(e) => {
-                        self.performance_monitor.record_cache_error(category, &format!("反序列化失败: {}", e));
+                        self.performance_monitor
+                            .record_cache_error(category, &format!("反序列化失败: {}", e));
                         Ok(None)
                     }
                 }
             }
             Err(e) => {
-                self.performance_monitor.record_cache_error(category, &format!("读取文件失败: {}", e));
+                self.performance_monitor
+                    .record_cache_error(category, &format!("读取文件失败: {}", e));
                 Ok(None)
             }
         }
@@ -142,20 +145,20 @@ impl CacheManager {
         };
 
         match serde_json::to_string_pretty(&entry) {
-            Ok(content) => {
-                match fs::write(&cache_path, content).await {
-                    Ok(_) => {
-                        self.performance_monitor.record_cache_write(category);
-                        Ok(())
-                    }
-                    Err(e) => {
-                        self.performance_monitor.record_cache_error(category, &format!("写入文件失败: {}", e));
-                        Err(e.into())
-                    }
+            Ok(content) => match fs::write(&cache_path, content).await {
+                Ok(_) => {
+                    self.performance_monitor.record_cache_write(category);
+                    Ok(())
                 }
-            }
+                Err(e) => {
+                    self.performance_monitor
+                        .record_cache_error(category, &format!("写入文件失败: {}", e));
+                    Err(e.into())
+                }
+            },
             Err(e) => {
-                self.performance_monitor.record_cache_error(category, &format!("序列化失败: {}", e));
+                self.performance_monitor
+                    .record_cache_error(category, &format!("序列化失败: {}", e));
                 Err(e.into())
             }
         }
