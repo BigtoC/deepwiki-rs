@@ -959,7 +959,7 @@ impl C4DocumentationAgent {
         
         if !architecture_analysis.module_breakdown.is_empty() {
             content.push_str("| 模块名称 | 主要功能 | 核心职责 |\n");
-            content.push_str("|----------|----------|----------|----------|\n");
+            content.push_str("|----------|----------|----------|\n");
             
             for module in &architecture_analysis.module_breakdown {
                 let responsibilities = if module.responsibilities.len() > 3 {
