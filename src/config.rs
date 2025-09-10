@@ -22,9 +22,6 @@ pub struct Config {
     /// 文档格式 (markdown, html)
     pub document_format: String,
 
-    /// 文档生成模式 (standard, c4)
-    pub doc_mode: String,
-
     /// 是否分析依赖关系
     pub analyze_dependencies: bool,
 
@@ -92,7 +89,7 @@ pub struct LLMConfig {
     /// 超时时间（秒）
     pub timeout_seconds: u64,
 
-    pub enable_preset_tools: bool
+    pub enable_preset_tools: bool,
 }
 
 /// 缓存配置
@@ -129,18 +126,18 @@ impl Config {
                 return name.clone();
             }
         }
-        
+
         // 如果没有配置或配置为空，则自动推断
         self.infer_project_name()
     }
-    
+
     /// 自动推断项目名称
     fn infer_project_name(&self) -> String {
         // 尝试从项目配置文件中提取项目名称
         if let Some(name) = self.extract_project_name_from_config_files() {
             return name;
         }
-        
+
         // 从项目路径推断
         self.project_path
             .file_name()
@@ -148,39 +145,39 @@ impl Config {
             .to_string_lossy()
             .to_string()
     }
-    
+
     /// 从项目配置文件中提取项目名称
     fn extract_project_name_from_config_files(&self) -> Option<String> {
         // 尝试从 Cargo.toml 提取（Rust项目）
         if let Some(name) = self.extract_from_cargo_toml() {
             return Some(name);
         }
-        
+
         // 尝试从 package.json 提取（Node.js项目）
         if let Some(name) = self.extract_from_package_json() {
             return Some(name);
         }
-        
+
         // 尝试从 pyproject.toml 提取（Python项目）
         if let Some(name) = self.extract_from_pyproject_toml() {
             return Some(name);
         }
-        
+
         // 尝试从 pom.xml 提取（Java Maven项目）
         if let Some(name) = self.extract_from_pom_xml() {
             return Some(name);
         }
-        
+
         None
     }
-    
+
     /// 从 Cargo.toml 提取项目名称
     pub fn extract_from_cargo_toml(&self) -> Option<String> {
         let cargo_path = self.project_path.join("Cargo.toml");
         if !cargo_path.exists() {
             return None;
         }
-        
+
         match std::fs::read_to_string(&cargo_path) {
             Ok(content) => {
                 // 查找 [package] 段落下的 name
@@ -209,14 +206,14 @@ impl Config {
         }
         None
     }
-    
+
     /// 从 package.json 提取项目名称
     pub fn extract_from_package_json(&self) -> Option<String> {
         let package_path = self.project_path.join("package.json");
         if !package_path.exists() {
             return None;
         }
-        
+
         match std::fs::read_to_string(&package_path) {
             Ok(content) => {
                 // 简单的JSON解析，查找 "name": "..."
@@ -224,7 +221,8 @@ impl Config {
                     let line = line.trim();
                     if line.starts_with("\"name\"") && line.contains(":") {
                         if let Some(name_part) = line.split(':').nth(1) {
-                            let name = name_part.trim()
+                            let name = name_part
+                                .trim()
                                 .trim_matches(',')
                                 .trim_matches('"')
                                 .trim_matches('\'');
@@ -239,20 +237,20 @@ impl Config {
         }
         None
     }
-    
+
     /// 从 pyproject.toml 提取项目名称
     pub fn extract_from_pyproject_toml(&self) -> Option<String> {
         let pyproject_path = self.project_path.join("pyproject.toml");
         if !pyproject_path.exists() {
             return None;
         }
-        
+
         match std::fs::read_to_string(&pyproject_path) {
             Ok(content) => {
                 // 查找 [project] 或 [tool.poetry] 下的 name
                 let mut in_project_section = false;
                 let mut in_poetry_section = false;
-                
+
                 for line in content.lines() {
                     let line = line.trim();
                     if line == "[project]" {
@@ -270,7 +268,10 @@ impl Config {
                         in_poetry_section = false;
                         continue;
                     }
-                    if (in_project_section || in_poetry_section) && line.starts_with("name") && line.contains("=") {
+                    if (in_project_section || in_poetry_section)
+                        && line.starts_with("name")
+                        && line.contains("=")
+                    {
                         if let Some(name_part) = line.split('=').nth(1) {
                             let name = name_part.trim().trim_matches('"').trim_matches('\'');
                             if !name.is_empty() {
@@ -284,14 +285,14 @@ impl Config {
         }
         None
     }
-    
+
     /// 从 pom.xml 提取项目名称
     fn extract_from_pom_xml(&self) -> Option<String> {
         let pom_path = self.project_path.join("pom.xml");
         if !pom_path.exists() {
             return None;
         }
-        
+
         match std::fs::read_to_string(&pom_path) {
             Ok(content) => {
                 // 简单的XML解析，查找 <artifactId> 或 <name>
@@ -300,14 +301,18 @@ impl Config {
                     let line = line.trim();
                     // 优先使用 <name> 标签
                     if line.starts_with("<name>") && line.ends_with("</name>") {
-                        let name = line.trim_start_matches("<name>").trim_end_matches("</name>");
+                        let name = line
+                            .trim_start_matches("<name>")
+                            .trim_end_matches("</name>");
                         if !name.is_empty() {
                             return Some(name.to_string());
                         }
                     }
                     // 其次使用 <artifactId> 标签
                     if line.starts_with("<artifactId>") && line.ends_with("</artifactId>") {
-                        let name = line.trim_start_matches("<artifactId>").trim_end_matches("</artifactId>");
+                        let name = line
+                            .trim_start_matches("<artifactId>")
+                            .trim_end_matches("</artifactId>");
                         if !name.is_empty() {
                             return Some(name.to_string());
                         }
@@ -328,11 +333,6 @@ impl Config {
     pub fn get_process_data_path(&self) -> PathBuf {
         self.get_internal_path("process")
     }
-
-    /// 获取缓存路径
-    pub fn get_cache_path(&self) -> PathBuf {
-        self.cache.cache_dir.clone()
-    }
 }
 
 impl Default for Config {
@@ -343,7 +343,6 @@ impl Default for Config {
             output_path: PathBuf::from("./litho.docs"),
             internal_path: PathBuf::from("./.litho"),
             document_format: "markdown".to_string(),
-            doc_mode: "c4".to_string(),
             analyze_dependencies: true,
             identify_components: true,
             max_depth: 10,

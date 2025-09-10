@@ -36,4 +36,4 @@ target
 .litho/process
 
 # Litho Generated Documents
-.litho.docs/
+litho.docs/
