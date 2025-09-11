@@ -415,7 +415,7 @@ impl C4DocumentationAgent {
     ) -> Result<Vec<C4ComponentDoc>> {
         let mut component_docs = Vec::new();
 
-        // 🔧 修复：使用工具函数过滤并排序组件（重要性分数 > 0.7，最多10个）
+        // 使用工具函数过滤并排序组件（重要性分数 > 0.7，最多10个）
         let important_components = ComponentSorter::filter_and_sort_components(
             &preprocessing_result.core_components,
             0.7,
@@ -453,7 +453,7 @@ impl C4DocumentationAgent {
             let content = self.generate_component_content(&cached_component, component);
             return Ok(C4ComponentDoc {
                 component_name: component.name.clone(),
-                filename: format!("{}.md", component.name.replace(".rs", "").replace("/", "_")),
+                filename: format!("{}.md", component.name.replace("/", "_")),
                 content,
                 functionality: cached_component.functionality_description,
                 workflow: cached_component
@@ -500,7 +500,7 @@ impl C4DocumentationAgent {
 
                 Ok(C4ComponentDoc {
                     component_name: component.name.clone(),
-                    filename: format!("{}.md", component.name.replace(".rs", "").replace("/", "_")),
+                    filename: format!("{}.md", component.name.replace("/", "_")),
                     content,
                     functionality: ai_component.functionality_description,
                     workflow: ai_component
@@ -1273,7 +1273,7 @@ impl C4DocumentationAgent {
 
         Ok(C4ComponentDoc {
             component_name: component.name.clone(),
-            filename: format!("{}.md", component.name.replace(".rs", "").replace("/", "_")),
+            filename: format!("{}.md", component.name.replace("/", "_")),
             content,
             functionality: format!("{}模块的主要功能", component.name),
             workflow: "标准的处理工作流程".to_string(),
