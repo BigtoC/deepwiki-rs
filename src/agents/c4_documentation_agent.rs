@@ -83,7 +83,7 @@ pub struct AIArchitectureAnalysis {
     pub architecture_diagram: String,
     #[serde(default)]
     pub core_processes: Vec<CoreProcess>,
-    /// 用Mermaid flowchart TD表达的核心功能流程图
+    /// 用Mermaid flowchart TD表达的整体流程图
     #[serde(default)]
     pub process_flow_diagram: String,
     #[serde(default)]
@@ -561,10 +561,10 @@ impl C4DocumentationAgent {
 {}
 
 ## 要求
-请生成结构化的项目概述，包括：
-1. 项目介绍 - 基于源码分析的项目描述和架构特点，**必须明确提及项目名称"{}"并说明其核心价值和定位**
-2. 核心功能与作用 - 基于代码实现分析的主要功能，**重点说明{}项目的特色功能和应用场景**
-3. 技术选型 - 基于实际代码的技术栈分析，**说明{}项目选择这些技术的原因**
+请生成结构化的项目概述，重点模块说明
+- 项目介绍 - 基于源码分析的项目描述和架构特点，**必须明确提及项目名称"{}"并说明其核心价值和定位**
+- 核心功能与作用 - 基于代码实现分析的主要功能，**重点说明{}项目的特色功能和应用场景**
+- 系统架构概览 - 分析高层次抽象的系统架构和整体流程
 
 **重要**:
 - **在项目概述的开头必须明确说明"{}"项目是什么、做什么用的**
@@ -594,7 +594,6 @@ impl C4DocumentationAgent {
             project_name, // 强调项目名称
             project_name, // 强调项目名称
             project_name, // 强调项目名称
-            project_name  // 强调项目名称
         )
     }
 
@@ -829,7 +828,7 @@ impl C4DocumentationAgent {
 
         // 核心功能流程图
         if !architecture_analysis.process_flow_diagram.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "核心功能流程图"));
+            content.push_str(&MarkdownUtils::heading(3, "整体流程图"));
             content.push_str(&MarkdownUtils::mermaid_block(
                 &architecture_analysis.process_flow_diagram,
             ));
