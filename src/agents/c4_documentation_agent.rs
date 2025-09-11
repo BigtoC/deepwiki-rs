@@ -950,7 +950,7 @@ impl C4DocumentationAgent {
             // 流程图
             if !process.flow_diagram.is_empty() {
                 content.push_str("**流程图**:\n");
-                content.push_str(&format!("{}\n\n", process.flow_diagram));
+                content.push_str(&MarkdownUtils::mermaid_block(&process.flow_diagram));
             }
 
             content.push_str("**处理步骤**:\n");
@@ -1042,7 +1042,9 @@ impl C4DocumentationAgent {
         // 工作流程图
         if !ai_component.workflow_diagram.is_empty() {
             content.push_str(&MarkdownUtils::heading(3, "工作流程图"));
-            content.push_str(&format!("{}\n\n", ai_component.workflow_diagram));
+            content.push_str(&MarkdownUtils::mermaid_block(
+                &ai_component.workflow_diagram,
+            ));
         }
 
         for step in &ai_component.workflow_steps {
