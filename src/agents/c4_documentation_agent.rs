@@ -131,7 +131,12 @@ pub struct ModuleDescription {
 /// AI增强的组件分析
 #[derive(Debug, Serialize, Deserialize, JsonSchema)]
 pub struct AIComponentAnalysis {
+    /// 模块的功能与作用
     pub functionality_description: String,
+    /// 业务价值和应用场景
+    #[serde(default)]
+    pub business_value: String,
+    /// 主要职责，格式为"职责名：职责的详细叙述"
     pub key_responsibilities: Vec<String>,
     pub workflow_steps: Vec<WorkflowStep>,
     /// Mermaid工作流程图
@@ -141,6 +146,18 @@ pub struct AIComponentAnalysis {
     pub interfaces_provided: Vec<String>,
     /// 基于源码的深度分析
     pub code_analysis: CodeAnalysis,
+    /// 性能特性分析
+    #[serde(default)]
+    pub performance_characteristics: Option<PerformanceAnalysis>,
+    /// 使用示例和最佳实践
+    #[serde(default)]
+    pub usage_examples: Option<Vec<UsageExample>>,
+    /// 配置和环境要求
+    #[serde(default)]
+    pub configuration_requirements: Option<ConfigurationInfo>,
+    /// 常见问题和解决方案
+    #[serde(default)]
+    pub troubleshooting: Option<Vec<TroubleshootingItem>>,
 }
 
 /// 工作流程步骤
@@ -160,7 +177,6 @@ pub struct InternalStructure {
     pub main_classes: Vec<String>,
     pub key_methods: Vec<String>,
     pub data_structures: Vec<String>,
-    pub design_patterns: Vec<String>,
     /// 算法分析
     pub algorithm_analysis: Vec<String>,
 }
@@ -185,6 +201,65 @@ pub struct CodeAnalysis {
 
     /// 算法复杂度分析，可能为空
     pub algorithm_complexity: Option<String>,
+}
+
+/// 性能特性分析
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct PerformanceAnalysis {
+    /// 时间复杂度
+    pub time_complexity: String,
+    /// 空间复杂度
+    pub space_complexity: String,
+    /// 资源消耗特点
+    pub resource_usage: String,
+    /// 性能瓶颈
+    #[serde(default)]
+    pub bottlenecks: Vec<String>,
+    /// 优化建议
+    #[serde(default)]
+    pub optimization_notes: Vec<String>,
+}
+
+/// 使用示例
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct UsageExample {
+    /// 示例标题
+    pub title: String,
+    /// 使用场景描述
+    pub scenario: String,
+    /// 代码示例
+    pub code_example: String,
+    /// 说明注释
+    pub explanation: String,
+}
+
+/// 配置信息
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct ConfigurationInfo {
+    /// 必需的配置参数
+    #[serde(default)]
+    pub required_config: Vec<String>,
+    /// 可选的配置参数
+    #[serde(default)]
+    pub optional_config: Vec<String>,
+    /// 环境依赖
+    #[serde(default)]
+    pub environment_dependencies: Vec<String>,
+    /// 初始化要求
+    pub initialization_requirements: String,
+}
+
+/// 故障排除项
+#[derive(Debug, Serialize, Deserialize, JsonSchema)]
+pub struct TroubleshootingItem {
+    /// 问题描述
+    pub problem: String,
+    /// 可能原因
+    #[serde(default)]
+    pub possible_causes: Vec<String>,
+    /// 解决方案
+    #[serde(default)]
+    pub solutions: Vec<String>,
 }
 
 impl C4DocumentationAgent {
@@ -455,28 +530,29 @@ impl C4DocumentationAgent {
                 component_name: component.name.clone(),
                 filename: format!("{}.md", component.name.replace("/", "_")),
                 content,
-                functionality: cached_component.functionality_description,
-                workflow: cached_component
-                    .workflow_steps
-                    .iter()
-                    .map(|step| format!("{}. {}", step.step_number, step.description))
-                    .collect::<Vec<_>>()
-                    .join("\n"),
-                internal_architecture: format!(
-                    "主要类: {}\n关键方法: {}\n数据结构: {}",
-                    cached_component.internal_structure.main_classes.join(", "),
-                    cached_component.internal_structure.key_methods.join(", "),
-                    cached_component
-                        .internal_structure
-                        .data_structures
-                        .join(", ")
-                ),
+                functionality: self.extract_functionality_summary(&cached_component),
+                workflow: self.extract_workflow_summary(&cached_component),
+                internal_architecture: self.extract_architecture_summary(&cached_component),
             });
         }
 
         println!("   🤖 正在生成AI组件分析: {}", component.name);
 
-        let system_msg = "你是一个专业的技术文档专家，专门创建详细的组件文档。请根据组件分析结果生成结构化的组件文档。";
+        let system_msg = r#"你是一个专业的软件架构师和技术文档专家，专门创建高质量的组件技术文档。
+
+你的任务是基于提供的源码和组件信息，生成深度的技术分析文档。请遵循以下原则：
+
+1. **准确性第一**: 所有分析必须基于提供的源码，不要编造不存在的信息
+2. **深度分析**: 不仅要说明"是什么"，更要解释"为什么"这样设计
+3. **实用价值**: 提供对开发者有实际帮助的信息和洞察
+4. **结构清晰**: 按照要求的结构组织内容，避免重复和冗余
+5. **技术深度**: 包含性能分析、设计决策、最佳实践等高级内容
+
+特别注意：
+- Mermaid流程图必须反映真实的代码执行逻辑
+- 性能分析要基于实际的算法和数据结构
+- 使用示例要切合实际的使用场景
+- 故障排除要基于常见的技术问题"#;
 
         let result = self
             .llm_client
@@ -502,19 +578,9 @@ impl C4DocumentationAgent {
                     component_name: component.name.clone(),
                     filename: format!("{}.md", component.name.replace("/", "_")),
                     content,
-                    functionality: ai_component.functionality_description,
-                    workflow: ai_component
-                        .workflow_steps
-                        .iter()
-                        .map(|step| format!("{}. {}", step.step_number, step.description))
-                        .collect::<Vec<_>>()
-                        .join("\n"),
-                    internal_architecture: format!(
-                        "主要类: {}\n关键方法: {}\n数据结构: {}",
-                        ai_component.internal_structure.main_classes.join(", "),
-                        ai_component.internal_structure.key_methods.join(", "),
-                        ai_component.internal_structure.data_structures.join(", ")
-                    ),
+                    functionality: self.extract_functionality_summary(&ai_component),
+                    workflow: self.extract_workflow_summary(&ai_component),
+                    internal_architecture: self.extract_architecture_summary(&ai_component),
                 })
             }
             Err(e) => {
@@ -688,17 +754,27 @@ impl C4DocumentationAgent {
 - 代码行数: {}
 - 圈复杂度: {:.1}
 - 接口数: {}
+- 重要性评分: {:.2}
 
 ## 接口详情
 {}
 
+## 复杂度指标
+- 函数数量: {}
+- 类/结构体数量: {}
+- 耦合因子: {:.2}
+
 ## 源码片段
 ```sourcecode
 {}
-```",
+```
+
+## 代码质量洞察
+{}",
                 analysis.complexity_metrics.lines_of_code,
                 analysis.complexity_metrics.cyclomatic_complexity,
                 analysis.interfaces.len(),
+                component.importance_score,
                 analysis
                     .interfaces
                     .iter()
@@ -711,17 +787,27 @@ impl C4DocumentationAgent {
                     ))
                     .collect::<Vec<_>>()
                     .join("\n"),
-                source_code
+                analysis.complexity_metrics.number_of_functions,
+                analysis.complexity_metrics.number_of_classes,
+                analysis.complexity_metrics.coupling_factor,
+                source_code,
+                self.generate_code_quality_insights(analysis)
             )
         } else {
             format!(
                 "## 组件分析
-暂无详细分析数据
+- 重要性评分: {:.2}
+- 组件类型: {}
 
 ## 源码片段
 ```sourcecode
 {}
-```",
+```
+
+## 基础分析
+基于文件路径和组件类型进行基础分析。",
+                component.importance_score,
+                component.component_type,
                 source_code
             )
         };
@@ -743,27 +829,60 @@ impl C4DocumentationAgent {
 ## 要求
 请生成结构化的组件文档，包括：
 
-1. **模块功能与作用** - 基于源码分析：
-   - 该组件的具体功能实现
-   - 在整个系统中的作用和定位
-   - 核心业务逻辑说明
+1. **模块功能与作用** - 基于源码深度分析：
+   - 该组件的具体功能实现和技术特点
+   - 在整个系统中的作用、定位和价值
+   - 核心业务逻辑和处理机制
+   - 解决的具体问题和应用场景
 
-2. **工作流程** - 包含Mermaid流程图：
-   - 组件的主要处理流程
-   - 方法调用顺序和逻辑
-   - 数据处理步骤
+2. **业务价值** - 说明组件的实际价值：
+   - 为系统带来的核心价值
+   - 解决的关键技术问题
+   - 在业务流程中的重要性
 
-3. **内部架构与结构** - 详细技术分析：
-   - 主要结构体和枚举定义
-   - 关键方法和函数实现
-   - 数据结构和算法选择
-   - 设计模式应用
+3. **工作流程** - 包含详细的Mermaid流程图：
+   - 组件的主要处理流程（必须基于实际代码逻辑）
+   - 方法调用顺序和数据流转路径
+   - 错误处理和异常情况的处理机制
+   - 关键决策点和分支逻辑
+   - 与其他组件的交互时序
+
+4. **内部架构与结构** - 深度技术分析：
+   - 主要结构体、枚举和trait的详细说明及其设计意图
+   - 关键方法和函数的实现原理和算法逻辑
+   - 数据结构选择的技术考量和性能影响
+   - 设计模式应用和架构决策的原因
+   - 并发安全性和线程模型（如适用）
+
+5. **性能特性** - 性能分析：
+   - 时间复杂度和空间复杂度分析
+   - 资源消耗特点（内存、CPU、I/O等）
+   - 潜在的性能瓶颈和限制因素
+   - 性能优化的关键点
+
+6. **使用示例** - 实用信息：
+   - 典型使用场景和代码示例
+   - 最佳实践和推荐用法
+   - 与其他组件的集成方式
+
+7. **配置要求** - 环境和配置：
+   - 必需的配置参数和环境变量
+   - 可选的配置选项和默认值
+   - 依赖的外部服务或库
+   - 初始化和启动要求
+
+8. **常见问题** - 故障排除：
+   - 常见的使用问题和错误
+   - 问题的可能原因分析
+   - 具体的解决方案和调试方法
 
 **重要要求**:
-- 基于提供的源码进行深度分析
-- 包含Mermaid流程图展示工作流程
-- 专注于技术实现细节
-- 不要包含优化建议或测试相关内容"#,
+- 基于提供的源码进行深度分析，不要编造不存在的信息
+- Mermaid流程图必须准确反映真实的代码执行流程和逻辑
+- 专注于技术实现细节和架构决策的深层原因
+- 包含性能考量和实际使用中的注意事项
+- 避免空洞的描述，提供具体的技术洞察和实用价值
+- 确保所有分析都有源码依据，不要推测或假设"#,
             component.name,
             component.component_type,
             component.file_path.display(),
@@ -1023,178 +1142,250 @@ impl C4DocumentationAgent {
         ));
         content.push_str("\n");
 
-        // 模块功能与作用
-        content.push_str(&MarkdownUtils::heading(2, "模块功能与作用"));
+        // 1. 模块概述 - 合并功能描述和业务价值
+        content.push_str(&MarkdownUtils::heading(2, "模块概述"));
         content.push_str(&format!("{}\n\n", ai_component.functionality_description));
+        
+        if !ai_component.business_value.is_empty() {
+            content.push_str(&MarkdownUtils::heading(3, "业务价值"));
+            content.push_str(&format!("{}\n\n", ai_component.business_value));
+        }
 
         if !ai_component.key_responsibilities.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "主要职责"));
+            content.push_str(&MarkdownUtils::heading(3, "核心职责"));
             for responsibility in &ai_component.key_responsibilities {
                 content.push_str(&format!("- {}\n", responsibility));
             }
             content.push_str("\n");
         }
 
-        // 工作流程
+        // 2. 工作流程 - 优化流程图和步骤描述
         content.push_str(&MarkdownUtils::heading(2, "工作流程"));
 
-        // 工作流程图
         if !ai_component.workflow_diagram.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "工作流程图"));
+            content.push_str(&MarkdownUtils::heading(3, "流程图"));
             content.push_str(&MarkdownUtils::mermaid_block(
                 &ai_component.workflow_diagram,
             ));
         }
 
-        for step in &ai_component.workflow_steps {
-            content.push_str(&MarkdownUtils::heading(
-                3,
-                &format!("步骤 {}: {}", step.step_number, step.description),
-            ));
-
-            if !step.inputs.is_empty() {
-                content.push_str("**输入**:\n");
-                for input in &step.inputs {
-                    content.push_str(&format!("- {}\n", input));
+        // 简化步骤描述，避免重复
+        if !ai_component.workflow_steps.is_empty() {
+            content.push_str(&MarkdownUtils::heading(3, "处理步骤"));
+            for step in &ai_component.workflow_steps {
+                content.push_str(&format!(
+                    "### 步骤 {}: {}\n",
+                    step.step_number, step.description
+                ));
+                
+                // 只在有实质内容时才显示输入输出
+                if !step.inputs.is_empty() || !step.outputs.is_empty() {
+                    if !step.inputs.is_empty() {
+                        content.push_str(&format!("**输入**: {}\n", step.inputs.join(", ")));
+                    }
+                    if !step.outputs.is_empty() {
+                        content.push_str(&format!("**输出**: {}\n", step.outputs.join(", ")));
+                    }
                 }
-                content.push_str("\n");
-            }
-
-            if !step.outputs.is_empty() {
-                content.push_str("**输出**:\n");
-                for output in &step.outputs {
-                    content.push_str(&format!("- {}\n", output));
-                }
-                content.push_str("\n");
-            }
-
-            // 实现细节
-            if !step.implementation_note.is_empty() {
-                content.push_str("**实现细节**:\n");
-                content.push_str(&format!("{}\n\n", step.implementation_note));
-            }
-        }
-
-        // 内部架构与结构
-        content.push_str(&MarkdownUtils::heading(2, "内部架构与结构"));
-
-        // 代码分析
-        content.push_str(&MarkdownUtils::heading(3, "代码结构分析"));
-
-        if let Some(type_defs) = &ai_component.code_analysis.type_definitions {
-            if !type_defs.is_empty() {
-                content.push_str("**类型定义**:\n");
-                for type_def in type_defs {
-                    content.push_str(&format!("- {}\n", type_def));
+                
+                if !step.implementation_note.is_empty() {
+                    content.push_str(&format!("**实现要点**: {}\n", step.implementation_note));
                 }
                 content.push_str("\n");
             }
         }
 
-        if let Some(enums) = &ai_component.code_analysis.enum_or_constants {
-            if !enums.is_empty() {
-                content.push_str("**枚举/常量定义**:\n");
-                for enum_def in enums {
-                    content.push_str(&format!("- {}\n", enum_def));
+        // 3. 技术架构 - 重组架构信息，避免重复
+        content.push_str(&MarkdownUtils::heading(2, "技术架构"));
+
+        // 合并代码结构信息
+        self.generate_code_structure_section(&mut content, &ai_component.code_analysis);
+        
+        // 性能特性
+        if let Some(perf) = &ai_component.performance_characteristics {
+            content.push_str(&MarkdownUtils::heading(3, "性能特性"));
+            content.push_str(&format!("- **时间复杂度**: {}\n", perf.time_complexity));
+            content.push_str(&format!("- **空间复杂度**: {}\n", perf.space_complexity));
+            content.push_str(&format!("- **资源使用**: {}\n", perf.resource_usage));
+            
+            if !perf.bottlenecks.is_empty() {
+                content.push_str("\n**性能瓶颈**:\n");
+                for bottleneck in &perf.bottlenecks {
+                    content.push_str(&format!("- {}\n", bottleneck));
                 }
-                content.push_str("\n");
             }
-        }
-
-        if let Some(interfaces) = &ai_component.code_analysis.interface_implementations {
-            if !interfaces.is_empty() {
-                content.push_str("**接口实现/继承关系**:\n");
-                for interface_impl in interfaces {
-                    content.push_str(&format!("- {}\n", interface_impl));
+            
+            if !perf.optimization_notes.is_empty() {
+                content.push_str("\n**优化要点**:\n");
+                for note in &perf.optimization_notes {
+                    content.push_str(&format!("- {}\n", note));
                 }
-                content.push_str("\n");
-            }
-        }
-
-        if let Some(functions) = &ai_component.code_analysis.key_functions {
-            if !functions.is_empty() {
-                content.push_str("**关键函数/方法**:\n");
-                for function in functions {
-                    content.push_str(&format!("- {}\n", function));
-                }
-                content.push_str("\n");
-            }
-        }
-
-        if let Some(data_flow) = &ai_component.code_analysis.data_flow_analysis {
-            content.push_str("**数据流分析**:\n");
-            content.push_str(&format!("{}\n\n", data_flow));
-        }
-
-        if let Some(complexity) = &ai_component.code_analysis.algorithm_complexity {
-            content.push_str("**算法复杂度**:\n");
-            content.push_str(&format!("{}\n\n", complexity));
-        }
-
-        if !ai_component.internal_structure.main_classes.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "主要类/结构"));
-            for class in &ai_component.internal_structure.main_classes {
-                content.push_str(&format!("- {}\n", class));
             }
             content.push_str("\n");
         }
 
-        if !ai_component.internal_structure.key_methods.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "关键方法"));
-            for method in &ai_component.internal_structure.key_methods {
-                content.push_str(&format!("- {}\n", method));
+        // 4. 使用指南 - 新增实用信息
+        if let Some(examples) = &ai_component.usage_examples {
+            if !examples.is_empty() {
+                content.push_str(&MarkdownUtils::heading(2, "使用指南"));
+                for example in examples {
+                    content.push_str(&MarkdownUtils::heading(3, &example.title));
+                    content.push_str(&format!("**场景**: {}\n\n", example.scenario));
+                    content.push_str("```rust\n");
+                    content.push_str(&example.code_example);
+                    content.push_str("\n```\n\n");
+                    if !example.explanation.is_empty() {
+                        content.push_str(&format!("**说明**: {}\n\n", example.explanation));
+                    }
+                }
             }
-            content.push_str("\n");
         }
 
-        if !ai_component.internal_structure.data_structures.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "数据结构"));
-            for data_structure in &ai_component.internal_structure.data_structures {
-                content.push_str(&format!("- {}\n", data_structure));
+        // 5. 配置要求
+        if let Some(config) = &ai_component.configuration_requirements {
+            content.push_str(&MarkdownUtils::heading(2, "配置要求"));
+            
+            if !config.initialization_requirements.is_empty() {
+                content.push_str(&format!("**初始化要求**: {}\n\n", config.initialization_requirements));
             }
-            content.push_str("\n");
+            
+            if !config.required_config.is_empty() {
+                content.push_str("**必需配置**:\n");
+                for req in &config.required_config {
+                    content.push_str(&format!("- {}\n", req));
+                }
+                content.push_str("\n");
+            }
+            
+            if !config.optional_config.is_empty() {
+                content.push_str("**可选配置**:\n");
+                for opt in &config.optional_config {
+                    content.push_str(&format!("- {}\n", opt));
+                }
+                content.push_str("\n");
+            }
+            
+            if !config.environment_dependencies.is_empty() {
+                content.push_str("**环境依赖**:\n");
+                for dep in &config.environment_dependencies {
+                    content.push_str(&format!("- {}\n", dep));
+                }
+                content.push_str("\n");
+            }
         }
 
-        if !ai_component.internal_structure.design_patterns.is_empty() {
-            content.push_str(&MarkdownUtils::heading(3, "设计模式"));
-            for pattern in &ai_component.internal_structure.design_patterns {
-                content.push_str(&format!("- {}\n", pattern));
-            }
-            content.push_str("\n");
-        }
-
-        // 算法分析
-        if !ai_component
-            .internal_structure
-            .algorithm_analysis
-            .is_empty()
-        {
-            content.push_str(&MarkdownUtils::heading(3, "算法分析"));
-            for algorithm in &ai_component.internal_structure.algorithm_analysis {
-                content.push_str(&format!("- {}\n", algorithm));
-            }
-            content.push_str("\n");
-        }
-
-        // 依赖关系
+        // 6. 模块依赖 - 简化显示
         if !ai_component.dependencies.is_empty() {
-            content.push_str(&MarkdownUtils::heading(2, "依赖关系"));
+            content.push_str(&MarkdownUtils::heading(2, "模块依赖"));
             for dependency in &ai_component.dependencies {
                 content.push_str(&format!("- {}\n", dependency));
             }
             content.push_str("\n");
         }
 
-        // 提供的接口
+        // 7. 对外接口
         if !ai_component.interfaces_provided.is_empty() {
-            content.push_str(&MarkdownUtils::heading(2, "提供的接口"));
+            content.push_str(&MarkdownUtils::heading(2, "对外接口"));
             for interface in &ai_component.interfaces_provided {
                 content.push_str(&format!("- {}\n", interface));
             }
             content.push_str("\n");
         }
 
+        // 8. 故障排除
+        if let Some(troubleshooting) = &ai_component.troubleshooting {
+            if !troubleshooting.is_empty() {
+                content.push_str(&MarkdownUtils::heading(2, "常见问题"));
+                for item in troubleshooting {
+                    content.push_str(&MarkdownUtils::heading(3, &item.problem));
+                    if !item.possible_causes.is_empty() {
+                        content.push_str("**可能原因**:\n");
+                        for cause in &item.possible_causes {
+                            content.push_str(&format!("- {}\n", cause));
+                        }
+                    }
+                    if !item.solutions.is_empty() {
+                        content.push_str("\n**解决方案**:\n");
+                        for solution in &item.solutions {
+                            content.push_str(&format!("- {}\n", solution));
+                        }
+                    }
+                    content.push_str("\n");
+                }
+            }
+        }
+
         content
+    }
+
+    /// 生成代码结构部分
+    fn generate_code_structure_section(
+        &self,
+        content: &mut String,
+        code_analysis: &CodeAnalysis,
+    ) {
+        use crate::utils::MarkdownUtils;
+        
+        content.push_str(&MarkdownUtils::heading(3, "代码结构"));
+        
+        // 只显示有内容的部分
+        let mut has_content = false;
+        
+        if let Some(type_defs) = &code_analysis.type_definitions {
+            if !type_defs.is_empty() {
+                content.push_str("**核心类型**:\n");
+                for type_def in type_defs {
+                    content.push_str(&format!("- {}\n", type_def));
+                }
+                has_content = true;
+            }
+        }
+        
+        if let Some(enums) = &code_analysis.enum_or_constants {
+            if !enums.is_empty() {
+                if has_content { content.push_str("\n"); }
+                content.push_str("**枚举和常量**:\n");
+                for enum_def in enums {
+                    content.push_str(&format!("- {}\n", enum_def));
+                }
+                has_content = true;
+            }
+        }
+        
+        if let Some(interfaces) = &code_analysis.interface_implementations {
+            if !interfaces.is_empty() {
+                if has_content { content.push_str("\n"); }
+                content.push_str("**接口实现**:\n");
+                for interface_impl in interfaces {
+                    content.push_str(&format!("- {}\n", interface_impl));
+                }
+                has_content = true;
+            }
+        }
+        
+        if let Some(functions) = &code_analysis.key_functions {
+            if !functions.is_empty() {
+                if has_content { content.push_str("\n"); }
+                content.push_str("**关键方法**:\n");
+                for function in functions {
+                    content.push_str(&format!("- {}\n", function));
+                }
+                has_content = true;
+            }
+        }
+        
+        if let Some(data_flow) = &code_analysis.data_flow_analysis {
+            if has_content { content.push_str("\n"); }
+            content.push_str(&format!("**数据流**: {}\n", data_flow));
+            has_content = true;
+        }
+        
+        if let Some(complexity) = &code_analysis.algorithm_complexity {
+            if has_content { content.push_str("\n"); }
+            content.push_str(&format!("**算法复杂度**: {}\n", complexity));
+        }
+        
+        content.push_str("\n");
     }
 
     async fn generate_basic_overview_document(
@@ -1450,14 +1641,349 @@ impl C4DocumentationAgent {
     ) -> String {
         match std::fs::read_to_string(&component.file_path) {
             Ok(content) => {
-                if content.chars().count() > 1000 {
-                    let truncated_content: String = content.chars().take(1000).collect();
-                    format!("{}...\n\n// 文件较大，仅显示前1000字符", truncated_content)
+                if content.chars().count() > 2000 {
+                    // 智能提取关键代码段
+                    let key_sections = self.extract_key_code_sections(&content);
+                    let preview = content.chars().take(1000).collect::<String>();
+                    
+                    format!(
+                        "{}...\n\n// === 关键代码段 ===\n{}\n\n// 文件较大，显示预览和关键部分",
+                        preview,
+                        key_sections
+                    )
                 } else {
                     content
                 }
             }
             Err(_) => "无法读取源码文件".to_string(),
+        }
+    }
+
+    /// 智能提取关键代码段
+    fn extract_key_code_sections(&self, content: &str) -> String {
+        let mut key_sections = Vec::new();
+        
+        // 提取结构体定义
+        if let Some(structs) = self.extract_struct_definitions(content) {
+            key_sections.push(format!("// === 结构体定义 ===\n{}", structs));
+        }
+        
+        // 提取枚举定义
+        if let Some(enums) = self.extract_enum_definitions(content) {
+            key_sections.push(format!("// === 枚举定义 ===\n{}", enums));
+        }
+        
+        // 提取主要函数
+        if let Some(functions) = self.extract_main_functions(content) {
+            key_sections.push(format!("// === 主要函数 ===\n{}", functions));
+        }
+        
+        // 提取trait实现
+        if let Some(impls) = self.extract_impl_blocks(content) {
+            key_sections.push(format!("// === 实现块 ===\n{}", impls));
+        }
+        
+        // 提取常量和静态变量
+        if let Some(constants) = self.extract_constants(content) {
+            key_sections.push(format!("// === 常量定义 ===\n{}", constants));
+        }
+        
+        key_sections.join("\n\n")
+    }
+
+    /// 提取结构体定义
+    fn extract_struct_definitions(&self, content: &str) -> Option<String> {
+        let mut structs = Vec::new();
+        let lines: Vec<&str> = content.lines().collect();
+        let mut i = 0;
+        
+        while i < lines.len() {
+            let line = lines[i].trim();
+            if line.starts_with("pub struct") || line.starts_with("struct") {
+                let mut struct_def = vec![lines[i]];
+                i += 1;
+                
+                // 收集结构体定义直到遇到结束的大括号
+                let mut brace_count = 0;
+                let mut found_opening = false;
+                
+                while i < lines.len() {
+                    let current_line = lines[i];
+                    struct_def.push(current_line);
+                    
+                    for ch in current_line.chars() {
+                        match ch {
+                            '{' => {
+                                brace_count += 1;
+                                found_opening = true;
+                            }
+                            '}' => {
+                                brace_count -= 1;
+                                if found_opening && brace_count == 0 {
+                                    structs.push(struct_def.join("\n"));
+                                    i += 1;
+                                    break;
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+                    
+                    if found_opening && brace_count == 0 {
+                        break;
+                    }
+                    
+                    i += 1;
+                    
+                    // 防止无限循环，限制结构体定义长度
+                    if struct_def.len() > 50 {
+                        break;
+                    }
+                }
+            } else {
+                i += 1;
+            }
+        }
+        
+        if structs.is_empty() {
+            None
+        } else {
+            Some(structs.join("\n\n"))
+        }
+    }
+
+    /// 提取枚举定义
+    fn extract_enum_definitions(&self, content: &str) -> Option<String> {
+        let mut enums = Vec::new();
+        let lines: Vec<&str> = content.lines().collect();
+        let mut i = 0;
+        
+        while i < lines.len() {
+            let line = lines[i].trim();
+            if line.starts_with("pub enum") || line.starts_with("enum") {
+                let mut enum_def = vec![lines[i]];
+                i += 1;
+                
+                // 收集枚举定义
+                let mut brace_count = 0;
+                let mut found_opening = false;
+                
+                while i < lines.len() {
+                    let current_line = lines[i];
+                    enum_def.push(current_line);
+                    
+                    for ch in current_line.chars() {
+                        match ch {
+                            '{' => {
+                                brace_count += 1;
+                                found_opening = true;
+                            }
+                            '}' => {
+                                brace_count -= 1;
+                                if found_opening && brace_count == 0 {
+                                    enums.push(enum_def.join("\n"));
+                                    i += 1;
+                                    break;
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+                    
+                    if found_opening && brace_count == 0 {
+                        break;
+                    }
+                    
+                    i += 1;
+                    
+                    if enum_def.len() > 30 {
+                        break;
+                    }
+                }
+            } else {
+                i += 1;
+            }
+        }
+        
+        if enums.is_empty() {
+            None
+        } else {
+            Some(enums.join("\n\n"))
+        }
+    }
+
+    /// 提取主要函数
+    fn extract_main_functions(&self, content: &str) -> Option<String> {
+        let mut functions = Vec::new();
+        let lines: Vec<&str> = content.lines().collect();
+        let mut i = 0;
+        
+        while i < lines.len() {
+            let line = lines[i].trim();
+            
+            // 匹配函数定义
+            if (line.starts_with("pub fn") || line.starts_with("fn") || 
+                line.starts_with("pub async fn") || line.starts_with("async fn")) &&
+               !line.contains("//") { // 排除注释行
+                
+                let mut func_def = vec![lines[i]];
+                i += 1;
+                
+                // 收集函数签名和开始部分
+                let mut brace_count = 0;
+                let mut found_opening = false;
+                let mut lines_collected = 0;
+                
+                while i < lines.len() && lines_collected < 20 { // 限制函数预览长度
+                    let current_line = lines[i];
+                    func_def.push(current_line);
+                    
+                    for ch in current_line.chars() {
+                        match ch {
+                            '{' => {
+                                brace_count += 1;
+                                found_opening = true;
+                            }
+                            '}' => {
+                                brace_count -= 1;
+                                if found_opening && brace_count == 0 {
+                                    functions.push(func_def.join("\n"));
+                                    i += 1;
+                                    break;
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+                    
+                    if found_opening && brace_count == 0 {
+                        break;
+                    }
+                    
+                    i += 1;
+                    lines_collected += 1;
+                }
+                
+                // 如果函数太长，只保留签名和开始部分
+                if lines_collected >= 20 {
+                    func_def.push("    // ... 函数体较长，省略 ...");
+                    func_def.push("}");
+                    functions.push(func_def.join("\n"));
+                }
+            } else {
+                i += 1;
+            }
+        }
+        
+        if functions.is_empty() {
+            None
+        } else {
+            Some(functions.join("\n\n"))
+        }
+    }
+
+    /// 提取impl块
+    fn extract_impl_blocks(&self, content: &str) -> Option<String> {
+        let mut impls = Vec::new();
+        let lines: Vec<&str> = content.lines().collect();
+        let mut i = 0;
+        
+        while i < lines.len() {
+            let line = lines[i].trim();
+            if line.starts_with("impl") && !line.contains("//") {
+                let mut impl_def = vec![lines[i]];
+                i += 1;
+                
+                // 收集impl块的开始部分
+                let mut brace_count = 0;
+                let mut found_opening = false;
+                let mut method_count = 0;
+                
+                while i < lines.len() && method_count < 5 { // 限制显示的方法数量
+                    let current_line = lines[i];
+                    
+                    // 检查是否是方法定义
+                    let trimmed = current_line.trim();
+                    if (trimmed.starts_with("pub fn") || trimmed.starts_with("fn")) && 
+                       !trimmed.contains("//") {
+                        method_count += 1;
+                        impl_def.push(current_line);
+                        
+                        // 添加方法签名
+                        i += 1;
+                        while i < lines.len() {
+                            let method_line = lines[i];
+                            impl_def.push(method_line);
+                            if method_line.trim().ends_with("{") || method_line.contains("{") {
+                                impl_def.push("        // ... 方法实现 ...");
+                                impl_def.push("    }");
+                                break;
+                            }
+                            i += 1;
+                        }
+                    } else {
+                        impl_def.push(current_line);
+                    }
+                    
+                    for ch in current_line.chars() {
+                        match ch {
+                            '{' => {
+                                brace_count += 1;
+                                found_opening = true;
+                            }
+                            '}' => {
+                                brace_count -= 1;
+                                if found_opening && brace_count == 0 {
+                                    impls.push(impl_def.join("\n"));
+                                    i += 1;
+                                    break;
+                                }
+                            }
+                            _ => {}
+                        }
+                    }
+                    
+                    if found_opening && brace_count == 0 {
+                        break;
+                    }
+                    
+                    i += 1;
+                }
+                
+                if method_count >= 5 {
+                    impl_def.push("    // ... 更多方法 ...");
+                    impl_def.push("}");
+                    impls.push(impl_def.join("\n"));
+                }
+            } else {
+                i += 1;
+            }
+        }
+        
+        if impls.is_empty() {
+            None
+        } else {
+            Some(impls.join("\n\n"))
+        }
+    }
+
+    /// 提取常量定义
+    fn extract_constants(&self, content: &str) -> Option<String> {
+        let mut constants = Vec::new();
+        
+        for line in content.lines() {
+            let trimmed = line.trim();
+            if (trimmed.starts_with("pub const") || trimmed.starts_with("const") ||
+                trimmed.starts_with("pub static") || trimmed.starts_with("static")) &&
+               !trimmed.contains("//") {
+                constants.push(line.to_string());
+            }
+        }
+        
+        if constants.is_empty() {
+            None
+        } else {
+            Some(constants.join("\n"))
         }
     }
 
@@ -1516,5 +2042,119 @@ impl C4DocumentationAgent {
             deep_dive_result.topics.len(),
             deep_dive_result.summary
         )
+    }
+
+    /// 提取功能摘要
+    fn extract_functionality_summary(&self, ai_component: &AIComponentAnalysis) -> String {
+        let mut summary = ai_component.functionality_description.clone();
+        
+        if !ai_component.business_value.is_empty() {
+            summary.push_str(&format!(" {}", ai_component.business_value));
+        }
+        
+        // 限制长度
+        if summary.len() > 200 {
+            let truncated: String = summary.chars().take(200).collect();
+            format!("{}...", truncated)
+        } else {
+            summary
+        }
+    }
+
+    /// 提取工作流程摘要
+    fn extract_workflow_summary(&self, ai_component: &AIComponentAnalysis) -> String {
+        if ai_component.workflow_steps.is_empty() {
+            "标准的处理工作流程".to_string()
+        } else {
+            ai_component
+                .workflow_steps
+                .iter()
+                .take(5) // 只取前5个步骤
+                .map(|step| format!("{}. {}", step.step_number, step.description))
+                .collect::<Vec<_>>()
+                .join("\n")
+        }
+    }
+
+    /// 提取架构摘要
+    fn extract_architecture_summary(&self, ai_component: &AIComponentAnalysis) -> String {
+        let mut summary_parts = Vec::new();
+        
+        // 主要类型
+        if let Some(types) = &ai_component.code_analysis.type_definitions {
+            if !types.is_empty() {
+                summary_parts.push(format!("主要类型: {}", types.join(", ")));
+            }
+        }
+        
+        // 关键方法
+        if let Some(functions) = &ai_component.code_analysis.key_functions {
+            if !functions.is_empty() {
+                let methods: Vec<String> = functions.iter().take(3).cloned().collect();
+                summary_parts.push(format!("关键方法: {}", methods.join(", ")));
+            }
+        }
+        
+        // 性能特性
+        if let Some(perf) = &ai_component.performance_characteristics {
+            summary_parts.push(format!("性能: {}", perf.time_complexity));
+        }
+        
+        if summary_parts.is_empty() {
+            "基本的内部架构结构".to_string()
+        } else {
+            summary_parts.join("\n")
+        }
+    }
+
+    /// 生成代码质量洞察
+    fn generate_code_quality_insights(&self, analysis: &crate::extractors::ComponentAnalysis) -> String {
+        let mut insights = Vec::new();
+        
+        // 复杂度分析
+        if analysis.complexity_metrics.cyclomatic_complexity > 10.0 {
+            insights.push("⚠️ 圈复杂度较高，建议考虑重构以降低复杂性".to_string());
+        } else if analysis.complexity_metrics.cyclomatic_complexity < 3.0 {
+            insights.push("✅ 复杂度适中，代码结构清晰".to_string());
+        }
+        
+        // 代码行数分析
+        if analysis.complexity_metrics.lines_of_code > 500 {
+            insights.push("📏 代码行数较多，可能需要考虑模块拆分".to_string());
+        }
+        
+        // 接口数量分析
+        if analysis.interfaces.len() > 10 {
+            insights.push("🔌 接口数量较多，说明模块功能丰富".to_string());
+        } else if analysis.interfaces.is_empty() {
+            insights.push("🔒 无公开接口，可能是内部实现模块".to_string());
+        }
+        
+        // 依赖分析
+        if analysis.dependencies.len() > 15 {
+            insights.push("🔗 依赖较多，需要注意模块耦合度".to_string());
+        } else if analysis.dependencies.len() < 3 {
+            insights.push("🎯 依赖较少，模块独立性较好".to_string());
+        }
+        
+        // 耦合度分析
+        if analysis.complexity_metrics.coupling_factor > 0.8 {
+            insights.push("🔗 耦合度较高，可能影响模块独立性".to_string());
+        } else if analysis.complexity_metrics.coupling_factor < 0.3 {
+            insights.push("🎯 耦合度较低，模块独立性良好".to_string());
+        }
+        
+        // 内聚性分析
+        if analysis.complexity_metrics.cohesion_score > 0.8 {
+            insights.push("✅ 内聚性良好，模块职责明确".to_string());
+        } else if analysis.complexity_metrics.cohesion_score < 0.5 {
+            insights.push("⚠️ 内聚性较低，建议明确模块职责".to_string());
+        }
+        
+        if insights.is_empty() {
+            "代码质量指标正常，结构合理".to_string()
+        } else {
+            insights.join("\n- ")
+        }
     }
 }

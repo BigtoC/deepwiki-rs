@@ -10,6 +10,9 @@ impl MarkdownUtils {
 
     /// 生成代码块
     pub fn code_block(code: &str, language: Option<&str>) -> String {
+        if code.starts_with("```") {
+            return code.to_string();
+        }
         let lang = language.unwrap_or("");
         format!("```{}\n{}\n```\n", lang, code)
     }
@@ -202,11 +205,17 @@ impl MarkdownUtils {
 
     /// 生成Mermaid图表
     pub fn mermaid_block(content: &str) -> String {
+        if content.starts_with("```mermaid") {
+            return content.to_string();
+        }
         format!("```mermaid\n{}\n```\n", content)
     }
 
     /// 生成Mermaid图表
     pub fn mermaid_diagram(diagram_type: &str, content: &str) -> String {
+        if content.starts_with("```mermaid") {
+            return content.to_string();
+        }
         format!("```mermaid\n{}\n{}\n```\n", diagram_type, content)
     }
 
