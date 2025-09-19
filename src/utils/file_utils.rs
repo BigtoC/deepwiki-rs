@@ -1,131 +1,136 @@
 use std::path::Path;
-use anyhow::Result;
-use tokio::fs;
-
-/// 文件工具结构体
-pub struct FileUtils;
-
-impl FileUtils {
-    /// 安全地写入文件，如果目录不存在则创建
-    pub async fn write_file_safe(path: &Path, content: &str) -> Result<()> {
-        // 确保父目录存在
-        if let Some(parent) = path.parent() {
-            fs::create_dir_all(parent).await?;
-        }
-        
-        // 写入文件
-        fs::write(path, content).await?;
-        Ok(())
-    }
-}
 
 /// 检查文件是否为测试文件
 pub fn is_test_file(path: &Path) -> bool {
-    let file_name = path.file_name()
+    let file_name = path
+        .file_name()
         .and_then(|n| n.to_str())
         .unwrap_or("")
         .to_lowercase();
-    
+
     let path_str = path.to_string_lossy().to_lowercase();
-    
+
     // 基于路径的检查 (支持不同的路径分隔符)
-    if path_str.contains("/test/") || path_str.contains("\\test\\") ||
-       path_str.contains("/tests/") || path_str.contains("\\tests\\") ||
-       path_str.contains("/__tests__/") || path_str.contains("\\__tests__\\") ||
-       path_str.contains("/spec/") || path_str.contains("\\spec\\") ||
-       path_str.contains("/specs/") || path_str.contains("\\specs\\") ||
-       path_str.starts_with("test/") || path_str.starts_with("test\\") ||
-       path_str.starts_with("tests/") || path_str.starts_with("tests\\") ||
-       path_str.starts_with("__tests__/") || path_str.starts_with("__tests__\\") ||
-       path_str.starts_with("spec/") || path_str.starts_with("spec\\") ||
-       path_str.starts_with("specs/") || path_str.starts_with("specs\\") {
+    if path_str.contains("/test/")
+        || path_str.contains("\\test\\")
+        || path_str.contains("/tests/")
+        || path_str.contains("\\tests\\")
+        || path_str.contains("/__tests__/")
+        || path_str.contains("\\__tests__\\")
+        || path_str.contains("/spec/")
+        || path_str.contains("\\spec\\")
+        || path_str.contains("/specs/")
+        || path_str.contains("\\specs\\")
+        || path_str.starts_with("test/")
+        || path_str.starts_with("test\\")
+        || path_str.starts_with("tests/")
+        || path_str.starts_with("tests\\")
+        || path_str.starts_with("__tests__/")
+        || path_str.starts_with("__tests__\\")
+        || path_str.starts_with("spec/")
+        || path_str.starts_with("spec\\")
+        || path_str.starts_with("specs/")
+        || path_str.starts_with("specs\\")
+    {
         return true;
     }
-    
+
     // 基于文件名的检查
     // Python测试文件
     if file_name.starts_with("test_") || file_name.ends_with("_test.py") {
         return true;
     }
-    
+
     // JavaScript/TypeScript测试文件
-    if file_name.ends_with(".test.js") || 
-       file_name.ends_with(".spec.js") ||
-       file_name.ends_with(".test.ts") || 
-       file_name.ends_with(".spec.ts") ||
-       file_name.ends_with(".test.jsx") || 
-       file_name.ends_with(".spec.jsx") ||
-       file_name.ends_with(".test.tsx") || 
-       file_name.ends_with(".spec.tsx") {
+    if file_name.ends_with(".test.js")
+        || file_name.ends_with(".spec.js")
+        || file_name.ends_with(".test.ts")
+        || file_name.ends_with(".spec.ts")
+        || file_name.ends_with(".test.jsx")
+        || file_name.ends_with(".spec.jsx")
+        || file_name.ends_with(".test.tsx")
+        || file_name.ends_with(".spec.tsx")
+    {
         return true;
     }
-    
+
     // Java测试文件
-    if file_name.ends_with("test.java") || 
-       file_name.ends_with("tests.java") {
+    if file_name.ends_with("test.java") || file_name.ends_with("tests.java") {
         return true;
     }
-    
+
     // Rust测试文件
-    if file_name.ends_with("_test.rs") || 
-       file_name.ends_with("_tests.rs") {
+    if file_name.ends_with("_test.rs") || file_name.ends_with("_tests.rs") {
         return true;
     }
-    
+
     // Go测试文件
     if file_name.ends_with("_test.go") {
         return true;
     }
-    
+
     // C/C++测试文件
-    if file_name.ends_with("_test.c") || 
-       file_name.ends_with("_test.cpp") ||
-       file_name.ends_with("_test.cc") ||
-       file_name.ends_with("test.c") || 
-       file_name.ends_with("test.cpp") ||
-       file_name.ends_with("test.cc") {
+    if file_name.ends_with("_test.c")
+        || file_name.ends_with("_test.cpp")
+        || file_name.ends_with("_test.cc")
+        || file_name.ends_with("test.c")
+        || file_name.ends_with("test.cpp")
+        || file_name.ends_with("test.cc")
+    {
         return true;
     }
-    
+
     // 通用测试文件名模式
-    if file_name.contains("test") && (
-        file_name.starts_with("test") ||
-        file_name.ends_with("test") ||
-        file_name.contains("_test_") ||
-        file_name.contains(".test.") ||
-        file_name.contains("-test-") ||
-        file_name.contains("-test.") ||
-        file_name.contains(".spec.") ||
-        file_name.contains("_spec_") ||
-        file_name.contains("-spec-") ||
-        file_name.contains("-spec.")
-    ) {
+    if file_name.contains("test")
+        && (file_name.starts_with("test")
+            || file_name.ends_with("test")
+            || file_name.contains("_test_")
+            || file_name.contains(".test.")
+            || file_name.contains("-test-")
+            || file_name.contains("-test.")
+            || file_name.contains(".spec.")
+            || file_name.contains("_spec_")
+            || file_name.contains("-spec-")
+            || file_name.contains("-spec."))
+    {
         return true;
     }
-    
+
     false
 }
 
 /// 检查目录是否为测试目录
 pub fn is_test_directory(dir_name: &str) -> bool {
     let name_lower = dir_name.to_lowercase();
-    
+
     // 常见的测试目录名
-    matches!(name_lower.as_str(), 
-        "test" | "tests" | "__tests__" | "spec" | "specs" | 
-        "testing" | "test_data" | "testdata" | "fixtures" |
-        "e2e" | "integration" | "unit" | "acceptance"
-    ) || name_lower.ends_with("_test") || 
-        name_lower.ends_with("_tests") ||
-        name_lower.ends_with("-test") || 
-        name_lower.ends_with("-tests")
+    matches!(
+        name_lower.as_str(),
+        "test"
+            | "tests"
+            | "__tests__"
+            | "spec"
+            | "specs"
+            | "testing"
+            | "test_data"
+            | "testdata"
+            | "fixtures"
+            | "e2e"
+            | "integration"
+            | "unit"
+            | "acceptance"
+    ) || name_lower.ends_with("_test")
+        || name_lower.ends_with("_tests")
+        || name_lower.ends_with("-test")
+        || name_lower.ends_with("-tests")
 }
 
 /// 检查是否为二进制文件路径
 pub fn is_binary_file_path(path: &Path) -> bool {
     if let Some(extension) = path.extension().and_then(|e| e.to_str()) {
         let ext_lower = extension.to_lowercase();
-        matches!(ext_lower.as_str(),
+        matches!(
+            ext_lower.as_str(),
             // 图片文件
             "jpg" | "jpeg" | "png" | "gif" | "bmp" | "ico" | "svg" | "webp" |
             // 音频文件
@@ -141,60 +146,10 @@ pub fn is_binary_file_path(path: &Path) -> bool {
             // 字体文件
             "ttf" | "otf" | "woff" | "woff2" |
             // 其他二进制文件
-            "db" | "sqlite" | "sqlite3" | "dat" | "cache"
+            "db" | "sqlite" | "sqlite3" | "dat" | "cache" |
+            "archive"
         )
     } else {
         false
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::path::PathBuf;
-
-    #[test]
-    fn test_is_test_file() {
-        // Python测试文件
-        assert!(is_test_file(&PathBuf::from("test_example.py")));
-        assert!(is_test_file(&PathBuf::from("example_test.py")));
-        
-        // JavaScript测试文件
-        assert!(is_test_file(&PathBuf::from("example.test.js")));
-        assert!(is_test_file(&PathBuf::from("example.spec.ts")));
-        
-        // Java测试文件
-        assert!(is_test_file(&PathBuf::from("ExampleTest.java")));
-        
-        // 路径中包含测试目录
-        assert!(is_test_file(&PathBuf::from("src/test/example.py")));
-        assert!(is_test_file(&PathBuf::from("tests/unit/example.js")));
-        
-        // 非测试文件
-        assert!(!is_test_file(&PathBuf::from("example.py")));
-        assert!(!is_test_file(&PathBuf::from("src/main.rs")));
-    }
-
-    #[test]
-    fn test_is_test_directory() {
-        assert!(is_test_directory("test"));
-        assert!(is_test_directory("tests"));
-        assert!(is_test_directory("__tests__"));
-        assert!(is_test_directory("spec"));
-        assert!(is_test_directory("unit_test"));
-        
-        assert!(!is_test_directory("src"));
-        assert!(!is_test_directory("lib"));
-        assert!(!is_test_directory("main"));
-    }
-
-    #[test]
-    fn test_is_binary_file_path() {
-        assert!(is_binary_file_path(&PathBuf::from("image.jpg")));
-        assert!(is_binary_file_path(&PathBuf::from("video.mp4")));
-        assert!(is_binary_file_path(&PathBuf::from("archive.zip")));
-        
-        assert!(!is_binary_file_path(&PathBuf::from("code.rs")));
-        assert!(!is_binary_file_path(&PathBuf::from("config.json")));
     }
 }

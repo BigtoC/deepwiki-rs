@@ -77,9 +77,6 @@ pub struct LLMConfig {
     /// 温度
     pub temperature: f32,
 
-    /// 上下文窗口大小
-    pub context_window: u32,
-
     /// 重试次数
     pub retry_attempts: u32,
 
@@ -407,9 +404,8 @@ impl Default for LLMConfig {
     fn default() -> Self {
         Self {
             model: "mistral-small-latest".to_string(),
-            max_tokens: 64000,
+            max_tokens: 65536,
             temperature: 0.1,
-            context_window: 32768,
             retry_attempts: 5,
             retry_delay_ms: 5000,
             timeout_seconds: 300,

@@ -125,7 +125,7 @@ impl LLMClient {
         user_prompt: &str,
     ) -> Result<String> {
         let agent_builder = self.get_agent_builder();
-        let agent = agent_builder.build_simple_agent(system_prompt);
+        let agent = agent_builder.build_agent_without_tools(system_prompt);
 
         self.retry_with_backoff(|| async { agent.prompt(user_prompt).await.map_err(|e| e.into()) })
             .await

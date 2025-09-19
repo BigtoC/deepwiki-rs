@@ -1,5 +1,6 @@
-use crate::extractors::CoreComponent;
 use std::cmp::Ordering;
+
+use crate::types::FeatureModule;
 
 /// 组件排序工具类
 pub struct ComponentSorter;
@@ -13,8 +14,8 @@ impl ComponentSorter {
     ///
     /// # Returns
     /// 按重要性分数降序排列的前N个组件引用向量
-    pub fn get_top_n_components(components: &[CoreComponent], limit: usize) -> Vec<&CoreComponent> {
-        let mut component_refs: Vec<&CoreComponent> = components.iter().collect();
+    pub fn get_top_n_components(components: &[FeatureModule], limit: usize) -> Vec<&FeatureModule> {
+        let mut component_refs: Vec<&FeatureModule> = components.iter().collect();
         component_refs.sort_by(|a, b| {
             b.importance_score
                 .partial_cmp(&a.importance_score)
@@ -33,11 +34,11 @@ impl ComponentSorter {
     /// # Returns
     /// 过滤后按重要性分数降序排列的组件引用向量
     pub fn filter_and_sort_components(
-        components: &[CoreComponent],
+        components: &[FeatureModule],
         min_score: f64,
         limit: Option<usize>,
-    ) -> Vec<&CoreComponent> {
-        let mut filtered_components: Vec<&CoreComponent> = components
+    ) -> Vec<&FeatureModule> {
+        let mut filtered_components: Vec<&FeatureModule> = components
             .iter()
             .filter(|c| c.importance_score > min_score)
             .collect();

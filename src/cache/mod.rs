@@ -11,7 +11,6 @@ pub mod performance_monitor;
 pub use performance_monitor::{CachePerformanceMonitor, CachePerformanceReport};
 
 /// 缓存管理器
-#[derive(Clone)]
 pub struct CacheManager {
     config: CacheConfig,
     performance_monitor: CachePerformanceMonitor,

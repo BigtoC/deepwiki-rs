@@ -1,13 +1,14 @@
 //! Agent构建器 - 负责构建和配置LLM Agent
 
 use rig::{
+    agent::Agent,
     client::CompletionClient,
     providers::mistral::{Client, CompletionModel},
 };
 
 use crate::{
-    agents::agent_tools::{file_explorer::AgentToolFileExplorer, file_reader::AgentToolFileReader},
     config::Config,
+    llm::tools::{file_explorer::AgentToolFileExplorer, file_reader::AgentToolFileReader},
 };
 
 /// Agent构建器
@@ -22,11 +23,8 @@ impl<'a> AgentBuilder<'a> {
         Self { client, config }
     }
 
-    /// 构建标准Agent（带工具）
-    pub fn build_agent_with_tools(
-        &self,
-        system_prompt: &str,
-    ) -> rig::agent::Agent<CompletionModel> {
+    /// 构建内置预设工具的Agent
+    pub fn build_agent_with_tools(&self, system_prompt: &str) -> Agent<CompletionModel> {
         let llm_config = &self.config.llm;
 
         let mut agent_builder = self
@@ -45,8 +43,8 @@ impl<'a> AgentBuilder<'a> {
         agent_builder.build()
     }
 
-    /// 构建简单Agent（无工具）
-    pub fn build_simple_agent(&self, system_prompt: &str) -> rig::agent::Agent<CompletionModel> {
+    /// 构建无工具Agent
+    pub fn build_agent_without_tools(&self, system_prompt: &str) -> Agent<CompletionModel> {
         let llm_config = &self.config.llm;
 
         self.client

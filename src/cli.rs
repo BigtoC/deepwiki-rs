@@ -81,11 +81,10 @@ impl Cli {
         config.internal_path = self.project_path.join(".litho");
         config.document_format = self.format;
 
-        // 项目名称处理：CLI参数优先级最高
+        // 项目名称处理：CLI参数优先级最高，如果CLI没有指定且配置文件也没有，get_project_name()会自动推断
         if let Some(name) = self.name {
             config.project_name = Some(name);
         }
-        // 如果CLI没有指定且配置文件也没有，get_project_name()会自动推断
 
         // 覆盖LLM配置
         if let Some(model) = self.model {
