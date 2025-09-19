@@ -14,7 +14,6 @@ use crate::types::code::CodeInsight;
 use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use std::collections::HashSet;
-use crate::generator::agent_executor::prompt;
 
 // 按照领域模块的调研材料
 #[derive(Default)]
@@ -58,11 +57,9 @@ impl StepForwardAgent for KeyModulesInsight {
         let reports = self.execute_multi_domain_analysis(context).await?;
         let value = serde_json::to_value(&reports)?;
 
-        context.store_to_memory(
-            &self.memory_scope_key(), 
-            &self.agent_type(), 
-            value.clone(),
-        ).await?;
+        context
+            .store_to_memory(&self.memory_scope_key(), &self.agent_type(), value.clone())
+            .await?;
 
         Ok(reports)
     }
