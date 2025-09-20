@@ -6,6 +6,7 @@ use crate::generator::research::types::{AgentType as ResearchAgentType, KeyModul
 use crate::generator::step_forward_agent::{
     AgentDataConfig, DataSource, FormatterConfig, LLMCallMode, PromptTemplate, StepForwardAgent,
 };
+use crate::utils::threads::do_parallel_with_limit;
 use anyhow::Result;
 
 #[derive(Default)]
@@ -18,20 +19,43 @@ impl KeyModulesInsightEditor {
             .await
         {
             let insight_reports: Vec<KeyModuleReport> = serde_json::from_value(value)?;
-            for insight_report in insight_reports {
-                let insight_key = format!(
-                    "{}_{}",
-                    ResearchAgentType::KeyModulesInsight,
-                    &insight_report.domain_name
-                );
-                let kmie =
-                    KeyModuleInsightEditor::new(insight_key.to_string(), insight_report.clone());
+            let max_parallels = context.config.llm.max_parallels;
 
-                kmie.execute(context).await?;
+            println!(
+                "🚀 启动并发分析insight reports，最大并发数：{}",
+                max_parallels
+            );
+
+            // 创建并发任务
+            let analysis_futures: Vec<_> = insight_reports
+                .into_iter()
+                .map(|insight_report| {
+                    let insight_key = format!(
+                        "{}_{}",
+                        ResearchAgentType::KeyModulesInsight,
+                        &insight_report.domain_name
+                    );
+                    let domain_name = insight_report.domain_name.clone();
+                    let kmie = KeyModuleInsightEditor::new(insight_key.clone(), insight_report);
+                    let context_clone = context.clone();
+
+                    Box::pin(async move {
+                        let result = kmie.execute(&context_clone).await;
+                        (insight_key, domain_name, result)
+                    })
+                })
+                .collect();
+
+            // 使用do_parallel_with_limit进行并发控制
+            let analysis_results = do_parallel_with_limit(analysis_futures, max_parallels).await;
+
+            // 处理结果并更新doc_tree
+            for (insight_key, domain_name, result) in analysis_results {
+                result?; // 检查是否有错误
 
                 doc_tree.insert(
                     &insight_key,
-                    format!("{}/{}.md", "4、深入探索", &insight_report.domain_name).as_str(),
+                    format!("{}/{}.md", "4、深入探索", &domain_name).as_str(),
                 );
             }
         }
