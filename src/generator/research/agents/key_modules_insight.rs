@@ -11,12 +11,13 @@ use crate::generator::{
     },
 };
 use crate::types::code::CodeInsight;
+use crate::utils::threads::do_parallel_with_limit;
 use anyhow::{Result, anyhow};
 use async_trait::async_trait;
 use std::collections::HashSet;
 
 // 按照领域模块的调研材料
-#[derive(Default)]
+#[derive(Default, Clone)]
 pub struct KeyModulesInsight;
 
 #[async_trait]
@@ -73,6 +74,7 @@ impl KeyModulesInsight {
     ) -> Result<Vec<KeyModuleReport>> {
         println!("🔍 开始多领域模块分析...");
         let mut reports = vec![];
+        let max_parallels = context.config.llm.max_parallels;
 
         // 1. 获取领域模块数据
         let domain_modules = self.get_domain_modules(context).await?;
@@ -88,22 +90,44 @@ impl KeyModulesInsight {
             domain_names.join("、")
         );
 
-        // 2. 为每个领域模块进行分析
+        // 2. 为每个领域模块进行并发分析
+        println!("🚀 启动并发分析，最大并发数：{}", max_parallels);
+
+        // 创建并发任务
+        let analysis_futures: Vec<_> = domain_modules
+            .iter()
+            .map(|domain| {
+                let domain_clone = domain.clone();
+                let context_clone = context.clone();
+                Box::pin(async move {
+                    let key_modules_insight = KeyModulesInsight::default();
+                    let result = key_modules_insight
+                        .analyze_single_domain(&domain_clone, &context_clone)
+                        .await;
+                    (domain_clone.name.clone(), result)
+                })
+            })
+            .collect();
+
+        // 使用do_parallel_with_limit进行并发控制
+        let analysis_results = do_parallel_with_limit(analysis_futures, max_parallels).await;
+
+        // 处理分析结果
         let mut successful_analyses = 0;
-        for domain in &domain_modules {
-            match self.analyze_single_domain(domain, context).await {
+        for (domain_name, result) in analysis_results {
+            match result {
                 Ok(report) => {
                     // 存储每个领域的结果
-                    let storage_key = format!("{}_{}", self.agent_type(), domain.name);
+                    let storage_key = format!("{}_{}", self.agent_type(), domain_name);
                     context
                         .store_research(&storage_key, serde_json::to_value(&report)?)
                         .await?;
                     successful_analyses += 1;
                     reports.push(report);
-                    println!("✅ 领域模块分析：{} 分析完成并已存储", domain.name);
+                    println!("✅ 领域模块分析：{} 分析完成并已存储", domain_name);
                 }
                 Err(e) => {
-                    println!("⚠️ 领域模块分析：{} 分析失败: {}", domain.name, e);
+                    println!("⚠️ 领域模块分析：{} 分析失败: {}", domain_name, e);
                     // 继续处理其他领域，不中断整个流程
                 }
             }

@@ -54,6 +54,10 @@ pub struct Cli {
     #[arg(long)]
     pub temperature: Option<f32>,
 
+    /// 温度参数
+    #[arg(long)]
+    pub max_parallels: Option<usize>,
+
     /// 是否禁用缓存
     #[arg(long)]
     pub no_cache: bool,
@@ -95,6 +99,9 @@ impl Cli {
         }
         if let Some(temperature) = self.temperature {
             config.llm.temperature = temperature;
+        }
+        if let Some(max_parallels) = self.max_parallels {
+            config.llm.max_parallels = max_parallels;
         }
 
         // 缓存配置

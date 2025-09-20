@@ -87,6 +87,8 @@ pub struct LLMConfig {
     pub timeout_seconds: u64,
 
     pub enable_preset_tools: bool,
+
+    pub max_parallels: usize,
 }
 
 /// 缓存配置
@@ -410,6 +412,7 @@ impl Default for LLMConfig {
             retry_delay_ms: 5000,
             timeout_seconds: 300,
             enable_preset_tools: false,
+            max_parallels: 3,
         }
     }
 }
