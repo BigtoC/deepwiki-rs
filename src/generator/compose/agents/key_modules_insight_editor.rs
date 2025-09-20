@@ -31,7 +31,7 @@ impl KeyModulesInsightEditor {
 
                 doc_tree.insert(
                     &insight_key,
-                    format!("{}/{}.md", "深入探索", &insight_report.domain_name).as_str(),
+                    format!("{}/{}.md", "4、深入探索", &insight_report.domain_name).as_str(),
                 );
             }
         }

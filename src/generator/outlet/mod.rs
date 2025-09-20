@@ -22,15 +22,20 @@ impl DocTree {
 
 impl Default for DocTree {
     fn default() -> Self {
-        let mut structure = HashMap::new();
-        structure.insert(
-            AgentType::Overview.to_string(),
-            "1、项目概述.md".to_string(),
-        );
-        structure.insert(
-            AgentType::Architecture.to_string(),
-            "2、架构设计.md".to_string(),
-        );
+        let mut structure = HashMap::from([
+            (
+                AgentType::Overview.to_string(),
+                "1、项目概述.md".to_string(),
+            ),
+            (
+                AgentType::Architecture.to_string(),
+                "2、架构概览.md".to_string(),
+            ),
+            (
+                AgentType::Workflow.to_string(),
+                "3、工作流程.md".to_string(),
+            ),
+        ]);
         Self { structure }
     }
 }

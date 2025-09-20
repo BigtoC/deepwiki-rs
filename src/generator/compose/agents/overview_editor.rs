@@ -1,11 +1,9 @@
-use crate::generator::{
-    {
-        step_forward_agent::{StepForwardAgent, AgentDataConfig, DataSource, PromptTemplate, LLMCallMode, FormatterConfig},
-    },
-};
 use crate::generator::compose::memory::MemoryScope;
 use crate::generator::compose::types::AgentType;
 use crate::generator::research::types::AgentType as ResearchAgentType;
+use crate::generator::step_forward_agent::{
+    AgentDataConfig, DataSource, FormatterConfig, LLMCallMode, PromptTemplate, StepForwardAgent,
+};
 
 #[derive(Default)]
 pub struct OverviewEditor;
@@ -25,11 +23,9 @@ impl StepForwardAgent for OverviewEditor {
         AgentDataConfig {
             required_sources: vec![
                 DataSource::ResearchResult(ResearchAgentType::SystemContextResearcher.to_string()),
-                DataSource::ResearchResult(ResearchAgentType::DomainModulesDetector.to_string())
+                DataSource::ResearchResult(ResearchAgentType::DomainModulesDetector.to_string()),
             ],
-            optional_sources: vec![
-                DataSource::README_CONTENT
-            ],
+            optional_sources: vec![DataSource::README_CONTENT],
         }
     }
 
@@ -37,7 +33,7 @@ impl StepForwardAgent for OverviewEditor {
         PromptTemplate {
             system_prompt: r#"你是一个专业的软件架构文档编写专家，专注于生成C4架构模型SystemContext层级文档。
 
-你的任务是基于提供的系统上下文调研报告和领域模块分析结果，编写一份完整、深入且详细的、易于阅读的C4 SystemContext文档。
+你的任务是基于提供的系统上下文调研报告和领域模块分析结果，编写一份以`项目概述`为标题的完整、深入且详细的、易于阅读的C4 SystemContext文档。
 
 ## C4 SystemContext文档要求：
 1. **系统概览**：清晰描述系统的核心目标、业务价值和技术特征
@@ -78,7 +74,7 @@ impl StepForwardAgent for OverviewEditor {
 
 ## 1. 项目简介
 - 项目名称和描述
-- 核心业务价值
+- 核心功能与价值
 - 技术特征概述
 
 ## 2. 目标用户
