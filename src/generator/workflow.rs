@@ -1,7 +1,7 @@
 use std::sync::Arc;
 use std::time::Instant;
 
-use crate::generator::compose::DocumentationOrchestrator;
+use crate::generator::compose::DocumentationComposer;
 use crate::generator::outlet::{DiskOutlet, DocTree, Outlet, SummaryOutlet};
 use crate::{
     cache::CacheManager,
@@ -32,7 +32,7 @@ impl TimingKeys {
     pub const PREPROCESS: &'static str = "preprocess";
     /// 研究阶段耗时
     pub const RESEARCH: &'static str = "research";
-    /// 编排阶段耗时
+    /// 文档生成阶段耗时
     pub const COMPOSE: &'static str = "compose";
     /// 输出阶段耗时
     pub const OUTPUT: &'static str = "output";
@@ -88,7 +88,7 @@ pub async fn launch(c: &Config) -> Result<()> {
     println!("\n执行文档生成流程...");
     let compose_start = Instant::now();
     let mut doc_tree = DocTree::default();
-    let documentation_orchestrator = DocumentationOrchestrator::default();
+    let documentation_orchestrator = DocumentationComposer::default();
     documentation_orchestrator
         .execute(&context, &mut doc_tree)
         .await?;

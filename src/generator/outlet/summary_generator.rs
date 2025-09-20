@@ -70,7 +70,7 @@ pub struct TimingStats {
     pub preprocess_time: f64,
     /// 研究阶段耗时（秒）
     pub research_time: f64,
-    /// 编排阶段耗时（秒）
+    /// 文档生成阶段耗时（秒）
     pub compose_time: f64,
     /// 输出阶段耗时（秒）
     pub output_time: f64,
@@ -247,7 +247,7 @@ impl SummaryContentGenerator {
             }
         ));
         content.push_str(&format!(
-            "- **编排阶段**: {:.2} 秒 ({:.1}%)\n",
+            "- **文档生成阶段**: {:.2} 秒 ({:.1}%)\n",
             timing.compose_time,
             if timing.total_execution_time > 0.0 {
                 (timing.compose_time / timing.total_execution_time) * 100.0
@@ -411,8 +411,8 @@ impl SummaryContentGenerator {
         // 显示最耗时的阶段
         let mut stages = vec![
             ("预处理", timing.preprocess_time),
-            ("研究", timing.research_time),
-            ("编排", timing.compose_time),
+            ("研究调研", timing.research_time),
+            ("文档化", timing.compose_time),
             ("输出", timing.output_time),
         ];
         stages.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());

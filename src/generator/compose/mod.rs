@@ -11,11 +11,11 @@ mod agents;
 pub mod memory;
 pub mod types;
 
-/// 文档生成编排器
+/// 文档生成器
 #[derive(Default)]
-pub struct DocumentationOrchestrator;
+pub struct DocumentationComposer;
 
-impl DocumentationOrchestrator {
+impl DocumentationComposer {
     pub async fn execute(&self, context: &GeneratorContext, doc_tree: &mut DocTree) -> Result<()> {
         let overview_editor = OverviewEditor::default();
         overview_editor.execute(context).await?;

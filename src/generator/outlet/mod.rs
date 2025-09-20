@@ -27,7 +27,7 @@ impl DocTree {
 
 impl Default for DocTree {
     fn default() -> Self {
-        let mut structure = HashMap::from([
+        let structure = HashMap::from([
             (
                 AgentType::Overview.to_string(),
                 "1、项目概述.md".to_string(),
