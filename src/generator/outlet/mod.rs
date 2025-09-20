@@ -4,6 +4,11 @@ use anyhow::Result;
 use std::collections::HashMap;
 use std::fs;
 
+pub mod summary_generator;
+pub mod summary_outlet;
+
+pub use summary_outlet::SummaryOutlet;
+
 pub trait Outlet {
     async fn save(&self, context: &GeneratorContext) -> Result<()>;
 }
