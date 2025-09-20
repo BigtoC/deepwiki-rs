@@ -59,9 +59,10 @@ impl Outlet for DiskOutlet {
     async fn save(&self, context: &GeneratorContext) -> Result<()> {
         // 创建输出目录
         let output_dir = &context.config.output_path;
-        if !output_dir.exists() {
-            fs::create_dir_all(output_dir)?;
+        if output_dir.exists() {
+            fs::remove_dir_all(output_dir)?;
         }
+        fs::create_dir_all(output_dir)?;
 
         // 遍历文档树结构，保存每个文档
         for (scoped_key, relative_path) in &self.doc_tree.structure {
