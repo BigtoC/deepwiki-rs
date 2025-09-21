@@ -3,6 +3,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use crate::generator::context::GeneratorContext;
+use crate::llm::client::utils::estimate_token_usage;
 
 pub struct AgentExecuteParams {
     pub prompt_sys: String,
@@ -38,13 +39,36 @@ pub async fn prompt(context: &GeneratorContext, params: AgentExecuteParams) -> R
         .await
         .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
 
-    // 缓存结果 - 直接使用prompt作为key
+    // 估算token使用情况
+    let input_text = format!("{} {}", prompt_sys, prompt_user);
+    let token_usage = estimate_token_usage(&input_text, &reply);
+
+    // 缓存结果 - 使用带token信息的方法
     context
         .cache_manager
         .write()
         .await
-        .set(cache_scope, &prompt_key, &reply)
+        .set_with_tokens(cache_scope, &prompt_key, &reply, token_usage)
         .await?;
+
+    Ok(reply)
+}
+
+pub async fn prompt_with_tools(
+    context: &GeneratorContext,
+    params: AgentExecuteParams,
+) -> Result<String> {
+    let prompt_sys = &params.prompt_sys;
+    let prompt_user = &params.prompt_user;
+    let log_tag = &params.log_tag;
+
+    println!("   🤖 正在进行AI分析: {}", log_tag);
+
+    let reply = context
+        .llm_client
+        .prompt(prompt_sys, prompt_user)
+        .await
+        .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
 
     Ok(reply)
 }
@@ -79,12 +103,17 @@ where
         .await
         .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
 
-    // 缓存结果 - 直接使用prompt作为key
+    // 估算token使用情况
+    let input_text = format!("{} {}", prompt_sys, prompt_user);
+    let output_text = serde_json::to_string(&reply).unwrap_or_default();
+    let token_usage = estimate_token_usage(&input_text, &output_text);
+
+    // 缓存结果 - 使用带token信息的方法
     context
         .cache_manager
         .write()
         .await
-        .set(cache_scope, &prompt_key, &reply)
+        .set_with_tokens(cache_scope, &prompt_key, &reply, token_usage)
         .await?;
 
     Ok(reply)

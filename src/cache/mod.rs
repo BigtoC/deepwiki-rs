@@ -6,6 +6,7 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tokio::fs;
 
 use crate::config::CacheConfig;
+use crate::llm::client::types::TokenUsage;
 
 pub mod performance_monitor;
 pub use performance_monitor::{CachePerformanceMonitor, CachePerformanceReport};
@@ -23,6 +24,10 @@ pub struct CacheEntry<T> {
     pub timestamp: u64,
     /// prompt的MD5哈希值，用于缓存键的生成和验证
     pub prompt_hash: String,
+    /// token使用情况（可选，用于准确统计）
+    pub token_usage: Option<TokenUsage>,
+    /// 使用的模型名称（可选）
+    pub model_name: Option<String>,
 }
 
 impl CacheManager {
@@ -94,10 +99,18 @@ impl CacheManager {
                             return Ok(None);
                         }
 
-                        // 估算节省的推理时间（基于缓存的复杂度）
+                        // 使用存储的token信息进行准确统计
                         let estimated_inference_time = self.estimate_inference_time(&content);
-                        self.performance_monitor
-                            .record_cache_hit(category, estimated_inference_time);
+
+                        if let Some(token_usage) = &entry.token_usage {
+                            // 使用存储的准确信息
+                            self.performance_monitor.record_cache_hit(
+                                category,
+                                estimated_inference_time,
+                                token_usage.clone(),
+                                "",
+                            );
+                        }
                         Ok(Some(entry.data))
                     }
                     Err(e) => {
@@ -115,7 +128,61 @@ impl CacheManager {
         }
     }
 
-    /// 设置缓存
+    /// 设置缓存（带token使用情况）
+    pub async fn set_with_tokens<T>(
+        &self,
+        category: &str,
+        prompt: &str,
+        data: T,
+        token_usage: TokenUsage,
+    ) -> Result<()>
+    where
+        T: Serialize,
+    {
+        if !self.config.enabled {
+            return Ok(());
+        }
+
+        let hash = self.hash_prompt(prompt);
+        let cache_path = self.get_cache_path(category, &hash);
+
+        // 确保目录存在
+        if let Some(parent) = cache_path.parent() {
+            fs::create_dir_all(parent).await?;
+        }
+
+        let timestamp = SystemTime::now()
+            .duration_since(UNIX_EPOCH)
+            .unwrap()
+            .as_secs();
+
+        let entry = CacheEntry {
+            data,
+            timestamp,
+            prompt_hash: hash,
+            token_usage: Some(token_usage),
+            model_name: None,
+        };
+
+        match serde_json::to_string_pretty(&entry) {
+            Ok(content) => match fs::write(&cache_path, content).await {
+                Ok(_) => {
+                    self.performance_monitor.record_cache_write(category);
+                    Ok(())
+                }
+                Err(e) => {
+                    self.performance_monitor
+                        .record_cache_error(category, &format!("写入文件失败: {}", e));
+                    Err(e.into())
+                }
+            },
+            Err(e) => {
+                self.performance_monitor
+                    .record_cache_error(category, &format!("序列化失败: {}", e));
+                Err(e.into())
+            }
+        }
+    }
     pub async fn set<T>(&self, category: &str, prompt: &str, data: T) -> Result<()>
     where
         T: Serialize,
@@ -141,6 +208,8 @@ impl CacheManager {
             data,
             timestamp,
             prompt_hash: hash,
+            token_usage: None,
+            model_name: None,
         };
 
         match serde_json::to_string_pretty(&entry) {
@@ -220,16 +289,6 @@ impl CacheManager {
         let complexity_factor = (content_length as f64 / 1000.0).min(10.0); // 最多10倍复杂度
         let estimated_seconds = base_time + complexity_factor;
         Duration::from_secs_f64(estimated_seconds)
-    }
-
-    /// 获取性能监控器
-    pub fn get_performance_monitor(&self) -> &CachePerformanceMonitor {
-        &self.performance_monitor
-    }
-
-    /// 打印性能摘要
-    pub fn print_performance_summary(&self) {
-        self.performance_monitor.print_performance_summary();
     }
 
     /// 生成性能报告

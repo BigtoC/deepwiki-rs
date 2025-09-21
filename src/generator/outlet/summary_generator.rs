@@ -59,6 +59,8 @@ pub struct CacheStatsData {
     pub inference_time_saved: f64,
     pub cost_saved: f64,
     pub performance_improvement: f64,
+    pub input_tokens_saved: u64,
+    pub output_tokens_saved: u64,
 }
 
 /// 耗时统计数据
@@ -130,6 +132,8 @@ impl SummaryDataCollector {
             inference_time_saved: cache_report.inference_time_saved,
             cost_saved: cache_report.cost_saved,
             performance_improvement: cache_report.performance_improvement,
+            input_tokens_saved: cache_report.input_tokens_saved,
+            output_tokens_saved: cache_report.output_tokens_saved,
         };
 
         // 收集生成文档列表
@@ -297,6 +301,12 @@ impl SummaryContentGenerator {
             "- **节省推理时间**: {:.1} 秒\n",
             stats.inference_time_saved
         ));
+        content.push_str(&format!(
+            "- **节省Token数量**: {} 输入 + {} 输出 = {} 总计\n",
+            stats.input_tokens_saved,
+            stats.output_tokens_saved,
+            stats.input_tokens_saved + stats.output_tokens_saved
+        ));
         content.push_str(&format!("- **估算节省成本**: ${:.4}\n", stats.cost_saved));
         if stats.performance_improvement > 0.0 {
             content.push_str(&format!(
@@ -445,6 +455,12 @@ impl SummaryContentGenerator {
         content.push_str(&format!(
             "**节省时间**: {:.1} 秒\n",
             stats.inference_time_saved
+        ));
+        content.push_str(&format!(
+            "**节省Token**: {} 输入 + {} 输出 = {} 总计\n",
+            stats.input_tokens_saved,
+            stats.output_tokens_saved,
+            stats.input_tokens_saved + stats.output_tokens_saved
         ));
         content.push_str(&format!("**节省成本**: ${:.4}\n", stats.cost_saved));
 

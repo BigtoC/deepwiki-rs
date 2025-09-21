@@ -123,7 +123,7 @@ impl StepForwardAgent for KeyModuleInsightEditor {
 
             closing_instruction: String::new(),
 
-            llm_call_mode: LLMCallMode::Prompt,
+            llm_call_mode: LLMCallMode::PromptWithTools,
             formatter_config: FormatterConfig::default(),
         }
     }

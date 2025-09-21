@@ -8,11 +8,12 @@ use std::future::Future;
 
 use crate::{config::Config, llm::client::utils::evaluate_befitting_model};
 
+pub mod types;
+pub mod utils;
 mod agent_builder;
 mod error;
 mod react;
 mod react_executor;
-mod utils;
 
 pub use react::{ReActConfig, ReActResponse};
 

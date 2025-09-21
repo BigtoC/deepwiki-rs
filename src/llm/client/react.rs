@@ -15,7 +15,7 @@ impl Default for ReActConfig {
     fn default() -> Self {
         Self {
             max_iterations: 10,
-            verbose: false,
+            verbose: cfg!(debug_assertions),
             return_partial_on_max_depth: true,
         }
     }

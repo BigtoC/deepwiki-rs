@@ -7,7 +7,7 @@ use crate::{
         code::{CodeDossier, CodeInsight},
         project_structure::ProjectStructure,
     },
-    utils::sources::read_dependency_code_source,
+    utils::{sources::read_dependency_code_source, threads::do_parallel_with_limit},
 };
 use anyhow::Result;
 use crate::generator::agent_executor::{AgentExecuteParams, extract};
@@ -29,18 +29,55 @@ impl CodeAnalyze {
         codes: &Vec<CodeDossier>,
         project_structure: &ProjectStructure,
     ) -> Result<Vec<CodeInsight>> {
-        let mut code_insights = vec![];
-        for code in codes {
-            let agent_params = self
-                .prepare_single_code_agent_params(project_structure, &code)
-                .await?;
-            let mut code_insight = extract::<CodeInsight>(context, agent_params).await?;
+        let max_parallels = context.config.llm.max_parallels;
+        
+        println!(
+            "🚀 启动并发代码分析，最大并发数：{}，总代码文件数：{}",
+            max_parallels, codes.len()
+        );
 
-            // LLM会重写source_summary，在这里排除掉并做覆盖
-            code_insight.code_dossier.source_summary = code.source_summary.to_owned();
-            code_insights.push(code_insight);
+        // 创建并发任务
+        let analysis_futures: Vec<_> = codes
+            .iter()
+            .map(|code| {
+                let code_clone = code.clone();
+                let context_clone = context.clone();
+                let project_structure_clone = project_structure.clone();
+                let language_processor = self.language_processor.clone();
+                
+                Box::pin(async move {
+                    let code_analyze = CodeAnalyze { language_processor };
+                    let agent_params = code_analyze
+                        .prepare_single_code_agent_params(&project_structure_clone, &code_clone)
+                        .await?;
+                    let mut code_insight = extract::<CodeInsight>(&context_clone, agent_params).await?;
+
+                    // LLM会重写source_summary，在这里排除掉并做覆盖
+                    code_insight.code_dossier.source_summary = code_clone.source_summary.to_owned();
+                    
+                    Result::<CodeInsight>::Ok(code_insight)
+                })
+            })
+            .collect();
+
+        // 使用do_parallel_with_limit进行并发控制
+        let analysis_results = do_parallel_with_limit(analysis_futures, max_parallels).await;
+
+        // 处理分析结果
+        let mut code_insights = Vec::new();
+        for result in analysis_results {
+            match result {
+                Ok(code_insight) => {
+                    code_insights.push(code_insight);
+                }
+                Err(e) => {
+                    eprintln!("代码分析失败: {}", e);
+                    return Err(e);
+                }
+            }
         }
 
+        println!("✓ 并发代码分析完成，成功分析{}个文件", code_insights.len());
         Ok(code_insights)
     }
 }

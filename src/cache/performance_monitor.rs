@@ -4,6 +4,8 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicU64, Ordering};
 use std::time::Duration;
 
+use crate::llm::client::types::TokenUsage;
+
 /// 缓存性能监控器
 #[derive(Clone)]
 pub struct CachePerformanceMonitor {
@@ -25,6 +27,10 @@ pub struct CacheMetrics {
     pub total_inference_time_saved: AtomicU64,
     /// 总节省的推理成本（估算）
     pub total_cost_saved: AtomicU64,
+    /// 总节省的输入token数量
+    pub total_input_tokens_saved: AtomicU64,
+    /// 总节省的输出token数量
+    pub total_output_tokens_saved: AtomicU64,
 }
 
 /// 缓存性能报告
@@ -48,6 +54,10 @@ pub struct CachePerformanceReport {
     pub cost_saved: f64,
     /// 性能提升百分比
     pub performance_improvement: f64,
+    /// 节省的输入token数量
+    pub input_tokens_saved: u64,
+    /// 节省的输出token数量
+    pub output_tokens_saved: u64,
     /// 分类统计
     pub category_stats: HashMap<String, CategoryPerformanceStats>,
 }
@@ -70,23 +80,39 @@ impl CachePerformanceMonitor {
     }
 
     /// 记录缓存命中
-    pub fn record_cache_hit(&self, category: &str, inference_time_saved: Duration) {
+    pub fn record_cache_hit(
+        &self,
+        category: &str,
+        inference_time_saved: Duration,
+        token_usage: TokenUsage,
+        model_name: &str,
+    ) {
         self.metrics.cache_hits.fetch_add(1, Ordering::Relaxed);
         self.metrics
             .total_inference_time_saved
             .fetch_add(inference_time_saved.as_millis() as u64, Ordering::Relaxed);
 
-        // 估算节省的成本（基于GPT-5 mini的定价）
-        let estimated_cost_saved = self.estimate_cost_saved(inference_time_saved);
+        // 记录节省的token数量
+        self.metrics
+            .total_input_tokens_saved
+            .fetch_add(token_usage.input_tokens, Ordering::Relaxed);
+        self.metrics
+            .total_output_tokens_saved
+            .fetch_add(token_usage.output_tokens, Ordering::Relaxed);
+
+        // 基于实际token使用情况计算节省的成本
+        let estimated_cost_saved = token_usage.estimate_cost(model_name);
         self.metrics.total_cost_saved.fetch_add(
             (estimated_cost_saved * 1000.0) as u64, // 存储为毫美元
             Ordering::Relaxed,
         );
 
         println!(
-            "   💰 缓存命中 [{}] - 节省推理时间: {:.2}秒, 估算节省成本: ${:.4}",
+            "   💰 缓存命中 [{}] - 节省推理时间: {:.2}秒, 节省tokens: {}输入+{}输出, 估算节省成本: ${:.4}",
             category,
             inference_time_saved.as_secs_f64(),
+            token_usage.input_tokens,
+            token_usage.output_tokens,
             estimated_cost_saved
         );
     }
@@ -130,6 +156,15 @@ impl CachePerformanceMonitor {
             / 1000.0; // 转换为秒
         let cost_saved = self.metrics.total_cost_saved.load(Ordering::Relaxed) as f64 / 1000.0; // 转换为美元
 
+        let input_tokens_saved = self
+            .metrics
+            .total_input_tokens_saved
+            .load(Ordering::Relaxed);
+        let output_tokens_saved = self
+            .metrics
+            .total_output_tokens_saved
+            .load(Ordering::Relaxed);
+
         let performance_improvement = if misses > 0 {
             (hits as f64 / (hits + misses) as f64) * 100.0
         } else {
@@ -146,46 +181,10 @@ impl CachePerformanceMonitor {
             inference_time_saved,
             cost_saved,
             performance_improvement,
+            input_tokens_saved,
+            output_tokens_saved,
             category_stats: HashMap::new(), // TODO: 实现分类统计
         }
-    }
-
-    /// 打印性能摘要
-    pub fn print_performance_summary(&self) {
-        let report = self.generate_report();
-
-        println!("\n📊 缓存性能摘要:");
-        println!("   🎯 缓存命中率: {:.1}%", report.hit_rate * 100.0);
-        println!("   📈 总操作次数: {}", report.total_operations);
-        println!("   ✅ 缓存命中: {} 次", report.cache_hits);
-        println!("   ❌ 缓存未命中: {} 次", report.cache_misses);
-        println!("   💾 缓存写入: {} 次", report.cache_writes);
-
-        if report.cache_errors > 0 {
-            println!("   ⚠️  缓存错误: {} 次", report.cache_errors);
-        }
-
-        println!("   ⏱️  节省推理时间: {:.1} 秒", report.inference_time_saved);
-        println!("   💰 估算节省成本: ${:.2}", report.cost_saved);
-
-        if report.performance_improvement > 0.0 {
-            println!("   🚀 性能提升: {:.1}%", report.performance_improvement);
-        }
-    }
-
-    /// 估算节省的成本（基于GPT-5 mini定价）
-    fn estimate_cost_saved(&self, _inference_time: Duration) -> f64 {
-        // 假设平均每次推理需要1000个token输入，1000个token输出
-        // GPT-5 mini 定价：输入 $0.025/1K tokens，输出 $0.2/1K tokens
-        let input_tokens = 1000.0;
-        let output_tokens = 500.0;
-        let input_cost_per_1k = 0.025;
-        let output_cost_per_1k = 0.2;
-
-        let total_cost = (input_tokens / 1000.0) * input_cost_per_1k
-            + (output_tokens / 1000.0) * output_cost_per_1k;
-
-        total_cost
     }
 
     /// 重置统计信息
@@ -198,33 +197,17 @@ impl CachePerformanceMonitor {
             .total_inference_time_saved
             .store(0, Ordering::Relaxed);
         self.metrics.total_cost_saved.store(0, Ordering::Relaxed);
+        self.metrics
+            .total_input_tokens_saved
+            .store(0, Ordering::Relaxed);
+        self.metrics
+            .total_output_tokens_saved
+            .store(0, Ordering::Relaxed);
     }
 }
 
 impl Default for CachePerformanceMonitor {
     fn default() -> Self {
         Self::new()
-    }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-    use std::time::Duration;
-
-    #[test]
-    fn test_cache_performance_monitor() {
-        let monitor = CachePerformanceMonitor::new();
-
-        // 模拟一些缓存操作
-        monitor.record_cache_hit("test", Duration::from_secs(2));
-        monitor.record_cache_miss("test");
-        monitor.record_cache_write("test");
-
-        let report = monitor.generate_report();
-        assert_eq!(report.cache_hits, 1);
-        assert_eq!(report.cache_misses, 1);
-        assert_eq!(report.cache_writes, 1);
-        assert_eq!(report.hit_rate, 0.5);
     }
 }

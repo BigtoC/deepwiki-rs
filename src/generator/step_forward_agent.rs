@@ -4,7 +4,7 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
-use crate::generator::agent_executor::{AgentExecuteParams, extract, prompt};
+use crate::generator::agent_executor::{AgentExecuteParams, extract, prompt, prompt_with_tools};
 use crate::generator::preprocess::memory::{MemoryScope, ScopedKeys};
 use crate::generator::research::memory::MemoryRetriever;
 use crate::{
@@ -63,6 +63,8 @@ pub enum LLMCallMode {
     Extract,
     /// 使用prompt方法，返回泛化推理文本
     Prompt,
+    /// 使用prompt方法，并提供Built-in Tools返回泛化推理文本
+    PromptWithTools,
 }
 
 /// 数据格式化配置
@@ -378,6 +380,10 @@ pub trait StepForwardAgent: Send + Sync {
             }
             LLMCallMode::Prompt => {
                 let result_text: String = prompt(context, params).await?;
+                serde_json::to_value(&result_text)?
+            }
+            LLMCallMode::PromptWithTools => {
+                let result_text: String = prompt_with_tools(context, params).await?;
                 serde_json::to_value(&result_text)?
             }
         };

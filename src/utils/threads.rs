@@ -18,11 +18,6 @@ where
             let permit = Arc::clone(&semaphore);
             async move {
                 let _permit = permit.acquire().await.unwrap();
-                #[cfg(debug_assertions)]
-                println!(
-                    "semaphore unlocked to execute task, max_concurrent = {}",
-                    max_concurrent
-                );
                 fut.await
             }
         })

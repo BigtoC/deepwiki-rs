@@ -37,7 +37,10 @@ impl<'a> AgentBuilder<'a> {
         if llm_config.enable_preset_tools {
             let file_explorer = AgentToolFileExplorer::new(self.config.clone());
             let file_reader = AgentToolFileReader::new(self.config.clone());
-            agent_builder = agent_builder.tool(file_explorer).tool(file_reader);
+            agent_builder = agent_builder
+            .tool(file_explorer)
+            .tool(file_reader)
+            .append_preamble("不要虚构不存在的代码，如果你需要了解更多项目的工程结构和源码内容，积极的调用工具来获得更多上下文补充");
         }
 
         agent_builder.build()
