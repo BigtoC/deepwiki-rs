@@ -42,9 +42,21 @@ pub struct Cli {
     #[arg(short, long)]
     pub verbose: bool,
 
-    /// LLM模型名称
+    /// 高能效模型，优先用于Litho引擎的常规推理任务
     #[arg(long)]
-    pub model: Option<String>,
+    pub model_efficient: Option<String>,
+
+    /// 高质量模型，优先用于Litho引擎的复杂推理任务，以及作为efficient失效情况下的兜底
+    #[arg(long)]
+    pub model_powerful: Option<String>,
+
+    /// LLM API基地址
+    #[arg(long)]
+    pub llm_api_base_url: Option<String>,
+
+    /// LLM API KEY
+    #[arg(long)]
+    pub llm_api_key: Option<String>,
 
     /// 最大tokens数
     #[arg(long)]
@@ -91,8 +103,19 @@ impl Cli {
         }
 
         // 覆盖LLM配置
-        if let Some(model) = self.model {
-            config.llm.model = model;
+        if let Some(llm_api_base_url) = self.llm_api_base_url {
+            config.llm.api_base_url = llm_api_base_url;
+        }
+        if let Some(llm_api_key) = self.llm_api_key {
+            config.llm.api_key = llm_api_key;
+        }
+        if let Some(model_efficient) = self.model_efficient {
+            config.llm.model_efficient = model_efficient;
+        }
+        if let Some(model_powerful) = self.model_powerful {
+            config.llm.model_powerful = model_powerful;
+        } else {
+            config.llm.model_powerful = config.llm.model_efficient.to_string();
         }
         if let Some(max_tokens) = self.max_tokens {
             config.llm.max_tokens = max_tokens;

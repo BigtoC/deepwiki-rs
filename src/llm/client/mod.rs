@@ -1,21 +1,18 @@
 //! LLM客户端 - 提供统一的LLM服务接口
 
 use anyhow::Result;
-use rig::{
-    client::{CompletionClient, ProviderClient},
-    completion::Prompt,
-    providers::mistral::Client,
-};
+use rig::{client::CompletionClient, completion::Prompt, providers::moonshot::Client};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::future::Future;
 
-use crate::config::Config;
+use crate::{config::Config, llm::client::utils::evaluate_befitting_model};
 
 mod agent_builder;
 mod error;
 mod react;
 mod react_executor;
+mod utils;
 
 pub use react::{ReActConfig, ReActResponse};
 
@@ -32,7 +29,10 @@ pub struct LLMClient {
 impl LLMClient {
     /// 创建新的LLM客户端
     pub fn new(config: Config) -> Result<Self> {
-        let client = Client::from_env();
+        let llm_config = &config.llm;
+        let client = Client::builder(&llm_config.api_key)
+            .base_url(&llm_config.api_base_url)
+            .build()?;
 
         Ok(Self { client, config })
     }
@@ -76,19 +76,53 @@ impl LLMClient {
     where
         T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,
     {
+        let (befitting_model, fallover_model) =
+            evaluate_befitting_model(&self.config.llm, system_prompt, user_prompt);
+
+        self.extract_inner(system_prompt, user_prompt, befitting_model, fallover_model)
+            .await
+    }
+
+    async fn extract_inner<T>(
+        &self,
+        system_prompt: &str,
+        user_prompt: &str,
+        befitting_model: String,
+        fallover_model: Option<String>,
+    ) -> Result<T>
+    where
+        T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,
+    {
         let llm_config = &self.config.llm;
 
         let extractor = self
             .client
-            .extractor::<T>(&llm_config.model)
+            .extractor::<T>(&befitting_model)
+            .retries(llm_config.retry_attempts.into())
             .preamble(system_prompt)
             .max_tokens(llm_config.max_tokens.into())
             .build();
 
-        self.retry_with_backoff(|| async {
-            extractor.extract(user_prompt).await.map_err(|e| e.into())
-        })
-        .await
+        match extractor.extract(user_prompt).await {
+            Ok(r) => Ok(r),
+            Err(e) => match fallover_model {
+                Some(ref model) => {
+                    eprintln!(
+                        "调用模型服务出错，尝试 {}次均失败，尝试使用备选模型...{}",
+                        llm_config.retry_attempts, model
+                    );
+                    Box::pin(self.extract_inner(system_prompt, user_prompt, model.clone(), None))
+                        .await
+                }
+                None => {
+                    eprintln!(
+                        "调用模型服务出错，尝试 {}次均失败",
+                        llm_config.retry_attempts
+                    );
+                    Err(e.into())
+                }
+            },
+        }
     }
 
     /// 智能对话方法（使用默认ReAct配置）

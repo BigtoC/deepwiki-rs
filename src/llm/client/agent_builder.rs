@@ -3,7 +3,7 @@
 use rig::{
     agent::Agent,
     client::CompletionClient,
-    providers::mistral::{Client, CompletionModel},
+    providers::moonshot::{Client, CompletionModel},
 };
 
 use crate::{
@@ -29,7 +29,7 @@ impl<'a> AgentBuilder<'a> {
 
         let mut agent_builder = self
             .client
-            .agent(&llm_config.model)
+            .agent(&llm_config.model_efficient)
             .preamble(system_prompt)
             .max_tokens(llm_config.max_tokens.into())
             .temperature(llm_config.temperature.into());
@@ -48,7 +48,7 @@ impl<'a> AgentBuilder<'a> {
         let llm_config = &self.config.llm;
 
         self.client
-            .agent(&llm_config.model)
+            .agent(&llm_config.model_efficient)
             .preamble(system_prompt)
             .max_tokens(llm_config.max_tokens.into())
             .temperature(llm_config.temperature.into())

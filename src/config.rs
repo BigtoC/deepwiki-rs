@@ -68,8 +68,17 @@ pub struct Config {
 /// LLM模型配置
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct LLMConfig {
-    /// 使用的模型
-    pub model: String,
+    /// LLM API KEY
+    pub api_key: String,
+
+    /// LLM API基地址
+    pub api_base_url: String,
+
+    /// 高能效模型，优先用于Litho引擎的常规推理任务
+    pub model_efficient: String,
+
+    /// 高质量模型，优先用于Litho引擎的复杂推理任务，以及作为efficient失效情况下的兜底
+    pub model_powerful: String,
 
     /// 最大tokens
     pub max_tokens: u32,
@@ -405,14 +414,17 @@ impl Default for Config {
 impl Default for LLMConfig {
     fn default() -> Self {
         Self {
-            model: "mistral-small-latest".to_string(),
-            max_tokens: 65536,
+            api_key: std::env::var("LITHO_LLM_API_KEY").unwrap_or_default(),
+            api_base_url: String::from("https://api-inference.modelscope.cn/v1"),
+            model_efficient: String::from("Qwen/Qwen3-Next-80B-A3B-Instruct"),
+            model_powerful: String::from("Qwen/Qwen3-235B-A22B-Instruct-2507"),
+            max_tokens: 131072,
             temperature: 0.1,
             retry_attempts: 5,
             retry_delay_ms: 5000,
             timeout_seconds: 300,
             enable_preset_tools: false,
-            max_parallels: 3,
+            max_parallels: 5,
         }
     }
 }
