@@ -1,5 +1,6 @@
-use crate::{config::Config, generator::workflow::launch};
+use crate::generator::workflow::launch;
 use anyhow::Result;
+use clap::Parser;
 
 mod cache;
 mod cli;
@@ -12,7 +13,8 @@ mod utils;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let config = Config::default(); // TODO:从CLI中读取传入
+    let args = cli::Args::parse();
+    let config = args.to_config();
 
     launch(&config).await
 }

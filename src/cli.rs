@@ -4,8 +4,13 @@ use std::path::PathBuf;
 
 /// DeepWiki-RS - 由Rust与AI驱动的项目知识库生成引擎
 #[derive(Parser, Debug)]
-#[command(author, version, about, long_about = None)]
-pub struct Cli {
+#[command(name = "Litho (deepwiki-rs)")]
+#[command(
+    about = "AI-based high-performance generation engine for documentation, It can intelligently analyze project structures, identify core modules, and generate professional architecture documentation."
+)]
+#[command(author = "Sopaco")]
+#[command(version)]
+pub struct Args {
     /// 项目路径
     #[arg(short, long, default_value = ".")]
     pub project_path: PathBuf,
@@ -70,6 +75,10 @@ pub struct Cli {
     #[arg(long)]
     pub max_parallels: Option<usize>,
 
+    /// 生成报告后,自动使用报告助手查看报告
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub enable_preset_tools: bool,
+
     /// 是否禁用缓存
     #[arg(long)]
     pub no_cache: bool,
@@ -79,7 +88,7 @@ pub struct Cli {
     pub force_regenerate: bool,
 }
 
-impl Cli {
+impl Args {
     /// 将CLI参数转换为配置
     pub fn to_config(self) -> Config {
         let mut config = if let Some(config_path) = &self.config {
@@ -126,6 +135,7 @@ impl Cli {
         if let Some(max_parallels) = self.max_parallels {
             config.llm.max_parallels = max_parallels;
         }
+        config.llm.enable_preset_tools = self.enable_preset_tools;
 
         // 缓存配置
         if self.no_cache {
