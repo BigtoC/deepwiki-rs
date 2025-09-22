@@ -21,7 +21,6 @@ pub struct CodeDossier {
     pub code_purpose: CodePurpose,
     /// 重要性分数
     pub importance_score: f64,
-    pub dependencies: Vec<String>,
     pub description: Option<String>,
     pub functions: Vec<String>,
     pub interfaces: Vec<String>,
