@@ -41,6 +41,7 @@
 
 - **Automated Documentation Generation**: Automatically generates comprehensive documentation by analyzing project code, reducing manual documentation efforts.
 - **AI-Powered Analysis**: Utilizes large language models (LLMs) with ReAct pattern for intelligent analysis, accurately identifying core components and architectural patterns in projects.
+- **C4 Architecture Documentation**: Generates professional C4 architecture-style documentation including Overview, Architecture, and detailed CoreComponents documentation.
 - **Multi-Format Output**: Supports generating documentation in multiple formats including Markdown and HTML to meet different needs and scenarios.
 - **Extensibility**: Modular design with a plugin system supports extension and customization for different project types and requirements.
 - **Multi-Language Support**: Capable of analyzing projects written in various programming languages including Rust, Python, JavaScript/TypeScript, Java, C/C++, and Go.
@@ -176,14 +177,55 @@ sequenceDiagram
 ### Basic Command
 
 ```sh
-litho --project <path-to-project> --output <output-directory>
+# Generate C4 architecture documentation (default mode)
+litho
+
+# Analyze specific project directory
+litho /path/to/your/project
+
+# Specify output directory
+litho -o ./docs
+
+# Specify project name
+litho --name "My Project"
+```
+
+### Documentation Modes
+
+**Litho** supports two documentation generation modes:
+
+#### C4 Architecture Mode (Default)
+Generates professional C4 architecture-style documentation:
+- `Overview.md`: Project overview, core functionality, and technology stack
+- `Architecture.md`: Overall architecture, core processes, and module breakdown
+- `CoreComponents/`: Detailed documentation for each core component
+
+```sh
+# Use C4 architecture mode (default)
+litho --doc-mode c4
+
+# Generate C4 documentation with custom output
+litho --doc-mode c4 -o ./architecture-docs
+```
+
+#### Standard Mode
+Generates traditional documentation format:
+
+```sh
+# Use standard documentation mode
+litho --doc-mode standard
 ```
 
 ### Advanced Options
 
 - Specify documentation format (Markdown or HTML):
   ```sh
-  litho --project <path-to-project> --output <output-directory> --format markdown,html
+  litho --format html
+  ```
+
+- Enable verbose logging:
+  ```sh
+  litho -v
   ```
 
 - Configure LLM settings:
@@ -199,6 +241,51 @@ litho --project <path-to-project> --output <output-directory>
 For more detailed usage information, run:
 ```sh
 litho --help
+```
+
+## 📁 Output Structure
+
+### C4 Architecture Mode (Default)
+
+Litho generates a C4 architecture-style documentation structure:
+
+```
+project-docs/
+├── Overview.md              # Project overview, core functionality, technology stack
+├── Architecture.md          # Overall architecture, core processes, module breakdown
+├── CoreComponents/          # Detailed component documentation
+│   ├── component1.md        # Component functionality, workflow, internal architecture
+│   ├── component2.md
+│   └── ...
+└── litho_work_summary.md    # Execution summary and process information
+```
+
+#### Document Contents
+
+- **Overview.md**: Contains project overview, core functionality & purpose, and technology selection rationale
+- **Architecture.md**: Contains overall architecture design, core processes & workflows, and detailed core module explanations
+- **CoreComponents/*.md**: Each core module's detailed documentation including:
+  - Module functionality and purpose
+  - Workflow and processing steps
+  - Internal architecture and structure
+
+### Standard Mode
+
+Traditional documentation structure:
+
+```
+project-docs/
+├── README.md                 # Main project overview
+├── architecture.md           # Architecture documentation
+├── components/              # Component documentation
+│   ├── component1.md
+│   └── component2.md
+├── api/                     # API documentation
+│   ├── endpoints.md
+│   └── schemas.md
+└── assets/                  # Generated diagrams and images
+    ├── architecture.svg
+    └── dependencies.png
 ```
 
 # 🤝 Contribute

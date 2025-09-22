@@ -1,159 +1,146 @@
-use clap::{Parser, ValueEnum};
+use crate::config::Config;
+use clap::Parser;
 use std::path::PathBuf;
 
-/// 命令行参数解析器
+/// DeepWiki-RS - 由Rust与AI驱动的项目知识库生成引擎
 #[derive(Parser, Debug)]
-#[command(version, about, long_about = None)]
-pub struct Cli {
-    /// 要分析的项目路径
+#[command(name = "Litho (deepwiki-rs)")]
+#[command(
+    about = "AI-based high-performance generation engine for documentation, It can intelligently analyze project structures, identify core modules, and generate professional architecture documentation."
+)]
+#[command(author = "Sopaco")]
+#[command(version)]
+pub struct Args {
+    /// 项目路径
     #[arg(short, long, default_value = ".")]
-    pub project: PathBuf,
+    pub project_path: PathBuf,
 
-    /// 文档输出路径
+    /// 输出路径
     #[arg(short, long, default_value = "./litho.docs")]
-    pub output: PathBuf,
+    pub output_path: PathBuf,
 
     /// 配置文件路径
-    #[arg(long, default_value = "./litho.toml")]
-    pub config: PathBuf,
+    #[arg(short, long)]
+    pub config: Option<PathBuf>,
 
-    /// 文档格式
-    #[arg(long, default_value = "markdown")]
+    /// 项目名称
+    #[arg(short, long)]
+    pub name: Option<String>,
+
+    /// 文档格式 (markdown, html)
+    #[arg(short, long, default_value = "markdown")]
     pub format: String,
 
-    /// 最大递归深度
-    #[arg(short, long, default_value_t = 10)]
-    pub depth: u8,
-
-    /// 跳过元数据提取
+    /// 是否跳过项目预处理
     #[arg(long)]
-    pub skip_metadata: bool,
+    pub skip_preprocessing: bool,
 
-    /// 跳过LLM分析
+    /// 是否跳过调研文档生成
     #[arg(long)]
-    pub skip_analysis: bool,
+    pub skip_research: bool,
 
-    /// 不分析依赖关系
+    /// 是否跳过最终文档生成
     #[arg(long)]
-    pub no_deps: bool,
+    pub skip_documentation: bool,
 
-    /// 不识别核心组件
-    #[arg(long)]
-    pub no_components: bool,
-
-    /// 不包括测试文件
-    #[arg(long)]
-    pub no_tests: bool,
-
-    /// 包括隐藏文件
-    #[arg(long)]
-    pub include_hidden: bool,
-
-    /// 排除指定扩展名的文件（例如：--exclude-ext jpg,png,pdf）
-    #[arg(long, value_delimiter = ',')]
-    pub exclude_ext: Vec<String>,
-
-    /// 只包含指定扩展名的文件（例如：--include-ext rs,py,js）
-    #[arg(long, value_delimiter = ',')]
-    pub include_ext: Vec<String>,
-
-    /// 启用ReAct模式进行自主探索
-    #[arg(long)]
-    pub react_mode: bool,
-
-    /// ReAct模式的最大迭代次数
-    #[arg(long, default_value = "20")]
-    pub max_iterations: usize,
-
-    /// 探索深度级别
-    #[arg(long, value_enum, default_value = "medium")]
-    pub exploration_depth: ExplorationDepth,
-
-    /// 启用详细日志
-    #[arg(long)]
+    /// 是否启用详细日志
+    #[arg(short, long)]
     pub verbose: bool,
 
-    /// 调试模式
+    /// 高能效模型，优先用于Litho引擎的常规推理任务
     #[arg(long)]
-    pub debug: bool,
+    pub model_efficient: Option<String>,
 
-    /// 要生成的文档类型
+    /// 高质量模型，优先用于Litho引擎的复杂推理任务，以及作为efficient失效情况下的兜底
     #[arg(long)]
-    pub doc_type: Option<String>,
+    pub model_powerful: Option<String>,
+
+    /// LLM API基地址
+    #[arg(long)]
+    pub llm_api_base_url: Option<String>,
+
+    /// LLM API KEY
+    #[arg(long)]
+    pub llm_api_key: Option<String>,
+
+    /// 最大tokens数
+    #[arg(long)]
+    pub max_tokens: Option<u32>,
+
+    /// 温度参数
+    #[arg(long)]
+    pub temperature: Option<f32>,
+
+    /// 温度参数
+    #[arg(long)]
+    pub max_parallels: Option<usize>,
+
+    /// 生成报告后,自动使用报告助手查看报告
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
+    pub enable_preset_tools: bool,
+
+    /// 是否禁用缓存
+    #[arg(long)]
+    pub no_cache: bool,
+
+    /// 强制重新生成（清除缓存）
+    #[arg(long)]
+    pub force_regenerate: bool,
 }
 
-/// 探索深度级别
-#[derive(ValueEnum, Clone, Debug)]
-pub enum ExplorationDepth {
-    /// 只分析主要文件和目录
-    Shallow,
-    /// 分析大部分代码文件
-    Medium,
-    /// 深入分析所有相关文件
-    Deep,
-}
-
-/// 文档类型枚举
-#[derive(ValueEnum, Clone, Debug)]
-pub enum DocType {
-    /// 架构文档
-    Architecture,
-    /// API文档
-    Api,
-    /// 用户手册
-    UserManual,
-    /// 所有文档
-    All,
-}
-
-impl Cli {
-    /// 从命令行参数创建配置
-    pub fn to_config(&self) -> crate::config::Config {
-        // 首先尝试从配置文件加载，如果失败则使用默认配置
-        let mut config = if self.config.exists() {
-            match crate::config::Config::from_file(&self.config) {
-                Ok(config) => {
-                    println!("已加载配置文件: {}", self.config.display());
-                    config
-                }
-                Err(e) => {
-                    eprintln!("警告: 无法加载配置文件 {}: {}", self.config.display(), e);
-                    eprintln!("使用默认配置");
-                    crate::config::Config::default()
-                }
-            }
+impl Args {
+    /// 将CLI参数转换为配置
+    pub fn to_config(self) -> Config {
+        let mut config = if let Some(config_path) = &self.config {
+            Config::from_file(config_path).unwrap_or_else(|_| {
+                eprintln!("警告: 无法读取配置文件 {:?}，使用默认配置", config_path);
+                Config::default()
+            })
         } else {
-            crate::config::Config::default()
+            Config::default()
         };
 
-        // 应用命令行参数到配置（命令行参数优先级更高）
-        config.project_path = self.project.clone();
-        config.output_path = self.output.clone();
-        config.document_format = self.format.clone();
-        config.max_depth = self.depth;
-        config.include_tests = !self.no_tests;
-        config.include_hidden = self.include_hidden;
-        config.analyze_dependencies = !self.no_deps;
-        config.identify_components = !self.no_components;
+        // 覆盖配置文件中的设置
+        config.project_path = self.project_path.clone();
+        config.output_path = self.output_path;
+        config.internal_path = self.project_path.join(".litho");
+        config.document_format = self.format;
 
-        // 处理文件扩展名过滤（命令行参数会覆盖配置文件）
-        if !self.exclude_ext.is_empty() {
-            config.excluded_extensions = self.exclude_ext.clone();
+        // 项目名称处理：CLI参数优先级最高，如果CLI没有指定且配置文件也没有，get_project_name()会自动推断
+        if let Some(name) = self.name {
+            config.project_name = Some(name);
         }
 
-        if !self.include_ext.is_empty() {
-            config.included_extensions = self.include_ext.clone();
+        // 覆盖LLM配置
+        if let Some(llm_api_base_url) = self.llm_api_base_url {
+            config.llm.api_base_url = llm_api_base_url;
         }
+        if let Some(llm_api_key) = self.llm_api_key {
+            config.llm.api_key = llm_api_key;
+        }
+        if let Some(model_efficient) = self.model_efficient {
+            config.llm.model_efficient = model_efficient;
+        }
+        if let Some(model_powerful) = self.model_powerful {
+            config.llm.model_powerful = model_powerful;
+        } else {
+            config.llm.model_powerful = config.llm.model_efficient.to_string();
+        }
+        if let Some(max_tokens) = self.max_tokens {
+            config.llm.max_tokens = max_tokens;
+        }
+        if let Some(temperature) = self.temperature {
+            config.llm.temperature = temperature;
+        }
+        if let Some(max_parallels) = self.max_parallels {
+            config.llm.max_parallels = max_parallels;
+        }
+        config.llm.enable_preset_tools = self.enable_preset_tools;
 
-        // 处理ReAct模式配置
-        config.react.enable_react_mode = self.react_mode;
-        config.react.max_iterations = self.max_iterations;
-        config.react.exploration_depth = match self.exploration_depth {
-            ExplorationDepth::Shallow => crate::react::config::ExplorationDepth::Shallow,
-            ExplorationDepth::Medium => crate::react::config::ExplorationDepth::Medium,
-            ExplorationDepth::Deep => crate::react::config::ExplorationDepth::Deep,
-        };
-        config.react.verbose_logging = self.verbose;
+        // 缓存配置
+        if self.no_cache {
+            config.cache.enabled = false;
+        }
 
         config
     }
