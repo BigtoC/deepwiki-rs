@@ -155,7 +155,7 @@ impl StepForwardAgent for ArchitectureEditor {
 
 请基于调研材料生成一份符合以上要求的高质量架构文档。"#.to_string(),
 
-            llm_call_mode: LLMCallMode::Prompt,
+            llm_call_mode: LLMCallMode::PromptWithTools,
             formatter_config: FormatterConfig::default(),
         }
     }

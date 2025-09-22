@@ -392,11 +392,25 @@ impl AgentToolFileExplorer {
         // 基于文件类型的权重
         if let Some(extension) = path.extension().and_then(|e| e.to_str()) {
             match extension.to_lowercase().as_str() {
-                "rs" | "py" | "java" | "kt" | "cpp" | "c" | "go" | "rb" | "php" => score += 0.3,
-                "jsx" | "tsx" => score += 0.35,
+                // 主要编程语言
+                "rs" | "py" | "java" | "kt" | "cpp" | "c" | "go" | "rb" | "php" | "m" | "swift"
+                | "dart" => score += 0.3,
+                // React 特殊文件
+                "jsx" | "tsx" => score += 0.3,
+                // JavaScript/TypeScript 生态
                 "js" | "ts" | "mjs" | "cjs" => score += 0.3,
+                // 前端框架文件
                 "vue" | "svelte" => score += 0.3,
-                "toml" | "yaml" | "yml" | "json" | "xml" => score += 0.1,
+                // 配置文件
+                "toml" | "yaml" | "yml" | "json" | "xml" | "ini" | "env" => score += 0.1,
+                // 构建和包管理文件
+                "gradle" | "pom" => score += 0.15,
+                "package" => score += 0.15,
+                "lock" => score += 0.05,
+                // 样式文件
+                "css" | "scss" | "sass" | "less" | "styl" => score += 0.1,
+                // 模板文件
+                "html" | "htm" | "hbs" | "mustache" | "ejs" => score += 0.1,
                 _ => {}
             }
         }

@@ -1,10 +1,8 @@
-use crate::generator::{
-    step_forward_agent::{
-        AgentDataConfig, DataSource, FormatterConfig, LLMCallMode, PromptTemplate, StepForwardAgent,
-    },
-};
 use crate::generator::research::memory::MemoryScope;
 use crate::generator::research::types::AgentType;
+use crate::generator::step_forward_agent::{
+    AgentDataConfig, DataSource, FormatterConfig, LLMCallMode, PromptTemplate, StepForwardAgent,
+};
 
 /// 架构调研员 - 负责分析项目的整体架构
 #[derive(Default)]
@@ -46,7 +44,7 @@ impl StepForwardAgent for ArchitectureResearcher {
 - 重点体现核心组件和交互模式"#
                 .to_string(),
 
-            llm_call_mode: LLMCallMode::Prompt, // 使用prompt模式
+            llm_call_mode: LLMCallMode::PromptWithTools, // 使用prompt模式
             formatter_config: FormatterConfig::default(),
         }
     }

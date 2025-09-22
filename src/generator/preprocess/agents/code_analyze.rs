@@ -1,7 +1,8 @@
+use crate::generator::agent_executor::{AgentExecuteParams, extract};
 use crate::{
     generator::{
         context::GeneratorContext,
-        preprocess::{ extractors::language_processors::LanguageProcessorManager},
+        preprocess::extractors::language_processors::LanguageProcessorManager,
     },
     types::{
         code::{CodeDossier, CodeInsight},
@@ -10,7 +11,6 @@ use crate::{
     utils::{sources::read_dependency_code_source, threads::do_parallel_with_limit},
 };
 use anyhow::Result;
-use crate::generator::agent_executor::{AgentExecuteParams, extract};
 
 pub struct CodeAnalyze {
     language_processor: LanguageProcessorManager,
@@ -30,11 +30,6 @@ impl CodeAnalyze {
         project_structure: &ProjectStructure,
     ) -> Result<Vec<CodeInsight>> {
         let max_parallels = context.config.llm.max_parallels;
-        
-        println!(
-            "🚀 启动并发代码分析，最大并发数：{}，总代码文件数：{}",
-            max_parallels, codes.len()
-        );
 
         // 创建并发任务
         let analysis_futures: Vec<_> = codes
@@ -44,17 +39,18 @@ impl CodeAnalyze {
                 let context_clone = context.clone();
                 let project_structure_clone = project_structure.clone();
                 let language_processor = self.language_processor.clone();
-                
+
                 Box::pin(async move {
                     let code_analyze = CodeAnalyze { language_processor };
                     let agent_params = code_analyze
                         .prepare_single_code_agent_params(&project_structure_clone, &code_clone)
                         .await?;
-                    let mut code_insight = extract::<CodeInsight>(&context_clone, agent_params).await?;
+                    let mut code_insight =
+                        extract::<CodeInsight>(&context_clone, agent_params).await?;
 
                     // LLM会重写source_summary，在这里排除掉并做覆盖
                     code_insight.code_dossier.source_summary = code_clone.source_summary.to_owned();
-                    
+
                     Result::<CodeInsight>::Ok(code_insight)
                 })
             })

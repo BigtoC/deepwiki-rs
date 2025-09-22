@@ -119,7 +119,7 @@ impl Tool for AgentToolFileReader {
     async fn definition(&self, _prompt: String) -> rig::completion::ToolDefinition {
         rig::completion::ToolDefinition {
             name: Self::NAME.to_string(),
-            description: "读取文件内容，支持指定行范围和最大行数限制。自动处理大文件和二进制文件。"
+            description: "读取项目的源代码或基于文本的内容，支持指定行范围和最大行数限制。自动处理大文件和二进制文件。"
                 .to_string(),
             parameters: serde_json::json!({
                 "type": "object",
@@ -138,7 +138,7 @@ impl Tool for AgentToolFileReader {
                     },
                     "max_lines": {
                         "type": "integer",
-                        "description": "最大读取行数限制（从文件开头开始）"
+                        "description": "最大读取行数限制（从文件开头开始，默认为200）"
                     }
                 },
                 "required": ["file_path"]
