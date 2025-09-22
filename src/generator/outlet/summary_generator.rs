@@ -553,8 +553,8 @@ impl SummaryContentGenerator {
         ));
 
         if !data.generated_docs.is_empty() {
-            content.push_str("**文档类型**: \n-");
-            content.push_str(&data.generated_docs.join("\n-"));
+            content.push_str("**文档类型**: \n - ");
+            content.push_str(&data.generated_docs.join("\n - "));
             content.push_str("\n");
         }
         content.push_str("\n");
@@ -588,9 +588,9 @@ impl SummaryContentGenerator {
             "**执行效率**: {:.2}s ",
             timing.total_execution_time
         ));
-        if timing.total_execution_time <= 30.0 {
+        if timing.total_execution_time <= 60.0 {
             content.push_str("🟢 快速\n");
-        } else if timing.total_execution_time <= 120.0 {
+        } else if timing.total_execution_time <= 300.0 {
             content.push_str("🟡 正常\n");
         } else {
             content.push_str("🔴 较慢\n");
