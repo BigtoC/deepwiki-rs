@@ -53,13 +53,14 @@ impl ReActExecutor {
                     let (content, tool_calls) = Self::extract_partial_result(&chat_history);
                     tool_calls_history.extend(tool_calls);
 
-                    Ok(ReActResponse::max_depth_reached(
+                    Ok(ReActResponse::max_depth_reached_with_history(
                         format!(
                             "{}\n\n[注意: 对话因达到最大迭代次数({})而被截断]",
                             content, max_depth
                         ),
                         max_depth,
                         tool_calls_history,
+                        chat_history.to_vec(),
                     ))
                 } else {
                     Err(anyhow::anyhow!(

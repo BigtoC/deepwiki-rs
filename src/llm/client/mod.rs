@@ -8,17 +8,19 @@ use std::future::Future;
 
 use crate::{config::Config, llm::client::utils::evaluate_befitting_model};
 
-pub mod types;
-pub mod utils;
 mod agent_builder;
 mod error;
 mod react;
 mod react_executor;
+mod summary_reasoner;
+pub mod types;
+pub mod utils;
 
 pub use react::{ReActConfig, ReActResponse};
 
 use agent_builder::AgentBuilder;
 use react_executor::ReActExecutor;
+use summary_reasoner::SummaryReasoner;
 
 /// LLM客户端 - 提供统一的LLM服务接口
 #[derive(Clone)]
@@ -145,12 +147,80 @@ impl LLMClient {
         let agent_builder = self.get_agent_builder();
         let agent = agent_builder.build_agent_with_tools(system_prompt);
 
-        self.retry_with_backoff(|| async {
-            ReActExecutor::execute(&agent, user_prompt, &react_config)
+        let response = self
+            .retry_with_backoff(|| async {
+                ReActExecutor::execute(&agent, user_prompt, &react_config)
+                    .await
+                    .map_err(|e| e.into())
+            })
+            .await?;
+
+        // 如果达到最大迭代次数且启用了总结推理，则尝试fallover
+        if response.stopped_by_max_depth
+            && react_config.enable_summary_reasoning
+            && response.chat_history.is_some()
+        {
+            if react_config.verbose {
+                println!("🔄 启动ReAct Agent总结转直接推理模式...");
+            }
+
+            match self
+                .try_summary_reasoning(system_prompt, user_prompt, &response)
+                .await
+            {
+                Ok(summary_response) => {
+                    if react_config.verbose {
+                        println!("✅ 总结推理完成");
+                    }
+                    return Ok(summary_response);
+                }
+                Err(e) => {
+                    if react_config.verbose {
+                        println!("⚠️  总结推理失败，返回原始部分结果: {}", e);
+                    }
+                    // 总结推理失败时，返回原始的部分结果
+                }
+            }
+        }
+
+        Ok(response)
+    }
+
+    /// 尝试总结推理fallover
+    async fn try_summary_reasoning(
+        &self,
+        system_prompt: &str,
+        user_prompt: &str,
+        original_response: &ReActResponse,
+    ) -> Result<ReActResponse> {
+        let agent_builder = self.get_agent_builder();
+        let agent_without_tools = agent_builder.build_agent_without_tools(system_prompt);
+
+        let chat_history = original_response
+            .chat_history
+            .as_ref()
+            .ok_or_else(|| anyhow::anyhow!("缺少对话历史"))?;
+
+        let summary_result = self
+            .retry_with_backoff(|| async {
+                SummaryReasoner::summarize_and_reason(
+                    &agent_without_tools,
+                    system_prompt,
+                    user_prompt,
+                    chat_history,
+                    &original_response.tool_calls_history,
+                )
                 .await
                 .map_err(|e| e.into())
-        })
-        .await
+            })
+            .await?;
+
+        Ok(ReActResponse::from_summary_reasoning(
+            summary_result,
+            original_response.iterations_used,
+            original_response.tool_calls_history.clone(),
+            chat_history.clone(),
+        ))
     }
 
     /// 简化的单轮对话方法（不使用工具）
