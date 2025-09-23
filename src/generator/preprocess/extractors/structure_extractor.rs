@@ -420,7 +420,6 @@ impl StructureExtractor {
 
         for file in core_files {
             let code_purpose = self.determine_code_purpose(file).await;
-            let dependencies = self.extract_file_dependencies(file).await?;
 
             // 提取接口信息
             let interfaces = self.extract_file_interfaces(file).await.unwrap_or_default();
@@ -436,7 +435,6 @@ impl StructureExtractor {
                 source_summary,
                 code_purpose,
                 importance_score: file.importance_score,
-                dependencies,
                 description: None,           // 稍后通过LLM分析填充
                 functions: Vec::new(),       // 稍后通过代码分析填充
                 interfaces: interface_names, // 从代码分析中提取的接口名称
@@ -467,34 +465,6 @@ impl StructureExtractor {
                 CodePurposeMapper::map_by_path_and_name(&file.path.to_string_lossy(), &file.name)
             }
         }
-    }
-
-    async fn extract_file_dependencies(&self, file: &FileInfo) -> Result<Vec<String>> {
-        // 构建完整文件路径
-        let full_path = if file.path.is_absolute() {
-            file.path.clone()
-        } else {
-            file.path.clone()
-        };
-
-        // 尝试读取文件内容
-        if let Ok(content) = tokio::fs::read_to_string(&full_path).await {
-            // 使用语言处理器提取依赖
-            let deps = self
-                .language_processor
-                .extract_dependencies(&full_path, &content);
-
-            // 只返回内部依赖的名称
-            let internal_deps: Vec<String> = deps
-                .into_iter()
-                .filter(|dep| !dep.is_external)
-                .map(|dep| dep.name)
-                .collect();
-
-            return Ok(internal_deps);
-        }
-
-        Ok(Vec::new())
     }
 
     /// 提取文件接口信息
