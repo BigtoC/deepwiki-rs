@@ -19,7 +19,7 @@
 <hr />
 
 # 👋 Litho是什么
-**Litho**（也称为deepwiki-rs）是一个基于Rust的高性能AI文档生成引擎，能够自动为软件项目创建全面的技术说明文档。通过先进的AI分析能力，Litho智能地探索项目结构，识别核心组件，分析依赖关系，并生成专业的架构文档。
+**Litho**（也称为deepwiki-rs）是一个基于Rust的高性能AI文档生成引擎，能够自动为软件项目创建全面的技术说明文档。通过先进的AI分析能力，Litho智能地探索项目结构，识别核心模块，分析依赖关系，并生成专业的架构文档。
 
 **Litho**采用基于静态代码分析 与 AI Multi-Agents的多引擎工作流，将静态代码分析与大型语言模型（LLM）智能相结合。系统使用专门的AI智能体对系统上下文、架构模式、业务工作流和核心模块洞察进行深度研究，最终生成包含概述、架构和详细的技术主题说明文档。
 
@@ -35,7 +35,7 @@
 - **ReAct模式集成**：利用ReAct（推理+行动）模式进行系统化的代码库探索和分析。
 - **缓存与性能优化**：包含智能缓存系统和并行处理能力，用于高效的大规模项目分析。
 - **可扩展架构**：模块化设计，基于特征的语言处理器和智能体系统，支持轻松扩展新语言和分析能力。
-- **专业文档输出**：生成具有适当结构、图表和详细组件分析的markdown和HTML文档。
+- **专业文档输出**：生成具有适当结构、图表和详细模块分析的markdown和HTML文档。
 
 # 🧠 工作原理
 
@@ -43,7 +43,7 @@
 
 ## 四阶段处理流水线
 
-1. **预处理阶段**：提取项目结构，使用特定语言处理器分析代码文件，识别核心组件和依赖关系。
+1. **预处理阶段**：提取项目结构，使用特定语言处理器分析代码文件，识别核心模块和依赖关系。
 2. **研究阶段**：部署多个专门的AI智能体进行深度分析：
    - **系统上下文研究员**：分析整体系统上下文和外部集成
    - **架构研究员**：识别架构模式和设计原则
@@ -52,7 +52,7 @@
 3. **编排阶段**：智能文档编辑器将研究结果综合为专业文档：
    - **概述编辑器**：生成项目概述和核心功能文档
    - **架构编辑器**：创建全面的架构文档
-   - **关键模块洞察编辑器**：生成详细的核心组件文档
+   - **关键模块洞察编辑器**：生成详细的核心模块文档
 4. **输出阶段**：格式化并输出所需格式的最终文档。
 
 ### 预处理阶段
@@ -129,13 +129,13 @@ flowchart TB
         Context[生成器上下文]
         Memory[共享内存]
     end
-    
+
     subgraph "预处理阶段"
         StructureExtractor[结构提取器]
         LanguageProcessors[语言处理器]
         CodeAnalyzer[代码分析器]
     end
-    
+
     subgraph "研究阶段"
         ResearchOrchestrator[研究协调器]
         SystemContextAgent[系统上下文智能体]
@@ -143,44 +143,44 @@ flowchart TB
         WorkflowAgent[工作流智能体]
         DomainModuleAgent[领域模块智能体]
     end
-    
+
     subgraph "编排阶段"
         OverviewEditor[概述编辑器]
         ArchitectureEditor[架构编辑器]
         CoreModulesEditor[核心模块编辑器]
     end
-    
+
     subgraph "输出阶段"
         SummaryGenerator[摘要生成器]
         DiskOutlet[磁盘输出器]
     end
-    
+
     subgraph "基础设施"
         LLMClient[LLM客户端]
         CacheManager[缓存管理器]
         FileTools[文件工具]
     end
-    
+
     Workflow --> Context
     Context --> Memory
-    
+
     Workflow --> StructureExtractor
     StructureExtractor --> LanguageProcessors
     LanguageProcessors --> CodeAnalyzer
-    
+
     Workflow --> ResearchOrchestrator
     ResearchOrchestrator --> SystemContextAgent
     ResearchOrchestrator --> ArchitectureAgent
     ResearchOrchestrator --> WorkflowAgent
     ResearchOrchestrator --> DomainModuleAgent
-    
+
     Workflow --> OverviewEditor
     Workflow --> ArchitectureEditor
     Workflow --> CoreModulesEditor
-    
+
     Workflow --> SummaryGenerator
     SummaryGenerator --> DiskOutlet
-    
+
     Context --> LLMClient
     Context --> CacheManager
     LLMClient --> FileTools
@@ -307,7 +307,7 @@ litho --name "我的项目"
 - `1、项目概述`：项目概述、核心功能和技术栈分析
 - `2、架构概览`：全面的架构设计、核心流程和模块分解
 - `3、架构概览`：全面的架构设计、核心流程和模块分解
-- `4、深入研究/`：每个识别出的核心组件的详细文档
+- `4、深入研究/`：每个识别出的核心模块的详细文档
 - `__Litho_Summary_Brief__.md`：生成过程总结摘要
 - `__Litho_Summary_Detail__.md`：生成过程执行详情
 
@@ -358,7 +358,7 @@ project-docs/
 ├── 2、架构概览          # 整体架构、核心流程、模块分解
 ├── 3、工作流程          # 整体架构、核心流程、模块分解
 ├── 4、深入研究/          # 详细的技术主题实现文档
-│   ├── 主题1.md        
+│   ├── 主题1.md
 │   ├── 主题2.md
 │   └── ...
 ```

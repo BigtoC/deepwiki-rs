@@ -26,7 +26,7 @@
 
 
 # 👋 What's Litho
-**Litho** (also known as deepwiki-rs) is a high-performance AI documentation generation engine built with Rust, capable of automatically creating comprehensive technical documentation for software projects. Through advanced AI analysis capabilities, Litho intelligently explores project structures, identifies core components, analyzes dependency relationships, and generates professional architecture documentation.
+**Litho** (also known as deepwiki-rs) is a high-performance AI documentation generation engine built with Rust, capable of automatically creating comprehensive technical documentation for software projects. Through advanced AI analysis capabilities, Litho intelligently explores project structures, identifies core modules, analyzes dependency relationships, and generates professional architecture documentation.
 
 **Litho** employs a multi-engine workflow based on static code analysis and AI Multi-Agents, combining static code analysis with large language model (LLM) intelligence. The system uses specialized AI agents to conduct deep research on system context, architecture patterns, business workflows, and core module insights, ultimately generating comprehensive documentation including overview, architecture, and detailed technical topic documentation.
 
@@ -42,7 +42,7 @@
 - **ReAct Pattern Integration**: Utilizes ReAct (Reasoning + Acting) pattern for systematic codebase exploration and analysis.
 - **Caching & Performance Optimization**: Includes intelligent caching system and parallel processing capabilities for efficient large-scale project analysis.
 - **Extensible Architecture**: Modular design with trait-based language processors and agent system supporting easy extension for new languages and analysis capabilities.
-- **Professional Documentation Output**: Generates markdown and HTML documentation with proper structure, diagrams, and detailed component analysis.
+- **Professional Documentation Output**: Generates markdown and HTML documentation with proper structure, diagrams, and detailed module analysis.
 
 # 🧠 How it works
 
@@ -50,7 +50,7 @@
 
 ## Four-Stage Processing Pipeline
 
-1. **Preprocessing Stage**: Extracts project structure, analyzes code files with language-specific processors, and identifies core components and dependencies.
+1. **Preprocessing Stage**: Extracts project structure, analyzes code files with language-specific processors, and identifies core modules and dependencies.
 2. **Research Stage**: Deploys multiple specialized AI agents to conduct deep analysis:
    - **System Context Researcher**: Analyzes overall system context and external integrations
    - **Architecture Researcher**: Identifies architectural patterns and design principles
@@ -59,7 +59,7 @@
 3. **Compose Stage**: Intelligent document editors synthesize research findings into professional documentation:
    - **Overview Editor**: Generates project overview and core functionality documentation
    - **Architecture Editor**: Creates comprehensive architecture documentation
-   - **Key Modules Insight Editor**: Produces detailed core component documentation
+   - **Key Modules Insight Editor**: Produces detailed core modules documentation
 4. **Output Stage**: Formats and outputs the final documentation in the requested format.
 
 ### Preprocessing Stage
@@ -135,13 +135,13 @@ flowchart TB
         Context[Generator Context]
         Memory[Shared Memory]
     end
-    
+
     subgraph "Preprocessing Stage"
         StructureExtractor[Structure Extractor]
         LanguageProcessors[Language Processors]
         CodeAnalyzer[Code Analyzer]
     end
-    
+
     subgraph "Research Stage"
         ResearchOrchestrator[Research Orchestrator]
         SystemContextAgent[System Context Agent]
@@ -149,44 +149,44 @@ flowchart TB
         WorkflowAgent[Workflow Agent]
         DomainModuleAgent[Domain Module Agent]
     end
-    
+
     subgraph "Compose Stage"
         OverviewEditor[Overview Editor]
         ArchitectureEditor[Architecture Editor]
         CoreModulesEditor[Core Modules Editor]
     end
-    
+
     subgraph "Output Stage"
         SummaryGenerator[Summary Generator]
         DiskOutlet[Disk Outlet]
     end
-    
+
     subgraph "Infrastructure"
         LLMClient[LLM Client]
         CacheManager[Cache Manager]
         FileTools[File Tools]
     end
-    
+
     Workflow --> Context
     Context --> Memory
-    
+
     Workflow --> StructureExtractor
     StructureExtractor --> LanguageProcessors
     LanguageProcessors --> CodeAnalyzer
-    
+
     Workflow --> ResearchOrchestrator
     ResearchOrchestrator --> SystemContextAgent
     ResearchOrchestrator --> ArchitectureAgent
     ResearchOrchestrator --> WorkflowAgent
     ResearchOrchestrator --> DomainModuleAgent
-    
+
     Workflow --> OverviewEditor
     Workflow --> ArchitectureEditor
     Workflow --> CoreModulesEditor
-    
+
     Workflow --> SummaryGenerator
     SummaryGenerator --> DiskOutlet
-    
+
     Context --> LLMClient
     Context --> CacheManager
     LLMClient --> FileTools
@@ -313,7 +313,7 @@ litho --name "My Project"
 - `1. Project Overview`: Project overview, core functionality, and technology stack analysis
 - `2. Architecture Overview`: Comprehensive architecture design, core processes, and module breakdown
 - `3. Workflow Overview`: Comprehensive architecture design, core processes, and module breakdown
-- `4. Deep Dive/`: Detailed technical topic implementation documentation for each identified core component
+- `4. Deep Dive/`: Detailed technical topic implementation documentation for each identified core modules topic
 - `__Litho_Summary_Brief__.md`: Generation process summary brief
 - `__Litho_Summary_Detail__.md`: Generation process execution details
 
@@ -364,7 +364,7 @@ project-docs/
 ├── 2. Architecture Overview # Overall architecture, core processes, module breakdown
 ├── 3. Workflow Overview     # Overall architecture, core processes, module breakdown
 ├── 4. Deep Dive/            # Detailed technical topic implementation documentation
-│   ├── Topic1.md        
+│   ├── Topic1.md
 │   ├── Topic2.md
 │   └── ...
 ```
