@@ -1,16 +1,11 @@
-use std::sync::Arc;
 use std::collections::HashMap;
+use std::sync::Arc;
 
-use tokio::sync::RwLock;
 use anyhow::Result;
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
+use tokio::sync::RwLock;
 
-use crate::{
-    cache::CacheManager, 
-    config::Config, 
-    llm::client::LLMClient, 
-    memory::Memory,
-};
+use crate::{cache::CacheManager, config::Config, llm::client::LLMClient, memory::Memory};
 
 #[derive(Clone)]
 pub struct GeneratorContext {
@@ -33,7 +28,7 @@ impl GeneratorContext {
         let mut memory = self.memory.write().await;
         memory.store(scope, key, data)
     }
-    
+
     /// 从 Memory 获取数据
     pub async fn get_from_memory<T>(&self, scope: &str, key: &str) -> Option<T>
     where
@@ -42,25 +37,19 @@ impl GeneratorContext {
         let mut memory = self.memory.write().await;
         memory.get(scope, key)
     }
-    
+
     /// 检查Memory中是否存在指定数据
     pub async fn has_memory_data(&self, scope: &str, key: &str) -> bool {
         let memory = self.memory.read().await;
         memory.has_data(scope, key)
     }
-    
+
     /// 获取作用域内的所有数据键
     pub async fn list_memory_keys(&self, scope: &str) -> Vec<String> {
         let memory = self.memory.read().await;
         memory.list_keys(scope)
     }
-    
-    /// 清理指定作用域的数据
-    pub async fn clear_memory_scope(&self, scope: &str) -> Result<()> {
-        let mut memory = self.memory.write().await;
-        memory.clear_scope(scope)
-    }
-    
+
     /// 获取Memory使用统计
     pub async fn get_memory_stats(&self) -> HashMap<String, usize> {
         let memory = self.memory.read().await;

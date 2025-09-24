@@ -38,14 +38,6 @@ impl CacheManager {
         }
     }
 
-    /// 初始化缓存目录
-    pub async fn init(&self) -> Result<()> {
-        if self.config.enabled {
-            fs::create_dir_all(&self.config.cache_dir).await?;
-        }
-        Ok(())
-    }
-
     /// 生成prompt的MD5哈希
     pub fn hash_prompt(&self, prompt: &str) -> String {
         let mut hasher = Md5::new();
@@ -232,55 +224,6 @@ impl CacheManager {
         }
     }
 
-    /// 清除指定类别的缓存
-    pub async fn clear_category(&self, category: &str) -> Result<()> {
-        let category_path = self.config.cache_dir.join(category);
-        if category_path.exists() {
-            fs::remove_dir_all(&category_path).await?;
-        }
-        Ok(())
-    }
-
-    /// 清除所有缓存
-    pub async fn clear_all(&self) -> Result<()> {
-        if self.config.cache_dir.exists() {
-            fs::remove_dir_all(&self.config.cache_dir).await?;
-        }
-        Ok(())
-    }
-
-    /// 获取缓存统计信息
-    pub async fn get_stats(&self) -> Result<CacheStats> {
-        let mut stats = CacheStats::default();
-
-        if !self.config.cache_dir.exists() {
-            return Ok(stats);
-        }
-
-        let mut entries = fs::read_dir(&self.config.cache_dir).await?;
-        while let Some(entry) = entries.next_entry().await? {
-            if entry.file_type().await?.is_dir() {
-                let category_name = entry.file_name().to_string_lossy().to_string();
-                let category_path = entry.path();
-
-                let mut category_entries = fs::read_dir(&category_path).await?;
-                let mut category_count = 0;
-
-                while let Some(_) = category_entries.next_entry().await? {
-                    category_count += 1;
-                }
-
-                stats.categories.push(CategoryStats {
-                    name: category_name,
-                    count: category_count,
-                });
-                stats.total_entries += category_count;
-            }
-        }
-
-        Ok(stats)
-    }
-
     /// 估算推理时间（基于内容复杂度）
     fn estimate_inference_time(&self, content: &str) -> Duration {
         // 基于内容长度估算推理时间
@@ -295,17 +238,4 @@ impl CacheManager {
     pub fn generate_performance_report(&self) -> CachePerformanceReport {
         self.performance_monitor.generate_report()
     }
-}
-
-/// 缓存统计信息
-#[derive(Debug, Default)]
-pub struct CacheStats {
-    pub total_entries: usize,
-    pub categories: Vec<CategoryStats>,
-}
-
-#[derive(Debug)]
-pub struct CategoryStats {
-    pub name: String,
-    pub count: usize,
 }

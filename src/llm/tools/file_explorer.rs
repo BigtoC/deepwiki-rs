@@ -520,7 +520,7 @@ impl Tool for AgentToolFileExplorer {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!("tool called...file_reader@{:?}", args);
+        println!("   🔧 tool called...file_reader@{:?}", args);
         match args.action.as_str() {
             "list_directory" => self
                 .list_directory(&args)

@@ -3,7 +3,7 @@
 use anyhow::Result;
 use rig::{
     agent::Agent,
-    completion::{Message, Prompt, PromptError},
+    completion::{AssistantContent, Message, Prompt, PromptError},
     providers::moonshot::CompletionModel,
 };
 
@@ -21,7 +21,7 @@ impl ReActExecutor {
     ) -> Result<ReActResponse> {
         if config.verbose {
             println!(
-                "🤖 激活ReAct Agent模式，最大迭代次数: {}",
+                "   ♻️ 激活ReAct Agent模式，最大迭代次数: {}",
                 config.max_iterations
             );
         }
@@ -35,7 +35,7 @@ impl ReActExecutor {
         {
             Ok(response) => {
                 if config.verbose {
-                    println!("✅ ReAct Agent任务完成");
+                    println!("   ✅ ReAct Agent任务完成");
                 }
 
                 Ok(ReActResponse::success(response, config.max_iterations))
@@ -46,7 +46,7 @@ impl ReActExecutor {
                 prompt: _,
             }) => {
                 if config.verbose {
-                    println!("⚠️  达到最大迭代次数 ({}), 触发中断", max_depth);
+                    println!("   ⚠️ 达到最大迭代次数 ({}), 触发中断", max_depth);
                 }
 
                 if config.return_partial_on_max_depth {
@@ -71,7 +71,7 @@ impl ReActExecutor {
             }
             Err(e) => {
                 if config.verbose {
-                    println!("❌ ReAct Agent出错: {:?}", e);
+                    println!("   ❌ ReAct Agent出错: {:?}", e);
                 }
                 Err(anyhow::anyhow!("ReAct Agent任务执行失败: {}", e))
             }
@@ -92,7 +92,7 @@ impl ReActExecutor {
                     let text_content = content
                         .iter()
                         .filter_map(|c| {
-                            if let rig::completion::AssistantContent::Text(text) = c {
+                            if let AssistantContent::Text(text) = c {
                                 Some(text.text.clone())
                             } else {
                                 None
@@ -110,13 +110,15 @@ impl ReActExecutor {
                     None
                 }
             })
-            .unwrap_or_else(|| "ReAct Agent因达到最大迭代次数而被中断，未能获得完整响应。".to_string());
+            .unwrap_or_else(|| {
+                "ReAct Agent因达到最大迭代次数而被中断，未能获得完整响应。".to_string()
+            });
 
         // 从聊天历史中提取工具调用信息
         for msg in chat_history {
             if let Message::Assistant { content, .. } = msg {
                 for c in content.iter() {
-                    if let rig::completion::AssistantContent::ToolCall(tool_call) = c {
+                    if let AssistantContent::ToolCall(tool_call) = c {
                         tool_calls.push(format!(
                             "{}({})",
                             tool_call.function.name, tool_call.function.arguments

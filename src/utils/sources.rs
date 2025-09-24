@@ -16,7 +16,7 @@ pub fn read_code_source(
     // 读取源代码
     if let Ok(content) = std::fs::read_to_string(&full_path) {
         // 如果代码太长，进行智能截取
-        truncate_source_code(language_processor, &full_path, &content, 16_1024)
+        truncate_source_code(language_processor, &full_path, &content, 8_1024)
     } else {
         format!("无法读取文件: {}", full_path.display())
     }
@@ -98,7 +98,8 @@ pub fn read_dependency_code_source(
             find_dependency_file(language_processor, project_path, &dep_info.name)
         {
             if let Ok(content) = std::fs::read_to_string(&dep_path) {
-                let truncated = truncate_source_code(language_processor, &dep_path, &content, 8_1024);
+                let truncated =
+                    truncate_source_code(language_processor, &dep_path, &content, 8_1024);
                 dependency_code.push_str(&format!(
                     "\n### 依赖: {} ({})\n```\n{}\n```\n",
                     dep_info.name,

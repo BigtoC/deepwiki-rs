@@ -15,7 +15,7 @@ pub struct ResearchOrchestrator;
 impl ResearchOrchestrator {
     /// 执行所有智能体的分析流程
     pub async fn execute_research_pipeline(&self, context: &GeneratorContext) -> Result<()> {
-        println!("开始执行Litho Studies Research调研流程...");
+        println!("🚀 开始执行Litho Studies Research调研流程...");
 
         // 第一层：宏观分析（C1）
         self.execute_agent("SystemContextResearcher", &SystemContextResearcher, context)
@@ -33,7 +33,7 @@ impl ResearchOrchestrator {
         self.execute_agent("KeyModulesInsight", &KeyModulesInsight, context)
             .await?;
 
-        println!("Litho Studies Research流程执行完毕");
+        println!("✓ Litho Studies Research流程执行完毕");
 
         Ok(())
     }
@@ -48,7 +48,7 @@ impl ResearchOrchestrator {
     where
         T: StepForwardAgent + Send + Sync,
     {
-        println!("执行 {} 智能体分析...", name);
+        println!("🤖 执行 {} 智能体分析...", name);
 
         agent.execute(context).await?;
         println!("✓ {} 分析完成", name);

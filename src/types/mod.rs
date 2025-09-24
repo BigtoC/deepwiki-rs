@@ -1,7 +1,7 @@
 pub mod code;
 pub mod code_releationship;
-pub mod project_structure;
 pub mod original_document;
+pub mod project_structure;
 
 use std::path::PathBuf;
 
@@ -28,8 +28,4 @@ pub struct DirectoryInfo {
     pub subdirectory_count: usize,
     pub total_size: u64,
     pub importance_score: f64,
-}
-
-pub struct FeatureModule {
-    pub(crate) importance_score: f64,
 }

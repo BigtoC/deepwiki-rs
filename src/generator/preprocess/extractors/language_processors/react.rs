@@ -6,7 +6,6 @@ use std::path::Path;
 #[derive(Debug)]
 pub struct ReactProcessor {
     import_regex: Regex,
-    react_import_regex: Regex,
     hook_regex: Regex,
 }
 
@@ -14,7 +13,6 @@ impl ReactProcessor {
     pub fn new() -> Self {
         Self {
             import_regex: Regex::new(r#"^\s*import\s+(?:.*\s+from\s+)?['"]([^'"]+)['"]"#).unwrap(),
-            react_import_regex: Regex::new(r#"import\s+.*\s+from\s+['"]react['"]"#).unwrap(),
             hook_regex: Regex::new(r"use[A-Z][a-zA-Z]*\s*\(").unwrap(),
         }
     }

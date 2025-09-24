@@ -66,7 +66,7 @@ impl Generator<PreprocessingResult> for PreProcessAgent {
             .await?;
 
         println!(
-            "   发现 {} 个文件，{} 个目录",
+            "   🔭 发现 {} 个文件，{} 个目录",
             project_structure.total_files, project_structure.total_directories
         );
 

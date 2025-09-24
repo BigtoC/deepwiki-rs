@@ -120,7 +120,7 @@ impl CachePerformanceMonitor {
     /// 记录缓存未命中
     pub fn record_cache_miss(&self, category: &str) {
         self.metrics.cache_misses.fetch_add(1, Ordering::Relaxed);
-        println!("   🔍 缓存未命中 [{}] - 需要进行AI推理", category);
+        println!("   ⌛ 缓存未命中 [{}] - 需要进行AI推理", category);
     }
 
     /// 记录缓存写入
@@ -185,24 +185,6 @@ impl CachePerformanceMonitor {
             output_tokens_saved,
             category_stats: HashMap::new(), // TODO: 实现分类统计
         }
-    }
-
-    /// 重置统计信息
-    pub fn reset_metrics(&self) {
-        self.metrics.cache_hits.store(0, Ordering::Relaxed);
-        self.metrics.cache_misses.store(0, Ordering::Relaxed);
-        self.metrics.cache_writes.store(0, Ordering::Relaxed);
-        self.metrics.cache_errors.store(0, Ordering::Relaxed);
-        self.metrics
-            .total_inference_time_saved
-            .store(0, Ordering::Relaxed);
-        self.metrics.total_cost_saved.store(0, Ordering::Relaxed);
-        self.metrics
-            .total_input_tokens_saved
-            .store(0, Ordering::Relaxed);
-        self.metrics
-            .total_output_tokens_saved
-            .store(0, Ordering::Relaxed);
     }
 }
 

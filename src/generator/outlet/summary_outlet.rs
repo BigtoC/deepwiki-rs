@@ -23,14 +23,6 @@ impl SummaryOutlet {
             generate_both: true,
         }
     }
-
-    pub fn with_file_paths(full_path: String, brief_path: String) -> Self {
-        Self {
-            full_file_path: full_path,
-            brief_file_path: brief_path,
-            generate_both: true,
-        }
-    }
 }
 
 impl Outlet for SummaryOutlet {
@@ -41,7 +33,7 @@ impl Outlet for SummaryOutlet {
             fs::create_dir_all(output_dir)?;
         }
 
-        println!("\n生成项目总结报告...");
+        println!("\n🖊️ 生成项目总结报告...");
 
         // 收集数据（只需要收集一次）
         let summary_data = SummaryDataCollector::collect_data(context).await?;
@@ -51,7 +43,7 @@ impl Outlet for SummaryOutlet {
             SummaryContentGenerator::generate_content(&summary_data, SummaryMode::Full);
         let full_path = output_dir.join(&self.full_file_path);
         fs::write(&full_path, full_content)?;
-        println!("已保存完整版总结报告: {}", full_path.display());
+        println!("💾 已保存完整版总结报告: {}", full_path.display());
 
         // 如果需要生成摘要版
         if self.generate_both {
@@ -59,7 +51,7 @@ impl Outlet for SummaryOutlet {
                 SummaryContentGenerator::generate_content(&summary_data, SummaryMode::Brief);
             let brief_path = output_dir.join(&self.brief_file_path);
             fs::write(&brief_path, brief_content)?;
-            println!("已保存摘要版总结报告: {}", brief_path.display());
+            println!("💾 已保存摘要版总结报告: {}", brief_path.display());
         }
 
         Ok(())

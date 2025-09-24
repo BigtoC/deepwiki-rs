@@ -187,54 +187,6 @@ impl CodePurpose {
             CodePurpose::Other => "其他组件",
         }
     }
-
-    /// 获取组件类型的文件夹名称
-    pub fn folder_name(&self) -> &'static str {
-        match self {
-            CodePurpose::Entry => "Entry",
-            CodePurpose::Agent => "Agent",
-            CodePurpose::Page => "Page",
-            CodePurpose::Controller => "Controller",
-            CodePurpose::Widget => "Widget",
-            CodePurpose::SpecificFeature => "SpecificFeature",
-
-            CodePurpose::Model => "Model",
-            CodePurpose::Util => "Util",
-            CodePurpose::Config => "Config",
-            CodePurpose::Middleware => "Middleware",
-            CodePurpose::Plugin => "Plugin",
-            CodePurpose::Router => "Router",
-            CodePurpose::Database => "Database",
-            CodePurpose::Api => "Api",
-            CodePurpose::Test => "Test",
-            CodePurpose::Doc => "Doc",
-            CodePurpose::Other => "Other",
-        }
-    }
-
-    /// 获取组件类型的描述
-    pub fn description(&self) -> &'static str {
-        match self {
-            CodePurpose::Entry => "应用程序的主要入口点，负责启动和初始化系统",
-            CodePurpose::Agent => "智能Agent，基于大模型的人工智能分析模块",
-            CodePurpose::Page => "用户界面的页面组件，提供完整的页面视图",
-            CodePurpose::Controller => "控制器组件，处理业务逻辑和用户交互",
-            CodePurpose::Widget => "可复用的UI组件，提供特定的界面元素",
-            CodePurpose::SpecificFeature => "用于处理实现特定逻辑功能",
-
-            CodePurpose::Model => "数据模型组件，定义数据结构和业务实体",
-            CodePurpose::Util => "工具类组件，提供通用的辅助功能",
-            CodePurpose::Config => "配置组件，管理应用程序的配置信息",
-            CodePurpose::Middleware => "中间件组件，提供请求处理的中间层逻辑",
-            CodePurpose::Plugin => "插件，用于支持由系统内外部对功能做扩展",
-            CodePurpose::Router => "路由组件，管理应用程序的路由和导航",
-            CodePurpose::Database => "数据库相关组件，处理数据持久化",
-            CodePurpose::Api => "API接口组件，提供外部接口服务",
-            CodePurpose::Test => "测试组件，包含单元测试和集成测试",
-            CodePurpose::Doc => "文档组件，包含项目文档和说明",
-            CodePurpose::Other => "其他类型的组件，不属于上述分类",
-        }
-    }
 }
 
 impl Display for CodePurpose {

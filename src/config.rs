@@ -331,16 +331,6 @@ impl Config {
         }
         None
     }
-
-    /// 获取内部工作目录的子路径
-    pub fn get_internal_path(&self, subdir: &str) -> PathBuf {
-        self.internal_path.join(subdir)
-    }
-
-    /// 获取过程数据存储路径
-    pub fn get_process_data_path(&self) -> PathBuf {
-        self.get_internal_path("process")
-    }
 }
 
 impl Default for Config {

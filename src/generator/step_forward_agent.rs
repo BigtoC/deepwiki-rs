@@ -13,6 +13,7 @@ use crate::{
         code::CodeInsight, code_releationship::RelationshipAnalysis,
         project_structure::ProjectStructure,
     },
+    utils::project_structure_formatter::ProjectStructureFormatter,
 };
 
 /// 数据源配置 - 基于Memory Key的直接数据访问机制
@@ -62,6 +63,7 @@ pub enum LLMCallMode {
     /// 使用extract方法，返回特定要求的结构化数据
     Extract,
     /// 使用prompt方法，返回泛化推理文本
+    #[allow(dead_code)]
     Prompt,
     /// 使用prompt方法，并提供Built-in Tools返回泛化推理文本
     PromptWithTools,
@@ -76,8 +78,6 @@ pub struct FormatterConfig {
     pub include_source_code: bool,
     /// 依赖关系显示数量限制
     pub dependency_limit: usize,
-    /// 项目结构显示深度
-    pub project_structure_depth: usize,
     /// README内容截断长度
     pub readme_truncate_length: Option<usize>,
 }
@@ -88,7 +88,6 @@ impl Default for FormatterConfig {
             code_insights_limit: 50,
             include_source_code: false,
             dependency_limit: 50,
-            project_structure_depth: 10,
             readme_truncate_length: Some(16384),
         }
     }
@@ -121,14 +120,12 @@ impl DataFormatter {
 
     /// 格式化项目结构信息
     pub fn format_project_structure(&self, structure: &ProjectStructure) -> String {
-        // TODO：要用更高效的结构来呈现路径，目前数据过于冗余。
-        // TODO: 只有Directory信息，需要显示文件信息
+        let project_tree_str = ProjectStructureFormatter::format_as_tree(structure);
         format!(
-            "### 项目结构信息\n项目名称: {}\n根目录: {}\n主要目录: {:?}\n文件总数: {}\n\n",
+            "### 项目结构信息\n项目名称: {}\n根目录: {}\n\n项目目录结构：\n``` txt{}```\n",
             structure.project_name,
             structure.root_path.to_string_lossy(),
-            structure.directories.iter().take(50).collect::<Vec<_>>(),
-            structure.files.len()
+            project_tree_str
         )
     }
 
@@ -400,7 +397,7 @@ pub trait StepForwardAgent: Send + Sync {
         // 7. 执行后处理
         if let Ok(typed_result) = serde_json::from_value::<Self::Output>(result_value) {
             self.post_process(&typed_result, context)?;
-            println!("Sub-Agent [{}]执行完成", self.agent_type());
+            println!("✅ Sub-Agent [{}]执行完成", self.agent_type());
             Ok(typed_result)
         } else {
             Err(anyhow::format_err!(""))
