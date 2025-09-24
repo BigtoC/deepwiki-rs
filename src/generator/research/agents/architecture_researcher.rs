@@ -25,7 +25,10 @@ impl StepForwardAgent for ArchitectureResearcher {
                 DataSource::ResearchResult(AgentType::SystemContextResearcher.to_string()),
                 DataSource::ResearchResult(AgentType::DomainModulesDetector.to_string()),
             ],
-            optional_sources: vec![DataSource::DEPENDENCY_ANALYSIS],
+            optional_sources: vec![
+                DataSource::PROJECT_STRUCTURE,
+                DataSource::DEPENDENCY_ANALYSIS,
+            ],
         }
     }
 

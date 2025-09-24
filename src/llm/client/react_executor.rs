@@ -21,7 +21,7 @@ impl ReActExecutor {
     ) -> Result<ReActResponse> {
         if config.verbose {
             println!(
-                "🤖 激活ReAct Agent模式，最大迭代次数: {}",
+                "   ♻️ 激活ReAct Agent模式，最大迭代次数: {}",
                 config.max_iterations
             );
         }
@@ -35,7 +35,7 @@ impl ReActExecutor {
         {
             Ok(response) => {
                 if config.verbose {
-                    println!("✅ ReAct Agent任务完成");
+                    println!("   ✅ ReAct Agent任务完成");
                 }
 
                 Ok(ReActResponse::success(response, config.max_iterations))
@@ -46,7 +46,7 @@ impl ReActExecutor {
                 prompt: _,
             }) => {
                 if config.verbose {
-                    println!("⚠️  达到最大迭代次数 ({}), 触发中断", max_depth);
+                    println!("   ⚠️ 达到最大迭代次数 ({}), 触发中断", max_depth);
                 }
 
                 if config.return_partial_on_max_depth {
@@ -71,7 +71,7 @@ impl ReActExecutor {
             }
             Err(e) => {
                 if config.verbose {
-                    println!("❌ ReAct Agent出错: {:?}", e);
+                    println!("   ❌ ReAct Agent出错: {:?}", e);
                 }
                 Err(anyhow::anyhow!("ReAct Agent任务执行失败: {}", e))
             }

@@ -147,7 +147,7 @@ impl Tool for AgentToolFileReader {
     }
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
-        println!("🔧 tool called...file_reader@{:?}", args);
+        println!("   🔧 tool called...file_reader@{:?}", args);
         self.read_file_content(&args)
             .await
             .map_err(|_e| FileReaderToolError)

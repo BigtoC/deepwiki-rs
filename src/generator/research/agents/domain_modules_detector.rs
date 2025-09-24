@@ -31,7 +31,7 @@ impl StepForwardAgent for DomainModulesDetector {
                 DataSource::DEPENDENCY_ANALYSIS,
                 DataSource::CODE_INSIGHTS,
             ],
-            optional_sources: vec![DataSource::README_CONTENT],
+            optional_sources: vec![DataSource::PROJECT_STRUCTURE],
         }
     }
 

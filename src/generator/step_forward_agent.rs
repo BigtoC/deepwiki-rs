@@ -13,6 +13,7 @@ use crate::{
         code::CodeInsight, code_releationship::RelationshipAnalysis,
         project_structure::ProjectStructure,
     },
+    utils::project_structure_formatter::ProjectStructureFormatter,
 };
 
 /// 数据源配置 - 基于Memory Key的直接数据访问机制
@@ -119,14 +120,12 @@ impl DataFormatter {
 
     /// 格式化项目结构信息
     pub fn format_project_structure(&self, structure: &ProjectStructure) -> String {
-        // TODO：要用更高效的结构来呈现路径，目前数据过于冗余。
-        // TODO: 只有Directory信息，需要显示文件信息
+        let project_tree_str = ProjectStructureFormatter::format_as_tree(structure);
         format!(
-            "### 项目结构信息\n项目名称: {}\n根目录: {}\n主要目录: {:?}\n文件总数: {}\n\n",
+            "### 项目结构信息\n项目名称: {}\n根目录: {}\n\n项目目录结构：\n``` txt{}```\n",
             structure.project_name,
             structure.root_path.to_string_lossy(),
-            structure.directories.iter().take(50).collect::<Vec<_>>(),
-            structure.files.len()
+            project_tree_str
         )
     }
 
