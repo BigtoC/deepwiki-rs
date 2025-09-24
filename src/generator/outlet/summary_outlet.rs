@@ -23,14 +23,6 @@ impl SummaryOutlet {
             generate_both: true,
         }
     }
-
-    pub fn with_file_paths(full_path: String, brief_path: String) -> Self {
-        Self {
-            full_file_path: full_path,
-            brief_file_path: brief_path,
-            generate_both: true,
-        }
-    }
 }
 
 impl Outlet for SummaryOutlet {

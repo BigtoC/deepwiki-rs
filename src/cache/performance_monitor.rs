@@ -186,24 +186,6 @@ impl CachePerformanceMonitor {
             category_stats: HashMap::new(), // TODO: 实现分类统计
         }
     }
-
-    /// 重置统计信息
-    pub fn reset_metrics(&self) {
-        self.metrics.cache_hits.store(0, Ordering::Relaxed);
-        self.metrics.cache_misses.store(0, Ordering::Relaxed);
-        self.metrics.cache_writes.store(0, Ordering::Relaxed);
-        self.metrics.cache_errors.store(0, Ordering::Relaxed);
-        self.metrics
-            .total_inference_time_saved
-            .store(0, Ordering::Relaxed);
-        self.metrics.total_cost_saved.store(0, Ordering::Relaxed);
-        self.metrics
-            .total_input_tokens_saved
-            .store(0, Ordering::Relaxed);
-        self.metrics
-            .total_output_tokens_saved
-            .store(0, Ordering::Relaxed);
-    }
 }
 
 impl Default for CachePerformanceMonitor {

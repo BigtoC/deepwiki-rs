@@ -39,8 +39,6 @@ pub struct ReActResponse {
     pub tool_calls_history: Vec<String>,
     /// 对话历史（仅在达到最大深度时包含）
     pub chat_history: Option<Vec<Message>>,
-    /// 是否通过总结推理生成
-    pub from_summary_reasoning: bool,
 }
 
 impl ReActResponse {
@@ -51,7 +49,6 @@ impl ReActResponse {
         stopped_by_max_depth: bool,
         tool_calls_history: Vec<String>,
         chat_history: Option<Vec<Message>>,
-        from_summary_reasoning: bool,
     ) -> Self {
         Self {
             content,
@@ -59,22 +56,12 @@ impl ReActResponse {
             stopped_by_max_depth,
             tool_calls_history,
             chat_history,
-            from_summary_reasoning,
         }
     }
 
     /// 创建成功完成的响应
     pub fn success(content: String, iterations_used: usize) -> Self {
-        Self::new(content, iterations_used, false, Vec::new(), None, false)
-    }
-
-    /// 创建因最大深度停止的响应
-    pub fn max_depth_reached(
-        content: String,
-        max_depth: usize,
-        tool_calls_history: Vec<String>,
-    ) -> Self {
-        Self::new(content, max_depth, true, tool_calls_history, None, false)
+        Self::new(content, iterations_used, false, Vec::new(), None)
     }
 
     /// 创建因最大深度停止的响应（带对话历史）
@@ -90,7 +77,6 @@ impl ReActResponse {
             true,
             tool_calls_history,
             Some(chat_history),
-            false,
         )
     }
 
@@ -107,7 +93,6 @@ impl ReActResponse {
             true,
             tool_calls_history,
             Some(chat_history),
-            true,
         )
     }
 }

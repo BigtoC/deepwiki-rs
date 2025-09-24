@@ -1,15 +1,13 @@
 use anyhow::Result;
 
-use crate::generator::{
-    context::GeneratorContext,
-    {
-        step_forward_agent::{
-            AgentDataConfig, DataSource, FormatterConfig, LLMCallMode, PromptTemplate, StepForwardAgent,
-        }
-    },
-};
 use crate::generator::research::memory::MemoryScope;
 use crate::generator::research::types::{AgentType, DomainModulesReport};
+use crate::generator::{
+    context::GeneratorContext,
+    step_forward_agent::{
+        AgentDataConfig, DataSource, FormatterConfig, LLMCallMode, PromptTemplate, StepForwardAgent,
+    },
+};
 
 /// 领域划分与顶层抽象模块研究员 - 识别High-Level-System领域架构与抽象模块，以及其内部关联关系。
 #[derive(Default)]
@@ -56,7 +54,6 @@ impl StepForwardAgent for DomainModulesDetector {
                 code_insights_limit: 100,
                 include_source_code: false,
                 dependency_limit: 1000,
-                project_structure_depth: 10,
                 readme_truncate_length: None,
             },
         }

@@ -62,6 +62,7 @@ pub enum LLMCallMode {
     /// 使用extract方法，返回特定要求的结构化数据
     Extract,
     /// 使用prompt方法，返回泛化推理文本
+    #[allow(dead_code)]
     Prompt,
     /// 使用prompt方法，并提供Built-in Tools返回泛化推理文本
     PromptWithTools,
@@ -76,8 +77,6 @@ pub struct FormatterConfig {
     pub include_source_code: bool,
     /// 依赖关系显示数量限制
     pub dependency_limit: usize,
-    /// 项目结构显示深度
-    pub project_structure_depth: usize,
     /// README内容截断长度
     pub readme_truncate_length: Option<usize>,
 }
@@ -88,7 +87,6 @@ impl Default for FormatterConfig {
             code_insights_limit: 50,
             include_source_code: false,
             dependency_limit: 50,
-            project_structure_depth: 10,
             readme_truncate_length: Some(16384),
         }
     }
