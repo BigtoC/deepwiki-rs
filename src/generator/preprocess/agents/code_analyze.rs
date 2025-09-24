@@ -67,7 +67,7 @@ impl CodeAnalyze {
                     code_insights.push(code_insight);
                 }
                 Err(e) => {
-                    eprintln!("代码分析失败: {}", e);
+                    eprintln!("❌ 代码分析失败: {}", e);
                     return Err(e);
                 }
             }

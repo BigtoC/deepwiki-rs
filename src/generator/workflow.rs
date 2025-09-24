@@ -58,7 +58,6 @@ pub async fn launch(c: &Config) -> Result<()> {
     };
 
     // 预处理阶段
-    println!("开始预处理阶段...");
     let preprocess_start = Instant::now();
     let preprocess_agent = PreProcessAgent::new();
     preprocess_agent.execute(context.clone()).await?;
@@ -67,12 +66,11 @@ pub async fn launch(c: &Config) -> Result<()> {
         .store_to_memory(TimingScope::TIMING, TimingKeys::PREPROCESS, preprocess_time)
         .await?;
     println!(
-        "✓ 预处理完成，结果已存储到Memory（耗时: {:.2}s）",
+        "=== 预处理完成，结果已存储到Memory（耗时: {:.2}s）=== ",
         preprocess_time
     );
 
     // 执行多智能体研究阶段
-    println!("\n执行多智能体项目深度调研...");
     let research_start = Instant::now();
     let research_orchestrator = ResearchOrchestrator::default();
     research_orchestrator
@@ -85,7 +83,6 @@ pub async fn launch(c: &Config) -> Result<()> {
     println!("\n=== 项目深度调研完成（耗时: {:.2}s） ===", research_time);
 
     // 执行文档生成流程
-    println!("\n执行文档生成流程...");
     let compose_start = Instant::now();
     let mut doc_tree = DocTree::default();
     let documentation_orchestrator = DocumentationComposer::default();
@@ -99,7 +96,6 @@ pub async fn launch(c: &Config) -> Result<()> {
     println!("\n=== 文档生成完成（耗时: {:.2}s） ===", compose_time);
 
     // 执行文档存储
-    println!("\n文档存储中...");
     let output_start = Instant::now();
     let outlet = DiskOutlet::new(doc_tree);
     outlet.save(&context).await?;

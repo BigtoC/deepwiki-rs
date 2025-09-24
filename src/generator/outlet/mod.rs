@@ -57,6 +57,7 @@ impl DiskOutlet {
 
 impl Outlet for DiskOutlet {
     async fn save(&self, context: &GeneratorContext) -> Result<()> {
+        println!("\n🖊️ 文档存储中...");
         // 创建输出目录
         let output_dir = &context.config.output_path;
         if output_dir.exists() {
@@ -84,14 +85,14 @@ impl Outlet for DiskOutlet {
                 // 写入文档内容到文件
                 fs::write(&output_file_path, doc_markdown)?;
 
-                println!("已保存文档: {}", output_file_path.display());
+                println!("💾 已保存文档: {}", output_file_path.display());
             } else {
                 // 如果文档不存在，记录警告但不中断流程
-                eprintln!("警告: 未找到文档内容，键: {}", scoped_key);
+                eprintln!("⚠️ 警告: 未找到文档内容，键: {}", scoped_key);
             }
         }
 
-        println!("文档保存完成，输出目录: {}", output_dir.display());
+        println!("💾 文档保存完成，输出目录: {}", output_dir.display());
         Ok(())
     }
 }

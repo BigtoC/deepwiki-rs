@@ -400,7 +400,7 @@ pub trait StepForwardAgent: Send + Sync {
         // 7. 执行后处理
         if let Ok(typed_result) = serde_json::from_value::<Self::Output>(result_value) {
             self.post_process(&typed_result, context)?;
-            println!("Sub-Agent [{}]执行完成", self.agent_type());
+            println!("✅ Sub-Agent [{}]执行完成", self.agent_type());
             Ok(typed_result)
         } else {
             Err(anyhow::format_err!(""))

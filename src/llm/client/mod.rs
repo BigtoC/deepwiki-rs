@@ -62,7 +62,7 @@ impl LLMClient {
                 Err(err) => {
                     retries += 1;
                     eprintln!(
-                        "调用模型服务出错，重试中 (第 {} / {}次尝试): {}",
+                        "❌ 调用模型服务出错，重试中 (第 {} / {}次尝试): {}",
                         retries, max_retries, err
                     );
                     if retries >= max_retries {
@@ -111,7 +111,7 @@ impl LLMClient {
             Err(e) => match fallover_model {
                 Some(ref model) => {
                     eprintln!(
-                        "调用模型服务出错，尝试 {}次均失败，尝试使用备选模型...{}",
+                        "❌ 调用模型服务出错，尝试 {}次均失败，尝试使用备选模型...{}",
                         llm_config.retry_attempts, model
                     );
                     Box::pin(self.extract_inner(system_prompt, user_prompt, model.clone(), None))
@@ -119,7 +119,7 @@ impl LLMClient {
                 }
                 None => {
                     eprintln!(
-                        "调用模型服务出错，尝试 {}次均失败",
+                        "❌ 调用模型服务出错，尝试 {}次均失败",
                         llm_config.retry_attempts
                     );
                     Err(e.into())

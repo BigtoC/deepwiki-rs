@@ -93,7 +93,7 @@ impl Args {
     pub fn to_config(self) -> Config {
         let mut config = if let Some(config_path) = &self.config {
             Config::from_file(config_path).unwrap_or_else(|_| {
-                eprintln!("警告: 无法读取配置文件 {:?}，使用默认配置", config_path);
+                eprintln!("⚠️ 警告: 无法读取配置文件 {:?}，使用默认配置", config_path);
                 Config::default()
             })
         } else {

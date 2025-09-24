@@ -110,7 +110,9 @@ impl ReActExecutor {
                     None
                 }
             })
-            .unwrap_or_else(|| "ReAct Agent因达到最大迭代次数而被中断，未能获得完整响应。".to_string());
+            .unwrap_or_else(|| {
+                "ReAct Agent因达到最大迭代次数而被中断，未能获得完整响应。".to_string()
+            });
 
         // 从聊天历史中提取工具调用信息
         for msg in chat_history {
