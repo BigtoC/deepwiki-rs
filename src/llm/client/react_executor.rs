@@ -21,7 +21,7 @@ impl ReActExecutor {
     ) -> Result<ReActResponse> {
         if config.verbose {
             println!(
-                "🤖 开始ReAct模式对话，最大迭代次数: {}",
+                "🤖 激活ReAct Agent模式，最大迭代次数: {}",
                 config.max_iterations
             );
         }
@@ -35,7 +35,7 @@ impl ReActExecutor {
         {
             Ok(response) => {
                 if config.verbose {
-                    println!("✅ ReAct对话成功完成");
+                    println!("✅ ReAct Agent任务完成");
                 }
 
                 Ok(ReActResponse::success(response, config.max_iterations))
@@ -46,7 +46,7 @@ impl ReActExecutor {
                 prompt: _,
             }) => {
                 if config.verbose {
-                    println!("⚠️  达到最大迭代次数 ({}), 对话被截断", max_depth);
+                    println!("⚠️  达到最大迭代次数 ({}), 触发中断", max_depth);
                 }
 
                 if config.return_partial_on_max_depth {
@@ -55,7 +55,7 @@ impl ReActExecutor {
 
                     Ok(ReActResponse::max_depth_reached_with_history(
                         format!(
-                            "{}\n\n[注意: 对话因达到最大迭代次数({})而被截断]",
+                            "{}\n\n[注意: 因达到最大迭代次数({})而被中断]",
                             content, max_depth
                         ),
                         max_depth,
@@ -64,16 +64,16 @@ impl ReActExecutor {
                     ))
                 } else {
                     Err(anyhow::anyhow!(
-                        "ReAct对话达到最大迭代次数({})而未完成",
+                        "ReAct Agent因达到最大迭代次数({})而未完成任务",
                         max_depth
                     ))
                 }
             }
             Err(e) => {
                 if config.verbose {
-                    println!("❌ ReAct对话出错: {:?}", e);
+                    println!("❌ ReAct Agent出错: {:?}", e);
                 }
-                Err(anyhow::anyhow!("ReAct对话失败: {}", e))
+                Err(anyhow::anyhow!("ReAct Agent任务执行失败: {}", e))
             }
         }
     }
@@ -110,7 +110,7 @@ impl ReActExecutor {
                     None
                 }
             })
-            .unwrap_or_else(|| "对话因达到最大迭代次数而被截断，未能获得完整响应。".to_string());
+            .unwrap_or_else(|| "ReAct Agent因达到最大迭代次数而被中断，未能获得完整响应。".to_string());
 
         // 从聊天历史中提取工具调用信息
         for msg in chat_history {
