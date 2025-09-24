@@ -3,7 +3,7 @@
 use anyhow::Result;
 use rig::{
     agent::Agent,
-    completion::{Message, Prompt, PromptError},
+    completion::{AssistantContent, Message, Prompt, PromptError},
     providers::moonshot::CompletionModel,
 };
 
@@ -92,7 +92,7 @@ impl ReActExecutor {
                     let text_content = content
                         .iter()
                         .filter_map(|c| {
-                            if let rig::completion::AssistantContent::Text(text) = c {
+                            if let AssistantContent::Text(text) = c {
                                 Some(text.text.clone())
                             } else {
                                 None
@@ -118,7 +118,7 @@ impl ReActExecutor {
         for msg in chat_history {
             if let Message::Assistant { content, .. } = msg {
                 for c in content.iter() {
-                    if let rig::completion::AssistantContent::ToolCall(tool_call) = c {
+                    if let AssistantContent::ToolCall(tool_call) = c {
                         tool_calls.push(format!(
                             "{}({})",
                             tool_call.function.name, tool_call.function.arguments
