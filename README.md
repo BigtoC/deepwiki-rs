@@ -75,7 +75,7 @@ A --> E[Relationship Analysis Agent]
 B --> F[Project Structure]
 C --> G[Original Document Materials]
 D --> H[Core Code Insights]
-E --> I[Component Dependencies]
+E --> I[Code Dependencies]
 F --> J[Store to Memory]
 G --> J
 H --> J
