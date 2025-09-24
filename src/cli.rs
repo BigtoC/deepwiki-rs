@@ -27,10 +27,6 @@ pub struct Args {
     #[arg(short, long)]
     pub name: Option<String>,
 
-    /// 文档格式 (markdown, html)
-    #[arg(short, long, default_value = "markdown")]
-    pub format: String,
-
     /// 是否跳过项目预处理
     #[arg(long)]
     pub skip_preprocessing: bool,
@@ -104,7 +100,6 @@ impl Args {
         config.project_path = self.project_path.clone();
         config.output_path = self.output_path;
         config.internal_path = self.project_path.join(".litho");
-        config.document_format = self.format;
 
         // 项目名称处理：CLI参数优先级最高，如果CLI没有指定且配置文件也没有，get_project_name()会自动推断
         if let Some(name) = self.name {

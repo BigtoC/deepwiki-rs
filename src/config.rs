@@ -19,9 +19,6 @@ pub struct Config {
     /// 内部工作目录路径 (.litho)
     pub internal_path: PathBuf,
 
-    /// 文档格式 (markdown, html)
-    pub document_format: String,
-
     /// 是否分析依赖关系
     pub analyze_dependencies: bool,
 
@@ -340,7 +337,6 @@ impl Default for Config {
             project_path: PathBuf::from("."),
             output_path: PathBuf::from("./litho.docs"),
             internal_path: PathBuf::from("./.litho"),
-            document_format: "markdown".to_string(),
             analyze_dependencies: true,
             identify_components: true,
             max_depth: 10,
