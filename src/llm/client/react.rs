@@ -1,5 +1,7 @@
 //! ReAct (Reasoning and Acting) 模式相关类型和配置
 
+use rig::completion::Message;
+
 /// ReAct模式配置
 #[derive(Debug, Clone)]
 pub struct ReActConfig {
@@ -9,6 +11,8 @@ pub struct ReActConfig {
     pub verbose: bool,
     /// 是否在达到最大迭代次数时返回部分结果
     pub return_partial_on_max_depth: bool,
+    /// 是否启用总结推理fallover机制
+    pub enable_summary_reasoning: bool,
 }
 
 impl Default for ReActConfig {
@@ -17,6 +21,7 @@ impl Default for ReActConfig {
             max_iterations: 15,
             verbose: cfg!(debug_assertions),
             return_partial_on_max_depth: true,
+            enable_summary_reasoning: true,
         }
     }
 }
@@ -32,6 +37,10 @@ pub struct ReActResponse {
     pub stopped_by_max_depth: bool,
     /// 工具调用历史
     pub tool_calls_history: Vec<String>,
+    /// 对话历史（仅在达到最大深度时包含）
+    pub chat_history: Option<Vec<Message>>,
+    /// 是否通过总结推理生成
+    pub from_summary_reasoning: bool,
 }
 
 impl ReActResponse {
@@ -41,18 +50,22 @@ impl ReActResponse {
         iterations_used: usize,
         stopped_by_max_depth: bool,
         tool_calls_history: Vec<String>,
+        chat_history: Option<Vec<Message>>,
+        from_summary_reasoning: bool,
     ) -> Self {
         Self {
             content,
             iterations_used,
             stopped_by_max_depth,
             tool_calls_history,
+            chat_history,
+            from_summary_reasoning,
         }
     }
 
     /// 创建成功完成的响应
     pub fn success(content: String, iterations_used: usize) -> Self {
-        Self::new(content, iterations_used, false, Vec::new())
+        Self::new(content, iterations_used, false, Vec::new(), None, false)
     }
 
     /// 创建因最大深度停止的响应
@@ -61,6 +74,40 @@ impl ReActResponse {
         max_depth: usize,
         tool_calls_history: Vec<String>,
     ) -> Self {
-        Self::new(content, max_depth, true, tool_calls_history)
+        Self::new(content, max_depth, true, tool_calls_history, None, false)
+    }
+
+    /// 创建因最大深度停止的响应（带对话历史）
+    pub fn max_depth_reached_with_history(
+        content: String,
+        max_depth: usize,
+        tool_calls_history: Vec<String>,
+        chat_history: Vec<Message>,
+    ) -> Self {
+        Self::new(
+            content,
+            max_depth,
+            true,
+            tool_calls_history,
+            Some(chat_history),
+            false,
+        )
+    }
+
+    /// 创建通过总结推理生成的响应
+    pub fn from_summary_reasoning(
+        content: String,
+        max_depth: usize,
+        tool_calls_history: Vec<String>,
+        chat_history: Vec<Message>,
+    ) -> Self {
+        Self::new(
+            content,
+            max_depth,
+            true,
+            tool_calls_history,
+            Some(chat_history),
+            true,
+        )
     }
 }
