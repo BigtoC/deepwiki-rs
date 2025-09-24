@@ -414,7 +414,7 @@ impl Default for LLMConfig {
             retry_delay_ms: 5000,
             timeout_seconds: 300,
             enable_preset_tools: false,
-            max_parallels: 5,
+            max_parallels: 3,
         }
     }
 }
