@@ -120,7 +120,7 @@ impl CachePerformanceMonitor {
     /// 记录缓存未命中
     pub fn record_cache_miss(&self, category: &str) {
         self.metrics.cache_misses.fetch_add(1, Ordering::Relaxed);
-        println!("   🔍 缓存未命中 [{}] - 需要进行AI推理", category);
+        println!("   ⌛ 缓存未命中 [{}] - 需要进行AI推理", category);
     }
 
     /// 记录缓存写入
