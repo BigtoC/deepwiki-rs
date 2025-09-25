@@ -2,6 +2,7 @@
 
 use crate::{
     config::Config,
+    llm::tools::{file_explorer::AgentToolFileExplorer, file_reader::AgentToolFileReader},
     llm::client::providers::{ProviderClient, ProviderAgent},
 };
 
@@ -21,15 +22,25 @@ impl<'a> AgentBuilder<'a> {
     pub fn build_agent_with_tools(&self, system_prompt: &str) -> ProviderAgent {
         let llm_config = &self.config.llm;
 
-        // 注意：工具支持需要为每个provider单独实现
-        // 这是一个简化版本，暂时不包含工具
-        let mut system_prompt_with_tools = system_prompt.to_string();
-        
         if llm_config.enable_preset_tools {
-            system_prompt_with_tools.push_str("\n不要虚构不存在的代码，如果你需要了解更多项目的工程结构和源码内容，积极的调用工具来获得更多上下文补充");
-        }
+            let file_explorer = AgentToolFileExplorer::new(self.config.clone());
+            let file_reader = AgentToolFileReader::new(self.config.clone());
+            
+            let system_prompt_with_tools = format!(
+                "{}\n不要虚构不存在的代码，如果你需要了解更多项目的工程结构和源码内容，积极的调用工具来获得更多上下文补充",
+                system_prompt
+            );
 
-        self.client.create_agent(&llm_config.model_efficient, &system_prompt_with_tools, llm_config)
+            self.client.create_agent_with_tools(
+                &llm_config.model_efficient,
+                &system_prompt_with_tools,
+                llm_config,
+                &file_explorer,
+                &file_reader,
+            )
+        } else {
+            self.client.create_agent(&llm_config.model_efficient, system_prompt, llm_config)
+        }
     }
 
     /// 构建无工具Agent

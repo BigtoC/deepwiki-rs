@@ -71,7 +71,7 @@ pub struct Args {
     #[arg(long)]
     pub max_parallels: Option<usize>,
 
-    /// LLM Provider (moonshot, mistral, openrouter)
+    /// LLM Provider (openai, mistral, openrouter, anthropic)
     #[arg(long)]
     pub llm_provider: Option<String>,
 
@@ -115,7 +115,10 @@ impl Args {
             if let Ok(provider) = provider_str.parse::<LLMProvider>() {
                 config.llm.provider = provider;
             } else {
-                eprintln!("⚠️ 警告: 未知的provider: {}，使用默认provider", provider_str);
+                eprintln!(
+                    "⚠️ 警告: 未知的provider: {}，使用默认provider",
+                    provider_str
+                );
             }
         }
         if let Some(llm_api_base_url) = self.llm_api_base_url {

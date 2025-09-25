@@ -18,6 +18,8 @@ pub enum ProviderClient {
     Moonshot(rig::providers::moonshot::Client),
     Mistral(rig::providers::mistral::Client),
     OpenRouter(rig::providers::openrouter::Client),
+    Anthropic(rig::providers::anthropic::Client),
+    Gemini(rig::providers::gemini::Client),
 }
 
 impl ProviderClient {
@@ -38,6 +40,14 @@ impl ProviderClient {
                 let client =
                     rig::providers::openrouter::Client::builder(&config.api_key).build()?;
                 Ok(ProviderClient::OpenRouter(client))
+            }
+            LLMProvider::Anthropic => {
+                let client = rig::providers::anthropic::Client::builder(&config.api_key).build()?;
+                Ok(ProviderClient::Anthropic(client))
+            }
+            LLMProvider::Gemini => {
+                let client = rig::providers::gemini::Client::builder(&config.api_key).build()?;
+                Ok(ProviderClient::Gemini(client))
             }
         }
     }
@@ -74,6 +84,90 @@ impl ProviderClient {
                     .temperature(config.temperature.into())
                     .build();
                 ProviderAgent::OpenRouter(agent)
+            }
+            ProviderClient::Anthropic(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .temperature(config.temperature.into())
+                    .build();
+                ProviderAgent::Anthropic(agent)
+            }
+            ProviderClient::Gemini(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .temperature(config.temperature.into())
+                    .build();
+                ProviderAgent::Gemini(agent)
+            }
+        }
+    }
+
+    /// 创建带工具的Agent
+    pub fn create_agent_with_tools(
+        &self,
+        model: &str,
+        system_prompt: &str,
+        config: &LLMConfig,
+        file_explorer: &crate::llm::tools::file_explorer::AgentToolFileExplorer,
+        file_reader: &crate::llm::tools::file_reader::AgentToolFileReader,
+    ) -> ProviderAgent {
+        match self {
+            ProviderClient::Moonshot(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .temperature(config.temperature.into())
+                    .tool(file_explorer.clone())
+                    .tool(file_reader.clone())
+                    .build();
+                ProviderAgent::Moonshot(agent)
+            }
+            ProviderClient::Mistral(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .temperature(config.temperature.into())
+                    .tool(file_explorer.clone())
+                    .tool(file_reader.clone())
+                    .build();
+                ProviderAgent::Mistral(agent)
+            }
+            ProviderClient::OpenRouter(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .temperature(config.temperature.into())
+                    .tool(file_explorer.clone())
+                    .tool(file_reader.clone())
+                    .build();
+                ProviderAgent::OpenRouter(agent)
+            }
+            ProviderClient::Anthropic(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .temperature(config.temperature.into())
+                    .tool(file_explorer.clone())
+                    .tool(file_reader.clone())
+                    .build();
+                ProviderAgent::Anthropic(agent)
+            }
+            ProviderClient::Gemini(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .temperature(config.temperature.into())
+                    .tool(file_explorer.clone())
+                    .tool(file_reader.clone())
+                    .build();
+                ProviderAgent::Gemini(agent)
             }
         }
     }
@@ -116,6 +210,24 @@ impl ProviderClient {
                     .build();
                 ProviderExtractor::OpenRouter(extractor)
             }
+            ProviderClient::Anthropic(client) => {
+                let extractor = client
+                    .extractor::<T>(model)
+                    .retries(config.retry_attempts.into())
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .build();
+                ProviderExtractor::Anthropic(extractor)
+            }
+            ProviderClient::Gemini(client) => {
+                let extractor = client
+                    .extractor::<T>(model)
+                    .retries(config.retry_attempts.into())
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .build();
+                ProviderExtractor::Gemini(extractor)
+            }
         }
     }
 }
@@ -125,6 +237,8 @@ pub enum ProviderAgent {
     Moonshot(Agent<rig::providers::moonshot::CompletionModel>),
     Mistral(Agent<rig::providers::mistral::CompletionModel>),
     OpenRouter(Agent<rig::providers::openrouter::CompletionModel>),
+    Anthropic(Agent<rig::providers::anthropic::completion::CompletionModel>),
+    Gemini(Agent<rig::providers::gemini::completion::CompletionModel>),
 }
 
 impl ProviderAgent {
@@ -134,6 +248,8 @@ impl ProviderAgent {
             ProviderAgent::Moonshot(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
             ProviderAgent::Mistral(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
             ProviderAgent::OpenRouter(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
+            ProviderAgent::Anthropic(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
+            ProviderAgent::Gemini(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
         }
     }
 
@@ -149,6 +265,10 @@ impl ProviderAgent {
             ProviderAgent::OpenRouter(agent) => {
                 agent.prompt(prompt).multi_turn(max_iterations).await
             }
+            ProviderAgent::Anthropic(agent) => {
+                agent.prompt(prompt).multi_turn(max_iterations).await
+            }
+            ProviderAgent::Gemini(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
         }
     }
 }
@@ -161,6 +281,8 @@ where
     Moonshot(Extractor<rig::providers::moonshot::CompletionModel, T>),
     Mistral(Extractor<rig::providers::mistral::CompletionModel, T>),
     OpenRouter(Extractor<rig::providers::openrouter::CompletionModel, T>),
+    Anthropic(Extractor<rig::providers::anthropic::completion::CompletionModel, T>),
+    Gemini(Extractor<rig::providers::gemini::completion::CompletionModel, T>),
 }
 
 impl<T> ProviderExtractor<T>
@@ -177,6 +299,12 @@ where
                 extractor.extract(prompt).await.map_err(|e| e.into())
             }
             ProviderExtractor::OpenRouter(extractor) => {
+                extractor.extract(prompt).await.map_err(|e| e.into())
+            }
+            ProviderExtractor::Anthropic(extractor) => {
+                extractor.extract(prompt).await.map_err(|e| e.into())
+            }
+            ProviderExtractor::Gemini(extractor) => {
                 extractor.extract(prompt).await.map_err(|e| e.into())
             }
         }

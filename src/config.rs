@@ -13,6 +13,10 @@ pub enum LLMProvider {
     Mistral,
     #[serde(rename = "openrouter")]
     OpenRouter,
+    #[serde(rename = "anthropic")]
+    Anthropic,
+    #[serde(rename = "gemini")]
+    Gemini,
 }
 
 impl Default for LLMProvider {
@@ -24,9 +28,11 @@ impl Default for LLMProvider {
 impl std::fmt::Display for LLMProvider {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            LLMProvider::Moonshot => write!(f, "moonshot"),
+            LLMProvider::Moonshot => write!(f, "openai"),
             LLMProvider::Mistral => write!(f, "mistral"),
             LLMProvider::OpenRouter => write!(f, "openrouter"),
+            LLMProvider::Anthropic => write!(f, "anthropic"),
+            LLMProvider::Gemini => write!(f, "gemini"),
         }
     }
 }
@@ -36,9 +42,11 @@ impl std::str::FromStr for LLMProvider {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
-            "moonshot" => Ok(LLMProvider::Moonshot),
+            "openai" => Ok(LLMProvider::Moonshot),
             "mistral" => Ok(LLMProvider::Mistral),
             "openrouter" => Ok(LLMProvider::OpenRouter),
+            "anthropic" => Ok(LLMProvider::Anthropic),
+            "gemini" => Ok(LLMProvider::Gemini),
             _ => Err(format!("Unknown provider: {}", s)),
         }
     }
