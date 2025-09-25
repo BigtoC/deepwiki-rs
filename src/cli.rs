@@ -1,4 +1,4 @@
-use crate::config::Config;
+use crate::config::{Config, LLMProvider};
 use clap::Parser;
 use std::path::PathBuf;
 
@@ -71,6 +71,10 @@ pub struct Args {
     #[arg(long)]
     pub max_parallels: Option<usize>,
 
+    /// LLM Provider (moonshot, mistral, openrouter)
+    #[arg(long)]
+    pub llm_provider: Option<String>,
+
     /// 生成报告后,自动使用报告助手查看报告
     #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
     pub enable_preset_tools: bool,
@@ -107,6 +111,13 @@ impl Args {
         }
 
         // 覆盖LLM配置
+        if let Some(provider_str) = self.llm_provider {
+            if let Ok(provider) = provider_str.parse::<LLMProvider>() {
+                config.llm.provider = provider;
+            } else {
+                eprintln!("⚠️ 警告: 未知的provider: {}，使用默认provider", provider_str);
+            }
+        }
         if let Some(llm_api_base_url) = self.llm_api_base_url {
             config.llm.api_base_url = llm_api_base_url;
         }

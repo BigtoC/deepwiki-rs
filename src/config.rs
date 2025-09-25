@@ -4,6 +4,46 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 
+/// LLM Provider类型
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+pub enum LLMProvider {
+    #[serde(rename = "moonshot")]
+    Moonshot,
+    #[serde(rename = "mistral")]
+    Mistral,
+    #[serde(rename = "openrouter")]
+    OpenRouter,
+}
+
+impl Default for LLMProvider {
+    fn default() -> Self {
+        Self::Moonshot
+    }
+}
+
+impl std::fmt::Display for LLMProvider {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            LLMProvider::Moonshot => write!(f, "moonshot"),
+            LLMProvider::Mistral => write!(f, "mistral"),
+            LLMProvider::OpenRouter => write!(f, "openrouter"),
+        }
+    }
+}
+
+impl std::str::FromStr for LLMProvider {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.to_lowercase().as_str() {
+            "moonshot" => Ok(LLMProvider::Moonshot),
+            "mistral" => Ok(LLMProvider::Mistral),
+            "openrouter" => Ok(LLMProvider::OpenRouter),
+            _ => Err(format!("Unknown provider: {}", s)),
+        }
+    }
+}
+
 /// 应用程序配置
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Config {
@@ -65,6 +105,9 @@ pub struct Config {
 /// LLM模型配置
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct LLMConfig {
+    /// LLM Provider类型
+    pub provider: LLMProvider,
+
     /// LLM API KEY
     pub api_key: String,
 
@@ -400,6 +443,7 @@ impl Default for Config {
 impl Default for LLMConfig {
     fn default() -> Self {
         Self {
+            provider: LLMProvider::default(),
             api_key: std::env::var("LITHO_LLM_API_KEY").unwrap_or_default(),
             api_base_url: String::from("https://api-inference.modelscope.cn/v1"),
             model_efficient: String::from("Qwen/Qwen3-Next-80B-A3B-Instruct"),
