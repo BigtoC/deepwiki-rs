@@ -164,26 +164,35 @@ impl KeyModulesInsight {
             .await
             .expect("memory of CODE_INSIGHTS not found in PREPROCESS");
 
-        // 收集该领域所有子模块的代码路径
-        let domain_paths: HashSet<String> = domain
-            .sub_modules
-            .iter()
-            .flat_map(|sub| sub.code_paths.iter().cloned())
-            .collect();
+        // 收集该领域所有关联的代码路径
+        let mut domain_paths: HashSet<String> = HashSet::new();
+
+        // 1. 添加领域本身的代码路径
+        for path in &domain.code_paths {
+            domain_paths.insert(path.clone());
+        }
+
+        // 2. 添加子模块的代码路径
+        for sub in &domain.sub_modules {
+            for path in &sub.code_paths {
+                domain_paths.insert(path.clone());
+            }
+        }
 
         if domain_paths.is_empty() {
             println!("⚠️ 领域'{}'没有关联的代码路径", domain.name);
             return Ok(Vec::new());
         }
 
-        // 筛选相关的代码洞察
         let filtered: Vec<CodeInsight> = all_insights
             .into_iter()
             .filter(|insight| {
                 let file_path = insight.code_dossier.file_path.to_string_lossy();
-                domain_paths
-                    .iter()
-                    .any(|path| file_path.contains(path) || path.contains(&*file_path))
+                let file_path = file_path.replace('\\', "/");
+                domain_paths.iter().any(|path| {
+                    let path = path.replace('\\', "/");
+                    file_path.contains(&path) || path.contains(&file_path)
+                })
             })
             .take(50)
             .collect();
