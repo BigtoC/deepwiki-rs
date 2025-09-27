@@ -71,7 +71,7 @@ pub struct Args {
     #[arg(long)]
     pub max_parallels: Option<usize>,
 
-    /// LLM Provider (openai, mistral, openrouter, anthropic)
+    /// LLM Provider (openai, mistral, openrouter, anthropic, deepseek)
     #[arg(long)]
     pub llm_provider: Option<String>,
 

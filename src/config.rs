@@ -9,6 +9,8 @@ use std::path::PathBuf;
 pub enum LLMProvider {
     #[serde(rename = "moonshot")]
     Moonshot,
+    #[serde(rename = "deepseek")]
+    DeepSeek,
     #[serde(rename = "mistral")]
     Mistral,
     #[serde(rename = "openrouter")]
@@ -29,6 +31,7 @@ impl std::fmt::Display for LLMProvider {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             LLMProvider::Moonshot => write!(f, "openai"),
+            LLMProvider::DeepSeek => write!(f, "deepseek"),
             LLMProvider::Mistral => write!(f, "mistral"),
             LLMProvider::OpenRouter => write!(f, "openrouter"),
             LLMProvider::Anthropic => write!(f, "anthropic"),
@@ -43,6 +46,7 @@ impl std::str::FromStr for LLMProvider {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "openai" => Ok(LLMProvider::Moonshot),
+            "deepseek" => Ok(LLMProvider::DeepSeek),
             "mistral" => Ok(LLMProvider::Mistral),
             "openrouter" => Ok(LLMProvider::OpenRouter),
             "anthropic" => Ok(LLMProvider::Anthropic),
