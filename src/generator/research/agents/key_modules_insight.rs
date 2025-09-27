@@ -301,7 +301,7 @@ impl KeyModulesInsight {
             .enumerate()
             .map(|(i, insight)| {
                 format!(
-                    "{}. 文件`{}`，用途：{}\n   描述：{}\n   源码{}\n---\n",
+                    "{}. 文件`{}`，用途：{}\n   描述：{}\n   源码\n```code\n{}```\n---\n",
                     i + 1,
                     insight.code_dossier.file_path.to_string_lossy(),
                     insight.code_dossier.code_purpose,

@@ -14,6 +14,8 @@ pub struct CodeDossier {
     /// 文件路径
     pub file_path: PathBuf,
     /// 源码摘要
+    #[schemars(skip)]
+    #[serde(default)]
     pub source_summary: String,
     /// 用途类型
     pub code_purpose: CodePurpose,

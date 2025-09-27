@@ -103,16 +103,16 @@ impl LLMClient {
             Err(e) => match fallover_model {
                 Some(ref model) => {
                     eprintln!(
-                        "❌ 调用模型服务出错，尝试 {}次均失败，尝试使用备选模型...{}",
-                        llm_config.retry_attempts, model
+                        "❌ 调用模型服务出错，尝试 {} 次均失败，尝试使用备选模型{}...{}",
+                        llm_config.retry_attempts, model, e
                     );
                     Box::pin(self.extract_inner(system_prompt, user_prompt, model.clone(), None))
                         .await
                 }
                 None => {
                     eprintln!(
-                        "❌ 调用模型服务出错，尝试 {}次均失败",
-                        llm_config.retry_attempts
+                        "❌ 调用模型服务出错，尝试 {} 次均失败...{}",
+                        llm_config.retry_attempts, e
                     );
                     Err(e.into())
                 }
@@ -168,7 +168,7 @@ impl LLMClient {
                 }
                 Err(e) => {
                     if react_config.verbose {
-                        println!("⚠️  总结推理失败，返回原始部分结果: {}", e);
+                        println!("⚠️  总结推理失败，返回原始部分结果...{}", e);
                     }
                     // 总结推理失败时，返回原始的部分结果
                 }
