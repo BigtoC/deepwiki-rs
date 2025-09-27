@@ -80,7 +80,6 @@ impl ProviderClient {
                 let agent = client
                     .agent(model)
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
                     .temperature(config.temperature.into())
                     .build();
                 ProviderAgent::DeepSeek(agent)

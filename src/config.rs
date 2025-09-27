@@ -136,7 +136,7 @@ pub struct LLMConfig {
     pub max_tokens: u32,
 
     /// 温度
-    pub temperature: f32,
+    pub temperature: f64,
 
     /// 重试次数
     pub retry_attempts: u32,

@@ -65,7 +65,7 @@ pub struct Args {
 
     /// 温度参数
     #[arg(long)]
-    pub temperature: Option<f32>,
+    pub temperature: Option<f64>,
 
     /// 温度参数
     #[arg(long)]
