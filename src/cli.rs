@@ -65,13 +65,13 @@ pub struct Args {
 
     /// 温度参数
     #[arg(long)]
-    pub temperature: Option<f32>,
+    pub temperature: Option<f64>,
 
     /// 温度参数
     #[arg(long)]
     pub max_parallels: Option<usize>,
 
-    /// LLM Provider (openai, mistral, openrouter, anthropic)
+    /// LLM Provider (openai, mistral, openrouter, anthropic, deepseek)
     #[arg(long)]
     pub llm_provider: Option<String>,
 
