@@ -1,7 +1,9 @@
 //! 总结推理模块 - 当ReAct模式达到最大迭代次数时的fallover机制
 
 use anyhow::Result;
-use rig::{completion::{Message, Prompt}, providers::moonshot::CompletionModel, agent::Agent};
+use rig::completion::Message;
+
+use super::providers::ProviderAgent;
 
 /// 总结推理器
 pub struct SummaryReasoner;
@@ -9,7 +11,7 @@ pub struct SummaryReasoner;
 impl SummaryReasoner {
     /// 基于ReAct对话历史和工具调用记录进行总结推理
     pub async fn summarize_and_reason(
-        agent_without_tools: &Agent<CompletionModel>,
+        agent_without_tools: &ProviderAgent,
         original_system_prompt: &str,
         original_user_prompt: &str,
         chat_history: &[Message],

@@ -1,7 +1,6 @@
 //! LLM客户端 - 提供统一的LLM服务接口
 
 use anyhow::Result;
-use rig::{client::CompletionClient, completion::Prompt, providers::moonshot::Client};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::future::Future;
@@ -9,6 +8,7 @@ use std::future::Future;
 use crate::{config::Config, llm::client::utils::evaluate_befitting_model};
 
 mod agent_builder;
+mod providers;
 mod react;
 mod react_executor;
 mod summary_reasoner;
@@ -18,6 +18,7 @@ pub mod utils;
 pub use react::{ReActConfig, ReActResponse};
 
 use agent_builder::AgentBuilder;
+use providers::ProviderClient;
 use react_executor::ReActExecutor;
 use summary_reasoner::SummaryReasoner;
 
@@ -25,17 +26,13 @@ use summary_reasoner::SummaryReasoner;
 #[derive(Clone)]
 pub struct LLMClient {
     config: Config,
-    client: Client,
+    client: ProviderClient,
 }
 
 impl LLMClient {
     /// 创建新的LLM客户端
     pub fn new(config: Config) -> Result<Self> {
-        let llm_config = &config.llm;
-        let client = Client::builder(&llm_config.api_key)
-            .base_url(&llm_config.api_base_url)
-            .build()?;
-
+        let client = ProviderClient::new(&config.llm)?;
         Ok(Self { client, config })
     }
 
@@ -99,27 +96,23 @@ impl LLMClient {
 
         let extractor = self
             .client
-            .extractor::<T>(&befitting_model)
-            .retries(llm_config.retry_attempts.into())
-            .preamble(system_prompt)
-            .max_tokens(llm_config.max_tokens.into())
-            .build();
+            .create_extractor::<T>(&befitting_model, system_prompt, llm_config);
 
         match extractor.extract(user_prompt).await {
             Ok(r) => Ok(r),
             Err(e) => match fallover_model {
                 Some(ref model) => {
                     eprintln!(
-                        "❌ 调用模型服务出错，尝试 {}次均失败，尝试使用备选模型...{}",
-                        llm_config.retry_attempts, model
+                        "❌ 调用模型服务出错，尝试 {} 次均失败，尝试使用备选模型{}...{}",
+                        llm_config.retry_attempts, model, e
                     );
                     Box::pin(self.extract_inner(system_prompt, user_prompt, model.clone(), None))
                         .await
                 }
                 None => {
                     eprintln!(
-                        "❌ 调用模型服务出错，尝试 {}次均失败",
-                        llm_config.retry_attempts
+                        "❌ 调用模型服务出错，尝试 {} 次均失败...{}",
+                        llm_config.retry_attempts, e
                     );
                     Err(e.into())
                 }
@@ -175,7 +168,7 @@ impl LLMClient {
                 }
                 Err(e) => {
                     if react_config.verbose {
-                        println!("⚠️  总结推理失败，返回原始部分结果: {}", e);
+                        println!("⚠️  总结推理失败，返回原始部分结果...{}", e);
                     }
                     // 总结推理失败时，返回原始的部分结果
                 }

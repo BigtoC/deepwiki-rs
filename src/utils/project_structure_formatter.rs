@@ -10,28 +10,28 @@ impl ProjectStructureFormatter {
     /// 格式化项目结构信息为树形结构
     pub fn format_as_tree(structure: &ProjectStructure) -> String {
         let mut result = format!(
-            "### 项目结构信息\n项目名称: {}\n根目录: {}\n\n项目目录结构：\n```\n", 
-            structure.project_name, 
+            "### 项目结构信息\n项目名称: {}\n根目录: {}\n\n项目目录结构：\n```\n",
+            structure.project_name,
             structure.root_path.to_string_lossy()
         );
-        
+
         // 构建路径树，区分文件和目录
         let mut tree = PathTree::new();
-        
+
         // 先插入所有文件（这些是确定的文件）
         for file in &structure.files {
             let normalized_path = Self::normalize_path(&file.path);
             tree.insert_file(&normalized_path);
         }
-        
+
         // 生成树形字符串
         let tree_output = tree.to_tree_string();
         result.push_str(&tree_output);
         result.push_str("```\n");
-        
+
         result
     }
-    
+
     /// 标准化路径格式，移除 "./" 前缀
     fn normalize_path(path: &Path) -> PathBuf {
         let path_str = path.to_string_lossy();
@@ -47,15 +47,13 @@ impl ProjectStructureFormatter {
 #[derive(Debug)]
 struct PathNode {
     name: String,
-    is_file: bool,
     children: BTreeMap<String, PathNode>,
 }
 
 impl PathNode {
-    fn new(name: String, is_file: bool) -> Self {
+    fn new(name: String) -> Self {
         Self {
             name,
-            is_file,
             children: BTreeMap::new(),
         }
     }
@@ -70,22 +68,17 @@ struct PathTree {
 impl PathTree {
     fn new() -> Self {
         Self {
-            root: PathNode::new("".to_string(), false),
+            root: PathNode::new("".to_string()),
         }
     }
 
     /// 插入文件路径到树中
     fn insert_file(&mut self, path: &Path) {
-        self.insert_path(path, true);
+        self.insert_path(path);
     }
-    
-    /// 插入目录路径到树中
-    fn insert_directory(&mut self, path: &Path) {
-        self.insert_path(path, false);
-    }
-    
+
     /// 插入路径到树中
-    fn insert_path(&mut self, path: &Path, is_file: bool) {
+    fn insert_path(&mut self, path: &Path) {
         let components: Vec<&str> = path
             .components()
             .filter_map(|c| c.as_os_str().to_str())
@@ -97,14 +90,11 @@ impl PathTree {
 
         let mut current = &mut self.root;
 
-        for (i, component) in components.iter().enumerate() {
-            let is_last_component = i == components.len() - 1;
-            let node_is_file = is_file && is_last_component;
-
+        for (_i, component) in components.iter().enumerate() {
             current
                 .children
                 .entry(component.to_string())
-                .or_insert_with(|| PathNode::new(component.to_string(), node_is_file));
+                .or_insert_with(|| PathNode::new(component.to_string()));
 
             current = current.children.get_mut(*component).unwrap();
         }

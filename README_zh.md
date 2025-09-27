@@ -121,69 +121,44 @@ I --> J[输出目录]
 
 **Litho**具有复杂的模块化架构，专为高性能、可扩展性和智能分析而设计。系统实现了多阶段工作流，配备专门的AI智能体和全面的缓存机制。
 
-
 ```mermaid
-flowchart TB
-    subgraph "核心引擎"
-        Workflow[工作流控制器]
-        Context[生成器上下文]
-        Memory[共享内存]
+graph LR
+    subgraph 输入阶段
+        A[CLI启动] --> B[加载配置]
+        B --> C[扫描结构]
+        C --> D[提取README]
     end
-
-    subgraph "预处理阶段"
-        StructureExtractor[结构提取器]
-        LanguageProcessors[语言处理器]
-        CodeAnalyzer[代码分析器]
+    subgraph 分析阶段
+        D --> E[语言解析]
+        E --> F[AI增强分析]
+        F --> G[存入内存]
     end
-
-    subgraph "研究阶段"
-        ResearchOrchestrator[研究协调器]
-        SystemContextAgent[系统上下文智能体]
-        ArchitectureAgent[架构智能体]
-        WorkflowAgent[工作流智能体]
-        DomainModuleAgent[领域模块智能体]
+    subgraph 推理阶段
+        G --> H[编排器启动]
+        H --> I[系统上下文分析]
+        H --> J[领域模块探测]
+        H --> K[工作流分析]
+        H --> L[关键模块洞察]
+        I --> M[存入内存]
+        J --> M
+        K --> M
+        L --> M
     end
-
-    subgraph "编排阶段"
-        OverviewEditor[概述编辑器]
-        ArchitectureEditor[架构编辑器]
-        CoreModulesEditor[核心模块编辑器]
+    subgraph 编排阶段
+        M --> N[编排中枢启动]
+        N --> O[生成项目概述]
+        N --> P[生成架构图]
+        N --> Q[生成工作流文档]
+        N --> R[生成模块洞察]
+        O --> S[写入DocTree]
+        P --> S
+        Q --> S
+        R --> S
     end
-
-    subgraph "输出阶段"
-        SummaryGenerator[摘要生成器]
-        DiskOutlet[磁盘输出器]
+    subgraph 输出阶段
+        S --> T[持久化文档]
+        T --> U[生成总结报告]
     end
-
-    subgraph "基础设施"
-        LLMClient[LLM客户端]
-        CacheManager[缓存管理器]
-        FileTools[文件工具]
-    end
-
-    Workflow --> Context
-    Context --> Memory
-
-    Workflow --> StructureExtractor
-    StructureExtractor --> LanguageProcessors
-    LanguageProcessors --> CodeAnalyzer
-
-    Workflow --> ResearchOrchestrator
-    ResearchOrchestrator --> SystemContextAgent
-    ResearchOrchestrator --> ArchitectureAgent
-    ResearchOrchestrator --> WorkflowAgent
-    ResearchOrchestrator --> DomainModuleAgent
-
-    Workflow --> OverviewEditor
-    Workflow --> ArchitectureEditor
-    Workflow --> CoreModulesEditor
-
-    Workflow --> SummaryGenerator
-    SummaryGenerator --> DiskOutlet
-
-    Context --> LLMClient
-    Context --> CacheManager
-    LLMClient --> FileTools
 ```
 
 ## 核心模块
@@ -321,32 +296,29 @@ litho --name "我的超棒项目" -o ./my-docs
 
 ### 高级选项
 
-- 启用详细日志：
+- 配置 LLM 设置：
   ```sh
-  litho -v
+  litho --llm-api-base-url <api-url> --llm-api-key <api-key> --model-efficient <model-name> --model-powerful <model-name> --llm-provider <provider>
   ```
 
-- 配置LLM设置：
-  ```sh
-  litho --llm-api-base-url <api-url> --llm-api-key <api-key> --model-efficient <model-name>
-  ```
+  支持的提供商（默认：`openai`）：
+  - `openai`: OpenAI 的 API
+  - `mistral`: Mistral AI 的 API
+  - `openrouter`: OpenRouter 的 API
+  - `anthropic`: Anthropic 的 API
+  - 兼容提供商（OpenAI 兼容的 API）：`moonshot`，`deepseek` 等
 
 - 跳过特定阶段：
   ```sh
   litho --skip-preprocessing  # 跳过预处理阶段
   litho --skip-research      # 跳过研究阶段
-  litho --skip-documentation # 跳过文档阶段
+  litho --skip-documentation # 跳过文档生成阶段
   ```
 
 - 高级配置：
   ```sh
-  litho --config <config-file> --max-tokens 4000 --temperature 0.7 --max-parallels 4
+  litho --config <config-file> --max-tokens 4000 --temperature 0.7 --max-parallels 4 --no-cache --force-regenerate --enable-preset-tools
   ```
-
-要获取更详细的使用信息，请运行：
-```sh
-litho --help
-```
 
 ## 📁 输出结构
 

@@ -1,4 +1,4 @@
-use crate::config::Config;
+use crate::config::{Config, LLMProvider};
 use clap::Parser;
 use std::path::PathBuf;
 
@@ -26,10 +26,6 @@ pub struct Args {
     /// 项目名称
     #[arg(short, long)]
     pub name: Option<String>,
-
-    /// 文档格式 (markdown, html)
-    #[arg(short, long, default_value = "markdown")]
-    pub format: String,
 
     /// 是否跳过项目预处理
     #[arg(long)]
@@ -75,6 +71,10 @@ pub struct Args {
     #[arg(long)]
     pub max_parallels: Option<usize>,
 
+    /// LLM Provider (openai, mistral, openrouter, anthropic)
+    #[arg(long)]
+    pub llm_provider: Option<String>,
+
     /// 生成报告后,自动使用报告助手查看报告
     #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
     pub enable_preset_tools: bool,
@@ -104,7 +104,6 @@ impl Args {
         config.project_path = self.project_path.clone();
         config.output_path = self.output_path;
         config.internal_path = self.project_path.join(".litho");
-        config.document_format = self.format;
 
         // 项目名称处理：CLI参数优先级最高，如果CLI没有指定且配置文件也没有，get_project_name()会自动推断
         if let Some(name) = self.name {
@@ -112,6 +111,16 @@ impl Args {
         }
 
         // 覆盖LLM配置
+        if let Some(provider_str) = self.llm_provider {
+            if let Ok(provider) = provider_str.parse::<LLMProvider>() {
+                config.llm.provider = provider;
+            } else {
+                eprintln!(
+                    "⚠️ 警告: 未知的provider: {}，使用默认provider",
+                    provider_str
+                );
+            }
+        }
         if let Some(llm_api_base_url) = self.llm_api_base_url {
             config.llm.api_base_url = llm_api_base_url;
         }

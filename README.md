@@ -10,41 +10,74 @@
     <a href="./README_zh.md">中文</a>
 </p>
 
-<p align="center">💪🏻 High-performance <strong>AI-driven</strong> intelligent documentation generation engine (DeepWiki-like) built with <strong>Rust</strong></p>
-<p align="center">📚 Automatically generates professional <strong>C4-style project architecture documentation</strong> for any software project</p>
+<p align="center">💪🏻 High-performance <strong>AI-driven</strong> intelligent document generator (DeepWiki-like) built with <strong>Rust</strong></p>
+<p align="center">📚 Automatically generates high quality <strong>Repo-Wiki</strong> for any software projects</p>
 <p align="center">
+  <a href="./docs/1、项目概述.md"><img src="https://img.shields.io/badge/Litho-Docs-blue" /></a>
   <a href="https://crates.io/crates/deepwiki-rs"><img src="https://img.shields.io/crates/v/deepwiki-rs.svg?color=dca282" /></a>
   <a href=""><img src="https://img.shields.io/badge/built_with-Rust-dca282.svg?logo=rust" /></a>
   <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/sopaco/deepwiki-rs/rust.yml">
 </p>
 <hr />
 
-> [!WARNING]
-> ⚠️ As we plan to ship a torrent of features in the following months, future updates will contain breaking changes. With the architecture evolving, we'll annotate changes and highlight migration paths as we encounter them.
-
 > 🚀 Help me develop this software better by [sponsoring on GitHub](https://github.com/sponsors/sopaco)
 
 
 # 👋 What's Litho
-**Litho** (also known as deepwiki-rs) is a high-performance AI documentation generation engine built with Rust, capable of automatically creating comprehensive technical documentation for software projects. Through advanced AI analysis capabilities, Litho intelligently explores project structures, identifies core modules, analyzes dependency relationships, and generates professional architecture documentation.
+**Litho** (also known as **deepwiki-rs**) is a high-performance AI-driven documentation engine that automatically generates Repo-Wiki for your software projects. Built with Rust for performance and reliability, Litho helps teams maintain up-to-date technical documentation with minimal effort.
 
 **Litho** employs a multi-engine workflow based on static code analysis and AI Multi-Agents, combining static code analysis with large language model (LLM) intelligence. The system uses specialized AI agents to conduct deep research on system context, architecture patterns, business workflows, and core module insights, ultimately generating comprehensive documentation including overview, architecture, and detailed technical topic documentation.
 
+# 😺 Why use Litho
+- Save hours/week on manual documentation
+- Keep documentation in sync with code
+- Get consistent, professional documentation
+- Understand complex projects faster
+
+🌟 **For:**
+- Development teams of all sizes
+- Open source projects
+- Enterprise software developers
+- Anyone who hates maintaining outdated docs!
+
 ❤️ Like **Litho**? Star it 🌟 or [Sponsor Me](https://github.com/sponsors/sopaco)! ❤️
+
+**Thanks to the kind people**
+
+[![Stargazers repo roster for @sopaco/saga-reader](https://reporoster.com/stars/sopaco/saga-reader)](https://github.com/sopaco/deepwiki-rs/stargazers)
 
 # 🌠 Features & Capabilities
 
-- **AI-Driven Multi-Stage Workflow**: Implements a four-stage pipeline (Preprocessing → Research → Compose → Output) with specialized AI agents for comprehensive project analysis.
-- **Project Knowledge & Technical Documentation Generation**: Generates professional C4 architecture-style documentation including project overview, technical architecture, and detailed Deep Dive intelligent topic documentation.
-- **Multi-Agent Research System**: Deploys specialized AI agents for system context analysis, architecture pattern recognition, business workflow reconstruction, and core module insights.
-- **Comprehensive Language Support**: Built-in processors for 10+ programming languages including Rust, Python, JavaScript/TypeScript, Java, Kotlin, React, Vue, Svelte, and more.
-- **Intelligent Code Analysis**: Combines static code analysis with LLM-driven understanding to extract project structure, dependencies, and architectural patterns.
-- **ReAct Pattern Integration**: Utilizes ReAct (Reasoning + Acting) pattern for systematic codebase exploration and analysis.
-- **Caching & Performance Optimization**: Includes intelligent caching system and parallel processing capabilities for efficient large-scale project analysis.
-- **Extensible Architecture**: Modular design with trait-based language processors and agent system supporting easy extension for new languages and analysis capabilities.
-- **Professional Documentation Output**: Generates markdown and HTML documentation with proper structure, diagrams, and detailed module analysis.
+### Core Capabilities
+
+- **AI Automated Documentation**: Generate project overview, architecture diagrams, and deep dives
+- **Multi-Language Support**: 10+ languages including Rust, Python, JavaScript, Java, and more
+- **C4 Model Compliance**: Professional architecture documentation standard
+- **ReAct Pattern Integration**: Advanced AI reasoning for deep code analysis
+
+### Advanced Features
+
+- Parallel processing for large codebases
+- Smart caching to reduce LLM calls
+- Customizable output formats
+- Extensible architecture for new language processors
+
+## 💡 Problem Solved
+
+**The documentation dilemma:**
+- Outdated docs that don't match the code
+- Time-consuming manual documentation
+- Lack of architecture overview
+- Inconsistent documentation styles
+
+**Litho solves this by:**
+- Continuously updating docs as code changes
+- Generating consistent, professional documentation
+- Providing both high-level overviews and detailed deep dives
+- Automating the tedious work of documentation
 
 # 🧠 How it works
+[![zread](https://img.shields.io/badge/Ask_Zread-_.svg?style=flat&color=00b0aa&labelColor=000000&logo=data%3Aimage%2Fsvg%2Bxml%3Bbase64%2CPHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZD0iTTQuOTYxNTYgMS42MDAxSDIuMjQxNTZDMS44ODgxIDEuNjAwMSAxLjYwMTU2IDEuODg2NjQgMS42MDE1NiAyLjI0MDFWNC45NjAxQzEuNjAxNTYgNS4zMTM1NiAxLjg4ODEgNS42MDAxIDIuMjQxNTYgNS42MDAxSDQuOTYxNTZDNS4zMTUwMiA1LjYwMDEgNS42MDE1NiA1LjMxMzU2IDUuNjAxNTYgNC45NjAxVjIuMjQwMUM1LjYwMTU2IDEuODg2NjQgNS4zMTUwMiAxLjYwMDEgNC45NjE1NiAxLjYwMDFaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00Ljk2MTU2IDEwLjM5OTlIMi4yNDE1NkMxLjg4ODEgMTAuMzk5OSAxLjYwMTU2IDEwLjY4NjQgMS42MDE1NiAxMS4wMzk5VjEzLjc1OTlDMS42MDE1NiAxNC4xMTM0IDEuODg4MSAxNC4zOTk5IDIuMjQxNTYgMTQuMzk5OUg0Ljk2MTU2QzUuMzE1MDIgMTQuMzk5OSA1LjYwMTU2IDE0LjExMzQgNS42MDE1NiAxMy43NTk5VjExLjAzOTlDNS42MDE1NiAxMC42ODY0IDUuMzE1MDIgMTAuMzk5OSA0Ljk2MTU2IDEwLjM5OTlaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik0xMy43NTg0IDEuNjAwMUgxMS4wMzg0QzEwLjY4NSAxLjYwMDEgMTAuMzk4NCAxLjg4NjY0IDEwLjM5ODQgMi4yNDAxVjQuOTYwMUMxMC4zOTg0IDUuMzEzNTYgMTAuNjg1IDUuNjAwMSAxMS4wMzg0IDUuNjAwMUgxMy43NTg0QzE0LjExMTkgNS42MDAxIDE0LjM5ODQgNS4zMTM1NiAxNC4zOTg0IDQuOTYwMVYyLjI0MDFDMTQuMzk4NCAxLjg4NjY0IDE0LjExMTkgMS42MDAxIDEzLjc1ODQgMS42MDAxWiIgZmlsbD0iI2ZmZiIvPgo8cGF0aCBkPSJNNCAxMkwxMiA0TDQgMTJaIiBmaWxsPSIjZmZmIi8%2BCjxwYXRoIGQ9Ik00IDEyTDEyIDQiIHN0cm9rZT0iI2ZmZiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPgo8L3N2Zz4K&logoColor=ffffff)](https://zread.ai/sopaco/deepwiki-rs)
 
 **Litho**'s documentation generation process is divided into four distinct phases: preprocessing, research, composition, and output. Each phase is executed by specialized agents, forming a pipeline-style workflow.
 
@@ -129,67 +162,43 @@ I --> J[Output Directory]
 **Litho** features a sophisticated modular architecture designed for high performance, extensibility, and intelligent analysis. The system implements a multi-stage workflow with specialized AI agents and comprehensive caching mechanisms.
 
 ```mermaid
-flowchart TB
-    subgraph "Core Engine"
-        Workflow[Workflow Controller]
-        Context[Generator Context]
-        Memory[Shared Memory]
+graph LR
+    subgraph Input Phase
+        A[CLI Startup] --> B[Load Configuration]
+        B --> C[Scan Structure]
+        C --> D[Extract README]
     end
-
-    subgraph "Preprocessing Stage"
-        StructureExtractor[Structure Extractor]
-        LanguageProcessors[Language Processors]
-        CodeAnalyzer[Code Analyzer]
+    subgraph Analysis Phase
+        D --> E[Language Parsing]
+        E --> F[AI-Enhanced Analysis]
+        F --> G[Store in Memory]
     end
-
-    subgraph "Research Stage"
-        ResearchOrchestrator[Research Orchestrator]
-        SystemContextAgent[System Context Agent]
-        ArchitectureAgent[Architecture Agent]
-        WorkflowAgent[Workflow Agent]
-        DomainModuleAgent[Domain Module Agent]
+    subgraph Reasoning Phase
+        G --> H[Orchestrator Startup]
+        H --> I[System Context Analysis]
+        H --> J[Domain Module Detection]
+        H --> K[Workflow Analysis]
+        H --> L[Key Module Insights]
+        I --> M[Store in Memory]
+        J --> M
+        K --> M
+        L --> M
     end
-
-    subgraph "Compose Stage"
-        OverviewEditor[Overview Editor]
-        ArchitectureEditor[Architecture Editor]
-        CoreModulesEditor[Core Modules Editor]
+    subgraph Orchestration Phase
+        M --> N[Orchestration Hub Startup]
+        N --> O[Generate Project Overview]
+        N --> P[Generate Architecture Diagram]
+        N --> Q[Generate Workflow Documentation]
+        N --> R[Generate Module Insights]
+        O --> S[Write to DocTree]
+        P --> S
+        Q --> S
+        R --> S
     end
-
-    subgraph "Output Stage"
-        SummaryGenerator[Summary Generator]
-        DiskOutlet[Disk Outlet]
+    subgraph Output Phase
+        S --> T[Persist Documents]
+        T --> U[Generate Summary Report]
     end
-
-    subgraph "Infrastructure"
-        LLMClient[LLM Client]
-        CacheManager[Cache Manager]
-        FileTools[File Tools]
-    end
-
-    Workflow --> Context
-    Context --> Memory
-
-    Workflow --> StructureExtractor
-    StructureExtractor --> LanguageProcessors
-    LanguageProcessors --> CodeAnalyzer
-
-    Workflow --> ResearchOrchestrator
-    ResearchOrchestrator --> SystemContextAgent
-    ResearchOrchestrator --> ArchitectureAgent
-    ResearchOrchestrator --> WorkflowAgent
-    ResearchOrchestrator --> DomainModuleAgent
-
-    Workflow --> OverviewEditor
-    Workflow --> ArchitectureEditor
-    Workflow --> CoreModulesEditor
-
-    Workflow --> SummaryGenerator
-    SummaryGenerator --> DiskOutlet
-
-    Context --> LLMClient
-    Context --> CacheManager
-    LLMClient --> FileTools
 ```
 
 ## Core Modules
@@ -326,16 +335,17 @@ litho --name "My Awesome Project" -o ./my-docs
 ```
 
 ### Advanced Options
-
-- Enable verbose logging:
-  ```sh
-  litho -v
-  ```
-
 - Configure LLM settings:
   ```sh
-  litho --llm-api-base-url <api-url> --llm-api-key <api-key> --model-efficient <model-name>
+  litho --llm-api-base-url <api-url> --llm-api-key <api-key> --model-efficient <model-name> --model-powerful <model-name> --llm-provider <provider>
   ```
+
+  Supported providers (default: `openai`):
+  - `openai`: OpenAI's API
+  - `mistral`: Mistral AI's API
+  - `openrouter`: OpenRouter's API
+  - `anthropic`: Anthropic's API
+  - Compatible providers (OpenAI-compatible APIs): `moonshot`, `deepseek`, etc.
 
 - Skip specific stages:
   ```sh
@@ -346,13 +356,8 @@ litho --name "My Awesome Project" -o ./my-docs
 
 - Advanced configuration:
   ```sh
-  litho --config <config-file> --max-tokens 4000 --temperature 0.7 --max-parallels 4
+  litho --config <config-file> --max-tokens 4000 --temperature 0.7 --max-parallels 4 --no-cache --force-regenerate --enable-preset-tools
   ```
-
-For more detailed usage information, run:
-```sh
-litho --help
-```
 
 ## 📁 Output Structure
 

@@ -1,13 +1,10 @@
 //! ReAct执行器 - 负责执行ReAct模式的多轮对话逻辑
 
 use anyhow::Result;
-use rig::{
-    agent::Agent,
-    completion::{AssistantContent, Message, Prompt, PromptError},
-    providers::moonshot::CompletionModel,
-};
+use rig::completion::{AssistantContent, Message, PromptError};
 
 use super::react::{ReActConfig, ReActResponse};
+use super::providers::ProviderAgent;
 
 /// ReAct执行器
 pub struct ReActExecutor;
@@ -15,7 +12,7 @@ pub struct ReActExecutor;
 impl ReActExecutor {
     /// 执行ReAct循环逻辑
     pub async fn execute(
-        agent: &Agent<CompletionModel>,
+        agent: &ProviderAgent,
         user_prompt: &str,
         config: &ReActConfig,
     ) -> Result<ReActResponse> {
@@ -28,11 +25,7 @@ impl ReActExecutor {
 
         let mut tool_calls_history = Vec::new();
 
-        match agent
-            .prompt(user_prompt)
-            .multi_turn(config.max_iterations)
-            .await
-        {
+        match agent.multi_turn(user_prompt, config.max_iterations).await {
             Ok(response) => {
                 if config.verbose {
                     println!("   ✅ ReAct Agent任务完成");
