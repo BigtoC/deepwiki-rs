@@ -44,7 +44,7 @@
 
 **Thanks to the kind people**
 
-[![Stargazers repo roster for @sopaco/saga-reader](https://reporoster.com/stars/sopaco/saga-reader)](https://github.com/sopaco/deepwiki-rs/stargazers)
+[![Stargazers repo roster for @sopaco/deepwiki-rs](https://reporoster.com/stars/sopaco/deepwiki-rs)](https://github.com/sopaco/deepwiki-rs/stargazers)
 
 # 🌠 Features & Capabilities
 
