@@ -76,7 +76,7 @@ pub struct Args {
     pub llm_provider: Option<String>,
 
     /// 生成报告后,自动使用报告助手查看报告
-    #[arg(long, default_value = "false", action = clap::ArgAction::SetFalse)]
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
     pub disable_preset_tools: bool,
 
     /// 是否禁用缓存
