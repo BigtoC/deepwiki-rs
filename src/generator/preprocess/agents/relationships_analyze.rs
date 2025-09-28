@@ -40,6 +40,7 @@ impl RelationshipsAnalyze {
             code_insights
                 .iter()
                 .filter(|insight| insight.code_dossier.importance_score > 0.6)
+                .take(150)
                 .map(|insight| {
                     {
                         let dependencies_introduce = insight
