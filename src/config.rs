@@ -422,6 +422,7 @@ impl Default for Config {
                 "yarn.lock".to_string(),
                 "Cargo.lock".to_string(),
                 ".gitignore".to_string(),
+                "*.tpl".to_string(),
                 "*.md".to_string(),
                 "*.txt".to_string(),
                 ".env".to_string(),
