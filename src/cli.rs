@@ -76,8 +76,8 @@ pub struct Args {
     pub llm_provider: Option<String>,
 
     /// 生成报告后,自动使用报告助手查看报告
-    #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
-    pub enable_preset_tools: bool,
+    #[arg(long, default_value = "false", action = clap::ArgAction::SetFalse)]
+    pub disable_preset_tools: bool,
 
     /// 是否禁用缓存
     #[arg(long)]
@@ -144,7 +144,7 @@ impl Args {
         if let Some(max_parallels) = self.max_parallels {
             config.llm.max_parallels = max_parallels;
         }
-        config.llm.enable_preset_tools = self.enable_preset_tools;
+        config.llm.disable_preset_tools = self.disable_preset_tools;
 
         // 缓存配置
         if self.no_cache {
