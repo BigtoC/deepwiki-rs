@@ -46,15 +46,14 @@ impl StepForwardAgent for DomainModulesDetector {
 ## 分析要求：
 - 采用自顶向下的分析方法，先领域后模块
 - 领域划分要体现功能价值，不是技术实现
-- 保持合理的抽象层次，避免过度细化"#
+- 保持合理的抽象层次，避免过度细化
+- 重点关注核心业务逻辑和关键依赖关系"#
                 .to_string(),
 
             llm_call_mode: LLMCallMode::Extract,
             formatter_config: FormatterConfig {
-                code_insights_limit: 100,
-                include_source_code: false,
-                dependency_limit: 1000,
-                readme_truncate_length: None,
+                only_directories_when_files_more_than: Some(500),
+                ..FormatterConfig::default()
             },
         }
     }

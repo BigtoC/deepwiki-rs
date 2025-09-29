@@ -14,6 +14,7 @@ use crate::{
         project_structure::ProjectStructure,
     },
     utils::project_structure_formatter::ProjectStructureFormatter,
+    utils::prompt_compressor::{CompressionConfig, PromptCompressor},
 };
 
 /// 数据源配置 - 基于Memory Key的直接数据访问机制
@@ -72,6 +73,8 @@ pub enum LLMCallMode {
 /// 数据格式化配置
 #[derive(Debug, Clone)]
 pub struct FormatterConfig {
+    /// 当文件数大于限定值时，只包含文件夹信息。如果设置为None则包含所有文件夹和文件
+    pub only_directories_when_files_more_than: Option<usize>,
     /// 代码洞察显示数量限制
     pub code_insights_limit: usize,
     /// 是否包含源码内容
@@ -80,6 +83,10 @@ pub struct FormatterConfig {
     pub dependency_limit: usize,
     /// README内容截断长度
     pub readme_truncate_length: Option<usize>,
+    /// 是否启用智能压缩
+    pub enable_compression: bool,
+    /// 压缩配置
+    pub compression_config: CompressionConfig,
 }
 
 impl Default for FormatterConfig {
@@ -89,6 +96,9 @@ impl Default for FormatterConfig {
             include_source_code: false,
             dependency_limit: 50,
             readme_truncate_length: Some(16384),
+            enable_compression: true,
+            compression_config: CompressionConfig::default(),
+            only_directories_when_files_more_than: None,
         }
     }
 }
@@ -111,39 +121,62 @@ pub struct PromptTemplate {
 /// 通用数据格式化器
 pub struct DataFormatter {
     config: FormatterConfig,
+    prompt_compressor: Option<PromptCompressor>,
 }
 
 impl DataFormatter {
     pub fn new(config: FormatterConfig) -> Self {
-        Self { config }
+        let prompt_compressor = if config.enable_compression {
+            Some(PromptCompressor::new(config.compression_config.clone()))
+        } else {
+            None
+        };
+
+        Self {
+            config,
+            prompt_compressor,
+        }
     }
 
     /// 格式化项目结构信息
     pub fn format_project_structure(&self, structure: &ProjectStructure) -> String {
-        let project_tree_str = ProjectStructureFormatter::format_as_tree(structure);
-        format!(
-            "### 项目结构信息\n项目名称: {}\n根目录: {}\n\n项目目录结构：\n``` txt{}```\n",
-            structure.project_name,
-            structure.root_path.to_string_lossy(),
-            project_tree_str
-        )
+        let config = &self.config;
+        if let Some(files_limit) = config.only_directories_when_files_more_than {
+            // 如果超限，则使用精简版项目结构信息（只显示目录）
+            if structure.total_files > files_limit {
+                return ProjectStructureFormatter::format_as_directory_tree(structure);
+            }
+        }
+
+        // 否则使用完整版项目结构信息
+        ProjectStructureFormatter::format_as_tree(structure)
     }
 
     /// 格式化代码洞察信息
     pub fn format_code_insights(&self, insights: &[CodeInsight]) -> String {
         let config = &self.config;
 
+        // 首先按重要性评分排序
+        let mut sorted_insights: Vec<_> = insights.iter().collect();
+        sorted_insights.sort_by(|a, b| {
+            b.code_dossier
+                .importance_score
+                .partial_cmp(&a.code_dossier.importance_score)
+                .unwrap_or(std::cmp::Ordering::Equal)
+        });
+
         let mut content = String::from("### 源码洞察摘要\n");
-        for (i, insight) in insights
+        for (i, insight) in sorted_insights
             .iter()
             .take(self.config.code_insights_limit)
             .enumerate()
         {
             content.push_str(&format!(
-                "{}. 文件`{}`，用途类型为`{}`\n",
+                "{}. 文件`{}`，用途类型为`{}`，重要性: {:.2}\n",
                 i + 1,
                 insight.code_dossier.file_path.to_string_lossy(),
-                insight.code_dossier.code_purpose
+                insight.code_dossier.code_purpose,
+                insight.code_dossier.importance_score
             ));
             if !insight.detailed_description.is_empty() {
                 content.push_str(&format!("   详细描述: {}\n", &insight.detailed_description));
@@ -179,12 +212,17 @@ impl DataFormatter {
     /// 格式化依赖关系分析
     pub fn format_dependency_analysis(&self, deps: &RelationshipAnalysis) -> String {
         let mut content = String::from("### 依赖关系分析\n");
-        // TODO：需要支持与指定文件相关的依赖代码，并做排序返回。防止分析任务所需要的关键代码依赖信息被截断。
-        for rel in deps
-            .core_dependencies
-            .iter()
-            .take(self.config.dependency_limit)
-        {
+
+        // 按依赖强度排序，优先显示重要依赖
+        let mut sorted_deps: Vec<_> = deps.core_dependencies.iter().collect();
+        sorted_deps.sort_by(|a, b| {
+            // 可以根据依赖类型的重要性进行排序
+            let a_priority = self.get_dependency_priority(&a.dependency_type);
+            let b_priority = self.get_dependency_priority(&b.dependency_type);
+            b_priority.cmp(&a_priority)
+        });
+
+        for rel in sorted_deps.iter().take(self.config.dependency_limit) {
             content.push_str(&format!(
                 "{} -> {} ({})\n",
                 rel.from,
@@ -194,6 +232,22 @@ impl DataFormatter {
         }
         content.push_str("\n");
         content
+    }
+
+    /// 获取依赖类型的优先级
+    fn get_dependency_priority(
+        &self,
+        dep_type: &crate::types::code_releationship::DependencyType,
+    ) -> u8 {
+        use crate::types::code_releationship::DependencyType;
+        match dep_type {
+            DependencyType::Import => 10,
+            DependencyType::FunctionCall => 8,
+            DependencyType::Inheritance => 9,
+            DependencyType::Composition => 7,
+            DependencyType::DataFlow => 6,
+            DependencyType::Module => 5,
+        }
     }
 
     /// 格式化研究结果
@@ -207,6 +261,28 @@ impl DataFormatter {
             ));
         }
         content
+    }
+
+    /// 智能压缩内容（如果启用且需要）
+    pub async fn compress_content_if_needed(
+        &self,
+        context: &GeneratorContext,
+        content: &str,
+        content_type: &str,
+    ) -> Result<String> {
+        if let Some(compressor) = &self.prompt_compressor {
+            let compression_result = compressor
+                .compress_if_needed(context, content, content_type)
+                .await?;
+
+            if compression_result.was_compressed {
+                println!("   📊 {}", compression_result.compression_summary);
+            }
+
+            Ok(compression_result.compressed_content)
+        } else {
+            Ok(content.to_string())
+        }
     }
 }
 
@@ -264,7 +340,12 @@ impl GeneratorPromptBuilder {
                             .get_from_memory::<ProjectStructure>(scope, key)
                             .await
                         {
-                            prompt.push_str(&self.formatter.format_project_structure(&structure));
+                            let formatted = self.formatter.format_project_structure(&structure);
+                            let compressed = self
+                                .formatter
+                                .compress_content_if_needed(context, &formatted, "项目结构")
+                                .await?;
+                            prompt.push_str(&compressed);
                         }
                     }
                     ScopedKeys::CODE_INSIGHTS => {
@@ -272,12 +353,22 @@ impl GeneratorPromptBuilder {
                             .get_from_memory::<Vec<CodeInsight>>(scope, key)
                             .await
                         {
-                            prompt.push_str(&self.formatter.format_code_insights(&insights));
+                            let formatted = self.formatter.format_code_insights(&insights);
+                            let compressed = self
+                                .formatter
+                                .compress_content_if_needed(context, &formatted, "代码洞察")
+                                .await?;
+                            prompt.push_str(&compressed);
                         }
                     }
                     ScopedKeys::ORIGINAL_DOCUMENT => {
                         if let Some(readme) = context.get_from_memory::<String>(scope, key).await {
-                            prompt.push_str(&self.formatter.format_readme_content(&readme));
+                            let formatted = self.formatter.format_readme_content(&readme);
+                            let compressed = self
+                                .formatter
+                                .compress_content_if_needed(context, &formatted, "README文档")
+                                .await?;
+                            prompt.push_str(&compressed);
                         }
                     }
                     ScopedKeys::RELATIONSHIPS => {
@@ -285,7 +376,12 @@ impl GeneratorPromptBuilder {
                             .get_from_memory::<RelationshipAnalysis>(scope, key)
                             .await
                         {
-                            prompt.push_str(&self.formatter.format_dependency_analysis(&deps));
+                            let formatted = self.formatter.format_dependency_analysis(&deps);
+                            let compressed = self
+                                .formatter
+                                .compress_content_if_needed(context, &formatted, "依赖关系")
+                                .await?;
+                            prompt.push_str(&compressed);
                         }
                     }
                     _ => {}
@@ -300,13 +396,21 @@ impl GeneratorPromptBuilder {
 
         // 添加研究结果
         if !research_results.is_empty() {
-            prompt.push_str(&self.formatter.format_research_results(&research_results));
+            let formatted = self.formatter.format_research_results(&research_results);
+            let compressed = self
+                .formatter
+                .compress_content_if_needed(context, &formatted, "研究结果")
+                .await?;
+            prompt.push_str(&compressed);
         }
 
         // 结尾强调性指令
         prompt.push_str(&self.template.closing_instruction);
 
-        Ok(prompt)
+        // 最终再次检测和压缩
+        self.formatter
+            .compress_content_if_needed(context, &prompt, "StepForwardAgent_prompt_full")
+            .await
     }
 }
 
