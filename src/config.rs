@@ -150,6 +150,34 @@ pub struct LLMConfig {
     pub disable_preset_tools: bool,
 
     pub max_parallels: usize,
+
+    /// Token优化配置
+    pub token_optimization: TokenOptimizationConfig,
+}
+
+/// Token优化配置
+#[derive(Debug, Deserialize, Serialize, Clone)]
+pub struct TokenOptimizationConfig {
+    /// 是否启用智能压缩
+    pub enable_compression: bool,
+
+    /// 触发压缩的token阈值
+    pub compression_threshold: usize,
+
+    /// 目标压缩比例（0.0-1.0）
+    pub target_compression_ratio: f64,
+
+    /// 最终prompt的token限制
+    pub final_prompt_limit: usize,
+
+    /// 代码洞察的最大显示数量
+    pub code_insights_limit: usize,
+
+    /// 依赖关系的最大显示数量
+    pub dependency_limit: usize,
+
+    /// README内容截断长度
+    pub readme_truncate_length: Option<usize>,
 }
 
 /// 缓存配置
@@ -468,6 +496,21 @@ impl Default for LLMConfig {
             timeout_seconds: 300,
             disable_preset_tools: false,
             max_parallels: 3,
+            token_optimization: TokenOptimizationConfig::default(),
+        }
+    }
+}
+
+impl Default for TokenOptimizationConfig {
+    fn default() -> Self {
+        Self {
+            enable_compression: true,
+            compression_threshold: 65536,
+            target_compression_ratio: 0.7,
+            final_prompt_limit: 15000,
+            code_insights_limit: 50,
+            dependency_limit: 100,
+            readme_truncate_length: Some(16384),
         }
     }
 }
