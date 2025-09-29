@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="120" src="./assets/banner_litho.webp">
+  <img height="160" src="./assets/banner_litho.webp">
 </p>
 <h3 align="center">Litho (deepwiki-rs)</h3>
 
@@ -12,6 +12,7 @@
 <p align="center">💪🏻 基于<strong>Rust</strong>的高性能<strong>AI驱动</strong>文档智能生成引擎（类DeepWiki）</p>
 <p align="center">📚 自动为任何软件项目生成专业的<strong>C4风格项目架构文档</strong></p>
 <p align="center">
+  <a href="./docs/1、项目概述.md"><img src="https://img.shields.io/badge/Litho-Docs-blue" /></a>
   <a href="https://crates.io/crates/deepwiki-rs"><img src="https://img.shields.io/crates/v/deepwiki-rs.svg?color=dca282" /></a>
   <a href=""><img src="https://img.shields.io/badge/built_with-Rust-dca282.svg?logo=rust" /></a>
   <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/sopaco/deepwiki-rs/rust.yml">
