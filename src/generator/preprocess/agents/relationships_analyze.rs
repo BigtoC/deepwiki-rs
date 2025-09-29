@@ -6,18 +6,15 @@ use crate::{
     generator::context::GeneratorContext,
     types::{code_releationship::RelationshipAnalysis, project_structure::ProjectStructure},
     utils::prompt_compressor::{CompressionConfig, PromptCompressor},
-    utils::token_estimator::TokenEstimator,
 };
 
 pub struct RelationshipsAnalyze {
-    token_estimator: TokenEstimator,
     prompt_compressor: PromptCompressor,
 }
 
 impl RelationshipsAnalyze {
     pub fn new() -> Self {
         Self {
-            token_estimator: TokenEstimator::new(),
             prompt_compressor: PromptCompressor::new(CompressionConfig::default()),
         }
     }
@@ -53,13 +50,6 @@ impl RelationshipsAnalyze {
 
         // 构建代码洞察内容
         let insights_content = self.build_insights_content(&sorted_insights);
-
-        // 检查token数量并进行压缩
-        let estimation = self.token_estimator.estimate_tokens(&insights_content);
-        println!(
-            "   📊 代码洞察内容预估token: {}",
-            estimation.estimated_tokens
-        );
 
         let compression_result = self
             .prompt_compressor
@@ -101,8 +91,8 @@ impl RelationshipsAnalyze {
     fn build_insights_content(&self, sorted_insights: &[&CodeInsight]) -> String {
         sorted_insights
             .iter()
-            .filter(|insight| insight.code_dossier.importance_score >= 0.6) // 降低阈值以包含更多文件
-            .take(200) // 增加数量限制
+            .filter(|insight| insight.code_dossier.importance_score >= 0.6)
+            .take(150) // 增加数量限制
             .map(|insight| {
                 let dependencies_introduce = insight
                     .dependencies

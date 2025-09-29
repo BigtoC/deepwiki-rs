@@ -15,7 +15,6 @@ use crate::{
     },
     utils::project_structure_formatter::ProjectStructureFormatter,
     utils::prompt_compressor::{CompressionConfig, PromptCompressor},
-    utils::token_estimator::TokenEstimator,
 };
 
 /// 数据源配置 - 基于Memory Key的直接数据访问机制
@@ -74,6 +73,8 @@ pub enum LLMCallMode {
 /// 数据格式化配置
 #[derive(Debug, Clone)]
 pub struct FormatterConfig {
+    /// 当文件数大于限定值时，只包含文件夹信息。如果设置为None则包含所有文件夹和文件
+    pub only_directories_when_files_more_than: Option<usize>,
     /// 代码洞察显示数量限制
     pub code_insights_limit: usize,
     /// 是否包含源码内容
@@ -86,8 +87,6 @@ pub struct FormatterConfig {
     pub enable_compression: bool,
     /// 压缩配置
     pub compression_config: CompressionConfig,
-    /// 最终prompt的token限制
-    pub final_prompt_limit: usize,
 }
 
 impl Default for FormatterConfig {
@@ -99,7 +98,7 @@ impl Default for FormatterConfig {
             readme_truncate_length: Some(16384),
             enable_compression: true,
             compression_config: CompressionConfig::default(),
-            final_prompt_limit: 15000,
+            only_directories_when_files_more_than: None,
         }
     }
 }
@@ -122,7 +121,6 @@ pub struct PromptTemplate {
 /// 通用数据格式化器
 pub struct DataFormatter {
     config: FormatterConfig,
-    token_estimator: TokenEstimator,
     prompt_compressor: Option<PromptCompressor>,
 }
 
@@ -136,20 +134,22 @@ impl DataFormatter {
 
         Self {
             config,
-            token_estimator: TokenEstimator::new(),
             prompt_compressor,
         }
     }
 
     /// 格式化项目结构信息
     pub fn format_project_structure(&self, structure: &ProjectStructure) -> String {
-        let project_tree_str = ProjectStructureFormatter::format_as_tree(structure);
-        format!(
-            "### 项目结构信息\n项目名称: {}\n根目录: {}\n\n项目目录结构：\n``` txt{}```\n",
-            structure.project_name,
-            structure.root_path.to_string_lossy(),
-            project_tree_str
-        )
+        let config = &self.config;
+        if let Some(files_limit) = config.only_directories_when_files_more_than {
+            // 如果超限，则使用精简版项目结构信息（只显示目录）
+            if structure.total_files > files_limit {
+                return ProjectStructureFormatter::format_as_directory_tree(structure);
+            }
+        }
+
+        // 否则使用完整版项目结构信息
+        ProjectStructureFormatter::format_as_tree(structure)
     }
 
     /// 格式化代码洞察信息
@@ -284,13 +284,6 @@ impl DataFormatter {
             Ok(content.to_string())
         }
     }
-
-    /// 估算内容的token数量
-    pub fn estimate_tokens(&self, content: &str) -> usize {
-        self.token_estimator
-            .estimate_tokens(content)
-            .estimated_tokens
-    }
 }
 
 /// 标准的研究Agent Prompt构建器
@@ -414,22 +407,10 @@ impl GeneratorPromptBuilder {
         // 结尾强调性指令
         prompt.push_str(&self.template.closing_instruction);
 
-        // 最终检查整个prompt的token数量
-        let total_tokens = self.formatter.estimate_tokens(&prompt);
-        if total_tokens > self.formatter.config.final_prompt_limit {
-            println!(
-                "   ⚠️  最终prompt过长 ({} tokens)，进行整体压缩...",
-                total_tokens
-            );
-            let final_compressed = self
-                .formatter
-                .compress_content_if_needed(context, &prompt, "完整prompt")
-                .await?;
-            Ok(final_compressed)
-        } else {
-            println!("   ✅ 最终prompt长度: {} tokens", total_tokens);
-            Ok(prompt)
-        }
+        // 最终再次检测和压缩
+        self.formatter
+            .compress_content_if_needed(context, &prompt, "StepForwardAgent_prompt_full")
+            .await
     }
 }
 

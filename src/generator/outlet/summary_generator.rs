@@ -51,16 +51,16 @@ pub struct SummaryData {
 #[derive(Debug)]
 pub struct CacheStatsData {
     pub hit_rate: f64,
-    pub total_operations: u64,
-    pub cache_hits: u64,
-    pub cache_misses: u64,
-    pub cache_writes: u64,
-    pub cache_errors: u64,
+    pub total_operations: usize,
+    pub cache_hits: usize,
+    pub cache_misses: usize,
+    pub cache_writes: usize,
+    pub cache_errors: usize,
     pub inference_time_saved: f64,
     pub cost_saved: f64,
     pub performance_improvement: f64,
-    pub input_tokens_saved: u64,
-    pub output_tokens_saved: u64,
+    pub input_tokens_saved: usize,
+    pub output_tokens_saved: usize,
 }
 
 /// 耗时统计数据

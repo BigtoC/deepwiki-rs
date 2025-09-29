@@ -4,15 +4,15 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct TokenUsage {
     /// 输入token数量
-    pub input_tokens: u64,
+    pub input_tokens: usize,
     /// 输出token数量
-    pub output_tokens: u64,
+    pub output_tokens: usize,
     /// 总token数量
-    pub total_tokens: u64,
+    pub total_tokens: usize,
 }
 
 impl TokenUsage {
-    pub fn new(input_tokens: u64, output_tokens: u64) -> Self {
+    pub fn new(input_tokens: usize, output_tokens: usize) -> Self {
         Self {
             input_tokens,
             output_tokens,

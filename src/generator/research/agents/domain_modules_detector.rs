@@ -51,7 +51,10 @@ impl StepForwardAgent for DomainModulesDetector {
                 .to_string(),
 
             llm_call_mode: LLMCallMode::Extract,
-            formatter_config: FormatterConfig::default(),
+            formatter_config: FormatterConfig {
+                only_directories_when_files_more_than: Some(500),
+                ..FormatterConfig::default()
+            },
         }
     }
 

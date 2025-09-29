@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use std::sync::Arc;
-use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::time::Duration;
 
 use crate::llm::client::types::TokenUsage;
@@ -16,21 +16,21 @@ pub struct CachePerformanceMonitor {
 #[derive(Default)]
 pub struct CacheMetrics {
     /// 缓存命中次数
-    pub cache_hits: AtomicU64,
+    pub cache_hits: AtomicUsize,
     /// 缓存未命中次数
-    pub cache_misses: AtomicU64,
+    pub cache_misses: AtomicUsize,
     /// 缓存写入次数
-    pub cache_writes: AtomicU64,
+    pub cache_writes: AtomicUsize,
     /// 缓存错误次数
-    pub cache_errors: AtomicU64,
+    pub cache_errors: AtomicUsize,
     /// 总节省的推理时间（秒）
     pub total_inference_time_saved: AtomicU64,
     /// 总节省的推理成本（估算）
-    pub total_cost_saved: AtomicU64,
+    pub total_cost_saved: AtomicUsize,
     /// 总节省的输入token数量
-    pub total_input_tokens_saved: AtomicU64,
+    pub total_input_tokens_saved: AtomicUsize,
     /// 总节省的输出token数量
-    pub total_output_tokens_saved: AtomicU64,
+    pub total_output_tokens_saved: AtomicUsize,
 }
 
 /// 缓存性能报告
@@ -39,15 +39,15 @@ pub struct CachePerformanceReport {
     /// 缓存命中率
     pub hit_rate: f64,
     /// 总缓存操作次数
-    pub total_operations: u64,
+    pub total_operations: usize,
     /// 缓存命中次数
-    pub cache_hits: u64,
+    pub cache_hits: usize,
     /// 缓存未命中次数
-    pub cache_misses: u64,
+    pub cache_misses: usize,
     /// 缓存写入次数
-    pub cache_writes: u64,
+    pub cache_writes: usize,
     /// 缓存错误次数
-    pub cache_errors: u64,
+    pub cache_errors: usize,
     /// 节省的推理时间（秒）
     pub inference_time_saved: f64,
     /// 节省的推理成本（美元，估算）
@@ -55,9 +55,9 @@ pub struct CachePerformanceReport {
     /// 性能提升百分比
     pub performance_improvement: f64,
     /// 节省的输入token数量
-    pub input_tokens_saved: u64,
+    pub input_tokens_saved: usize,
     /// 节省的输出token数量
-    pub output_tokens_saved: u64,
+    pub output_tokens_saved: usize,
     /// 分类统计
     pub category_stats: HashMap<String, CategoryPerformanceStats>,
 }
@@ -103,7 +103,7 @@ impl CachePerformanceMonitor {
         // 基于实际token使用情况计算节省的成本
         let estimated_cost_saved = token_usage.estimate_cost(model_name);
         self.metrics.total_cost_saved.fetch_add(
-            (estimated_cost_saved * 1000.0) as u64, // 存储为毫美元
+            (estimated_cost_saved * 1000.0) as usize, // 存储为毫美元
             Ordering::Relaxed,
         );
 
