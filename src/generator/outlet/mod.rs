@@ -6,8 +6,10 @@ use std::fs;
 
 pub mod summary_generator;
 pub mod summary_outlet;
+pub mod fixer;
 
 pub use summary_outlet::SummaryOutlet;
+pub use fixer::MermaidFixer;
 
 pub trait Outlet {
     async fn save(&self, context: &GeneratorContext) -> Result<()>;
@@ -93,6 +95,13 @@ impl Outlet for DiskOutlet {
         }
 
         println!("💾 文档保存完成，输出目录: {}", output_dir.display());
+
+        // 文档保存完成后，自动修复mermaid图表
+        if let Err(e) = MermaidFixer::auto_fix_after_output(context).await {
+            eprintln!("⚠️ mermaid图表修复过程中出现错误: {}", e);
+            eprintln!("💡 这不会影响文档生成的主要流程");
+        }
+
         Ok(())
     }
 }

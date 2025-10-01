@@ -17,11 +17,10 @@ pub async fn extract(context: &GeneratorContext) -> Result<OriginalDocument> {
 }
 
 fn trim_markdown(markdown: &str) -> String {
-    // 提取项目描述、安装说明、使用方法等关键信息
     let lines: Vec<&str> = markdown.lines().collect();
     let mut description = String::new();
 
-    for line in lines.iter().take(100) { // 分析前50行
+    for line in lines.iter().take(500) {
         if line.starts_with('#') || line.starts_with("```") {
             continue;
         }
