@@ -7,6 +7,7 @@ pub enum AgentType {
     Overview,
     Architecture,
     Workflow,
+    Boundary
 }
 
 impl Display for AgentType {
@@ -15,6 +16,7 @@ impl Display for AgentType {
             AgentType::Overview => "项目概述",
             AgentType::Architecture => "架构说明",
             AgentType::Workflow => "核心流程",
+            AgentType::Boundary => "边界调用",
         };
         write!(f, "{}", str)
     }

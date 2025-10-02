@@ -133,14 +133,14 @@ pub enum CodePurpose {
     Agent,
     /// 前端UI页面
     Page,
-    /// 后端接口或Controller
-    Controller,
     /// 前端UI组件
     Widget,
     /// 用于处理实现特定逻辑功能
     SpecificFeature,
     /// 数据类型或模型
     Model,
+    /// 程序内部接口定义
+    Types,
     /// 工具类的代码
     Util,
     /// 配置
@@ -153,7 +153,7 @@ pub enum CodePurpose {
     Router,
     /// 数据库组件
     Database,
-    /// 各类接口定义
+    /// 供外部调用的服务API，提供基于HTTP、RPC、IPC等协议等调用能力。
     Api,
     /// 测试组件
     Test,
@@ -170,10 +170,8 @@ impl CodePurpose {
             CodePurpose::Entry => "项目执行入口",
             CodePurpose::Agent => "智能Agent",
             CodePurpose::Page => "前端UI页面",
-            CodePurpose::Controller => "后端接口或Controller",
             CodePurpose::Widget => "前端UI组件",
             CodePurpose::SpecificFeature => "用于处理实现特定逻辑功能",
-
             CodePurpose::Model => "数据类型或模型",
             CodePurpose::Util => "工具类的代码",
             CodePurpose::Config => "配置",
@@ -185,6 +183,7 @@ impl CodePurpose {
             CodePurpose::Test => "测试组件",
             CodePurpose::Doc => "文档组件",
             CodePurpose::Other => "其他组件",
+            CodePurpose::Types => "程序接口定义",
         }
     }
 }
@@ -216,9 +215,6 @@ impl CodePurposeMapper {
             || path_lower.contains("/screens/")
         {
             return CodePurpose::Page;
-        }
-        if path_lower.contains("/controllers/") || path_lower.contains("/ctrl/") {
-            return CodePurpose::Controller;
         }
         if path_lower.contains("/components/")
             || path_lower.contains("/widgets/")
@@ -293,9 +289,6 @@ impl CodePurposeMapper {
             || name_lower.contains("screen")
         {
             return CodePurpose::Page;
-        }
-        if name_lower.contains("controller") {
-            return CodePurpose::Controller;
         }
         if name_lower.contains("component") || name_lower.contains("widget") {
             return CodePurpose::Widget;

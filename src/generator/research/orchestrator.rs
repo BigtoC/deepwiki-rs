@@ -2,6 +2,7 @@ use anyhow::Result;
 
 use crate::generator::context::GeneratorContext;
 use crate::generator::research::agents::architecture_researcher::ArchitectureResearcher;
+use crate::generator::research::agents::boundary_analyzer::BoundaryAnalyzer;
 use crate::generator::research::agents::domain_modules_detector::DomainModulesDetector;
 use crate::generator::research::agents::key_modules_insight::KeyModulesInsight;
 use crate::generator::research::agents::system_context_researcher::SystemContextResearcher;
@@ -31,6 +32,10 @@ impl ResearchOrchestrator {
 
         // 第三层：微观分析（C3-C4）
         self.execute_agent("KeyModulesInsight", &KeyModulesInsight, context)
+            .await?;
+
+        // 边界接口分析
+        self.execute_agent("BoundaryAnalyzer", &BoundaryAnalyzer::default(), context)
             .await?;
 
         println!("✓ Litho Studies Research流程执行完毕");

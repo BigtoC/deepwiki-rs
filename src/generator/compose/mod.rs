@@ -1,4 +1,5 @@
 use crate::generator::compose::agents::architecture_editor::ArchitectureEditor;
+use crate::generator::compose::agents::boundary_editor::BoundaryEditor;
 use crate::generator::compose::agents::key_modules_insight_editor::KeyModulesInsightEditor;
 use crate::generator::compose::agents::overview_editor::OverviewEditor;
 use crate::generator::compose::agents::workflow_editor::WorkflowEditor;
@@ -32,6 +33,9 @@ impl DocumentationComposer {
         key_modules_insight_editor
             .execute(context, doc_tree)
             .await?;
+
+        let boundary_editor = BoundaryEditor::default();
+        boundary_editor.execute(context).await?;
 
         Ok(())
     }
