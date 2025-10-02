@@ -11,6 +11,7 @@ pub enum AgentType {
     ArchitectureResearcher,
     WorkflowResearcher,
     KeyModulesInsight,
+    BoundaryAnalyzer,
 }
 
 impl Display for AgentType {
@@ -21,6 +22,7 @@ impl Display for AgentType {
             AgentType::ArchitectureResearcher => "系统架构调研报告".to_string(),
             AgentType::WorkflowResearcher => "工作流调研报告".to_string(),
             AgentType::KeyModulesInsight => "核心模块与组件调研报告".to_string(),
+            AgentType::BoundaryAnalyzer => "边界接口调研报告".to_string(),
         };
         write!(f, "{}", str)
     }
@@ -239,6 +241,86 @@ pub struct ModuleImplementationReport {
     pub code_patterns: Vec<String>,
     pub best_practices: Vec<String>,
     pub potential_improvements: Vec<String>,
+}
+
+/// 边界接口分析结果
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct BoundaryAnalysisReport {
+    /// CLI边界接口
+    pub cli_boundaries: Vec<CLIBoundary>,
+    /// 供外部调用的网络API边界接口（包括HTTP、RPC等协议）
+    pub api_boundaries: Vec<APIBoundary>,
+    /// 集成建议
+    pub integration_suggestions: Vec<IntegrationSuggestion>,
+    /// 分析置信度 (1-10分)
+    pub confidence_score: f64,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct CLIBoundary {
+    pub command: String,
+    pub description: String,
+    pub arguments: Vec<CLIArgument>,
+    pub options: Vec<CLIOption>,
+    pub examples: Vec<String>,
+    pub source_location: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct CLIArgument {
+    pub name: String,
+    pub description: String,
+    pub required: bool,
+    pub default_value: Option<String>,
+    pub value_type: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct CLIOption {
+    pub name: String,
+    pub short_name: Option<String>,
+    pub description: String,
+    pub required: bool,
+    pub default_value: Option<String>,
+    pub value_type: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct APIBoundary {
+    pub endpoint: String,
+    pub method: String,
+    pub description: String,
+    pub request_format: Option<String>,
+    pub response_format: Option<String>,
+    pub authentication: Option<String>,
+    pub source_location: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct Parameter {
+    pub name: String,
+    pub param_type: String,
+    pub description: String,
+    pub optional: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct IntegrationSuggestion {
+    pub integration_type: String,
+    pub description: String,
+    pub example_code: String,
+    pub best_practices: Vec<String>,
+}
+
+impl Default for BoundaryAnalysisReport {
+    fn default() -> Self {
+        Self {
+            cli_boundaries: Vec::new(),
+            api_boundaries: Vec::new(),
+            integration_suggestions: Vec::new(),
+            confidence_score: 0.0,
+        }
+    }
 }
 
 // https://c4model.com/abstractions/software-system

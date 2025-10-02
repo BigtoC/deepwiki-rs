@@ -42,6 +42,10 @@ impl Default for DocTree {
                 AgentType::Workflow.to_string(),
                 "3、工作流程.md".to_string(),
             ),
+            (
+                AgentType::Boundary.to_string(),
+                "5、边界调用.md".to_string(),
+            ),
         ]);
         Self { structure }
     }

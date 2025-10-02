@@ -302,23 +302,27 @@ impl GeneratorPromptBuilder {
     }
 
     /// 构建标准的prompt（系统提示词和用户提示词）
+    /// 新增custom_content参数，用于插入自定义内容
     pub async fn build_prompts(
         &self,
         context: &GeneratorContext,
         data_sources: &[DataSource],
+        custom_content: Option<String>,
     ) -> Result<(String, String)> {
         let system_prompt = self.template.system_prompt.clone();
         let user_prompt = self
-            .build_standard_user_prompt(context, data_sources)
+            .build_standard_user_prompt(context, data_sources, custom_content)
             .await?;
         Ok((system_prompt, user_prompt))
     }
 
     /// 构建标准的用户提示词
+    /// 新增custom_content参数
     async fn build_standard_user_prompt(
         &self,
         context: &GeneratorContext,
         data_sources: &[DataSource],
+        custom_content: Option<String>,
     ) -> Result<String> {
         let mut prompt = String::new();
 
@@ -328,6 +332,12 @@ impl GeneratorPromptBuilder {
 
         // 调研材料参考部分
         prompt.push_str("## 调研材料参考\n");
+
+        // 插入自定义内容（如果有）
+        if let Some(custom) = custom_content {
+            prompt.push_str(&custom);
+            prompt.push_str("\n");
+        }
 
         // 收集并格式化各种数据源
         let mut research_results = HashMap::new();
@@ -436,6 +446,12 @@ pub trait StepForwardAgent: Send + Sync {
         Ok(())
     }
 
+    /// 可选的自定义prompt内容提供钩子
+    /// 返回自定义的prompt内容，将被插入到标准prompt的调研材料参考部分
+    async fn provide_custom_prompt_content(&self, _context: &GeneratorContext) -> Result<Option<String>> {
+        Ok(None)
+    }
+
     /// 默认实现的execute方法 - 完全标准化，自动数据验证
     async fn execute(&self, context: &GeneratorContext) -> Result<Self::Output> {
         // 1. 获取数据配置
@@ -463,8 +479,12 @@ pub trait StepForwardAgent: Send + Sync {
         // 4. 使用标准模板构建prompt
         let template = self.prompt_template();
         let prompt_builder = GeneratorPromptBuilder::new(template.clone());
+        
+        // 获取自定义prompt内容
+        let custom_content = self.provide_custom_prompt_content(context).await?;
+        
         let (system_prompt, user_prompt) =
-            prompt_builder.build_prompts(context, &all_sources).await?;
+            prompt_builder.build_prompts(context, &all_sources, custom_content).await?;
 
         // 5. 根据配置选择LLM调用方式
         let params = AgentExecuteParams {

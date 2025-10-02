@@ -1,5 +1,7 @@
 //! 文件读取工具
 
+use std::time::Duration;
+
 use anyhow::Result;
 use rig::tool::Tool;
 use serde::{Deserialize, Serialize};
@@ -148,6 +150,10 @@ impl Tool for AgentToolFileReader {
 
     async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {
         println!("   🔧 tool called...file_reader@{:?}", args);
+
+        #[cfg(debug_assertions)]
+        tokio::time::sleep(Duration::from_secs(1)).await;
+
         self.read_file_content(&args)
             .await
             .map_err(|_e| FileReaderToolError)
