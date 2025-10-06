@@ -94,30 +94,38 @@ impl LLMClient {
     {
         let llm_config = &self.config.llm;
 
-        let extractor = self
-            .client
-            .create_extractor::<T>(&befitting_model, system_prompt, llm_config);
+        let extractor =
+            self.client
+                .create_extractor::<T>(&befitting_model, system_prompt, llm_config);
 
-        match extractor.extract(user_prompt).await {
-            Ok(r) => Ok(r),
-            Err(e) => match fallover_model {
-                Some(ref model) => {
-                    eprintln!(
-                        "❌ 调用模型服务出错，尝试 {} 次均失败，尝试使用备选模型{}...{}",
-                        llm_config.retry_attempts, model, e
-                    );
-                    Box::pin(self.extract_inner(system_prompt, user_prompt, model.clone(), None))
+        self.retry_with_backoff(|| async {
+            match extractor.extract(user_prompt).await {
+                Ok(r) => Ok(r),
+                Err(e) => match fallover_model {
+                    Some(ref model) => {
+                        eprintln!(
+                            "❌ 调用模型服务出错，尝试 {} 次均失败，尝试使用备选模型{}...{}",
+                            llm_config.retry_attempts, model, e
+                        );
+                        Box::pin(self.extract_inner(
+                            system_prompt,
+                            user_prompt,
+                            model.clone(),
+                            None,
+                        ))
                         .await
-                }
-                None => {
-                    eprintln!(
-                        "❌ 调用模型服务出错，尝试 {} 次均失败...{}",
-                        llm_config.retry_attempts, e
-                    );
-                    Err(e.into())
-                }
-            },
-        }
+                    }
+                    None => {
+                        eprintln!(
+                            "❌ 调用模型服务出错，尝试 {} 次均失败...{}",
+                            llm_config.retry_attempts, e
+                        );
+                        Err(e.into())
+                    }
+                },
+            }
+        })
+        .await
     }
 
     /// 智能对话方法（使用默认ReAct配置）

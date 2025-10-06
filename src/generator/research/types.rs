@@ -1,6 +1,5 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use std::collections::HashMap;
 use std::fmt::Display;
 
 /// 智能体类型枚举
@@ -195,28 +194,6 @@ pub struct DomainModulesReport {
     pub confidence_score: f64,
 }
 
-/// 模块类型
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub enum ModuleType {
-    Core,
-    Infrastructure,
-    UI,
-    API,
-    Database,
-    Configuration,
-    Utilities,
-    Tests,
-}
-
-/// 模块重要性度量
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct ModuleMetrics {
-    pub complexity_score: f64,
-    pub dependency_score: f64,
-    pub centrality_score: f64,
-    pub business_value_score: f64,
-}
-
 /// 工作流程调研结果
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct WorkflowReport {
@@ -231,16 +208,6 @@ pub struct Workflow {
     pub name: String,
     pub description: String,
     pub flowchart_mermaid: String,
-}
-
-/// 模块实现挖掘结果
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct ModuleImplementationReport {
-    pub module_implementations: HashMap<String, String>,
-    pub technical_details: HashMap<String, Vec<String>>,
-    pub code_patterns: Vec<String>,
-    pub best_practices: Vec<String>,
-    pub potential_improvements: Vec<String>,
 }
 
 /// 边界接口分析结果
@@ -294,14 +261,6 @@ pub struct APIBoundary {
     pub response_format: Option<String>,
     pub authentication: Option<String>,
     pub source_location: String,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
-pub struct Parameter {
-    pub name: String,
-    pub param_type: String,
-    pub description: String,
-    pub optional: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]

@@ -212,7 +212,6 @@ impl ProviderClient {
             ProviderClient::Moonshot(client) => {
                 let extractor = client
                     .extractor::<T>(model)
-                    .retries(config.retry_attempts.into())
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .build();
@@ -221,7 +220,6 @@ impl ProviderClient {
             ProviderClient::DeepSeek(client) => {
                 let extractor = client
                     .extractor::<T>(model)
-                    .retries(config.retry_attempts.into())
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .build();
@@ -230,7 +228,6 @@ impl ProviderClient {
             ProviderClient::Mistral(client) => {
                 let extractor = client
                     .extractor::<T>(model)
-                    .retries(config.retry_attempts.into())
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .build();
@@ -239,7 +236,6 @@ impl ProviderClient {
             ProviderClient::OpenRouter(client) => {
                 let extractor = client
                     .extractor::<T>(model)
-                    .retries(config.retry_attempts.into())
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .build();
@@ -248,7 +244,6 @@ impl ProviderClient {
             ProviderClient::Anthropic(client) => {
                 let extractor = client
                     .extractor::<T>(model)
-                    .retries(config.retry_attempts.into())
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .build();
@@ -257,7 +252,6 @@ impl ProviderClient {
             ProviderClient::Gemini(client) => {
                 let extractor = client
                     .extractor::<T>(model)
-                    .retries(config.retry_attempts.into())
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .build();
