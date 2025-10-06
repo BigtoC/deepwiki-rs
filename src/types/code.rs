@@ -88,29 +88,6 @@ impl Display for Dependency {
     }
 }
 
-/// 模块信息
-#[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
-pub struct ModuleInfo {
-    pub name: String,
-    pub file_path: String,
-    pub dependencies: Vec<String>,
-    pub dependents: Vec<String>,
-    pub is_core: bool,
-    pub centrality_score: f64,
-}
-
-/// 依赖分析结果
-#[derive(Debug, Serialize, Deserialize, Default, JsonSchema)]
-pub struct DependencyAnalysisResult {
-    pub dependencies: Vec<Dependency>,
-    pub modules: Vec<ModuleInfo>,
-    pub circular_dependencies: Vec<Vec<String>>,
-    pub external_dependencies: Vec<String>,
-    pub dependency_graph: std::collections::HashMap<String, Vec<String>>,
-    pub metrics: std::collections::HashMap<String, f64>,
-    pub insights: Vec<String>,
-}
-
 /// 组件复杂度指标
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct CodeComplexity {
