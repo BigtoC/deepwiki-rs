@@ -1,6 +1,7 @@
 <p align="center">
-  <img height="160" src="./assets/banner_litho_white.png">
+  <img height="160" src="./assets/banner_litho_white.webp">
 </p>
+
 <h3 align="center">Litho (deepwiki-rs)</h3>
 
 <p align="center">
@@ -8,54 +9,112 @@
     |
     <a href="./README_zh.md">中文</a>
 </p>
+<p align="center">💪🏻 基于 <strong>Rust</strong> 的高性能 <strong>AI 驱动</strong> 文档生成引擎（类 DeepWiki）</p>
+<p align="center">📚 自动为任意代码库生成高质量的 <strong>Repo-Wiki / 项目架构文档</strong></p>
 
-<p align="center">💪🏻 基于<strong>Rust</strong>的高性能<strong>AI驱动</strong>文档智能生成引擎（类DeepWiki）</p>
-<p align="center">📚 自动为任何软件项目生成专业的<strong>C4风格项目架构文档</strong></p>
 <p align="center">
-  <a href="./docs/1、项目概述.md"><img src="https://img.shields.io/badge/Litho-Docs-blue" /></a>
-  <a href="https://crates.io/crates/deepwiki-rs"><img src="https://img.shields.io/crates/v/deepwiki-rs.svg?color=dca282" /></a>
+  <a href="https://crates.io/crates/deepwiki-rs"><img src="https://img.shields.io/crates/v/deepwiki-rs?color=44a1c9" /></a>
   <a href="https://crates.io/crates/deepwiki-rs"><img src="https://img.shields.io/crates/d/deepwiki-rs.svg" /></a>
   <img alt="GitHub Actions Workflow Status" src="https://img.shields.io/github/actions/workflow/status/sopaco/deepwiki-rs/rust.yml">
 </p>
+
 <hr />
 
-# 👋 Litho是什么
+# 👋 什么是 Litho
+
 **Litho**（也称为deepwiki-rs）是一个基于Rust的高性能AI文档生成引擎，能够自动为软件项目创建全面的技术说明文档。通过先进的AI分析能力，Litho智能地探索项目结构，识别核心模块，分析依赖关系，并生成专业的架构文档。
 
-**Litho**采用基于静态代码分析 与 AI Multi-Agents的多引擎工作流，将静态代码分析与大型语言模型（LLM）智能相结合。系统使用专门的AI智能体对系统上下文、架构模式、业务工作流和核心模块洞察进行深度研究，最终生成包含概述、架构和详细的技术主题说明文档。
+**Litho**采用基于静态代码分析 与 AI Multi-Agents的多引擎工作流，将静态代码分析与大型语言模型（LLM）智能相结合。能把原始代码转换为清晰组织的文档，自动生成上下文图（Context）、容器图（Container）、组件图（Component）以及代码级别的文档内容，适用于开发者、架构师或技术负责人，帮助团队始终保持准确、最新的架构信息。
 
 ❤️ 喜欢 **Litho**? 点亮小星星 🌟 或 [赞助](https://github.com/sponsors/sopaco)! ❤️
 
-# 🌠 功能与特性
+# 😺 为什么使用 Litho
 
-- **AI驱动多阶段工作流**：实现四阶段流水线（预处理 → 研究 → 编排 → 输出），配备专门的AI智能体进行全面项目分析。
-- **项目知识与技术说明文档生成**：生成专业的C4架构风格文档，包括项目概览、技术架构和详细的Deep Dive智能主题文档。
-- **多智能体研究系统**：部署专门的AI智能体进行系统上下文分析、架构模式识别、业务工作流重建和核心模块洞察。
-- **全面语言支持**：内置对10+种编程语言的处理器，包括Rust、Python、JavaScript/TypeScript、Java、Kotlin、React、Vue、Svelte等。
-- **智能代码分析**：结合静态代码分析与LLM驱动的理解，提取项目结构、依赖关系和架构模式。
-- **ReAct模式集成**：利用ReAct（推理+行动）模式进行系统化的代码库探索和分析。
-- **缓存与性能优化**：包含智能缓存系统和并行处理能力，用于高效的大规模项目分析。
-- **可扩展架构**：模块化设计，基于特征的语言处理器和智能体系统，支持轻松扩展新语言和分析能力。
-- **专业文档输出**：生成具有适当结构、图表和详细模块分析的markdown和HTML文档。
+- 自动使文档与代码变更保持同步，告别过时文档
+- 节省大量手工编写和维护文档的时间
+- 改善新成员的入职体验，提供完整、及时的项目知识
+- 在代码审查时提供清晰的架构背景，提升讨论效率
+- 满足合规与审计需求，生成可追溯的自动化文档
+- 支持多种编程语言：Rust、Python、Java、Go、C#、JavaScript 等
+- 自动生成专业的 C4 模型图表（Context / Container / Component / Code）
+- 可集成到 CI/CD 流程，随每次提交自动生成文档
+
+# 🌠 功能与能力
+
+### 核心能力
+- 基于代码库分析的 AI 驱动架构文档生成
+- 自动创建 C4 模型图（Context、Container、Component、Code）
+- 智能抽取代码注释、结构与依赖关系
+- 多语言支持与可扩展的语言处理器
+- 自定义模板系统支持文档输出样式定制
+
+### 高级特性
+- Git 历史分析以追踪架构演进
+- 代码元素与文档之间的交叉引用
+- 带图示与示例的交互式文档
+- 与 CI/CD 集成，实现自动化文档生成
+
+## 💡 解决的问题
+Litho 自动从源代码生成最新的架构文档，解决了传统手工文档经常滞后、缺失或不完整的问题，让文档始终保持与代码一致。
+
+# 🌐 Litho Eco 生态
+
+Litho 属于一套完整的生态工具，用于提升文档质量与开发效率，下列工具可以和 Litho 无缝配合：
+
+## 📘 Litho Book
+**Litho Book** 是一个高性能的 Markdown 阅读器（基于 Rust + Axum），用于展示 Litho 生成的文档，提供优雅的浏览体验。
+
+### 主要功能
+- 实时 Markdown 渲染与语法高亮
+- 完整的 Mermaid 图表支持（架构图）
+- 文件与内容的模糊搜索
+- 低内存占用的高性能架构
+- 基于 AI 的文档理解与问答
+
+### 🌠 运行截图
+<div style="text-align: center;">
+  <table style="width: 100%; margin: 0 auto;">
+    <tr>
+      <td style="width: 50%;"><img src="https://github.com/sopaco/litho-book/blob/main/assets/snapshot-1.webp" alt="snapshot-1" style="width: 100%; height: auto; display: block;"></td>
+      <td style="width: 50%;"><img src="https://github.com/sopaco/litho-book/blob/main/assets/snapshot-2.webp" alt="snapshot-2" style="width: 100%; height: auto; display: block;"></td>
+    </tr>
+  </table>
+</div>
+
+[了解更多 Litho Book](https://github.com/sopaco/litho-book)
+
+## 🔧 Mermaid Fixer
+**Mermaid Fixer** 是一个高性能的 AI 工具，用于自动检测并修复 Markdown 文件中 Mermaid 图表的语法错误，确保图表能够正确渲染。
+
+### 主要功能
+- 自动扫描目录并定位 Markdown 文件中的 Mermaid 图
+- 使用 JS 沙箱或解析器检测语法错误
+- 使用 LLM 智能修复并生成修复报告
+- 支持多个 LLM 提供商与可配置策略
+
+### 👀 运行截图
+<div style="text-align: center;">
+  <table style="width: 100%; margin: 0 auto;">
+    <tr>
+      <td style="width: 50%;"><img src="https://github.com/sopaco/mermaid-fixer/blob/main/assets/snapshot-1.webp" alt="snapshot-1" style="width: 100%; height: auto; display: block;"></td>
+      <td style="width: 50%;"><img src="https://github.com/sopaco/mermaid-fixer/blob/main/assets/snapshot-2.webp" alt="snapshot-2" style="width: 100%; height: auto; display: block;"></td>
+    </tr>
+  </table>
+</div>
+
+[了解更多 Mermaid Fixer](https://github.com/sopaco/mermaid-fixer)
 
 # 🧠 工作原理
 
-**Litho**的文档生成过程分为四个明确阶段：预处理、研究、编排、输出。每个阶段由专门的智能体（Agent）执行，形成流水线式的工作流。
+Litho 的处理流程基于一个四阶段流水线，将原始代码逐步转化为高质量文档：预处理（Preprocessing）→ 研究（Research）→ 编排（Composition）→ 输出（Output/Validation）。
 
-## 四阶段处理流水线
+## 四阶段处理流水线（概览）
+1. 预处理阶段：扫描代码库、抽取文件与元数据、识别模块与依赖。
+2. 研究阶段：引入多个 AI 智能体分析系统上下文、架构模式、工作流与模块职责。
+3. 编排阶段：将研究结果整合为结构化文档（概述、架构、模块深挖）。
+4. 输出与验证阶段：格式化输出，校验图表语法，生成覆盖率报告并持久化。
 
-1. **预处理阶段**：提取项目结构，使用特定语言处理器分析代码文件，识别核心模块和依赖关系。
-2. **研究阶段**：部署多个专门的AI智能体进行深度分析：
-   - **系统上下文研究员**：分析整体系统上下文和外部集成
-   - **架构研究员**：识别架构模式和设计原则
-   - **工作流研究员**：重建业务流程和数据流
-   - **领域模块探测器**：发现和分析领域特定模块
-3. **编排阶段**：智能文档编辑器将研究结果综合为专业文档：
-   - **概述编辑器**：生成项目概述和核心功能文档
-   - **架构编辑器**：创建全面的架构文档
-   - **关键模块洞察编辑器**：生成详细的核心模块文档
-4. **输出阶段**：格式化并输出所需格式的最终文档。
-
+### 预处理阶段
 ### 预处理阶段
 
 该阶段负责从项目中提取基础元数据，为后续 AI 分析提供输入。
@@ -220,160 +279,99 @@ Workflow-->>Main : 流程结束
 # 🖥️ 快速开始
 
 ### 前提条件
-- [**Rust**](https://www.rust-lang.org)（2024或更高版本）
-- [**Cargo**](https://doc.rust-lang.org/cargo/)
-- 互联网连接（用于LLM集成）
+- [Rust](https://www.rust-lang.org)（建议版本 1.70 或更高）
+- [Cargo](https://doc.rust-lang.org/cargo/)
+- 网络访问（用于调用 LLM 提供商的 API）
 
 ### 安装
 
-#### 方式一：从crates.io安装（推荐）
-
-最简单的安装方式是直接今crates.io安装：
-
+#### 方式一：从 crates.io 安装（推荐）
 ```sh
+cargo install litho
+# 或者（仓库包名为 deepwiki-rs）
 cargo install deepwiki-rs
 ```
 
-安装完成后，您可以直接使用 `deepwiki-rs` 命令：
-
-```sh
-deepwiki-rs --help
-```
-
 #### 方式二：从源码构建
-
-1. 克隆仓库。
-    ```sh
-    git clone https://github.com/sopaco/deepwiki-rs.git
-    ```
-2. 进入克隆的项目文件夹。
-    ```sh
-    cd deepwiki-rs
-    ```
-3. 构建项目。
-    ```sh
-    cargo build --release
-    ```
-4. 编译后的二进制文件将位于`target/release`目录中。
+```sh
+git clone https://github.com/sopaco/deepwiki-rs.git
+cd deepwiki-rs
+cargo build --release
+# 可执行文件位于 target/release 目录
+```
 
 # 🚀 使用方法
 
-**Litho**提供命令行界面用于生成架构文档。以下是一些基本使用示例：
+Litho 提供简单的命令行界面来生成文档。
 
-### 基本命令
-
+### 基本命令示例
 ```sh
-# 为当前目录生成项目知识与技术说明文档
+# 为当前项目生成文档（默认设置）
 litho
 
-# 分析特定项目目录
-litho -p /path/to/your/project
-
-# 指定输出目录
-litho -o ./architecture-docs
-
-# 指定项目名称
-litho --name "我的项目"
+# 指定项目目录与输出目录
+litho -p ./my-project -o ./docs
 ```
 
-### 文档生成
-
-**Litho**生成专业的项目知识技术说明文档，结构如下：
-
-- `1、项目概述`：项目概述、核心功能和技术栈分析
-- `2、架构概览`：全面的架构设计、核心流程和模块分解
-- `3、架构概览`：全面的架构设计、核心流程和模块分解
-- `4、深入研究/`：每个识别出的核心模块的详细文档
-- `__Litho_Summary_Brief__.md`：生成过程总结摘要
-- `__Litho_Summary_Detail__.md`：生成过程执行详情
-
+### 文档生成示例（带 LLM 配置）
 ```sh
-# 生成完整的项目知识与技术文档
-litho -p ./my-project
-
-# 使用自定义项目名称生成
-litho --name "我的超棒项目" -o ./my-docs
+litho -p ./src --llm-api-base-url <your-llm-base-url> --llm_api_key <your-api-key> --model-efficient GPT-5-mini
 ```
 
-### 高级选项
+### 其他常见选项
+```sh
+# 启用详细日志
+litho --project ./src --output ./docs --verbose --llm-api-base-url <base> --llm_api_key <key>
 
-- 配置 LLM 设置：
-  ```sh
-  litho --llm-api-base-url <api-url> --llm-api-key <api-key> --model-efficient <model-name> --model-powerful <model-name> --llm-provider <provider>
-  ```
+# 跳过阶段（示例）
+litho --skip-preprocessing --skip-research
 
-  支持的提供商（默认：`openai`）：
-  - `openai`: OpenAI 的 API
-  - `mistral`: Mistral AI 的 API
-  - `openrouter`: OpenRouter 的 API
-  - `anthropic`: Anthropic 的 API
-  - 兼容提供商（OpenAI 兼容的 API）：`moonshot`，`deepseek` 等
+# 关闭 ReAct 模式（避免使用工具自动扫描）
+litho -p ./src --disable-preset-tools --llm-api-base-url <base> --llm_api_key <key>
 
-- 跳过特定阶段：
-  ```sh
-  litho --skip-preprocessing  # 跳过预处理阶段
-  litho --skip-research      # 跳过研究阶段
-  litho --skip-documentation # 跳过文档生成阶段
-  ```
-
-- 高级配置：
-  ```sh
-  litho --config <config-file> --max-tokens 4000 --temperature 0.7 --max-parallels 4 --no-cache --force-regenerate --enable-preset-tools
-  ```
-
-## 📁 输出结构
-
-Litho生成全面的项目hi是与ishu方案文档结构：
-
+# 高级并行/上下文配置
+litho --config <config-file> --max-tokens 4000 --temperature 0.7 --max-parallels 4 --no-cache --force-regenerate
 ```
+
+## 📁 默认输出结构（示例）
+```sh
 project-docs/
-├── 1、项目概述              # 项目概述、核心功能、技术栈
-├── 2、架构概览          # 整体架构、核心流程、模块分解
-├── 3、工作流程          # 整体架构、核心流程、模块分解
-├── 4、深入研究/          # 详细的技术主题实现文档
-│   ├── 主题1.md
-│   ├── 主题2.md
-│   └── ...
+|_ 1、项目概述          # 项目概述、核心功能、技术栈
+|_ 2、架构概览          # 整体架构、核心流程、模块分解
+|_ 3、工作流程          # 整体架构、核心流程、模块分解
+|_ 4、深入研究/         # 详细的技术主题实现文档
+    |_ 主题1.md
+    |_ 主题2.md
 ```
 
 # 🤝 贡献
 
-通过[GitHub Issues](https://github.com/sopaco/deepwiki-rs/issues)报告错误或提出功能请求，帮助改进Litho。
+欢迎各种形式的贡献！通过 [GitHub Issues](https://github.com/sopaco/deepwiki-rs/issues) 报告问题或提交功能请求。
 
 ## 贡献方式
+- 添加对新语言的支持（实现 LanguageProcessor 抽象）
+- 设计新的文档模板与样式
+- 改善 Mermaid 图表生成策略与可视化效果
+- 提升性能与缓存策略
+- 添加更多测试覆盖不同代码模式
+- 增强 LLM 智能体与工具集成
+- 提供国际化与本地化支持
 
-- **语言处理器开发**：通过实现`LanguageProcessor`特征为其他编程语言添加支持
-- **AI智能体增强**：改进现有研究智能体或开发新的专门分析智能体
-- **文档格式扩展**：添加对Markdown和HTML之外的新输出格式的支持
-- **性能优化**：增强缓存策略和并行处理能力
-- **工具集成**：使用额外的代码分析工具扩展ReAct模式
-- **架构模式识别**：改进对架构模式和设计原则的检测
-- **国际化支持**：为多语言文档生成能力做出贡献
-
-# ⚛️ 使用以下技术开发
-
-- [rust](https://github.com/rust-lang/rust) - 高性能和安全的系统编程语言
-- [rig-core](https://github.com/0xPlaygrounds/rig) - 用于构建LLM驱动应用的Rust库
-- [tokio](https://github.com/tokio-rs/tokio) - Rust异步运行时
-- [clap](https://github.com/clap-rs/clap) - 命令行参数解析器
-- [serde](https://github.com/serde-rs/serde) - 序列化框架
-- [anyhow](https://github.com/dtolnay/anyhow) - 错误处理
-- [thiserror](https://github.com/dtolnay/thiserror) - 错误处理派生宏
-- [walkdir](https://github.com/BurntSushi/walkdir) - 目录遍历
-- [regex](https://github.com/rust-lang/regex) - 正则表达式
-- [markdown](https://github.com/wooorm/markdown-rs) - Markdown处理
+## 开发贡献流程
+1. Fork 本仓库
+2. 创建功能分支：`git checkout -b feature/amazing-feature`
+3. 提交变更：`git commit -m 'Add some amazing feature'`
+4. 推送分支并发起 Pull Request
 
 # 🪪 许可证
-**MIT**，协议的副本说明保留在[LICENSE](./LICENSE)文件中。
+本项目使用 **MIT** 许可证，详见仓库中的 [LICENSE](./LICENSE) 文件。
 
-**🙏感谢大家的支持，你们是国产开源的历史见证者**
+# 👨 关于作者
 
-# 👨 关于我
+> 🚀 如果你喜欢这个项目，请考虑在 GitHub 支持我： [sponsaco on GitHub](https://github.com/sopaco)
 
-> 🚀 通过 [在 GitHub 上赞助我](https://github.com/sponsors/sopaco)让这个软件更好的发展。
+作者为一名资深互联网从业者，经历 PC 互联网、移动互联网与 AI 应用多个发展阶段，具有丰富的产品和研发经验。目前在快手从事大前端与 AI 探索相关工作。
 
-互联网老兵，经历PC互联网、移动互联网、AI应用三股浪潮，从早期的移动应用个人开发者角色入场，到现在的职场从业者角色，有丰富的产品设计与研发经验。现就职于快手，从事大前端体系以及AI探索方面的研发工作。
-
-wx号：dokhell
-
-邮箱：dokhell@hotmail.com
+GitHub: [sopaco](https://github.com/sopaco)
+Email: dokhell@hotmail.com
+wx: dokhell
