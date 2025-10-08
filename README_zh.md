@@ -1,5 +1,5 @@
 <p align="center">
-  <img height="160" src="./assets/banner_litho_white.webp">
+  <img height="160" src="./assets/banner_litho_white.png">
 </p>
 
 <h3 align="center">Litho (deepwiki-rs)</h3>
