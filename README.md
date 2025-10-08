@@ -29,7 +29,7 @@ Litho transforms raw code into beautifully structured documentation with context
 Whether you're a developer, architect, or technical lead, Litho eliminates the burden of maintaining documentation and ensures your team always has accurate, up-to-date architectural information.
 
 <p align="center">
-  <strong>Transform your codebase into professional architecture documentation in seconds</strong>
+  <strong>Transform your codebase into professional architecture documentation in minutes</strong>
 </p>
 
 <div style="text-align: center; margin: 30px 0;">
@@ -66,7 +66,7 @@ Whether you're a developer, architect, or technical lead, Litho eliminates the b
 </div>
 
 <p align="center">
-  <strong>🚀 Litho automatically transforms your messy codebase into beautiful, professional architecture documentation</strong>
+  <strong>🚀 Litho automatically transforms your messy codebase into beautiful, professional documentation</strong>
 </p>
 
 <hr />
