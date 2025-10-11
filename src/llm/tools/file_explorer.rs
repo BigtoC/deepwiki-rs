@@ -525,7 +525,7 @@ impl Tool for AgentToolFileExplorer {
         println!("   🔧 tool called...file_reader@{:?}", args);
 
         #[cfg(debug_assertions)]
-        tokio::time::sleep(Duration::from_secs(1)).await;
+        tokio::time::sleep(Duration::from_secs(2)).await;
 
         match args.action.as_str() {
             "list_directory" => self

@@ -369,7 +369,7 @@ Workflow-->>Main : Process finished
 ### Installation
 #### Option 1: Install from crates.io (Recommended)
 ```sh
-cargo install litho
+cargo install deepwiki-rs
 ```
 
 #### Option 2: Build from Source

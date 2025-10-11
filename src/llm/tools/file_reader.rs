@@ -152,7 +152,7 @@ impl Tool for AgentToolFileReader {
         println!("   🔧 tool called...file_reader@{:?}", args);
 
         #[cfg(debug_assertions)]
-        tokio::time::sleep(Duration::from_secs(1)).await;
+        tokio::time::sleep(Duration::from_secs(2)).await;
 
         self.read_file_content(&args)
             .await

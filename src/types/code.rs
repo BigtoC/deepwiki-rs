@@ -132,6 +132,8 @@ pub enum CodePurpose {
     Database,
     /// 供外部调用的服务API，提供基于HTTP、RPC、IPC等协议等调用能力。
     Api,
+    /// 依赖库
+    Lib,
     /// 测试组件
     Test,
     /// 文档组件
@@ -157,6 +159,7 @@ impl CodePurpose {
             CodePurpose::Router => "路由组件",
             CodePurpose::Database => "数据库组件",
             CodePurpose::Api => "各类接口定义",
+            CodePurpose::Lib => "依赖库",
             CodePurpose::Test => "测试组件",
             CodePurpose::Doc => "文档组件",
             CodePurpose::Other => "其他组件",
