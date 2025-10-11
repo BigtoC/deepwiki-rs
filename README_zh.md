@@ -287,8 +287,6 @@ Workflow-->>Main : 流程结束
 
 #### 方式一：从 crates.io 安装（推荐）
 ```sh
-cargo install litho
-# 或者（仓库包名为 deepwiki-rs）
 cargo install deepwiki-rs
 ```
 
