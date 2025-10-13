@@ -388,11 +388,16 @@ cargo install deepwiki-rs
 4. The compiled binary will be available in the `target/release` directory.
 
 # 🚀 Usage
-**Litho** provides a simple command-line interface to generate documentation from your codebase.
+**Litho** provides a simple command-line interface to generate documentation from your codebase. For more configuration parameters, refer to the [CLI Options Detail](https://github.com/sopaco/deepwiki-rs/blob/main/docs/5%E3%80%81%E8%BE%B9%E7%95%8C%E8%B0%83%E7%94%A8.md#litho).
 
 ### Basic Command
 ```sh
-litho -p ./my-project -o ./docs
+deepwiki-rs -p ./my-project -o ./docs
+
+# Generate documentation in the target language.
+deepwiki-rs --target-language en -p ./my-project
+
+deepwiki-rs --target-language ja -p ./my-project
 ```
 
 This command will:
@@ -406,22 +411,17 @@ Litho supports several options for generating documentation:
 
 ```sh
 # Generate documentation with default settings
-litho -p ./src --llm-api-base-url <your llm provider base-api> --llm_api_key <your api key> --model-efficient GPT-5-mini
-
-# Enable verbose output for debugging
-litho --project ./src --output ./docs --verbose --llm-api-base-url <your llm provider base-api> --llm_api_key <your api key> --model-efficient GPT-5-mini
-
-# Selectively skip certain processing stages in the generation workflow
-litho --skip-preprocessing --skip-research
+deepwiki-rs skip certain processing stages in the generation workflow
+deepwiki-rs --skip-preprocessing --skip-research
 ```
 
 ### Advanced Options
 ```sh
 # Turn off ReAct Mode to avoid auto-scanning project files via tool-calls
-litho -p ./src --disable-preset-tools --llm-api-base-url <your llm provider base-api> --llm_api_key <your api key> --model-efficient GPT-5-mini
+deepwiki-rs -p ./src --disable-preset-tools --llm-api-base-url <your llm provider base-api> --llm_api_key <your api key> --model-efficient GPT-5-mini
 
 # Set up both the efficient model and the powerful model simultaneously
-litho -p ./src --model-efficient GPT-5-mini --model-poweruful GPT-5-Pro --llm-api-base-url <your llm provider base-api> --llm_api_key <your api key> --model-efficient GPT-5-mini
+deepwiki-rs -p ./src --model-efficient GPT-5-mini --model-poweruful GPT-5-Pro --llm-api-base-url <your llm provider base-api> --llm_api_key <your api key> --model-efficient GPT-5-mini
 ```
 
 ## 📁 Output Structure

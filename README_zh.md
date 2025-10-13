@@ -300,35 +300,36 @@ cargo build --release
 
 # 🚀 使用方法
 
-Litho 提供简单的命令行界面来生成文档。
+Litho 提供简单的命令行界面来生成文档。For more configuration parameters, refer to the [CLI全参数说明](https://github.com/sopaco/deepwiki-rs/blob/main/docs/5%E3%80%81%E8%BE%B9%E7%95%8C%E8%B0%83%E7%94%A8.md#litho)。
 
 ### 基本命令示例
 ```sh
 # 为当前项目生成文档（默认设置）
-litho
+deepwiki-rs
 
 # 指定项目目录与输出目录
-litho -p ./my-project -o ./docs
+deepwiki-rs -p ./my-project -o ./docs
+
+# 生成使用特定语种描述的文档（例如日文）
+deepwiki-rs --target-language ja -p ./my-project
+
 ```
 
 ### 文档生成示例（带 LLM 配置）
 ```sh
-litho -p ./src --llm-api-base-url <your-llm-base-url> --llm_api_key <your-api-key> --model-efficient GPT-5-mini
+deepwiki-rs -p ./src --llm-api-base-url <your-llm-base-url> --llm_api_key <your-api-key> --model-efficient GPT-5-mini
 ```
 
 ### 其他常见选项
 ```sh
-# 启用详细日志
-litho --project ./src --output ./docs --verbose --llm-api-base-url <base> --llm_api_key <key>
-
 # 跳过阶段（示例）
-litho --skip-preprocessing --skip-research
+deepwiki-rs --skip-preprocessing --skip-research
 
 # 关闭 ReAct 模式（避免使用工具自动扫描）
-litho -p ./src --disable-preset-tools --llm-api-base-url <base> --llm_api_key <key>
+deepwiki-rs -p ./src --disable-preset-tools --llm-api-base-url <base> --llm_api_key <key>
 
 # 高级并行/上下文配置
-litho --config <config-file> --max-tokens 4000 --temperature 0.7 --max-parallels 4 --no-cache --force-regenerate
+deepwiki-rs --config <config-file> --max-tokens 4000 --temperature 0.7 --max-parallels 4 --no-cache --force-regenerate
 ```
 
 ## 📁 默认输出结构（示例）
