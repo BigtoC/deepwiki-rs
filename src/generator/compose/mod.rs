@@ -19,6 +19,7 @@ pub struct DocumentationComposer;
 impl DocumentationComposer {
     pub async fn execute(&self, context: &GeneratorContext, doc_tree: &mut DocTree) -> Result<()> {
         println!("\n🤖 执行文档生成流程...");
+        println!("📝 目标语言: {}", context.config.target_language.display_name());
 
         let overview_editor = OverviewEditor::default();
         overview_editor.execute(context).await?;

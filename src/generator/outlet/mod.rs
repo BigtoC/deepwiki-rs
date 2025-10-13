@@ -1,5 +1,6 @@
 use crate::generator::compose::types::AgentType;
 use crate::generator::{compose::memory::MemoryScope, context::GeneratorContext};
+use crate::i18n::TargetLanguage;
 use anyhow::Result;
 use std::collections::HashMap;
 use std::fs;
@@ -21,6 +22,28 @@ pub struct DocTree {
 }
 
 impl DocTree {
+    pub fn new(target_language: &TargetLanguage) -> Self {
+        let structure = HashMap::from([
+            (
+                AgentType::Overview.to_string(),
+                target_language.get_doc_filename("overview"),
+            ),
+            (
+                AgentType::Architecture.to_string(),
+                target_language.get_doc_filename("architecture"),
+            ),
+            (
+                AgentType::Workflow.to_string(),
+                target_language.get_doc_filename("workflow"),
+            ),
+            (
+                AgentType::Boundary.to_string(),
+                target_language.get_doc_filename("boundary"),
+            ),
+        ]);
+        Self { structure }
+    }
+
     pub fn insert(&mut self, scoped_key: &str, relative_path: &str) {
         self.structure
             .insert(scoped_key.to_string(), relative_path.to_string());
@@ -29,25 +52,8 @@ impl DocTree {
 
 impl Default for DocTree {
     fn default() -> Self {
-        let structure = HashMap::from([
-            (
-                AgentType::Overview.to_string(),
-                "1、项目概述.md".to_string(),
-            ),
-            (
-                AgentType::Architecture.to_string(),
-                "2、架构概览.md".to_string(),
-            ),
-            (
-                AgentType::Workflow.to_string(),
-                "3、工作流程.md".to_string(),
-            ),
-            (
-                AgentType::Boundary.to_string(),
-                "5、边界调用.md".to_string(),
-            ),
-        ]);
-        Self { structure }
+        // 默认使用英文
+        Self::new(&TargetLanguage::English)
     }
 }
 

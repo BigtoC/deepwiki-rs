@@ -1,10 +1,13 @@
 use anyhow::Result;
+use async_trait::async_trait;
+use crate::generator::compose::memory::MemoryScope;
 use crate::generator::compose::types::AgentType;
-use crate::generator::step_forward_agent::StepForwardAgent;
 use crate::generator::context::GeneratorContext;
 use crate::generator::research::memory::MemoryRetriever;
 use crate::generator::research::types::{AgentType as ResearchAgentType, BoundaryAnalysisReport, CLIBoundary, APIBoundary, IntegrationSuggestion};
-use async_trait::async_trait;
+use crate::generator::step_forward_agent::{
+    AgentDataConfig, DataSource, PromptTemplate, StepForwardAgent,
+};
 
 /// 边界接口文档编辑器 - 将边界分析结果编排为标准化文档
 #[derive(Default)]
@@ -19,36 +22,36 @@ impl StepForwardAgent for BoundaryEditor {
     }
 
     fn memory_scope_key(&self) -> String {
-        crate::generator::compose::memory::MemoryScope::DOCUMENTATION.to_string()
+        MemoryScope::DOCUMENTATION.to_string()
     }
 
-    fn data_config(&self) -> crate::generator::step_forward_agent::AgentDataConfig {
-        crate::generator::step_forward_agent::AgentDataConfig {
-            required_sources: vec![
-                crate::generator::step_forward_agent::DataSource::ResearchResult(ResearchAgentType::BoundaryAnalyzer.to_string()),
-            ],
+    fn data_config(&self) -> AgentDataConfig {
+        AgentDataConfig {
+            required_sources: vec![],
             optional_sources: vec![
-                crate::generator::step_forward_agent::DataSource::ResearchResult(ResearchAgentType::SystemContextResearcher.to_string()),
+                DataSource::ResearchResult(ResearchAgentType::BoundaryAnalyzer.to_string()),
+                DataSource::PROJECT_STRUCTURE,
+                DataSource::CODE_INSIGHTS,
+                DataSource::README_CONTENT,
             ],
         }
     }
 
-    fn prompt_template(&self) -> crate::generator::step_forward_agent::PromptTemplate {
-        crate::generator::step_forward_agent::PromptTemplate {
-            system_prompt: r#"你是一个专业的技术文档编辑师，专门将边界接口分析结果编排为清晰、实用的技术文档。
+    fn prompt_template(&self) -> PromptTemplate {
+        PromptTemplate {
+            system_prompt: r#"你是一个专业的软件接口文档编写专家，专注于生成清晰、详细的边界调用文档。你的任务是基于提供的调研报告，编写一份以`边界调用`为标题的接口说明文档。
 
-你的任务是基于边界分析结果，生成一份完整的系统边界接口文档，包括：
-- CLI命令行接口使用指南（如果有）
-- API接口文档（如果有）
-- 集成建议和最佳实践
+## 文档要求
+1. **接口完整**：详细描述所有对外接口
+2. **参数清晰**：每个参数都要有明确的说明
+3. **示例丰富**：提供实用的调用示例
+4. **易于理解**：为开发者提供有价值的参考
 
-文档要求：
+## 输出格式
 - 使用Markdown格式
-- 结构清晰，便于查阅
-- 包含实用的示例代码
-- 提供完整的参数说明
-- 突出安全注意事项"#
-                .to_string(),
+- 包含适当的标题层级
+- 使用代码块展示示例
+- 确保内容的逻辑性和可读性"#.to_string(),
 
             opening_instruction: "基于以下边界分析结果，生成系统边界接口文档：".to_string(),
 

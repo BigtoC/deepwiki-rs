@@ -330,6 +330,14 @@ impl GeneratorPromptBuilder {
         prompt.push_str(&self.template.opening_instruction);
         prompt.push_str("\n\n");
 
+        // 添加当前时间信息
+        let now = chrono::Utc::now();
+        prompt.push_str(&format!(
+            "## 当前时间信息\n生成时间: {} (UTC)\n时间戳: {}\n\n",
+            now.format("%Y-%m-%d %H:%M:%S"),
+            now.timestamp()
+        ));
+
         // 调研材料参考部分
         prompt.push_str("## 调研材料参考\n");
 
@@ -476,8 +484,13 @@ pub trait StepForwardAgent: Send + Sync {
         // 3. 收集所有数据源（required + optional）
         let all_sources = [config.required_sources, config.optional_sources].concat();
 
-        // 4. 使用标准模板构建prompt
-        let template = self.prompt_template();
+        // 4. 使用标准模板构建prompt，并根据目标语言调整
+        let mut template = self.prompt_template();
+        
+        // 根据配置的目标语言添加语言指令
+        let language_instruction = context.config.target_language.prompt_instruction();
+        template.system_prompt = format!("{}\n\n{}", template.system_prompt, language_instruction);
+        
         let prompt_builder = GeneratorPromptBuilder::new(template.clone());
         
         // 获取自定义prompt内容
