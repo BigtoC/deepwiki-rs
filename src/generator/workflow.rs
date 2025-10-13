@@ -84,7 +84,7 @@ pub async fn launch(c: &Config) -> Result<()> {
 
     // 执行文档生成流程
     let compose_start = Instant::now();
-    let mut doc_tree = DocTree::default();
+    let mut doc_tree = DocTree::new(&context.config.target_language);
     let documentation_orchestrator = DocumentationComposer::default();
     documentation_orchestrator
         .execute(&context, &mut doc_tree)

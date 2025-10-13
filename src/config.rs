@@ -4,6 +4,8 @@ use std::fs::File;
 use std::io::Read;
 use std::path::PathBuf;
 
+use crate::i18n::TargetLanguage;
+
 /// LLM Provider类型
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub enum LLMProvider {
@@ -56,6 +58,8 @@ impl std::str::FromStr for LLMProvider {
     }
 }
 
+
+
 /// 应用程序配置
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Config {
@@ -70,6 +74,9 @@ pub struct Config {
 
     /// 内部工作目录路径 (.litho)
     pub internal_path: PathBuf,
+
+    /// 目标语言
+    pub target_language: TargetLanguage,
 
     /// 是否分析依赖关系
     pub analyze_dependencies: bool,
@@ -392,6 +399,7 @@ impl Default for Config {
             project_path: PathBuf::from("."),
             output_path: PathBuf::from("./litho.docs"),
             internal_path: PathBuf::from("./.litho"),
+            target_language: TargetLanguage::default(),
             analyze_dependencies: true,
             identify_components: true,
             max_depth: 10,
@@ -429,7 +437,7 @@ impl Default for Config {
             ],
             excluded_extensions: vec![
                 "jpg".to_string(),
-                "jpeg".to_string(),
+    "jpeg".to_string(),
                 "png".to_string(),
                 "gif".to_string(),
                 "bmp".to_string(),

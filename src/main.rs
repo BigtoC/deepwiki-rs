@@ -6,6 +6,7 @@ mod cache;
 mod cli;
 mod config;
 mod generator;
+mod i18n;
 mod llm;
 mod memory;
 mod types;

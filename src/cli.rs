@@ -1,4 +1,5 @@
 use crate::config::{Config, LLMProvider};
+use crate::i18n::TargetLanguage;
 use clap::Parser;
 use std::path::PathBuf;
 
@@ -75,6 +76,10 @@ pub struct Args {
     #[arg(long)]
     pub llm_provider: Option<String>,
 
+    /// 目标语言 (zh, en, ja, ko, de, fr, ru)
+    #[arg(long)]
+    pub target_language: Option<String>,
+
     /// 生成报告后,自动使用报告助手查看报告
     #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
     pub disable_preset_tools: bool,
@@ -145,6 +150,18 @@ impl Args {
             config.llm.max_parallels = max_parallels;
         }
         config.llm.disable_preset_tools = self.disable_preset_tools;
+
+        // 目标语言配置
+        if let Some(target_language_str) = self.target_language {
+            if let Ok(target_language) = target_language_str.parse::<TargetLanguage>() {
+                config.target_language = target_language;
+            } else {
+                eprintln!(
+                    "⚠️ 警告: 未知的目标语言: {}，使用默认语言 (English)",
+                    target_language_str
+                );
+            }
+        }
 
         // 缓存配置
         if self.no_cache {
