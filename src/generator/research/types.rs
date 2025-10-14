@@ -217,6 +217,8 @@ pub struct BoundaryAnalysisReport {
     pub cli_boundaries: Vec<CLIBoundary>,
     /// 供外部调用的网络API边界接口（包括HTTP、RPC等协议）
     pub api_boundaries: Vec<APIBoundary>,
+    /// 页面路由
+    pub router_boundaries: Vec<RouterBoundary>,
     /// 集成建议
     pub integration_suggestions: Vec<IntegrationSuggestion>,
     /// 分析置信度 (1-10分)
@@ -264,6 +266,21 @@ pub struct APIBoundary {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct RouterBoundary {
+    pub path: String,
+    pub description: String,
+    pub source_location: String,
+    pub params: Vec<RouterParam>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+pub struct RouterParam {
+    pub key: String,
+    pub value_type: String,
+    pub description: String,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct IntegrationSuggestion {
     pub integration_type: String,
     pub description: String,
@@ -278,6 +295,7 @@ impl Default for BoundaryAnalysisReport {
             api_boundaries: Vec::new(),
             integration_suggestions: Vec::new(),
             confidence_score: 0.0,
+            router_boundaries: Vec::new(),
         }
     }
 }
