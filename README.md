@@ -129,8 +129,8 @@ Litho is part of a broader ecosystem of tools designed to enhance developer prod
 <div style="text-align: center;">
   <table style="width: 100%; margin: 0 auto;">
     <tr>
-      <td style="width: 50%;"><img src="https://github.com/sopaco/litho-book/blob/main/assets/snapshot-1.webp" alt="snapshot-1" style="width: 100%; height: auto; display: block;"></td>
-      <td style="width: 50%;"><img src="https://github.com/sopaco/litho-book/blob/main/assets/snapshot-2.webp" alt="snapshot-2" style="width: 100%; height: auto; display: block;"></td>
+      <td style="width: 50%;"><img src="https://github.com/sopaco/litho-book/blob/main/assets/snapshot-1.webp?raw=true" alt="snapshot-1" style="width: 100%; height: auto; display: block;"></td>
+      <td style="width: 50%;"><img src="https://github.com/sopaco/litho-book/blob/main/assets/snapshot-2.webp?raw=true" alt="snapshot-2" style="width: 100%; height: auto; display: block;"></td>
     </tr>
   </table>
 </div>
