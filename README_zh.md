@@ -317,7 +317,7 @@ deepwiki-rs --target-language ja -p ./my-project
 
 ### 文档生成示例（带 LLM 配置）
 ```sh
-deepwiki-rs -p ./src --llm-api-base-url <your-llm-base-url> --llm_api_key <your-api-key> --model-efficient GPT-5-mini
+deepwiki-rs -p ./src --llm-api-base-url <your-llm-base-url> --llm-api-key <your-api-key> --model-efficient GPT-5-mini
 ```
 
 ### 其他常见选项
