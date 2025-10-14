@@ -303,26 +303,30 @@ impl GeneratorPromptBuilder {
 
     /// 构建标准的prompt（系统提示词和用户提示词）
     /// 新增custom_content参数，用于插入自定义内容
+    /// 新增include_timestamp参数，控制是否包含时间戳信息
     pub async fn build_prompts(
         &self,
         context: &GeneratorContext,
         data_sources: &[DataSource],
         custom_content: Option<String>,
+        include_timestamp: bool,
     ) -> Result<(String, String)> {
         let system_prompt = self.template.system_prompt.clone();
         let user_prompt = self
-            .build_standard_user_prompt(context, data_sources, custom_content)
+            .build_standard_user_prompt(context, data_sources, custom_content, include_timestamp)
             .await?;
         Ok((system_prompt, user_prompt))
     }
 
     /// 构建标准的用户提示词
     /// 新增custom_content参数
+    /// 新增include_timestamp参数，控制是否包含时间戳信息
     async fn build_standard_user_prompt(
         &self,
         context: &GeneratorContext,
         data_sources: &[DataSource],
         custom_content: Option<String>,
+        include_timestamp: bool,
     ) -> Result<String> {
         let mut prompt = String::new();
 
@@ -330,13 +334,15 @@ impl GeneratorPromptBuilder {
         prompt.push_str(&self.template.opening_instruction);
         prompt.push_str("\n\n");
 
-        // 添加当前时间信息
-        let now = chrono::Utc::now();
-        prompt.push_str(&format!(
-            "## 当前时间信息\n生成时间: {} (UTC)\n时间戳: {}\n\n",
-            now.format("%Y-%m-%d %H:%M:%S"),
-            now.timestamp()
-        ));
+        // 根据参数决定是否添加当前时间信息
+        if include_timestamp {
+            let now = chrono::Utc::now();
+            prompt.push_str(&format!(
+                "## 当前时间信息\n生成时间: {} (UTC)\n时间戳: {}\n\n",
+                now.format("%Y-%m-%d %H:%M:%S"),
+                now.timestamp()
+            ));
+        }
 
         // 调研材料参考部分
         prompt.push_str("## 调研材料参考\n");
@@ -460,6 +466,12 @@ pub trait StepForwardAgent: Send + Sync {
         Ok(None)
     }
 
+    /// 是否在prompt中包含时间戳信息
+    /// 默认为false，只有特定的agent（如compose目录下的editor agents）需要重写为true
+    fn should_include_timestamp(&self) -> bool {
+        false
+    }
+
     /// 默认实现的execute方法 - 完全标准化，自动数据验证
     async fn execute(&self, context: &GeneratorContext) -> Result<Self::Output> {
         // 1. 获取数据配置
@@ -496,8 +508,11 @@ pub trait StepForwardAgent: Send + Sync {
         // 获取自定义prompt内容
         let custom_content = self.provide_custom_prompt_content(context).await?;
         
+        // 检查是否需要包含时间戳
+        let include_timestamp = self.should_include_timestamp();
+        
         let (system_prompt, user_prompt) =
-            prompt_builder.build_prompts(context, &all_sources, custom_content).await?;
+            prompt_builder.build_prompts(context, &all_sources, custom_content, include_timestamp).await?;
 
         // 5. 根据配置选择LLM调用方式
         let params = AgentExecuteParams {

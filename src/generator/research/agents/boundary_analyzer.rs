@@ -45,10 +45,8 @@ impl StepForwardAgent for BoundaryAnalyzer {
 你的任务是基于提供的边界相关代码，识别并分析：
 1. CLI命令行接口 - 命令、参数、选项、使用示例
 2. API接口 - HTTP端点、请求/响应格式、认证方式
-3. 配置接口 - 配置参数、数据类型、配置来源
-4. 库接口 - 公共函数、接口签名、可见性
-5. 安全边界考虑 - 潜在风险和缓解策略
-6. 集成建议 - 最佳实践和示例代码
+3. Router路由 - 页面的Router路由、URL路径、路由参数
+4. 集成建议 - 最佳实践和示例代码
 
 重点关注：
 - 从Entry、Api、Controller、Router类型的代码中提取边界信息
@@ -108,8 +106,9 @@ impl StepForwardAgent for BoundaryAnalyzer {
         _context: &GeneratorContext,
     ) -> Result<()> {
         println!("✅ 边界接口分析完成:");
-        println!("   - CLI接口: {} 个", result.cli_boundaries.len());
+        println!("   - CLI命令: {} 个", result.cli_boundaries.len());
         println!("   - API接口: {} 个", result.api_boundaries.len());
+        println!("   - Router路由: {} 个", result.router_boundaries.len());
         println!("   - 集成建议: {} 项", result.integration_suggestions.len());
         println!("   - 置信度: {:.1}/10", result.confidence_score);
 

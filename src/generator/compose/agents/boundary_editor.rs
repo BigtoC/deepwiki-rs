@@ -1,13 +1,16 @@
-use anyhow::Result;
-use async_trait::async_trait;
 use crate::generator::compose::memory::MemoryScope;
 use crate::generator::compose::types::AgentType;
 use crate::generator::context::GeneratorContext;
 use crate::generator::research::memory::MemoryRetriever;
-use crate::generator::research::types::{AgentType as ResearchAgentType, BoundaryAnalysisReport, CLIBoundary, APIBoundary, IntegrationSuggestion};
+use crate::generator::research::types::{
+    APIBoundary, AgentType as ResearchAgentType, BoundaryAnalysisReport, CLIBoundary,
+    IntegrationSuggestion, RouterBoundary,
+};
 use crate::generator::step_forward_agent::{
     AgentDataConfig, DataSource, PromptTemplate, StepForwardAgent,
 };
+use anyhow::Result;
+use async_trait::async_trait;
 
 /// 边界接口文档编辑器 - 将边界分析结果编排为标准化文档
 #[derive(Default)]
@@ -23,6 +26,10 @@ impl StepForwardAgent for BoundaryEditor {
 
     fn memory_scope_key(&self) -> String {
         MemoryScope::DOCUMENTATION.to_string()
+    }
+
+    fn should_include_timestamp(&self) -> bool {
+        true
     }
 
     fn data_config(&self) -> AgentDataConfig {
@@ -98,26 +105,38 @@ impl BoundaryEditor {
     fn generate_boundary_documentation(&self, report: &BoundaryAnalysisReport) -> String {
         let mut content = String::new();
         content.push_str("# 系统边界接口文档\n\n");
-        content.push_str("本文档描述了系统的外部调用接口，包括CLI命令、API端点、配置参数等边界机制。\n\n");
-        
+        content.push_str(
+            "本文档描述了系统的外部调用接口，包括CLI命令、API端点、配置参数等边界机制。\n\n",
+        );
+
         // 生成CLI接口文档
         if !report.cli_boundaries.is_empty() {
             content.push_str(&self.generate_cli_documentation(&report.cli_boundaries));
         }
-        
+
         // 生成API接口文档
         if !report.api_boundaries.is_empty() {
             content.push_str(&self.generate_api_documentation(&report.api_boundaries));
         }
-        
+
+        // 生成Router路由文档
+        if !report.router_boundaries.is_empty() {
+            content.push_str(&self.generate_router_documentation(&report.router_boundaries));
+        }
+
         // 生成集成建议
         if !report.integration_suggestions.is_empty() {
-            content.push_str(&self.generate_integration_documentation(&report.integration_suggestions));
+            content.push_str(
+                &self.generate_integration_documentation(&report.integration_suggestions),
+            );
         }
 
         // 添加分析置信度
-        content.push_str(&format!("\n---\n\n**分析置信度**: {:.1}/10\n", report.confidence_score));
-        
+        content.push_str(&format!(
+            "\n---\n\n**分析置信度**: {:.1}/10\n",
+            report.confidence_score
+        ));
+
         content
     }
 
@@ -128,45 +147,56 @@ impl BoundaryEditor {
 
         let mut content = String::new();
         content.push_str("## 命令行接口 (CLI)\n\n");
-        
+
         for cli in cli_boundaries {
             content.push_str(&format!("### {}\n\n", cli.command));
             content.push_str(&format!("**描述**: {}\n\n", cli.description));
             content.push_str(&format!("**源文件**: `{}`\n\n", cli.source_location));
-            
+
             if !cli.arguments.is_empty() {
                 content.push_str("**参数**:\n\n");
                 for arg in &cli.arguments {
                     let required_text = if arg.required { "必需" } else { "可选" };
-                    let default_text = arg.default_value.as_ref()
+                    let default_text = arg
+                        .default_value
+                        .as_ref()
                         .map(|v| format!(" (默认: `{}`)", v))
                         .unwrap_or_default();
                     content.push_str(&format!(
-                        "- `{}` ({}): {} - {}{}\n", 
+                        "- `{}` ({}): {} - {}{}\n",
                         arg.name, arg.value_type, required_text, arg.description, default_text
                     ));
                 }
                 content.push_str("\n");
             }
-            
+
             if !cli.options.is_empty() {
                 content.push_str("**选项**:\n\n");
                 for option in &cli.options {
-                    let short_text = option.short_name.as_ref()
+                    let short_text = option
+                        .short_name
+                        .as_ref()
                         .map(|s| format!(", {}", s))
                         .unwrap_or_default();
                     let required_text = if option.required { "必需" } else { "可选" };
-                    let default_text = option.default_value.as_ref()
+                    let default_text = option
+                        .default_value
+                        .as_ref()
                         .map(|v| format!(" (默认: `{}`)", v))
                         .unwrap_or_default();
                     content.push_str(&format!(
-                        "- `{}{}`({}): {} - {}{}\n", 
-                        option.name, short_text, option.value_type, required_text, option.description, default_text
+                        "- `{}{}`({}): {} - {}{}\n",
+                        option.name,
+                        short_text,
+                        option.value_type,
+                        required_text,
+                        option.description,
+                        default_text
                     ));
                 }
                 content.push_str("\n");
             }
-            
+
             if !cli.examples.is_empty() {
                 content.push_str("**使用示例**:\n\n");
                 for example in &cli.examples {
@@ -174,10 +204,10 @@ impl BoundaryEditor {
                 }
             }
         }
-        
+
         content
     }
-    
+
     fn generate_api_documentation(&self, api_boundaries: &[APIBoundary]) -> String {
         if api_boundaries.len() == 0 {
             return String::new();
@@ -185,45 +215,75 @@ impl BoundaryEditor {
 
         let mut content = String::new();
         content.push_str("## API接口\n\n");
-        
+
         for api in api_boundaries {
             content.push_str(&format!("### {} {}\n\n", api.method, api.endpoint));
             content.push_str(&format!("**描述**: {}\n\n", api.description));
             content.push_str(&format!("**源文件**: `{}`\n\n", api.source_location));
-            
+
             if let Some(request_format) = &api.request_format {
                 content.push_str(&format!("**请求格式**: {}\n\n", request_format));
             }
-            
+
             if let Some(response_format) = &api.response_format {
                 content.push_str(&format!("**响应格式**: {}\n\n", response_format));
             }
-            
+
             if let Some(auth) = &api.authentication {
                 content.push_str(&format!("**认证方式**: {}\n\n", auth));
             }
         }
-        
+
         content
     }
 
-    fn generate_integration_documentation(&self, integration_suggestions: &[IntegrationSuggestion]) -> String {
+    fn generate_router_documentation(&self, router_boundaries: &[RouterBoundary]) -> String {
+        if router_boundaries.len() == 0 {
+            return String::new();
+        }
+
+        let mut content = String::new();
+        content.push_str("## Router路由\n\n");
+
+        for router in router_boundaries {
+            content.push_str(&format!("### {}\n\n", router.path));
+            content.push_str(&format!("**描述**: {}\n\n", router.description));
+            content.push_str(&format!("**源文件**: `{}`\n\n", router.source_location));
+
+            if !router.params.is_empty() {
+                content.push_str("**参数**:\n\n");
+                for param in &router.params {
+                    content.push_str(&format!(
+                        "- `{}` ({}): {}\n",
+                        param.key, param.value_type, param.description
+                    ));
+                }
+            }
+        }
+
+        content
+    }
+
+    fn generate_integration_documentation(
+        &self,
+        integration_suggestions: &[IntegrationSuggestion],
+    ) -> String {
         if integration_suggestions.len() == 0 {
             return String::new();
         }
 
         let mut content = String::new();
         content.push_str("## 集成建议\n\n");
-        
+
         for suggestion in integration_suggestions {
             content.push_str(&format!("### {}\n\n", suggestion.integration_type));
             content.push_str(&format!("{}\n\n", suggestion.description));
-            
+
             if !suggestion.example_code.is_empty() {
                 content.push_str("**示例代码**:\n\n");
                 content.push_str(&format!("```\n{}\n```\n\n", suggestion.example_code));
             }
-            
+
             if !suggestion.best_practices.is_empty() {
                 content.push_str("**最佳实践**:\n\n");
                 for practice in &suggestion.best_practices {
@@ -232,7 +292,7 @@ impl BoundaryEditor {
                 content.push_str("\n");
             }
         }
-        
+
         content
     }
 }

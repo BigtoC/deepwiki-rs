@@ -89,6 +89,10 @@ impl StepForwardAgent for KeyModuleInsightEditor {
         MemoryScope::DOCUMENTATION.to_string()
     }
 
+    fn should_include_timestamp(&self) -> bool {
+        true
+    }
+
     fn data_config(&self) -> AgentDataConfig {
         AgentDataConfig {
             required_sources: vec![
