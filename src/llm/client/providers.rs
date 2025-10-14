@@ -6,6 +6,7 @@ use rig::{
     client::CompletionClient,
     completion::{Prompt, PromptError},
     extractor::Extractor,
+    providers::gemini::completion::gemini_api_types::{AdditionalParameters, GenerationConfig},
 };
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
@@ -110,11 +111,15 @@ impl ProviderClient {
                 ProviderAgent::Anthropic(agent)
             }
             ProviderClient::Gemini(client) => {
+                let gen_cfg = GenerationConfig::default();
+                let cfg = AdditionalParameters::default().with_config(gen_cfg);
+
                 let agent = client
                     .agent(model)
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .temperature(config.temperature.into())
+                    .additional_params(serde_json::to_value(cfg).unwrap())
                     .build();
                 ProviderAgent::Gemini(agent)
             }
@@ -185,6 +190,9 @@ impl ProviderClient {
                 ProviderAgent::Anthropic(agent)
             }
             ProviderClient::Gemini(client) => {
+                let gen_cfg = GenerationConfig::default();
+                let cfg = AdditionalParameters::default().with_config(gen_cfg);
+
                 let agent = client
                     .agent(model)
                     .preamble(system_prompt)
@@ -192,6 +200,7 @@ impl ProviderClient {
                     .temperature(config.temperature.into())
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
+                    .additional_params(serde_json::to_value(cfg).unwrap())
                     .build();
                 ProviderAgent::Gemini(agent)
             }
@@ -250,10 +259,14 @@ impl ProviderClient {
                 ProviderExtractor::Anthropic(extractor)
             }
             ProviderClient::Gemini(client) => {
+                let gen_cfg = GenerationConfig::default();
+                let cfg = AdditionalParameters::default().with_config(gen_cfg);
+
                 let extractor = client
                     .extractor::<T>(model)
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
+                    .additional_params(serde_json::to_value(cfg).unwrap())
                     .build();
                 ProviderExtractor::Gemini(extractor)
             }
