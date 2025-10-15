@@ -1,5 +1,6 @@
 //! 文件读取工具
 
+#[cfg(debug_assertions)]
 use std::time::Duration;
 
 use anyhow::Result;
