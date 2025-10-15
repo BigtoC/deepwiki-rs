@@ -31,26 +31,27 @@ impl ProviderClient {
             LLMProvider::Moonshot => {
                 let client = rig::providers::moonshot::Client::builder(&config.api_key)
                     .base_url(&config.api_base_url)
-                    .build()?;
+                    .build();
                 Ok(ProviderClient::Moonshot(client))
             }
             LLMProvider::DeepSeek => {
                 let client = rig::providers::deepseek::Client::builder(&config.api_key)
                     .base_url(&config.api_base_url)
-                    .build()?;
+                    .build();
                 Ok(ProviderClient::DeepSeek(client))
             }
             LLMProvider::Mistral => {
-                let client = rig::providers::mistral::Client::builder(&config.api_key).build()?;
+                let client = rig::providers::mistral::Client::builder(&config.api_key).build();
                 Ok(ProviderClient::Mistral(client))
             }
             LLMProvider::OpenRouter => {
+                // reference： https://docs.rig.rs/docs/integrations/model_providers/anthropic#basic-usage
                 let client =
-                    rig::providers::openrouter::Client::builder(&config.api_key).build()?;
+                    rig::providers::openrouter::Client::builder(&config.api_key).build();
                 Ok(ProviderClient::OpenRouter(client))
             }
             LLMProvider::Anthropic => {
-                let client = rig::providers::anthropic::Client::builder(&config.api_key).build()?;
+                let client = rig::providers::anthropic::ClientBuilder::new(&config.api_key).build()?;
                 Ok(ProviderClient::Anthropic(client))
             }
             LLMProvider::Gemini => {
