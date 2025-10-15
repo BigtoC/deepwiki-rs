@@ -21,7 +21,6 @@ target
 .idea/
 .zed/
 .qoder/
-.kwaipilot/
 
 # Litho(deepwiki-rs) Generated Cache and Documents
 .litho/
