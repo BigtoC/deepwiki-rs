@@ -9,8 +9,8 @@ use crate::i18n::TargetLanguage;
 /// LLM Provider类型
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub enum LLMProvider {
-    #[serde(rename = "moonshot")]
-    Moonshot,
+    #[serde(rename = "openai")]
+    OpenAI,
     #[serde(rename = "deepseek")]
     DeepSeek,
     #[serde(rename = "mistral")]
@@ -25,14 +25,14 @@ pub enum LLMProvider {
 
 impl Default for LLMProvider {
     fn default() -> Self {
-        Self::Moonshot
+        Self::OpenAI
     }
 }
 
 impl std::fmt::Display for LLMProvider {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
-            LLMProvider::Moonshot => write!(f, "openai"),
+            LLMProvider::OpenAI => write!(f, "openai"),
             LLMProvider::DeepSeek => write!(f, "deepseek"),
             LLMProvider::Mistral => write!(f, "mistral"),
             LLMProvider::OpenRouter => write!(f, "openrouter"),
@@ -47,7 +47,7 @@ impl std::str::FromStr for LLMProvider {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
-            "openai" => Ok(LLMProvider::Moonshot),
+            "openai" => Ok(LLMProvider::OpenAI),
             "deepseek" => Ok(LLMProvider::DeepSeek),
             "mistral" => Ok(LLMProvider::Mistral),
             "openrouter" => Ok(LLMProvider::OpenRouter),
@@ -57,8 +57,6 @@ impl std::str::FromStr for LLMProvider {
         }
     }
 }
-
-
 
 /// 应用程序配置
 #[derive(Debug, Deserialize, Serialize, Clone)]
@@ -437,7 +435,7 @@ impl Default for Config {
             ],
             excluded_extensions: vec![
                 "jpg".to_string(),
-    "jpeg".to_string(),
+                "jpeg".to_string(),
                 "png".to_string(),
                 "gif".to_string(),
                 "bmp".to_string(),
