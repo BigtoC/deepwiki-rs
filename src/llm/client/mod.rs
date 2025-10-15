@@ -107,9 +107,10 @@ impl LLMClient {
                             "❌ 调用模型服务出错，尝试 {} 次均失败，尝试使用备选模型{}...{}",
                             llm_config.retry_attempts, model, e
                         );
+                        let user_prompt_with_fixer = format!("{}\n\n**注意事项**此前我调用大模型过程时存在错误，错误信息为“{}”，你注意你这一次要规避这个错误", user_prompt, e);
                         Box::pin(self.extract_inner(
                             system_prompt,
-                            user_prompt,
+                            &user_prompt_with_fixer,
                             model.clone(),
                             None,
                         ))

@@ -23,6 +23,7 @@ pub struct CodeDossier {
     pub importance_score: f64,
     pub description: Option<String>,
     pub functions: Vec<String>,
+    /// 接口清单
     pub interfaces: Vec<String>,
 }
 
@@ -95,9 +96,6 @@ pub struct CodeComplexity {
     pub lines_of_code: usize,
     pub number_of_functions: usize,
     pub number_of_classes: usize,
-    pub depth_of_inheritance: usize,
-    pub coupling_factor: f64,
-    pub cohesion_score: f64,
 }
 
 /// 代码功能分类枚举
@@ -112,13 +110,15 @@ pub enum CodePurpose {
     Page,
     /// 前端UI组件
     Widget,
-    /// 用于处理实现特定逻辑功能
+    /// 用于处理实现特定逻辑功能的代码模块
     SpecificFeature,
     /// 数据类型或模型
     Model,
     /// 程序内部接口定义
     Types,
-    /// 工具类的代码
+    /// 特定场景下的功能工具代码
+    Tool,
+    /// 通用、基础的工具函数和类，提供与业务逻辑无关的底层辅助功能
     Util,
     /// 配置
     Config,
@@ -132,6 +132,8 @@ pub enum CodePurpose {
     Database,
     /// 供外部调用的服务API，提供基于HTTP、RPC、IPC等协议等调用能力。
     Api,
+    /// MVC架构中的Controller组件，负责处理业务逻辑
+    Controller,
     /// 依赖库
     Lib,
     /// 测试组件
@@ -152,13 +154,15 @@ impl CodePurpose {
             CodePurpose::Widget => "前端UI组件",
             CodePurpose::SpecificFeature => "用于处理实现特定逻辑功能",
             CodePurpose::Model => "数据类型或模型",
-            CodePurpose::Util => "工具类的代码",
+            CodePurpose::Util => "基础工具函数",
+            CodePurpose::Tool => "特定场景下的功能工具代码",
             CodePurpose::Config => "配置",
             CodePurpose::Middleware => "中间件",
             CodePurpose::Plugin => "插件",
             CodePurpose::Router => "路由组件",
             CodePurpose::Database => "数据库组件",
             CodePurpose::Api => "各类接口定义",
+            CodePurpose::Controller => "Controller组件",
             CodePurpose::Lib => "依赖库",
             CodePurpose::Test => "测试组件",
             CodePurpose::Doc => "文档组件",
@@ -239,9 +243,10 @@ impl CodePurposeMapper {
             return CodePurpose::Database;
         }
         if path_lower.contains("/api/")
-            || path_lower.contains("/apis/")
-            || path_lower.contains("/endpoints/")
-            || path_lower.contains("/native_module/")
+            || path_lower.contains("/api")
+            || path_lower.contains("/endpoint")
+            || path_lower.contains("/controller")
+            || path_lower.contains("/native_module")
             || path_lower.contains("/bridge")
         {
             return CodePurpose::Api;

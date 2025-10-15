@@ -46,12 +46,12 @@ impl ProviderClient {
             }
             LLMProvider::OpenRouter => {
                 // reference： https://docs.rig.rs/docs/integrations/model_providers/anthropic#basic-usage
-                let client =
-                    rig::providers::openrouter::Client::builder(&config.api_key).build();
+                let client = rig::providers::openrouter::Client::builder(&config.api_key).build();
                 Ok(ProviderClient::OpenRouter(client))
             }
             LLMProvider::Anthropic => {
-                let client = rig::providers::anthropic::ClientBuilder::new(&config.api_key).build()?;
+                let client =
+                    rig::providers::anthropic::ClientBuilder::new(&config.api_key).build()?;
                 Ok(ProviderClient::Anthropic(client))
             }
             LLMProvider::Gemini => {

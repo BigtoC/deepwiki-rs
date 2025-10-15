@@ -137,6 +137,7 @@ impl BoundaryAnalyzer {
                         | CodePurpose::Api
                         | CodePurpose::Config
                         | CodePurpose::Router
+                        | CodePurpose::Controller
                 )
             })
             .collect();
@@ -163,6 +164,7 @@ impl BoundaryAnalyzer {
                 CodePurpose::Api => api_count += 1,
                 CodePurpose::Config => config_count += 1,
                 CodePurpose::Router => router_count += 1,
+                CodePurpose::Controller => api_count += 1,
                 _ => {}
             }
         }
@@ -189,6 +191,7 @@ impl BoundaryAnalyzer {
             match insight.code_dossier.code_purpose {
                 CodePurpose::Entry => entry_codes.push(insight),
                 CodePurpose::Api => api_codes.push(insight),
+                CodePurpose::Controller => api_codes.push(insight),
                 CodePurpose::Config => config_codes.push(insight),
                 CodePurpose::Router => router_codes.push(insight),
                 _ => {}
