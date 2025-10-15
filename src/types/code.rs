@@ -134,6 +134,8 @@ pub enum CodePurpose {
     Api,
     /// MVC架构中的Controller组件，负责处理业务逻辑
     Controller,
+    /// MVC架构中的Service组件，负责处理业务规则
+    Service,
     /// 依赖库
     Lib,
     /// 测试组件
@@ -163,6 +165,7 @@ impl CodePurpose {
             CodePurpose::Database => "数据库组件",
             CodePurpose::Api => "各类接口定义",
             CodePurpose::Controller => "Controller组件",
+            CodePurpose::Service => "Service组件",
             CodePurpose::Lib => "依赖库",
             CodePurpose::Test => "测试组件",
             CodePurpose::Doc => "文档组件",
