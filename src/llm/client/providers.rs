@@ -16,7 +16,7 @@ use crate::config::{LLMConfig, LLMProvider};
 /// 统一的Provider客户端枚举
 #[derive(Clone)]
 pub enum ProviderClient {
-    Moonshot(rig::providers::moonshot::Client),
+    OpenAI(rig::providers::openai::Client),
     DeepSeek(rig::providers::deepseek::Client),
     Mistral(rig::providers::mistral::Client),
     OpenRouter(rig::providers::openrouter::Client),
@@ -28,11 +28,11 @@ impl ProviderClient {
     /// 根据配置创建相应的provider客户端
     pub fn new(config: &LLMConfig) -> Result<Self> {
         match config.provider {
-            LLMProvider::Moonshot => {
-                let client = rig::providers::moonshot::Client::builder(&config.api_key)
+            LLMProvider::OpenAI => {
+                let client = rig::providers::openai::Client::builder(&config.api_key)
                     .base_url(&config.api_base_url)
                     .build();
-                Ok(ProviderClient::Moonshot(client))
+                Ok(ProviderClient::OpenAI(client))
             }
             LLMProvider::DeepSeek => {
                 let client = rig::providers::deepseek::Client::builder(&config.api_key)
@@ -46,12 +46,12 @@ impl ProviderClient {
             }
             LLMProvider::OpenRouter => {
                 // reference： https://docs.rig.rs/docs/integrations/model_providers/anthropic#basic-usage
-                let client =
-                    rig::providers::openrouter::Client::builder(&config.api_key).build();
+                let client = rig::providers::openrouter::Client::builder(&config.api_key).build();
                 Ok(ProviderClient::OpenRouter(client))
             }
             LLMProvider::Anthropic => {
-                let client = rig::providers::anthropic::ClientBuilder::new(&config.api_key).build()?;
+                let client =
+                    rig::providers::anthropic::ClientBuilder::new(&config.api_key).build()?;
                 Ok(ProviderClient::Anthropic(client))
             }
             LLMProvider::Gemini => {
@@ -69,14 +69,16 @@ impl ProviderClient {
         config: &LLMConfig,
     ) -> ProviderAgent {
         match self {
-            ProviderClient::Moonshot(client) => {
+            ProviderClient::OpenAI(client) => {
                 let agent = client
-                    .agent(model)
+                    .completion_model(model)
+                    .completions_api()
+                    .into_agent_builder()
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .temperature(config.temperature.into())
                     .build();
-                ProviderAgent::Moonshot(agent)
+                ProviderAgent::OpenAI(agent)
             }
             ProviderClient::DeepSeek(client) => {
                 let agent = client
@@ -137,16 +139,18 @@ impl ProviderClient {
         file_reader: &crate::llm::tools::file_reader::AgentToolFileReader,
     ) -> ProviderAgent {
         match self {
-            ProviderClient::Moonshot(client) => {
+            ProviderClient::OpenAI(client) => {
                 let agent = client
-                    .agent(model)
+                    .completion_model(model)
+                    .completions_api()
+                    .into_agent_builder()
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .temperature(config.temperature.into())
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
                     .build();
-                ProviderAgent::Moonshot(agent)
+                ProviderAgent::OpenAI(agent)
             }
             ProviderClient::DeepSeek(client) => {
                 let agent = client
@@ -219,13 +223,13 @@ impl ProviderClient {
         T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,
     {
         match self {
-            ProviderClient::Moonshot(client) => {
+            ProviderClient::OpenAI(client) => {
                 let extractor = client
-                    .extractor::<T>(model)
+                    .extractor_completions_api::<T>(model)
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .build();
-                ProviderExtractor::Moonshot(extractor)
+                ProviderExtractor::OpenAI(extractor)
             }
             ProviderClient::DeepSeek(client) => {
                 let extractor = client
@@ -277,7 +281,7 @@ impl ProviderClient {
 
 /// 统一的Agent枚举
 pub enum ProviderAgent {
-    Moonshot(Agent<rig::providers::moonshot::CompletionModel>),
+    OpenAI(Agent<rig::providers::openai::CompletionModel>),
     Mistral(Agent<rig::providers::mistral::CompletionModel>),
     OpenRouter(Agent<rig::providers::openrouter::CompletionModel>),
     Anthropic(Agent<rig::providers::anthropic::completion::CompletionModel>),
@@ -289,7 +293,7 @@ impl ProviderAgent {
     /// 执行prompt
     pub async fn prompt(&self, prompt: &str) -> Result<String> {
         match self {
-            ProviderAgent::Moonshot(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
+            ProviderAgent::OpenAI(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
             ProviderAgent::DeepSeek(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
             ProviderAgent::Mistral(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
             ProviderAgent::OpenRouter(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
@@ -305,7 +309,7 @@ impl ProviderAgent {
         max_iterations: usize,
     ) -> Result<String, PromptError> {
         match self {
-            ProviderAgent::Moonshot(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
+            ProviderAgent::OpenAI(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
             ProviderAgent::DeepSeek(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
             ProviderAgent::Mistral(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
             ProviderAgent::OpenRouter(agent) => {
@@ -324,7 +328,7 @@ pub enum ProviderExtractor<T>
 where
     T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,
 {
-    Moonshot(Extractor<rig::providers::moonshot::CompletionModel, T>),
+    OpenAI(Extractor<rig::providers::openai::CompletionModel, T>),
     Mistral(Extractor<rig::providers::mistral::CompletionModel, T>),
     OpenRouter(Extractor<rig::providers::openrouter::CompletionModel, T>),
     Anthropic(Extractor<rig::providers::anthropic::completion::CompletionModel, T>),
@@ -339,7 +343,7 @@ where
     /// 执行提取
     pub async fn extract(&self, prompt: &str) -> Result<T> {
         match self {
-            ProviderExtractor::Moonshot(extractor) => {
+            ProviderExtractor::OpenAI(extractor) => {
                 extractor.extract(prompt).await.map_err(|e| e.into())
             }
             ProviderExtractor::DeepSeek(extractor) => {

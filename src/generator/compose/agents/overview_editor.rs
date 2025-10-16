@@ -109,7 +109,7 @@ impl StepForwardAgent for OverviewEditor {
 
 请生成一份高质量的C4 SystemContext架构文档。"#.to_string(),
 
-            llm_call_mode: LLMCallMode::PromptWithTools,
+            llm_call_mode: LLMCallMode::Prompt,
             formatter_config: FormatterConfig::default(),
         }
     }

@@ -129,9 +129,6 @@ impl LanguageProcessorManager {
             lines_of_code,
             number_of_functions,
             number_of_classes,
-            depth_of_inheritance: 0, // 简化
-            coupling_factor: 0.5,    // 简化
-            cohesion_score: 0.7,     // 简化
         }
     }
 }
