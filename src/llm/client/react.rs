@@ -18,7 +18,7 @@ pub struct ReActConfig {
 impl Default for ReActConfig {
     fn default() -> Self {
         Self {
-            max_iterations: 15,
+            max_iterations: 10,
             verbose: cfg!(debug_assertions),
             return_partial_on_max_depth: true,
             enable_summary_reasoning: true,

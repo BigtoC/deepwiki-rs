@@ -416,6 +416,9 @@ impl Default for Config {
                 "venv".to_string(),
                 ".svelte-kit".to_string(),
                 "__pycache__".to_string(),
+                "__tests__".to_string(),
+                "__mocks__".to_string(),
+                "__fixtures__".to_string(),
             ],
             excluded_files: vec![
                 "litho.toml".to_string(),
