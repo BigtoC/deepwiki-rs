@@ -11,6 +11,8 @@ use crate::i18n::TargetLanguage;
 pub enum LLMProvider {
     #[serde(rename = "openai")]
     OpenAI,
+    #[serde(rename = "moonshot")]
+    Moonshot,
     #[serde(rename = "deepseek")]
     DeepSeek,
     #[serde(rename = "mistral")]
@@ -33,6 +35,7 @@ impl std::fmt::Display for LLMProvider {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             LLMProvider::OpenAI => write!(f, "openai"),
+            LLMProvider::Moonshot => write!(f, "moonshot"),
             LLMProvider::DeepSeek => write!(f, "deepseek"),
             LLMProvider::Mistral => write!(f, "mistral"),
             LLMProvider::OpenRouter => write!(f, "openrouter"),
@@ -48,6 +51,7 @@ impl std::str::FromStr for LLMProvider {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.to_lowercase().as_str() {
             "openai" => Ok(LLMProvider::OpenAI),
+            "moonshot" => Ok(LLMProvider::Moonshot),
             "deepseek" => Ok(LLMProvider::DeepSeek),
             "mistral" => Ok(LLMProvider::Mistral),
             "openrouter" => Ok(LLMProvider::OpenRouter),

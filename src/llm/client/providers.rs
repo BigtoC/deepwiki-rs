@@ -17,6 +17,7 @@ use crate::config::{LLMConfig, LLMProvider};
 #[derive(Clone)]
 pub enum ProviderClient {
     OpenAI(rig::providers::openai::Client),
+    Moonshot(rig::providers::moonshot::Client),
     DeepSeek(rig::providers::deepseek::Client),
     Mistral(rig::providers::mistral::Client),
     OpenRouter(rig::providers::openrouter::Client),
@@ -33,6 +34,12 @@ impl ProviderClient {
                     .base_url(&config.api_base_url)
                     .build();
                 Ok(ProviderClient::OpenAI(client))
+            }
+            LLMProvider::Moonshot => {
+                let client = rig::providers::moonshot::Client::builder(&config.api_key)
+                    .base_url(&config.api_base_url)
+                    .build();
+                Ok(ProviderClient::Moonshot(client))
             }
             LLMProvider::DeepSeek => {
                 let client = rig::providers::deepseek::Client::builder(&config.api_key)
@@ -79,6 +86,14 @@ impl ProviderClient {
                     .temperature(config.temperature.into())
                     .build();
                 ProviderAgent::OpenAI(agent)
+            }
+            ProviderClient::Moonshot(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .temperature(config.temperature.into())
+                    .build();
+                ProviderAgent::Moonshot(agent)
             }
             ProviderClient::DeepSeek(client) => {
                 let agent = client
@@ -151,6 +166,17 @@ impl ProviderClient {
                     .tool(file_reader.clone())
                     .build();
                 ProviderAgent::OpenAI(agent)
+            }
+            ProviderClient::Moonshot(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .temperature(config.temperature.into())
+                    .tool(file_explorer.clone())
+                    .tool(file_reader.clone())
+                    .build();
+                ProviderAgent::Moonshot(agent)
             }
             ProviderClient::DeepSeek(client) => {
                 let agent = client
@@ -231,6 +257,14 @@ impl ProviderClient {
                     .build();
                 ProviderExtractor::OpenAI(extractor)
             }
+            ProviderClient::Moonshot(client) => {
+                let extractor = client
+                    .extractor::<T>(model)
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .build();
+                ProviderExtractor::Moonshot(extractor)
+            }
             ProviderClient::DeepSeek(client) => {
                 let extractor = client
                     .extractor::<T>(model)
@@ -286,6 +320,7 @@ pub enum ProviderAgent {
     OpenRouter(Agent<rig::providers::openrouter::CompletionModel>),
     Anthropic(Agent<rig::providers::anthropic::completion::CompletionModel>),
     Gemini(Agent<rig::providers::gemini::completion::CompletionModel>),
+    Moonshot(Agent<rig::providers::moonshot::CompletionModel>),
     DeepSeek(Agent<rig::providers::deepseek::CompletionModel>),
 }
 
@@ -294,6 +329,7 @@ impl ProviderAgent {
     pub async fn prompt(&self, prompt: &str) -> Result<String> {
         match self {
             ProviderAgent::OpenAI(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
+            ProviderAgent::Moonshot(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
             ProviderAgent::DeepSeek(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
             ProviderAgent::Mistral(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
             ProviderAgent::OpenRouter(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
@@ -310,6 +346,7 @@ impl ProviderAgent {
     ) -> Result<String, PromptError> {
         match self {
             ProviderAgent::OpenAI(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
+            ProviderAgent::Moonshot(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
             ProviderAgent::DeepSeek(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
             ProviderAgent::Mistral(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
             ProviderAgent::OpenRouter(agent) => {
@@ -333,6 +370,7 @@ where
     OpenRouter(Extractor<rig::providers::openrouter::CompletionModel, T>),
     Anthropic(Extractor<rig::providers::anthropic::completion::CompletionModel, T>),
     Gemini(Extractor<rig::providers::gemini::completion::CompletionModel, T>),
+    Moonshot(Extractor<rig::providers::moonshot::CompletionModel, T>),
     DeepSeek(Extractor<rig::providers::deepseek::CompletionModel, T>),
 }
 
@@ -344,6 +382,9 @@ where
     pub async fn extract(&self, prompt: &str) -> Result<T> {
         match self {
             ProviderExtractor::OpenAI(extractor) => {
+                extractor.extract(prompt).await.map_err(|e| e.into())
+            }
+            ProviderExtractor::Moonshot(extractor) => {
                 extractor.extract(prompt).await.map_err(|e| e.into())
             }
             ProviderExtractor::DeepSeek(extractor) => {
