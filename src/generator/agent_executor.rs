@@ -84,6 +84,19 @@ pub async fn prompt_with_tools(
         .await
         .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
 
+    // 估算token使用情况
+    let input_text = format!("{} {}", prompt_sys, prompt_user);
+    let output_text = serde_json::to_string(&reply).unwrap_or_default();
+    let token_usage = estimate_token_usage(&input_text, &output_text);
+
+    // 缓存结果 - 使用带token信息的方法
+    context
+        .cache_manager
+        .write()
+        .await
+        .set_with_tokens(cache_scope, &prompt_key, &reply, token_usage)
+        .await?;
+
     Ok(reply)
 }
 

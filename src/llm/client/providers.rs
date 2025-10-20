@@ -78,8 +78,6 @@ impl ProviderClient {
         system_prompt: &str,
         config: &LLMConfig,
     ) -> ProviderAgent {
-        let tool_time = AgentToolTime::new();
-
         match self {
             ProviderClient::OpenAI(client) => {
                 let agent = client
@@ -89,7 +87,6 @@ impl ProviderClient {
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .temperature(config.temperature.into())
-                    .tool(tool_time)
                     .build();
                 ProviderAgent::OpenAI(agent)
             }
@@ -98,7 +95,6 @@ impl ProviderClient {
                     .agent(model)
                     .preamble(system_prompt)
                     .temperature(config.temperature.into())
-                    .tool(tool_time)
                     .build();
                 ProviderAgent::Moonshot(agent)
             }
@@ -107,7 +103,6 @@ impl ProviderClient {
                     .agent(model)
                     .preamble(system_prompt)
                     .temperature(config.temperature.into())
-                    .tool(tool_time)
                     .build();
                 ProviderAgent::DeepSeek(agent)
             }
@@ -116,7 +111,6 @@ impl ProviderClient {
                     .agent(model)
                     .preamble(system_prompt)
                     .temperature(config.temperature.into())
-                    .tool(tool_time)
                     .build();
                 ProviderAgent::Mistral(agent)
             }
@@ -125,7 +119,6 @@ impl ProviderClient {
                     .agent(model)
                     .preamble(system_prompt)
                     .temperature(config.temperature.into())
-                    .tool(tool_time)
                     .build();
                 ProviderAgent::OpenRouter(agent)
             }
@@ -135,7 +128,6 @@ impl ProviderClient {
                     .preamble(system_prompt)
                     .max_tokens(config.max_tokens.into())
                     .temperature(config.temperature.into())
-                    .tool(tool_time)
                     .build();
                 ProviderAgent::Anthropic(agent)
             }
@@ -149,7 +141,6 @@ impl ProviderClient {
                     .max_tokens(config.max_tokens.into())
                     .temperature(config.temperature.into())
                     .additional_params(serde_json::to_value(cfg).unwrap())
-                    .tool(tool_time)
                     .build();
                 ProviderAgent::Gemini(agent)
             }
