@@ -17,6 +17,15 @@ use crate::{
     utils::prompt_compressor::{CompressionConfig, PromptCompressor},
 };
 
+/// 替换时间占位符为实际时间信息
+/// 这个函数将LLM响应中的时间占位符替换为当前的实际时间
+pub fn replace_time_placeholders(content: &str) -> String {
+    let now = chrono::Utc::now();
+    content
+        .replace("__CURRENT_UTC_TIME__", &format!("{} (UTC)", now.format("%Y-%m-%d %H:%M:%S")))
+        .replace("__CURRENT_TIMESTAMP__", &now.timestamp().to_string())
+}
+
 /// 数据源配置 - 基于Memory Key的直接数据访问机制
 #[derive(Debug, Clone, PartialEq)]
 pub enum DataSource {
@@ -334,14 +343,11 @@ impl GeneratorPromptBuilder {
         prompt.push_str(&self.template.opening_instruction);
         prompt.push_str("\n\n");
 
-        // 根据参数决定是否添加当前时间信息
+        // 根据参数决定是否添加当前时间信息（使用占位符）
         if include_timestamp {
-            let now = chrono::Utc::now();
-            prompt.push_str(&format!(
-                "## 当前时间信息\n生成时间: {} (UTC)\n时间戳: {}\n\n",
-                now.format("%Y-%m-%d %H:%M:%S"),
-                now.timestamp()
-            ));
+            prompt.push_str(
+                "## 当前时间信息\n生成时间: __CURRENT_UTC_TIME__\n时间戳: __CURRENT_TIMESTAMP__\n\n"
+            );
         }
 
         // 调研材料参考部分
@@ -529,11 +535,15 @@ pub trait StepForwardAgent: Send + Sync {
             }
             LLMCallMode::Prompt => {
                 let result_text: String = prompt(context, params).await?;
-                serde_json::to_value(&result_text)?
+                // 替换时间占位符
+                let processed_text = replace_time_placeholders(&result_text);
+                serde_json::to_value(&processed_text)?
             }
             LLMCallMode::PromptWithTools => {
                 let result_text: String = prompt_with_tools(context, params).await?;
-                serde_json::to_value(&result_text)?
+                // 替换时间占位符
+                let processed_text = replace_time_placeholders(&result_text);
+                serde_json::to_value(&processed_text)?
             }
         };
 

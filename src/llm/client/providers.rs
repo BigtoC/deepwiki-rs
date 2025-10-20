@@ -11,7 +11,10 @@ use rig::{
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::config::{LLMConfig, LLMProvider};
+use crate::{
+    config::{LLMConfig, LLMProvider},
+    llm::tools::time::AgentToolTime,
+};
 
 /// 统一的Provider客户端枚举
 #[derive(Clone)]
@@ -153,6 +156,8 @@ impl ProviderClient {
         file_explorer: &crate::llm::tools::file_explorer::AgentToolFileExplorer,
         file_reader: &crate::llm::tools::file_reader::AgentToolFileReader,
     ) -> ProviderAgent {
+        let tool_time = AgentToolTime::new();
+
         match self {
             ProviderClient::OpenAI(client) => {
                 let agent = client
@@ -164,6 +169,7 @@ impl ProviderClient {
                     .temperature(config.temperature.into())
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
+                    .tool(tool_time)
                     .build();
                 ProviderAgent::OpenAI(agent)
             }
@@ -175,6 +181,7 @@ impl ProviderClient {
                     .temperature(config.temperature.into())
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
+                    .tool(tool_time)
                     .build();
                 ProviderAgent::Moonshot(agent)
             }
@@ -186,6 +193,7 @@ impl ProviderClient {
                     .temperature(config.temperature.into())
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
+                    .tool(tool_time)
                     .build();
                 ProviderAgent::DeepSeek(agent)
             }
@@ -196,6 +204,7 @@ impl ProviderClient {
                     .temperature(config.temperature.into())
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
+                    .tool(tool_time)
                     .build();
                 ProviderAgent::Mistral(agent)
             }
@@ -206,6 +215,7 @@ impl ProviderClient {
                     .temperature(config.temperature.into())
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
+                    .tool(tool_time)
                     .build();
                 ProviderAgent::OpenRouter(agent)
             }
@@ -217,6 +227,7 @@ impl ProviderClient {
                     .temperature(config.temperature.into())
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
+                    .tool(tool_time)
                     .build();
                 ProviderAgent::Anthropic(agent)
             }
@@ -231,6 +242,7 @@ impl ProviderClient {
                     .temperature(config.temperature.into())
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
+                    .tool(tool_time)
                     .additional_params(serde_json::to_value(cfg).unwrap())
                     .build();
                 ProviderAgent::Gemini(agent)

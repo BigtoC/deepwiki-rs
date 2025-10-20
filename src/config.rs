@@ -27,7 +27,7 @@ pub enum LLMProvider {
 
 impl Default for LLMProvider {
     fn default() -> Self {
-        Self::OpenAI
+        Self::Moonshot
     }
 }
 

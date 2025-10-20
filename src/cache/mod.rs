@@ -76,6 +76,7 @@ impl CacheManager {
         let cache_path = self.get_cache_path(category, &hash);
 
         if !cache_path.exists() {
+            println!("缓存未找到{:?}", cache_path);
             self.performance_monitor.record_cache_miss(category);
             return Ok(None);
         }
