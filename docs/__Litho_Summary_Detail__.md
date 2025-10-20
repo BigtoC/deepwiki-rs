@@ -1,31 +1,31 @@
 # 项目分析总结报告（完整版）
 
-生成时间: 2025-10-17 09:41:16 UTC
+生成时间: 2025-10-20 11:06:41 UTC
 
 ## 执行耗时统计
 
-- **总执行时间**: 825.51 秒
-- **预处理阶段**: 62.07 秒 (7.5%)
-- **研究阶段**: 202.82 秒 (24.6%)
-- **文档生成阶段**: 560.62 秒 (67.9%)
+- **总执行时间**: 651.38 秒
+- **预处理阶段**: 6.79 秒 (1.0%)
+- **研究阶段**: 7.66 秒 (1.2%)
+- **文档生成阶段**: 636.93 秒 (97.8%)
 - **输出阶段**: 0.00 秒 (0.0%)
-- **Summary生成时间**: 0.004 秒
+- **Summary生成时间**: 0.005 秒
 
 ## 缓存性能统计与节约效果
 
 ### 性能指标
-- **缓存命中率**: 83.8%
+- **缓存命中率**: 94.6%
 - **总操作次数**: 167
-- **缓存命中**: 140 次
-- **缓存未命中**: 27 次
-- **缓存写入**: 20 次
+- **缓存命中**: 158 次
+- **缓存未命中**: 9 次
+- **缓存写入**: 10 次
 
 ### 节约效果
-- **节省推理时间**: 700.6 秒
-- **节省Token数量**: 144923 输入 + 77802 输出 = 222725 总计
-- **估算节省成本**: $0.1290
-- **性能提升**: 83.8%
-- **效率提升比**: 0.8x（节省时间 / 实际执行时间）
+- **节省推理时间**: 839.0 秒
+- **节省Token数量**: 329626 输入 + 99510 输出 = 429136 总计
+- **估算节省成本**: $0.2100
+- **性能提升**: 94.6%
+- **效率提升比**: 1.3x（节省时间 / 实际执行时间）
 
 ## 核心调研数据汇总
 
@@ -36,91 +36,74 @@
 
 ```json
 {
-  "business_value": "本项目显著提升软件架构分析与文档编写效率，将原本耗时数天的人工调研与文档撰写过程压缩至分钟级。通过自动化识别系统边界、领域模块和核心工作流程，帮助团队快速理解复杂代码库，降低新成员上手成本，提升架构一致性，支持安全审计、技术债务评估和系统集成规划。同时，生成的标准化 C4 文档可作为团队知识资产沉淀，减少信息孤岛。",
-  "confidence_score": 0.95,
+  "business_value": "通过AI驱动的自动化分析，显著降低大型项目架构理解与文档维护成本，提升团队协作效率和知识沉淀质量。",
+  "confidence_score": 0.98,
   "external_systems": [
     {
-      "description": "作为主要的大语言模型提供商，用于执行语义分析、提示推理和文档生成任务。",
-      "interaction_type": "API 调用",
-      "name": "OpenAI API"
+      "description": "提供大语言模型API服务，如OpenAI、Anthropic、Gemini等，用于驱动智能Agent进行语义分析和内容生成",
+      "interaction_type": "API调用",
+      "name": "LLM服务提供商"
     },
     {
-      "description": "备选的大语言模型提供商，用于在 OpenAI 不可用或成本过高时提供推理服务。",
-      "interaction_type": "API 调用",
-      "name": "Anthropic API"
-    },
-    {
-      "description": "备选的大语言模型提供商，用于支持多供应商策略和模型性能对比。",
-      "interaction_type": "API 调用",
-      "name": "Gemini API"
-    },
-    {
-      "description": "项目分析的输入源，包含源代码文件、配置文件、README 文档等。系统通过文件读取和目录扫描工具与之交互。",
+      "description": "存储待分析的源代码项目，工具通过读取目录结构和文件内容获取分析数据",
       "interaction_type": "文件读写",
       "name": "本地文件系统"
     },
     {
-      "description": "用于自动识别项目类型（Rust、Java、Node.js、Python）并提取元数据（如包名、依赖列表），作为系统上下文分析的输入。",
-      "interaction_type": "文件读取",
-      "name": "项目构建系统（Cargo、Maven、npm 等）"
+      "description": "本地磁盘上的缓存目录，用于加速重复分析任务，避免不必要的LLM调用",
+      "interaction_type": "文件读写",
+      "name": "缓存存储"
     }
   ],
-  "project_description": "deepwiki-rs 是一个基于 Rust 构建的智能代码库分析与架构文档生成系统，通过多智能体协作和大语言模型（LLM）驱动，自动化完成软件项目的系统上下文分析、领域模块识别、依赖关系建模、边界接口提取，并最终生成符合 C4 架构模型的专业技术文档。系统整合了静态代码分析、LLM 推理、缓存优化和多语言支持能力，实现从源码到架构文档的端到端自动化。",
+  "project_description": "一个基于Rust的自动化软件架构分析与技术文档生成工具，利用多智能体系统对代码库进行深度理解，并自动生成符合C4模型的结构化架构文档。",
   "project_name": "deepwiki-rs",
   "project_type": "CLITool",
   "system_boundary": {
     "excluded_components": [
-      "源代码的编译与链接过程",
-      "应用程序的运行时执行环境",
-      "CI/CD 流水线集成",
-      "Web UI 或图形界面",
-      "数据库存储或持久化服务",
-      "网络服务暴露（如 HTTP API）",
-      "容器化部署脚本（Docker/K8s）"
+      "代码编辑与重构功能",
+      "实时系统监控与追踪",
+      "CI/CD集成能力",
+      "图形化用户界面（GUI）",
+      "在线协作平台"
     ],
     "included_components": [
-      "配置管理（config.rs）",
-      "多语言代码解析器（language_processors）",
-      "项目结构提取器（structure_extractor）",
-      "代码洞察分析器（CodeAnalyze, RelationshipsAnalyze）",
-      "LLM 客户端与工具（llm/client, llm/tools）",
-      "智能体编排框架（StepForwardAgent, ResearchOrchestrator）",
-      "缓存与性能监控（cache）",
-      "提示压缩与 Token 估算（prompt_compressor, token_estimator）",
-      "文档生成编辑器（OverviewEditor, ArchitectureEditor, BoundaryEditor 等）",
-      "CLI 入口（cli.rs, main.rs）"
+      "项目结构解析器",
+      "多语言代码静态分析器",
+      "基于LLM的智能分析Agent集群",
+      "C4模型文档生成引擎",
+      "缓存与性能监控系统"
     ],
-    "scope": "deepwiki-rs 是一个命令行工具，专注于从源代码库中自动提取架构信息并生成 C4 模型文档。其边界不包含代码编译、运行时执行、部署或持续集成流程。"
+    "scope": "自动化分析指定代码库，并输出结构化的架构文档。不修改原始代码，也不部署运行目标系统。"
   },
   "target_users": [
     {
-      "description": "负责系统整体架构设计与技术决策的资深工程师，需快速理解遗留系统或第三方项目的高层结构。",
-      "name": "架构师",
+      "description": "负责系统整体设计和技术决策的专业人员",
+      "name": "软件架构师",
       "needs": [
-        "自动化获取系统上下文和架构视图",
-        "识别关键领域模块与核心组件",
-        "可视化系统边界与外部依赖",
-        "生成符合 C4 模型的标准化架构文档"
+        "快速掌握遗留或复杂系统的架构全貌",
+        "自动生成标准化的C4架构文档",
+        "识别关键模块与核心工作流程",
+        "分析系统外部依赖与接口边界"
       ]
     },
     {
-      "description": "管理代码库质量、技术债务和团队知识传承的管理者，关注系统可维护性和可理解性。",
+      "description": "管理开发团队并确保技术方案落地的领导者",
       "name": "技术负责人",
       "needs": [
-        "快速评估新项目的技术复杂度",
-        "发现潜在的架构违规或边界泄露",
-        "自动生成可追溯的文档以支持代码审查",
-        "统一团队对系统结构的认知"
+        "评估项目技术健康度与架构合理性",
+        "新成员入职时的技术引导材料",
+        "跨团队协作所需的系统上下文说明",
+        "自动化生成API与CLI接口文档"
       ]
     },
     {
-      "description": "需要快速熟悉项目结构、依赖关系和接口规范的团队成员，尤其在接手新模块或参与跨团队协作时。",
-      "name": "开发工程师",
+      "description": "参与具体功能开发的工程师",
+      "name": "开发者",
       "needs": [
-        "清晰的项目结构树和文件作用说明",
-        "接口定义与调用关系的快速查询",
-        "了解核心工作流程和关键路径",
-        "获取可执行的边界使用示例"
+        "快速理解项目整体结构与模块职责",
+        "查找关键入口点和核心实现逻辑",
+        "了解代码间的依赖关系与调用链路",
+        "减少因文档缺失导致的沟通成本"
       ]
     }
   ]
@@ -132,589 +115,511 @@
 
 ```json
 {
-  "architecture_summary": "deepwiki-rs 是一个基于多智能体架构的自动化软件分析与文档生成系统，采用分层设计，核心由预处理、研究分析、编排协调和文档生成四大领域构成，依托LLM作为智能引擎，实现从源码到C4架构文档的端到端自动化。系统通过统一的类型定义和内存管理支撑数据流动，所有分析流程由StepForwardAgent接口标准化，确保模块可插拔、可复用。技术选型以Rust为主，强调类型安全与异步性能，集成多语言解析器、Token估算、缓存优化和多LLM提供商支持，构建了一个高效、可扩展、低维护成本的智能架构分析平台。",
+  "architecture_summary": "deepwiki-rs采用分层的多智能体架构，以'预处理→研究分析→文档生成'为主线，结合C4架构模型理念。系统通过领域驱动的设计划分了五大功能域，其中智能分析代理域作为核心引擎，协同LLM交互、预处理和文档生成等支撑域，实现了从代码到文档的自动化转化。整体架构强调职责分离与模块化，利用内存作为各阶段间的数据交换中心，形成了清晰的流水线式工作流。",
   "business_flows": [
     {
-      "description": "该流程是系统的核心业务流程，旨在从源代码库中自动识别系统上下文、领域模块、依赖关系和边界接口，并最终生成符合C4模型的专业架构文档。流程从配置加载开始，依次执行预处理、智能体研究、结果编排和文档生成，形成闭环自动化分析流水线，显著降低人工调研成本。",
-      "entry_point": "cli.rs 或 main.rs 启动 CLI 命令",
+      "description": "从零开始对一个新项目进行全面的架构分析，最终生成完整的架构文档。",
+      "entry_point": "main.rs -> generator::workflow::execute",
       "importance": 10.0,
-      "involved_domains_count": 4,
-      "name": "项目架构分析与文档生成流程",
+      "involved_domains_count": 5,
+      "name": "项目分析流程",
       "steps": [
         {
-          "code_entry_point": null,
-          "domain_module": "配置管理域",
-          "operation": "加载并解析 config.rs 中的运行时配置，包括LLM提供商、缓存策略、文件过滤规则等，为后续流程提供参数驱动",
+          "code_entry_point": "src/config.rs -> Config::load",
+          "domain_module": "配置与基础设施域",
+          "operation": "加载项目配置文件(config.toml)，初始化系统运行环境",
           "step": 1,
-          "sub_module": null
+          "sub_module": "配置管理"
         },
         {
-          "code_entry_point": null,
-          "domain_module": "预处理域",
-          "operation": "调用 structure_extractor 递归扫描项目目录，识别文件结构；使用 language_processors 对多语言源码进行静态解析，提取接口、依赖和代码用途；通过 code_purpose_analyze 和 code_analyze 智能推断代码功能类型，生成 ProjectStructure 和 CodeInsight 数据",
+          "code_entry_point": "src/generator/preprocess/mod.rs -> execute",
+          "domain_module": "预处理与代码分析域",
+          "operation": "解析项目结构，提取原始文档，识别关键源码文件",
           "step": 2,
-          "sub_module": null
+          "sub_module": "预处理协调器"
         },
         {
-          "code_entry_point": null,
-          "domain_module": "研究分析域",
-          "operation": "由 ResearchOrchestrator 编排多个智能体依次执行：system_context_researcher 提取系统目标与边界；domain_modules_detector 识别高层次领域模块；relationships_analyze 构建依赖图谱；workflow_researcher 分析核心工作流程；boundary_analyzer 提取外部接口",
+          "code_entry_point": "src/generator/preprocess/agents/code_analyze.rs -> CodeAnalyze::execute",
+          "domain_module": "预处理与代码分析域",
+          "operation": "对关键文件进行静态与语义分析，生成CodeInsight数据",
           "step": 3,
-          "sub_module": null
+          "sub_module": "代码分析代理"
         },
         {
-          "code_entry_point": null,
+          "code_entry_point": "src/generator/research/orchestrator.rs -> ResearchOrchestrator::execute",
+          "domain_module": "智能分析代理域",
+          "operation": "按层次化顺序执行多个研究员Agent进行深度分析",
+          "step": 4,
+          "sub_module": "研究编排器"
+        },
+        {
+          "code_entry_point": "src/generator/compose/mod.rs -> ComposeGenerator::execute",
           "domain_module": "文档生成域",
-          "operation": "由 compose/mod.rs 协调多个编辑器（OverviewEditor、ArchitectureEditor、WorkflowEditor、KeyModulesInsightEditor、BoundaryEditor）按顺序聚合研究结果，使用LLM生成结构化C4文档，输出为Markdown格式",
-          "step": 4,
-          "sub_module": null
-        },
-        {
-          "code_entry_point": null,
-          "domain_module": "缓存与性能监控域",
-          "operation": "在每一步中，通过 cache/mod.rs 缓存中间结果（如prompt哈希、分析输出），通过 performance_monitor.rs 统计缓存命中率、token节省和推理耗时，提升系统效率与可重复性",
+          "operation": "调用各编辑器Agent生成最终的架构文档集合",
           "step": 5,
-          "sub_module": null
+          "sub_module": "文档生成协调器"
         }
       ]
     },
     {
-      "description": "该流程专注于从源代码中提取结构化语义信息，是支撑上层架构分析的基础。通过多语言解析器与LLM协同，自动识别代码功能类型、接口定义和模块间依赖关系，为领域划分和架构建模提供高质量输入数据。",
-      "entry_point": "preprocess/mod.rs 中的 execute 方法",
-      "importance": 9.0,
-      "involved_domains_count": 2,
-      "name": "代码洞察与依赖分析流程",
+      "description": "针对单个代码文件或模块生成详细的分析洞察，包括用途、接口和依赖等信息。",
+      "entry_point": "CodeAnalyze Agent 被触发",
+      "importance": 8.5,
+      "involved_domains_count": 4,
+      "name": "代码洞察生成流程",
       "steps": [
         {
-          "code_entry_point": null,
-          "domain_module": "预处理域",
-          "operation": "通过 structure_extractor 获取项目文件列表，过滤忽略文件，计算文件重要性分数，识别核心代码文件",
+          "code_entry_point": "src/generator/preprocess/extractors/language_processors/mod.rs -> LanguageProcessorManager::get_processor",
+          "domain_module": "预处理与代码分析域",
+          "operation": "根据文件扩展名选择合适的语言处理器",
           "step": 1,
-          "sub_module": null
+          "sub_module": "多语言处理器"
         },
         {
-          "code_entry_point": null,
-          "domain_module": "预处理域",
-          "operation": "根据文件扩展名，由 LanguageProcessorManager 动态选择对应语言处理器（rust.rs、java.rs、typescript.rs等），提取依赖、接口、注释等结构化信息",
+          "code_entry_point": "src/generator/preprocess/agents/code_analyze.rs -> static_analysis",
+          "domain_module": "预处理与代码分析域",
+          "operation": "执行静态分析，提取接口、依赖和复杂度指标",
           "step": 2,
-          "sub_module": null
+          "sub_module": "代码分析代理"
         },
         {
-          "code_entry_point": null,
-          "domain_module": "预处理域",
-          "operation": "调用 code_purpose_analyze 使用规则与AI模型联合判断代码文件的功能类型（如controller、util、entity等）",
+          "code_entry_point": "src/llm/client/mod.rs -> ProviderClient::prompt",
+          "domain_module": "LLM交互与工具支撑域",
+          "operation": "构建提示词并调用LLM进行语义层面的增强分析",
           "step": 3,
-          "sub_module": null
+          "sub_module": "LLM客户端"
         },
         {
-          "code_entry_point": null,
-          "domain_module": "预处理域",
-          "operation": "调用 relationships_analyze，对高重要性代码模块进行依赖关系图谱分析，使用 PromptCompressor 压缩输入，减少LLM token消耗",
+          "code_entry_point": "src/memory/mod.rs -> Memory::set",
+          "domain_module": "配置与基础设施域",
+          "operation": "将生成的CodeInsight结果存储至内存供后续流程使用",
           "step": 4,
-          "sub_module": null
-        },
-        {
-          "code_entry_point": null,
-          "domain_module": "预处理域",
-          "operation": "将提取的 CodeInsight、Dependency 和 ProjectStructure 结构化数据统一写入 GeneratorContext 的 Memory 中，供研究分析域消费",
-          "step": 5,
-          "sub_module": null
+          "sub_module": "内存管理器"
         }
       ]
     },
     {
-      "description": "该流程是系统智能的核心，定义了如何调用大语言模型完成语义分析、提示推理和内容生成。通过ReAct模式、工具调用、总结回退和多提供商支持，确保分析过程的鲁棒性与准确性。",
-      "entry_point": "llm/client/mod.rs 中的 LLMClient::execute 方法",
-      "importance": 9.0,
-      "involved_domains_count": 3,
-      "name": "LLM智能体执行与推理流程",
+      "description": "识别项目中的高层次功能领域及其相互关系，形成领域架构视图。",
+      "entry_point": "DomainModulesDetector Agent 被执行",
+      "importance": 9.5,
+      "involved_domains_count": 4,
+      "name": "领域架构识别流程",
       "steps": [
         {
-          "code_entry_point": null,
-          "domain_module": "LLM客户端域",
-          "operation": "根据 config.rs 中的 LLMProvider 配置，由 providers.rs 创建对应的客户端实例（OpenAI、Anthropic、Gemini）",
+          "code_entry_point": "src/generator/research/agents/domain_modules_detector.rs -> DomainModulesDetector::get_data_sources",
+          "domain_module": "智能分析代理域",
+          "operation": "从内存中获取系统上下文、依赖分析和代码洞察等数据源",
           "step": 1,
-          "sub_module": null
+          "sub_module": "领域模块检测器"
         },
         {
-          "code_entry_point": null,
-          "domain_module": "LLM客户端域",
-          "operation": "由 agent_builder.rs 根据配置决定是否注入 file_explorer 和 file_reader 工具，构建带工具或纯LLM的Agent",
+          "code_entry_point": "src/utils/prompt_compressor.rs -> PromptCompressor::compress_if_needed",
+          "domain_module": "LLM交互与工具支撑域",
+          "operation": "检查输入数据大小，必要时压缩以减少token消耗",
           "step": 2,
-          "sub_module": null
+          "sub_module": "提示压缩器"
         },
         {
-          "code_entry_point": null,
-          "domain_module": "LLM客户端域",
-          "operation": "通过 react_executor.rs 启动ReAct多轮推理循环，监控最大迭代次数，处理工具调用与响应",
+          "code_entry_point": "src/llm/client/react_executor.rs -> ReactExecutor::execute",
+          "domain_module": "LLM交互与工具支撑域",
+          "operation": "执行多轮ReAct推理，引导LLM识别功能导向的领域划分",
           "step": 3,
-          "sub_module": null
+          "sub_module": "ReAct执行器"
         },
         {
-          "code_entry_point": null,
-          "domain_module": "LLM客户端域",
-          "operation": "若达到最大迭代限制，由 summary_reasoner.rs 自动触发降级总结推理，生成最终响应，确保流程不中断",
+          "code_entry_point": "src/memory/mod.rs -> Memory::set_with_scope",
+          "domain_module": "配置与基础设施域",
+          "operation": "将识别出的领域模块报告存储至研究学习作用域",
           "step": 4,
-          "sub_module": null
-        },
-        {
-          "code_entry_point": null,
-          "domain_module": "LLM客户端域",
-          "operation": "利用 utils.rs 中的 token_estimator 和 prompt_compressor 进行输入长度评估与语义压缩，优化token使用效率",
-          "step": 5,
-          "sub_module": null
+          "sub_module": "内存管理器"
         }
       ]
     }
   ],
-  "confidence_score": 0.98,
+  "confidence_score": 9.5,
   "domain_modules": [
     {
       "code_paths": [
-        "src/config.rs",
-        "src/types/project_structure.rs"
+        "src/generator/research/agents/",
+        "src/generator/compose/agents/"
       ],
-      "complexity": 7.0,
-      "description": "负责系统所有运行时配置的统一管理，包括LLM提供商选择、缓存策略、文件过滤规则、并发控制参数等。该域通过结构化配置模型（Config、LLMConfig）提供可扩展的配置接口，是系统启动的首要依赖，决定了所有下游模块的行为模式。",
-      "domain_type": "基础设施域",
-      "importance": 9.0,
-      "name": "配置管理域",
-      "sub_modules": []
-    },
-    {
-      "code_paths": [
-        "src/generator/preprocess/mod.rs",
-        "src/generator/preprocess/extractors/structure_extractor.rs",
-        "src/generator/preprocess/agents/code_analyze.rs",
-        "src/generator/preprocess/agents/code_purpose_analyze.rs",
-        "src/generator/preprocess/agents/relationships_analyze.rs",
-        "src/generator/preprocess/extractors/language_processors/mod.rs",
-        "src/generator/preprocess/extractors/language_processors/rust.rs",
-        "src/generator/preprocess/extractors/language_processors/java.rs",
-        "src/generator/preprocess/extractors/language_processors/javascript.rs",
-        "src/generator/preprocess/extractors/language_processors/typescript.rs",
-        "src/generator/preprocess/extractors/language_processors/vue.rs",
-        "src/generator/preprocess/extractors/language_processors/react.rs",
-        "src/generator/preprocess/extractors/language_processors/kotlin.rs",
-        "src/generator/preprocess/extractors/language_processors/python.rs",
-        "src/generator/preprocess/extractors/language_processors/svelte.rs",
-        "src/types/code.rs",
-        "src/types/code_releationship.rs",
-        "src/utils/token_estimator.rs",
-        "src/utils/prompt_compressor.rs"
-      ],
-      "complexity": 9.0,
-      "description": "负责对原始源代码库进行结构化信息提取，是架构分析的输入源头。该域通过多语言解析器、结构提取器和AI驱动的代码理解模块，将非结构化代码转化为结构化数据（ProjectStructure、CodeInsight、Dependency），为高层分析提供高质量语义输入。",
+      "complexity": 9.5,
+      "description": "该领域负责实现基于LLM的多智能体系统，驱动自动化架构分析与文档生成。通过协调多个专业Agent完成从代码理解到文档输出的完整流程，是系统的核心业务引擎。",
       "domain_type": "核心业务域",
       "importance": 10.0,
-      "name": "预处理域",
+      "name": "智能分析代理域",
       "sub_modules": [
-        {
-          "code_paths": [
-            "src/generator/preprocess/extractors/language_processors/rust.rs",
-            "src/generator/preprocess/extractors/language_processors/java.rs",
-            "src/generator/preprocess/extractors/language_processors/javascript.rs",
-            "src/generator/preprocess/extractors/language_processors/typescript.rs",
-            "src/generator/preprocess/extractors/language_processors/vue.rs",
-            "src/generator/preprocess/extractors/language_processors/react.rs",
-            "src/generator/preprocess/extractors/language_processors/kotlin.rs",
-            "src/generator/preprocess/extractors/language_processors/python.rs",
-            "src/generator/preprocess/extractors/language_processors/svelte.rs",
-            "src/generator/preprocess/extractors/language_processors/mod.rs"
-          ],
-          "description": "实现对9种编程语言（Rust、Java、JS、TS、Vue、React、Kotlin、Python、Svelte）的语法解析，提取依赖、接口、类型等结构化信息，是预处理域的核心能力单元。",
-          "importance": 9.0,
-          "key_functions": [
-            "识别import/use语句",
-            "提取函数/类/接口定义",
-            "解析JSDoc/文档注释",
-            "判断文件语义类型",
-            "计算代码复杂度"
-          ],
-          "name": "语言处理器子模块"
-        },
-        {
-          "code_paths": [
-            "src/generator/preprocess/extractors/structure_extractor.rs",
-            "src/utils/file_utils.rs",
-            "src/utils/project_structure_formatter.rs"
-          ],
-          "description": "负责递归扫描项目目录，构建完整的项目文件树结构，识别核心文件并计算文件重要性分数，为后续分析提供上下文。",
-          "importance": 8.0,
-          "key_functions": [
-            "递归目录扫描",
-            "过滤忽略文件（.git、target、test等）",
-            "识别二进制文件",
-            "计算文件重要性评分",
-            "生成项目结构树"
-          ],
-          "name": "结构提取子模块"
-        },
-        {
-          "code_paths": [
-            "src/generator/preprocess/agents/code_analyze.rs",
-            "src/generator/preprocess/agents/relationships_analyze.rs",
-            "src/generator/preprocess/agents/code_purpose_analyze.rs",
-            "src/types/code.rs",
-            "src/types/code_releationship.rs"
-          ],
-          "description": "使用规则与LLM协同分析代码功能类型与依赖关系，输出标准化的CodeInsight和RelationshipAnalysis数据结构。",
-          "importance": 10.0,
-          "key_functions": [
-            "推断代码用途（CodePurpose）",
-            "构建依赖图谱",
-            "压缩输入提示",
-            "支持并发分析"
-          ],
-          "name": "代码洞察子模块"
-        }
-      ]
-    },
-    {
-      "code_paths": [
-        "src/generator/research/mod.rs",
-        "src/generator/research/orchestrator.rs",
-        "src/generator/research/agents/system_context_researcher.rs",
-        "src/generator/research/agents/domain_modules_detector.rs",
-        "src/generator/research/agents/workflow_researcher.rs",
-        "src/generator/research/agents/boundary_analyzer.rs",
-        "src/generator/research/agents/key_modules_insight.rs",
-        "src/generator/research/agents/architecture_researcher.rs",
-        "src/generator/research/types.rs",
-        "src/generator/research/memory.rs"
-      ],
-      "complexity": 9.0,
-      "description": "负责执行高层次的架构分析任务，包括系统上下文识别、领域模块划分、核心工作流提取和系统边界分析。该域通过多个独立智能体（Agent）协作，基于预处理阶段的数据，使用LLM进行语义推理，输出结构化的研究报告，是连接数据与文档生成的中枢。",
-      "domain_type": "核心业务域",
-      "importance": 10.0,
-      "name": "研究分析域",
-      "sub_modules": [
-        {
-          "code_paths": [
-            "src/generator/research/orchestrator.rs",
-            "src/generator/step_forward_agent.rs"
-          ],
-          "description": "通过 ResearchOrchestrator 统一协调多个研究型Agent的执行顺序，确保分析流程符合C4模型从宏观到微观的层次逻辑，是研究分析域的流程控制器。",
-          "importance": 9.0,
-          "key_functions": [
-            "按顺序调用Agent",
-            "统一管理内存作用域",
-            "输出执行日志",
-            "支持泛型Agent调用"
-          ],
-          "name": "智能体编排子模块"
-        },
         {
           "code_paths": [
             "src/generator/research/agents/domain_modules_detector.rs"
           ],
-          "description": "由 domain_modules_detector 负责，使用LLM从代码洞察中自顶向下识别业务导向的领域模块，而非技术分层，是架构认知的核心起点。",
-          "importance": 10.0,
+          "description": "识别项目中的高层次功能领域及其关联关系，为架构分析提供领域划分基础。",
+          "importance": 9.0,
           "key_functions": [
-            "识别业务领域（如订单、用户、支付）",
-            "输出领域模块报告",
-            "关联关键代码文件"
+            "执行领域架构分析",
+            "整合上下文与依赖数据",
+            "生成结构化领域报告"
           ],
-          "name": "领域模块识别子模块"
+          "name": "领域模块检测器"
         },
         {
           "code_paths": [
-            "src/generator/research/agents/boundary_analyzer.rs",
+            "src/generator/research/agents/system_context_researcher.rs"
+          ],
+          "description": "分析项目的宏观系统上下文，提取业务价值、技术特征和用户场景等关键信息。",
+          "importance": 8.5,
+          "key_functions": [
+            "生成C4模型系统上下文",
+            "识别核心目标与使用场景",
+            "定义系统边界"
+          ],
+          "name": "系统上下文研究员"
+        },
+        {
+          "code_paths": [
             "src/generator/research/agents/workflow_researcher.rs"
           ],
-          "description": "由 boundary_analyzer 和 workflow_researcher 负责，分别提取系统外部接口（CLI、API、Router）和核心执行流程，为文档生成提供关键内容。",
-          "importance": 8.0,
+          "description": "从业务功能视角提取系统的核心工作流程，关注主干执行路径而非技术细节。",
+          "importance": 8.5,
           "key_functions": [
-            "识别CLI命令与API端点",
-            "提取主干工作流程",
-            "标注关键路径与异常分支"
+            "识别主干工作流程",
+            "分析关键执行路径",
+            "输出结构化流程报告"
           ],
-          "name": "边界与工作流分析子模块"
+          "name": "工作流研究员"
+        },
+        {
+          "code_paths": [
+            "src/generator/research/agents/boundary_analyzer.rs"
+          ],
+          "description": "自动识别系统的外部接口边界，包括CLI、API、路由配置等暴露点。",
+          "importance": 8.5,
+          "key_functions": [
+            "提取入口点与控制器",
+            "分析外部调用接口",
+            "生成边界接口报告"
+          ],
+          "name": "边界分析器"
+        },
+        {
+          "code_paths": [
+            "src/generator/research/agents/key_modules_insight.rs"
+          ],
+          "description": "深入分析各领域模块的技术实现细节，提供核心组件级的深度洞察。",
+          "importance": 8.5,
+          "key_functions": [
+            "并发处理多领域模块",
+            "生成关键技术细节报告",
+            "支持资源限制下的并行执行"
+          ],
+          "name": "关键模块洞察"
         }
       ]
     },
     {
       "code_paths": [
-        "src/generator/compose/mod.rs",
-        "src/generator/compose/agents/overview_editor.rs",
-        "src/generator/compose/agents/architecture_editor.rs",
-        "src/generator/compose/agents/workflow_editor.rs",
-        "src/generator/compose/agents/key_modules_insight_editor.rs",
-        "src/generator/compose/agents/boundary_editor.rs",
-        "src/generator/compose/memory.rs",
-        "src/generator/compose/types.rs"
+        "src/generator/compose/"
       ],
-      "complexity": 8.0,
-      "description": "负责将研究分析域输出的结构化报告，整合为人类可读、符合C4标准的专业架构文档。该域通过多个专用编辑器（Editor）按顺序生成文档章节，强调输出的完整性、准确性和可读性，是系统价值的最终体现。",
+      "complexity": 9.0,
+      "description": "将分析结果转化为专业、可读的结构化文档，遵循C4架构模型标准，支持多种视图输出。",
       "domain_type": "核心业务域",
-      "importance": 9.0,
+      "importance": 9.5,
       "name": "文档生成域",
       "sub_modules": [
         {
           "code_paths": [
-            "src/generator/compose/mod.rs"
+            "src/generator/compose/agents/architecture_editor.rs"
           ],
-          "description": "由 compose/mod.rs 实现，作为总协调器，按预定顺序调用各个编辑器，形成流水线式文档生成流程，确保各章节内容连贯、无遗漏。",
+          "description": "生成符合C4模型标准的全面架构说明文档，包含Mermaid图表和深度洞察。",
           "importance": 9.0,
           "key_functions": [
-            "串行调用编辑器",
-            "传递上下文数据",
-            "管理输出路径"
+            "聚合多源调研结果",
+            "生成标准化架构文档",
+            "输出可视化图表"
           ],
-          "name": "文档编排子模块"
+          "name": "架构编辑器"
         },
         {
           "code_paths": [
-            "src/generator/compose/agents/overview_editor.rs",
-            "src/generator/compose/agents/architecture_editor.rs",
-            "src/generator/compose/agents/workflow_editor.rs",
-            "src/generator/compose/agents/key_modules_insight_editor.rs"
+            "src/generator/compose/agents/overview_editor.rs"
           ],
-          "description": "由OverviewEditor、ArchitectureEditor、WorkflowEditor等实现，每个子模块负责生成C4模型的一个特定层级文档（系统上下文、容器图、组件图、工作流等），依赖LLM生成专业文本。",
-          "importance": 10.0,
+          "description": "生成系统上下文层级的架构文档，聚焦整体系统描述与高层设计。",
+          "importance": 8.5,
           "key_functions": [
-            "构建C4专用提示模板",
-            "聚合研究结果",
-            "生成Mermaid图表描述",
-            "确保文档结构符合标准"
+            "编写C4 System Context文档",
+            "整合系统上下文与领域信息",
+            "生成开场与收尾指令"
           ],
-          "name": "C4章节生成子模块"
+          "name": "概览编辑器"
+        },
+        {
+          "code_paths": [
+            "src/generator/compose/agents/workflow_editor.rs"
+          ],
+          "description": "生成系统级核心工作流程说明文档，强调执行路径与异常处理机制。",
+          "importance": 8.5,
+          "key_functions": [
+            "聚合工作流调研结果",
+            "生成主干流程文档",
+            "包含性能优化策略"
+          ],
+          "name": "工作流编辑器"
         },
         {
           "code_paths": [
             "src/generator/compose/agents/boundary_editor.rs"
           ],
-          "description": "由 BoundaryEditor 实现，不依赖LLM，而是直接将边界分析结果转换为标准化的开发者接口文档，确保输出的精确性和可控性。",
-          "importance": 8.0,
+          "description": "将边界分析结果转换为结构化的Markdown格式接口文档。",
+          "importance": 8.5,
           "key_functions": [
-            "生成CLI使用示例",
-            "输出API参数说明",
-            "生成Router映射表",
-            "提供集成建议"
+            "生成CLI/API文档",
+            "包含参数说明与使用示例",
+            "输出最佳实践建议"
           ],
-          "name": "边界文档生成子模块"
+          "name": "边界编辑器"
         }
       ]
     },
     {
       "code_paths": [
-        "src/llm/client/mod.rs",
-        "src/llm/client/providers.rs",
-        "src/llm/client/agent_builder.rs",
-        "src/llm/client/react.rs",
-        "src/llm/client/react_executor.rs",
-        "src/llm/client/summary_reasoner.rs",
-        "src/llm/client/utils.rs",
-        "src/llm/client/types.rs"
+        "src/generator/preprocess/"
       ],
-      "complexity": 8.0,
-      "description": "封装与多种大语言模型提供商（OpenAI、Anthropic、Gemini）的交互逻辑，提供统一的异步调用接口。该域实现ReAct推理框架、工具调用、提示压缩、token估算和降级总结机制，是系统智能能力的执行引擎。",
-      "domain_type": "工具支撑域",
-      "importance": 9.0,
-      "name": "LLM客户端域",
+      "complexity": 9.0,
+      "description": "在正式分析前对代码库进行静态解析和初步洞察，提取结构化数据供后续智能体使用。",
+      "domain_type": "核心业务域",
+      "importance": 9.5,
+      "name": "预处理与代码分析域",
       "sub_modules": [
         {
           "code_paths": [
-            "src/llm/client/providers.rs"
+            "src/generator/preprocess/agents/code_analyze.rs"
           ],
-          "description": "通过 providers.rs 封装不同LLM提供商的客户端初始化与调用逻辑，实现策略模式，支持无缝切换提供商。",
+          "description": "执行代码的静态与语义分析，提取接口、依赖和复杂度指标。",
           "importance": 9.0,
           "key_functions": [
-            "创建OpenAI/Anthropic/Gemini客户端",
-            "统一Agent与Extractor构建接口",
-            "支持模型自适应选择"
+            "调用语言处理器进行静态分析",
+            "构建提示词调用LLM增强分析",
+            "支持高并发执行"
           ],
-          "name": "提供商抽象子模块"
+          "name": "代码分析代理"
         },
         {
           "code_paths": [
-            "src/llm/client/react.rs",
-            "src/llm/client/react_executor.rs",
-            "src/llm/client/summary_reasoner.rs"
+            "src/generator/preprocess/agents/relationships_analyze.rs"
           ],
-          "description": "通过 react.rs、react_executor.rs 和 summary_reasoner.rs 实现多轮推理、工具调用、最大迭代控制和降级总结机制，确保分析流程的鲁棒性。",
-          "importance": 10.0,
+          "description": "分析代码模块间的依赖关系图谱，生成架构级依赖分析结果。",
+          "importance": 8.5,
           "key_functions": [
-            "启动ReAct循环",
-            "管理工具调用历史",
-            "触发总结回退",
-            "封装执行结果"
+            "压缩核心代码洞察内容",
+            "执行依赖关系分析",
+            "动态过滤低重要性模块"
           ],
-          "name": "ReAct执行子模块"
+          "name": "关系分析代理"
         },
         {
           "code_paths": [
-            "src/llm/client/utils.rs",
-            "src/utils/token_estimator.rs",
-            "src/utils/prompt_compressor.rs"
+            "src/generator/preprocess/extractors/language_processors/"
           ],
-          "description": "通过 utils.rs 提供token估算、模型选择、提示压缩等优化能力，提升LLM调用效率与成本控制。",
-          "importance": 8.0,
+          "description": "支持多种编程语言的代码解析，提取语法结构和依赖关系。",
+          "importance": 9.0,
           "key_functions": [
-            "估算输入/输出token数",
-            "根据长度选择模型",
-            "智能压缩长提示",
-            "缓存压缩结果"
+            "识别各类语言结构",
+            "提取导入语句与接口定义",
+            "判断组件类型"
           ],
-          "name": "工具与优化子模块"
+          "name": "多语言处理器"
         }
       ]
     },
     {
       "code_paths": [
-        "src/cache/mod.rs",
-        "src/cache/performance_monitor.rs",
-        "src/memory/mod.rs"
+        "src/llm/client/",
+        "src/llm/tools/"
       ],
-      "complexity": 7.0,
-      "description": "负责在分析过程中缓存中间结果，避免重复计算，并监控系统性能指标（缓存命中率、token节省、执行耗时）。该域通过异步缓存管理器和原子计数器，显著提升系统效率与可重复性，是实现高性能分析的关键支撑。",
-      "domain_type": "基础设施域",
-      "importance": 8.0,
-      "name": "缓存与性能监控域",
+      "complexity": 8.0,
+      "description": "提供与大语言模型交互的基础能力及辅助工具，支撑智能代理的运行。",
+      "domain_type": "工具支撑域",
+      "importance": 8.5,
+      "name": "LLM交互与工具支撑域",
       "sub_modules": [
         {
           "code_paths": [
-            "src/cache/mod.rs"
+            "src/llm/client/mod.rs"
           ],
-          "description": "由 cache/mod.rs 实现，基于MD5哈希缓存prompt与LLM响应，支持压缩与非压缩缓存，使用异步IO进行文件读写。",
-          "importance": 8.0,
+          "description": "抽象不同LLM提供商的差异，提供统一调用接口。",
+          "importance": 9.0,
           "key_functions": [
-            "计算prompt哈希",
-            "存储/读取缓存文件",
-            "设置过期时间",
-            "支持压缩缓存"
+            "初始化ProviderClient",
+            "实现带重试机制的容错处理",
+            "支持结构化数据提取"
           ],
-          "name": "缓存管理子模块"
+          "name": "LLM客户端"
         },
         {
           "code_paths": [
-            "src/cache/performance_monitor.rs"
+            "src/llm/client/react_executor.rs"
           ],
-          "description": "由 performance_monitor.rs 实现，通过原子操作统计缓存命中、未命中、写入和错误事件，生成性能报告，为系统优化提供数据支持。",
-          "importance": 7.0,
+          "description": "驱动智能Agent完成多轮推理与行动任务。",
+          "importance": 8.5,
           "key_functions": [
-            "记录缓存事件",
-            "计算token节省",
-            "估算AI成本节约",
-            "生成性能摘要报告"
+            "启动多轮对话循环",
+            "监控最大迭代次数",
+            "处理执行错误"
           ],
-          "name": "性能监控子模块"
+          "name": "ReAct执行器"
+        },
+        {
+          "code_paths": [
+            "src/llm/tools/file_explorer.rs"
+          ],
+          "description": "提供文件系统感知能力，支持目录遍历与文件查找。",
+          "importance": 8.0,
+          "key_functions": [
+            "列出目录内容",
+            "根据模式查找文件",
+            "计算文件重要性分数"
+          ],
+          "name": "文件探索工具"
+        },
+        {
+          "code_paths": [
+            "src/llm/tools/file_reader.rs"
+          ],
+          "description": "读取文本文件内容，专为LLM智能体设计。",
+          "importance": 8.0,
+          "key_functions": [
+            "按路径读取文件",
+            "限制行范围或最大行数",
+            "跳过二进制文件"
+          ],
+          "name": "文件读取工具"
+        }
+      ]
+    },
+    {
+      "code_paths": [
+        "src/config.rs",
+        "src/memory/",
+        "src/cache/",
+        "src/utils/"
+      ],
+      "complexity": 7.5,
+      "description": "提供系统运行所需的配置管理、内存存储和通用工具函数等基础支撑能力。",
+      "domain_type": "基础设施域",
+      "importance": 8.0,
+      "name": "配置与基础设施域",
+      "sub_modules": [
+        {
+          "code_paths": [
+            "src/config.rs"
+          ],
+          "description": "定义和加载应用程序的运行时配置。",
+          "importance": 9.0,
+          "key_functions": [
+            "声明配置模型",
+            "从TOML文件读取配置",
+            "自动推断项目名称"
+          ],
+          "name": "配置管理"
         },
         {
           "code_paths": [
             "src/memory/mod.rs"
           ],
-          "description": "由 memory/mod.rs 提供统一的内存管理接口，支持按作用域和键存储任意序列化数据，是各智能体间共享分析结果的中心存储。",
-          "importance": 9.0,
+          "description": "在运行时动态存储、检索和管理序列化数据。",
+          "importance": 8.5,
           "key_functions": [
-            "set/get数据",
             "按作用域隔离数据",
-            "追踪数据大小与访问频率",
-            "支持JSON Value存储"
+            "追踪数据元信息",
+            "统计内存使用情况"
           ],
-          "name": "运行时内存子模块"
+          "name": "内存管理器"
+        },
+        {
+          "code_paths": [
+            "src/cache/mod.rs"
+          ],
+          "description": "基于文件系统的缓存机制，加速重复请求响应。",
+          "importance": 8.5,
+          "key_functions": [
+            "生成MD5哈希键",
+            "序列化存储结构化数据",
+            "清理过期缓存"
+          ],
+          "name": "缓存系统"
+        },
+        {
+          "code_paths": [
+            "src/utils/prompt_compressor.rs"
+          ],
+          "description": "智能压缩过长Prompt内容以减少token数量。",
+          "importance": 8.0,
+          "key_functions": [
+            "估算Token数量",
+            "调用LLM执行语义压缩",
+            "支持缓存避免重复压缩"
+          ],
+          "name": "提示压缩器"
         }
       ]
     }
   ],
   "domain_relations": [
     {
-      "description": "预处理域依赖配置管理域提供的文件过滤规则、并发限制和语言支持配置，决定扫描行为和分析粒度。",
-      "from_domain": "配置管理域",
-      "relation_type": "配置依赖",
+      "description": "智能分析代理域产生的调研结果（如领域模块、系统上下文）是文档生成域创建专业文档的直接输入数据源。",
+      "from_domain": "智能分析代理域",
+      "relation_type": "数据依赖",
       "strength": 9.0,
-      "to_domain": "预处理域"
-    },
-    {
-      "description": "LLM客户端必须从配置中读取提供商类型、API密钥、模型名称和重试策略，是其正常运行的先决条件。",
-      "from_domain": "配置管理域",
-      "relation_type": "配置依赖",
-      "strength": 10.0,
-      "to_domain": "LLM客户端域"
-    },
-    {
-      "description": "缓存策略（过期时间、启用开关）和性能监控开关由配置管理域控制，影响缓存行为和指标收集。",
-      "from_domain": "配置管理域",
-      "relation_type": "配置依赖",
-      "strength": 8.0,
-      "to_domain": "缓存与性能监控域"
-    },
-    {
-      "description": "研究分析域的所有智能体（如领域检测器、工作流分析器）均依赖预处理域生成的ProjectStructure和CodeInsight作为输入数据。",
-      "from_domain": "预处理域",
-      "relation_type": "数据依赖",
-      "strength": 10.0,
-      "to_domain": "研究分析域"
-    },
-    {
-      "description": "预处理域中的代码洞察分析器（如relationships_analyze）使用LLM客户端进行语义增强分析，依赖其推理能力。",
-      "from_domain": "预处理域",
-      "relation_type": "工具支撑",
-      "strength": 7.0,
-      "to_domain": "LLM客户端域"
-    },
-    {
-      "description": "文档生成域的每个编辑器都直接消费研究分析域输出的各类报告（SystemContextReport、DomainModulesReport等），是其内容来源。",
-      "from_domain": "研究分析域",
-      "relation_type": "数据依赖",
-      "strength": 10.0,
       "to_domain": "文档生成域"
     },
     {
-      "description": "研究分析域的所有智能体均通过LLM客户端域的统一接口调用大语言模型执行语义分析任务，是其智能能力的执行载体。",
-      "from_domain": "LLM客户端域",
-      "relation_type": "服务调用",
-      "strength": 10.0,
-      "to_domain": "研究分析域"
+      "description": "智能分析代理需要依赖预处理阶段提取的代码洞察和依赖关系等结构化数据作为分析基础。",
+      "from_domain": "智能分析代理域",
+      "relation_type": "数据依赖",
+      "strength": 8.5,
+      "to_domain": "预处理与代码分析域"
     },
     {
-      "description": "预处理域中的code_purpose_analyze和code_analyze组件调用LLM客户端进行AI驱动的代码用途判断与增强分析。",
-      "from_domain": "LLM客户端域",
-      "relation_type": "服务调用",
-      "strength": 7.0,
-      "to_domain": "预处理域"
-    },
-    {
-      "description": "预处理域在生成CodeInsight后写入缓存，后续分析可复用，提升效率；性能监控为预处理阶段提供优化依据。",
-      "from_domain": "缓存与性能监控域",
-      "relation_type": "工具支撑",
-      "strength": 8.0,
-      "to_domain": "预处理域"
-    },
-    {
-      "description": "研究分析域的智能体在执行前检查缓存，避免重复分析相同上下文，显著提升整体流程速度。",
-      "from_domain": "缓存与性能监控域",
-      "relation_type": "工具支撑",
-      "strength": 8.0,
-      "to_domain": "研究分析域"
-    },
-    {
-      "description": "文档生成域在生成文档前可复用已缓存的研究报告，避免重复调用LLM，降低延迟与成本。",
-      "from_domain": "缓存与性能监控域",
-      "relation_type": "工具支撑",
-      "strength": 7.0,
-      "to_domain": "文档生成域"
-    },
-    {
-      "description": "研究分析域通过LLM客户端调用模型，是其执行分析任务的唯一方式，构成强依赖关系。",
-      "from_domain": "研究分析域",
-      "relation_type": "服务调用",
-      "strength": 10.0,
-      "to_domain": "LLM客户端域"
-    },
-    {
-      "description": "文档生成域的编辑器（除BoundaryEditor外）均需调用LLM客户端生成专业文档内容，依赖其推理能力。",
+      "description": "文档生成域中的编排器会调用智能分析代理域中的各个研究员Agent来获取最新分析结果。",
       "from_domain": "文档生成域",
       "relation_type": "服务调用",
-      "strength": 9.0,
-      "to_domain": "LLM客户端域"
+      "strength": 8.0,
+      "to_domain": "智能分析代理域"
     },
     {
-      "description": "预处理域将分析结果写入内存和缓存，触发性能监控事件，是缓存与监控数据的源头。",
-      "from_domain": "预处理域",
-      "relation_type": "数据依赖",
+      "description": "代码分析过程需要调用LLM客户端执行语义分析，并可能使用文件读取等工具获取源码内容。",
+      "from_domain": "预处理与代码分析域",
+      "relation_type": "服务调用",
+      "strength": 8.5,
+      "to_domain": "LLM交互与工具支撑域"
+    },
+    {
+      "description": "所有智能代理均依赖LLM交互域提供的客户端和服务来执行推理任务，并使用各种工具扩展其能力。",
+      "from_domain": "智能分析代理域",
+      "relation_type": "服务调用",
+      "strength": 9.5,
+      "to_domain": "LLM交互与工具支撑域"
+    },
+    {
+      "description": "LLM客户端需要从配置管理模块获取API密钥、模型选择等运行时配置参数。",
+      "from_domain": "LLM交互与工具支撑域",
+      "relation_type": "配置依赖",
+      "strength": 9.0,
+      "to_domain": "配置与基础设施域"
+    },
+    {
+      "description": "预处理流程依赖配置模块确定分析范围和规则，并使用内存管理器存储中间结果。",
+      "from_domain": "预处理与代码分析域",
+      "relation_type": "配置依赖",
       "strength": 8.0,
-      "to_domain": "缓存与性能监控域"
+      "to_domain": "配置与基础设施域"
+    },
+    {
+      "description": "文档生成过程受配置影响，如输出格式、并发数等参数，并依赖内存管理器获取分析结果。",
+      "from_domain": "文档生成域",
+      "relation_type": "配置依赖",
+      "strength": 7.5,
+      "to_domain": "配置与基础设施域"
     }
   ]
 }
@@ -726,20 +631,30 @@
 ```json
 {
   "main_workflow": {
-    "description": "该流程是系统的核心业务流程，旨在从源代码库中自动识别系统上下文、领域模块、依赖关系和边界接口，并最终生成符合C4模型的专业架构文档。流程从配置加载开始，依次执行预处理、智能体研究、结果编排和文档生成，形成闭环自动化分析流水线，显著降低人工调研成本。",
-    "flowchart_mermaid": "graph TD\n    A[启动CLI命令] --> B[加载配置管理域]\n    B --> C[执行预处理域]\n    C --> D[运行研究分析域]\n    D --> E[执行文档生成域]\n    E --> F[输出C4架构文档]\n    C --> G[缓存与性能监控域]\n    D --> G\n    E --> G\n    G --> H[生成性能报告]",
-    "name": "项目架构分析与文档生成流程"
+    "description": "该主流程从加载项目配置开始，依次完成预处理、智能分析和文档生成三个阶段，最终输出完整的C4架构文档。整个流程由多智能体协同驱动，以内存为数据交换中心，实现从代码到专业文档的端到端自动化转化。",
+    "flowchart_mermaid": "graph TD\n    A[开始] --> B[加载配置: Config::load]\n    B --> C[预处理与代码分析: preprocess::execute]\n    C --> D[静态分析与语义洞察: CodeAnalyze, RelationshipsAnalyze]\n    D --> E[领域架构识别: DomainModulesDetector]\n    E --> F[系统上下文分析: SystemContextResearcher]\n    F --> G[核心工作流分析: WorkflowResearcher]\n    G --> H[边界接口分析: BoundaryAnalyzer]\n    H --> I[关键模块洞察: KeyModulesInsight]\n    I --> J[文档生成协调: compose::execute]\n    J --> K[生成概览文档: OverviewEditor]\n    K --> L[生成架构文档: ArchitectureEditor]\n    L --> M[生成工作流文档: WorkflowEditor]\n    M --> N[生成关键模块文档: KeyModulesInsightEditor]\n    N --> O[生成边界文档: BoundaryEditor]\n    O --> P[结束]",
+    "name": "项目分析与文档生成主流程"
   },
   "other_important_workflows": [
     {
-      "description": "该流程专注于从源代码中提取结构化语义信息，是支撑上层架构分析的基础。通过多语言解析器与LLM协同，自动识别代码功能类型、接口定义和模块间依赖关系，为领域划分和架构建模提供高质量输入数据。",
-      "flowchart_mermaid": "graph TD\n    A[扫描项目目录] --> B[识别核心代码文件]\n    B --> C[选择对应语言处理器]\n    C --> D[提取接口与依赖信息]\n    D --> E[推断代码用途（AI+规则）]\n    E --> F[分析模块间依赖关系]\n    F --> G[生成CodeInsight与Dependency数据]\n    G --> H[写入运行时内存]\n    H --> I[缓存中间结果]",
-      "name": "代码洞察与依赖分析流程"
+      "description": "针对单个代码文件或模块，通过语言处理器提取结构信息，结合LLM进行语义增强分析，最终将结果存入内存供下游使用。该流程是预处理阶段的核心子流程。",
+      "flowchart_mermaid": "graph TD\n    A[开始] --> B[选择语言处理器: LanguageProcessorManager]\n    B --> C[执行静态分析: 提取接口/依赖/复杂度]\n    C --> D[构建提示词: 整合上下文与源码]\n    D --> E[调用LLM: ProviderClient::prompt]\n    E --> F[语义增强分析: 识别功能用途与关键逻辑]\n    F --> G[存储结果: Memory::set]\n    G --> H[结束]",
+      "name": "代码洞察生成流程"
     },
     {
-      "description": "该流程是系统智能的核心，定义了如何调用大语言模型完成语义分析、提示推理和内容生成。通过ReAct模式、工具调用、总结回退和多提供商支持，确保分析过程的鲁棒性与准确性。",
-      "flowchart_mermaid": "graph TD\n    A[根据配置选择LLM提供商] --> B[构建智能体（带/不带工具）]\n    B --> C[启动ReAct多轮推理循环]\n    C --> D{达到最大迭代？}\n    D -- 是 --> E[触发总结回退机制]\n    D -- 否 --> F[调用工具（文件探索/读取）]\n    F --> G[解析工具返回结果]\n    G --> C\n    E --> H[生成最终响应]\n    H --> I[执行提示压缩与Token优化]\n    I --> J[返回结构化结果]",
-      "name": "LLM智能体执行与推理流程"
+      "description": "基于预处理阶段的代码洞察与依赖关系，通过LLM驱动的ReAct模式，自顶向下识别系统的高层次功能领域，输出结构化领域模块报告，为后续架构分析提供认知框架。",
+      "flowchart_mermaid": "graph TD\n    A[开始] --> B[获取数据源: 系统上下文+代码洞察+依赖分析]\n    B --> C[提示词压缩: PromptCompressor]\n    C --> D[启动ReAct推理: ReactExecutor]\n    D --> E[多轮推理: LLM识别功能导向模块]\n    E --> F[生成领域模块报告: DomainModulesReport]\n    F --> G[存储至研究作用域: Memory::set_with_scope]\n    G --> H[结束]",
+      "name": "领域架构识别流程"
+    },
+    {
+      "description": "从项目元信息、README和代码洞察中提取宏观业务目标、用户群体、技术特征与系统边界，生成符合C4模型的系统上下文文档，作为所有架构分析的起点。",
+      "flowchart_mermaid": "graph TD\n    A[开始] --> B[获取输入: 项目结构+README+代码洞察]\n    B --> C[构建系统上下文提示模板]\n    C --> D[调用LLM: 提取核心目标与使用场景]\n    D --> E[生成系统上下文报告: SystemContextReport]\n    E --> F[存储至内存: Memory::set_with_scope]\n    F --> G[结束]",
+      "name": "系统上下文分析流程"
+    },
+    {
+      "description": "作为文档输出的总控流程，按顺序调用多个编辑器Agent，将智能分析阶段产出的调研结果转化为结构化、专业化的技术文档，确保输出完整性与一致性。",
+      "flowchart_mermaid": "graph TD\n    A[开始] --> B[读取调研结果: 从内存获取各Agent输出]\n    B --> C[调用OverviewEditor: 生成系统上下文文档]\n    C --> D[调用ArchitectureEditor: 生成C4架构文档]\n    D --> E[调用WorkflowEditor: 生成主干工作流程文档]\n    E --> F[调用KeyModulesInsightEditor: 生成关键模块实现文档]\n    F --> G[调用BoundaryEditor: 生成接口文档]\n    G --> H[结束]",
+      "name": "文档生成协调流程"
     }
   ]
 }
@@ -1918,6 +1833,123 @@
   },
   {
     "code_dossier": {
+      "code_purpose": "tool",
+      "description": null,
+      "file_path": "src/llm/tools/time.rs",
+      "functions": [
+        "AgentToolTime::new",
+        "AgentToolTime::get_current_time",
+        "AgentToolTime::definition",
+        "AgentToolTime::call"
+      ],
+      "importance_score": 0.8,
+      "interfaces": [
+        "Tool",
+        "std::fmt::Display",
+        "std::error::Error"
+      ],
+      "name": "time.rs",
+      "source_summary": "//! 时间查询工具\n\nuse anyhow::Result;\nuse rig::tool::Tool;\nuse serde::{Deserialize, Serialize};\n#[cfg(debug_assertions)]\nuse std::time::Duration;\nuse std::time::{SystemTime, UNIX_EPOCH};\n\n/// 时间工具\n#[derive(Debug, Clone)]\npub struct AgentToolTime;\n\n/// 时间查询参数\n#[derive(Debug, Deserialize)]\npub struct TimeArgs {\n    #[serde(rename = \"format\")]\n    pub format: Option<String>,\n}\n\n/// 时间查询结果\n#[derive(Debug, Serialize)]\npub struct TimeResult {\n    pub current_time: String,\n    pub timestamp: u64,\n    pub utc_time: String,\n}\n\n/// 时间工具错误\n#[derive(Debug)]\npub struct TimeToolError;\n\nimpl std::fmt::Display for TimeToolError {\n    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {\n        write!(f, \"Time tool error\")\n    }\n}\n\nimpl std::error::Error for TimeToolError {}\n\nimpl AgentToolTime {\n    pub fn new() -> Self {\n        Self\n    }\n\n    async fn get_current_time(&self, args: &TimeArgs) -> Result<TimeResult> {\n        // 获取当前系统时间\n        let now = SystemTime::now();\n        let timestamp = now.duration_since(UNIX_EPOCH)?.as_secs();\n\n        // 格式化时间\n        let format = args.format.as_deref().unwrap_or(\"%Y-%m-%d %H:%M:%S\");\n\n        // 本地时间\n        let datetime: chrono::DateTime<chrono::Local> = now.into();\n        let current_time = datetime.format(format).to_string();\n\n        // UTC时间\n        let utc_datetime: chrono::DateTime<chrono::Utc> = now.into();\n        let utc_time = utc_datetime.format(format).to_string();\n\n        Ok(TimeResult {\n            current_time,\n            timestamp,\n            utc_time,\n        })\n    }\n}\n\nimpl Tool for AgentToolTime {\n    const NAME: &'static str = \"time\";\n\n    type Error = TimeToolError;\n    type Args = TimeArgs;\n    type Output = TimeResult;\n\n    async fn definition(&self, _prompt: String) -> rig::completion::ToolDefinition {\n        rig::completion::ToolDefinition {\n            name: Self::NAME.to_string(),\n            description: \"获取当前日期和时间信息，包括本地时间和UTC时间以及时间戳。\".to_string(),\n            parameters: serde_json::json!({\n                \"type\": \"object\",\n                \"properties\": {\n                    \"format\": {\n                        \"type\": \"string\",\n                        \"description\": \"时间格式字符串（默认为'%Y-%m-%d %H:%M:%S'）。支持chrono格式化语法。\"\n                    }\n                },\n                \"required\": []\n            }),\n        }\n    }\n\n    async fn call(&self, args: Self::Args) -> Result<Self::Output, Self::Error> {\n        println!(\"   🔧 tool called...time@{:?}\", args);\n\n        #[cfg(debug_assertions)]\n        tokio::time::sleep(Duration::from_secs(2)).await;\n\n        self.get_current_time(&args)\n            .await\n            .map_err(|_e| TimeToolError)\n    }\n}\n"
+    },
+    "complexity_metrics": {
+      "cyclomatic_complexity": 4.0,
+      "lines_of_code": 104,
+      "number_of_classes": 4,
+      "number_of_functions": 4
+    },
+    "dependencies": [
+      {
+        "dependency_type": "crate",
+        "is_external": true,
+        "line_number": null,
+        "name": "anyhow",
+        "path": null,
+        "version": null
+      },
+      {
+        "dependency_type": "crate",
+        "is_external": true,
+        "line_number": null,
+        "name": "rig",
+        "path": null,
+        "version": null
+      },
+      {
+        "dependency_type": "crate",
+        "is_external": true,
+        "line_number": null,
+        "name": "serde",
+        "path": null,
+        "version": null
+      },
+      {
+        "dependency_type": "crate",
+        "is_external": true,
+        "line_number": null,
+        "name": "chrono",
+        "path": null,
+        "version": null
+      },
+      {
+        "dependency_type": "crate",
+        "is_external": true,
+        "line_number": null,
+        "name": "tokio",
+        "path": null,
+        "version": null
+      }
+    ],
+    "detailed_description": "该组件是一个时间查询工具，用于在AI代理系统中提供当前日期和时间信息。它通过实现rig::tool::Tool trait，暴露为一个可被LLM调用的工具。用户可通过传入可选的时间格式字符串（默认为'%Y-%m-%d %H:%M:%S'）获取本地时间、UTC时间和时间戳。工具内部使用chrono库进行时间格式化，使用SystemTime获取系统时间，并通过serde进行序列化。在调试模式下，调用时会模拟2秒延迟以模拟网络延迟。该工具不依赖外部服务，完全基于本地系统时钟，适合用于需要时间上下文的智能代理场景。",
+    "interfaces": [
+      {
+        "description": null,
+        "interface_type": "trait",
+        "name": "Tool",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "_prompt",
+            "param_type": "String"
+          }
+        ],
+        "return_type": "rig::completion::ToolDefinition",
+        "visibility": "public"
+      },
+      {
+        "description": null,
+        "interface_type": "trait",
+        "name": "Display",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "f",
+            "param_type": "&mut std::fmt::Formatter<'_>"
+          }
+        ],
+        "return_type": "std::fmt::Result",
+        "visibility": "public"
+      },
+      {
+        "description": null,
+        "interface_type": "trait",
+        "name": "Error",
+        "parameters": [],
+        "return_type": null,
+        "visibility": "public"
+      }
+    ],
+    "responsibilities": [
+      "封装系统时间获取逻辑，提供统一的API接口",
+      "实现rig::tool::Tool协议，使其可被LLM调用",
+      "支持自定义时间格式输出，增强灵活性",
+      "提供本地时间与UTC时间的双重输出，满足时区感知需求",
+      "在调试模式下模拟延迟，用于测试工具响应行为"
+    ]
+  },
+  {
+    "code_dossier": {
       "code_purpose": "agent",
       "description": "总结推理模块 - 当ReAct模式达到最大迭代次数时的fallover机制，用于基于对话历史和工具调用记录生成最终回答。",
       "file_path": "src/llm/client/summary_reasoner.rs",
@@ -2300,25 +2332,23 @@
   },
   {
     "code_dossier": {
-      "code_purpose": "types",
-      "description": null,
+      "code_purpose": "api",
+      "description": "LLM客户端 - 提供统一的LLM服务接口，封装多种大模型提供商的调用逻辑，支持数据提取、智能对话（ReAct模式）和普通对话功能。",
       "file_path": "src/llm/client/mod.rs",
       "functions": [
-        "LLMClient::new",
-        "LLMClient::get_agent_builder",
-        "LLMClient::retry_with_backoff",
-        "LLMClient::extract",
-        "LLMClient::extract_inner",
-        "LLMClient::prompt",
-        "LLMClient::prompt_with_react",
-        "LLMClient::try_summary_reasoning",
-        "LLMClient::prompt_without_react"
+        "new",
+        "get_agent_builder",
+        "retry_with_backoff",
+        "extract",
+        "extract_inner",
+        "prompt",
+        "prompt_with_react",
+        "try_summary_reasoning",
+        "prompt_without_react"
       ],
       "importance_score": 0.8,
       "interfaces": [
-        "ProviderClient",
-        "ProviderAgent",
-        "ProviderExtractor",
+        "LLMClient",
         "ReActConfig",
         "ReActResponse"
       ],
@@ -2333,174 +2363,248 @@
     },
     "dependencies": [
       {
-        "dependency_type": "crate",
+        "dependency_type": "error_handling",
         "is_external": true,
-        "line_number": null,
+        "line_number": 1,
         "name": "anyhow",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "crate",
+        "dependency_type": "serialization",
         "is_external": true,
-        "line_number": null,
+        "line_number": 2,
         "name": "schemars",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "crate",
+        "dependency_type": "serialization",
         "is_external": true,
-        "line_number": null,
+        "line_number": 3,
         "name": "serde",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "crate",
-        "is_external": true,
-        "line_number": null,
-        "name": "tokio",
+        "dependency_type": "language_feature",
+        "is_external": false,
+        "line_number": 4,
+        "name": "std::future::Future",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "crate",
-        "is_external": true,
-        "line_number": null,
-        "name": "rig",
-        "path": null,
+        "dependency_type": "configuration",
+        "is_external": false,
+        "line_number": 6,
+        "name": "crate::config::Config",
+        "path": "./src/config.rs",
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "utility",
         "is_external": false,
-        "line_number": null,
-        "name": "crate::config",
-        "path": "src/config/mod.rs",
+        "line_number": 6,
+        "name": "evaluate_befitting_model",
+        "path": "./src/llm/client/utils.rs",
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "module",
         "is_external": false,
-        "line_number": null,
-        "name": "crate::llm::client::utils",
-        "path": "src/llm/client/utils.rs",
+        "line_number": 10,
+        "name": "agent_builder",
+        "path": "./src/llm/client/agent_builder.rs",
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "module",
         "is_external": false,
-        "line_number": null,
-        "name": "crate::llm::client::agent_builder",
-        "path": "src/llm/client/agent_builder.rs",
+        "line_number": 11,
+        "name": "providers",
+        "path": "./src/llm/client/providers.rs",
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "module",
         "is_external": false,
-        "line_number": null,
-        "name": "crate::llm::client::providers",
-        "path": "src/llm/client/providers.rs",
+        "line_number": 12,
+        "name": "react",
+        "path": "./src/llm/client/react.rs",
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "module",
         "is_external": false,
-        "line_number": null,
-        "name": "crate::llm::client::react",
-        "path": "src/llm/client/react.rs",
+        "line_number": 13,
+        "name": "react_executor",
+        "path": "./src/llm/client/react_executor.rs",
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "module",
         "is_external": false,
-        "line_number": null,
-        "name": "crate::llm::client::react_executor",
-        "path": "src/llm/client/react_executor.rs",
+        "line_number": 14,
+        "name": "summary_reasoner",
+        "path": "./src/llm/client/summary_reasoner.rs",
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "module",
         "is_external": false,
-        "line_number": null,
-        "name": "crate::llm::client::summary_reasoner",
-        "path": "src/llm/client/summary_reasoner.rs",
+        "line_number": 15,
+        "name": "types",
+        "path": "./src/llm/client/types.rs",
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "module",
         "is_external": false,
-        "line_number": null,
-        "name": "crate::llm::tools::file_explorer",
-        "path": "src/llm/tools/file_explorer.rs",
+        "line_number": 16,
+        "name": "utils",
+        "path": "./src/llm/client/utils.rs",
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "interface",
         "is_external": false,
-        "line_number": null,
-        "name": "crate::llm::tools::file_reader",
-        "path": "src/llm/tools/file_reader.rs",
+        "line_number": 18,
+        "name": "ReActConfig",
+        "path": "./src/llm/client/react.rs",
+        "version": null
+      },
+      {
+        "dependency_type": "interface",
+        "is_external": false,
+        "line_number": 18,
+        "name": "ReActResponse",
+        "path": "./src/llm/client/react.rs",
         "version": null
       }
     ],
-    "detailed_description": "该组件是LLM客户端的核心入口模块，提供统一的异步接口用于与多种大语言模型提供商（如OpenAI、Anthropic、Gemini等）交互。它封装了重试机制、模型自适应选择、ReAct智能代理执行、总结推理回退等高级功能，实现了对不同LLM提供商API的抽象层。核心逻辑围绕LLMClient结构体展开，通过组合ProviderClient、AgentBuilder、ReActExecutor等子模块，支持提取结构化数据、多轮对话、工具调用和回退策略。模块通过mod.rs统一导出公共接口，是整个LLM客户端系统的业务逻辑中枢。",
+    "detailed_description": "该组件是系统中与大语言模型交互的核心API层，负责抽象不同LLM提供商的差异，提供统一的调用接口。主要功能包括：1) 初始化基于配置的ProviderClient以连接具体LLM服务；2) 实现带指数退避重试机制的容错处理；3) 支持结构化数据提取（extract），利用JSON Schema进行类型安全的数据解析；4) 提供ReAct模式的多轮推理对话，结合工具调用与总结推理fallover机制；5) 支持普通单轮对话。其设计采用了组合模式，通过依赖agent_builder、providers等模块实现关注点分离，并在出错时自动尝试备选模型或降级为总结推理，增强了系统的鲁棒性。",
     "interfaces": [
       {
-        "description": "统一的LLM提供商客户端枚举，封装OpenAI、Anthropic、Gemini等不同提供商的具体客户端，提供创建Agent和Extractor的工厂方法。",
-        "interface_type": "enum",
-        "name": "ProviderClient",
+        "description": "核心客户端结构体，提供所有LLM交互方法",
+        "interface_type": "struct",
+        "name": "LLMClient",
         "parameters": [],
         "return_type": null,
-        "visibility": "pub"
+        "visibility": "public"
       },
       {
-        "description": "统一的LLM Agent枚举，封装不同提供商的Agent实现，提供prompt和multi_turn等标准化交互方法。",
-        "interface_type": "enum",
-        "name": "ProviderAgent",
-        "parameters": [],
-        "return_type": null,
-        "visibility": "pub"
+        "description": "创建新的LLM客户端实例",
+        "interface_type": "method",
+        "name": "new",
+        "parameters": [
+          {
+            "description": "LLM配置对象",
+            "is_optional": false,
+            "name": "config",
+            "param_type": "Config"
+          }
+        ],
+        "return_type": "Result<Self>",
+        "visibility": "public"
       },
       {
-        "description": "泛型提取器枚举，支持对任意结构化类型T进行JSON提取，封装不同提供商的Extractor实现。",
-        "interface_type": "enum",
-        "name": "ProviderExtractor",
+        "description": "从文本中提取结构化数据",
+        "interface_type": "method",
+        "name": "extract",
         "parameters": [
           {
             "description": null,
             "is_optional": false,
-            "name": "T",
-            "param_type": "generic"
+            "name": "system_prompt",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "user_prompt",
+            "param_type": "&str"
           }
         ],
-        "return_type": null,
-        "visibility": "pub"
+        "return_type": "Result<T>",
+        "visibility": "public"
       },
       {
-        "description": "ReAct模式的配置结构，包含verbose、enable_summary_reasoning等控制参数。",
-        "interface_type": "struct",
-        "name": "ReActConfig",
-        "parameters": [],
-        "return_type": null,
-        "visibility": "pub"
+        "description": "执行智能对话（使用默认ReAct配置）",
+        "interface_type": "method",
+        "name": "prompt",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "system_prompt",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "user_prompt",
+            "param_type": "&str"
+          }
+        ],
+        "return_type": "Result<String>",
+        "visibility": "public"
       },
       {
-        "description": "ReAct模式执行的响应结构，包含chat_history、tool_calls_history、iterations_used等字段。",
-        "interface_type": "struct",
-        "name": "ReActResponse",
-        "parameters": [],
-        "return_type": null,
-        "visibility": "pub"
+        "description": "使用ReAct模式进行多轮对话",
+        "interface_type": "method",
+        "name": "prompt_with_react",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "system_prompt",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "user_prompt",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "react_config",
+            "param_type": "ReActConfig"
+          }
+        ],
+        "return_type": "Result<ReActResponse>",
+        "visibility": "public"
+      },
+      {
+        "description": "执行不使用工具的单轮对话",
+        "interface_type": "method",
+        "name": "prompt_without_react",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "system_prompt",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "user_prompt",
+            "param_type": "&str"
+          }
+        ],
+        "return_type": "Result<String>",
+        "visibility": "public"
       }
     ],
     "responsibilities": [
-      "统一抽象不同LLM提供商的API调用方式",
-      "实现智能重试与备选模型回退机制",
-      "管理ReAct代理的构建与执行流程",
-      "提供结构化数据提取与自然语言对话两种核心交互模式",
-      "协调工具调用、总结推理与对话历史的复合逻辑"
+      "作为统一入口协调对各类LLM服务的访问",
+      "实现高可用的重试与故障转移机制保障服务稳定性",
+      "提供高级对话能力如ReAct推理链与总结推理fallover",
+      "封装底层provider差异实现多模型供应商支持",
+      "执行结构化数据提取并保证类型安全性"
     ]
   },
   {
@@ -2675,19 +2779,19 @@
         "ProviderExtractor"
       ],
       "name": "providers.rs",
-      "source_summary": "//! LLM Provider支持模块\n\nuse anyhow::Result;\nuse rig::{\n    agent::Agent,\n    client::CompletionClient,\n    completion::{Prompt, PromptError},\n    extractor::Extractor,\n    providers::gemini::completion::gemini_api_types::{AdditionalParameters, GenerationConfig},\n};\nuse schemars::JsonSchema;\nuse serde::{Deserialize, Serialize};\n\nuse crate::config::{LLMConfig, LLMProvider};\n\n/// 统一的Provider客户端枚举\n#[derive(Clone)]\npub enum ProviderClient {\n    OpenAI(rig::providers::openai::Client),\n    Moonshot(rig::providers::moonshot::Client),\n    DeepSeek(rig::providers::deepseek::Client),\n    Mistral(rig::providers::mistral::Client),\n    OpenRouter(rig::providers::openrouter::Client),\n    Anthropic(rig::providers::anthropic::Client),\n    Gemini(rig::providers::gemini::Client),\n}\n\nimpl ProviderClient {\n    /// 根据配置创建相应的provider客户端\n    pub fn new(config: &LLMConfig) -> Result<Self> {\n        match config.provider {\n            LLMProvider::OpenAI => {\n                let client = rig::providers::openai::Client::builder(&config.api_key)\n                    .base_url(&config.api_base_url)\n                    .build();\n                Ok(ProviderClient::OpenAI(client))\n            }\n            LLMProvider::Moonshot => {\n                let client = rig::providers::moonshot::Client::builder(&config.api_key)\n                    .base_url(&config.api_base_url)\n                    .build();\n                Ok(ProviderClient::Moonshot(client))\n            }\n            LLMProvider::DeepSeek => {\n                let client = rig::providers::deepseek::Client::builder(&config.api_key)\n                    .base_url(&config.api_base_url)\n                    .build();\n                Ok(ProviderClient::DeepSeek(client))\n            }\n            LLMProvider::Mistral => {\n                let client = rig::providers::mistral::Client::builder(&config.api_key).build();\n                Ok(ProviderClient::Mistral(client))\n            }\n            LLMProvider::OpenRouter => {\n                // reference： https://docs.rig.rs/docs/integrations/model_providers/anthropic#basic-usage\n                let client = rig::providers::openrouter::Client::builder(&config.api_key).build();\n                Ok(ProviderClient::OpenRouter(client))\n            }\n            LLMProvider::Anthropic => {\n                let client =\n                    rig::providers::anthropic::ClientBuilder::new(&config.api_key).build()?;\n                Ok(ProviderClient::Anthropic(client))\n            }\n            LLMProvider::Gemini => {\n                let client = rig::providers::gemini::Client::builder(&config.api_key).build()?;\n                Ok(ProviderClient::Gemini(client))\n            }\n        }\n    }\n\n    /// 创建Agent\n    pub fn create_agent(\n        &self,\n        model: &str,\n        system_prompt: &str,\n        config: &LLMConfig,\n    ) -> ProviderAgent {\n        match self {\n            ProviderClient::OpenAI(client) => {\n                let agent = client\n                    .completion_model(model)\n                    .completions_api()\n                    .into_agent_builder()\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::OpenAI(agent)\n            }\n            ProviderClient::Moonshot(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::Moonshot(agent)\n            }\n            ProviderClient::DeepSeek(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::DeepSeek(agent)\n            }\n            ProviderClient::Mistral(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::Mistral(agent)\n            }\n            ProviderClient::OpenRouter(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::OpenRouter(agent)\n            }\n            ProviderClient::Anthropic(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::Anthropic(agent)\n            }\n            ProviderClient::Gemini(client) => {\n                let gen_cfg = GenerationConfig::default();\n                let cfg = AdditionalParameters::default().with_config(gen_cfg);\n\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .additional_params(serde_json::to_value(cfg).unwrap())\n                    .build();\n                ProviderAgent::Gemini(agent)\n            }\n        }\n    }\n\n    /// 创建带工具的Agent\n    pub fn create_agent_with_tools(\n        &self,\n        model: &str,\n        system_prompt: &str,\n        config: &LLMConfig,\n        file_explorer: &crate::llm::tools::file_explorer::AgentToolFileExplorer,\n        file_reader: &crate::llm::tools::file_reader::AgentToolFileReader,\n    ) -> ProviderAgent {\n        match self {\n            ProviderClient::OpenAI(client) => {\n                let agent = client\n                    .completion_model(model)\n                    .completions_api()\n                    .into_agent_builder()\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .build();\n                ProviderAgent::OpenAI(agent)\n            }\n            ProviderClient::Moonshot(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .build();\n                ProviderAgent::Moonshot(agent)\n            }\n            ProviderClient::DeepSeek(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .build();\n                ProviderAgent::DeepSeek(agent)\n            }\n            ProviderClient::Mistral(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .build();\n                ProviderAgent::Mistral(agent)\n            }\n            ProviderClient::OpenRouter(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .build();\n                ProviderAgent::OpenRouter(agent)\n            }\n            ProviderClient::Anthropic(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .build();\n                ProviderAgent::Anthropic(agent)\n            }\n            ProviderClient::Gemini(client) => {\n                let gen_cfg = GenerationConfig::default();\n                let cfg = AdditionalParameters::default().with_config(gen_cfg);\n\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .additional_params(serde_json::to_value(cfg).unwrap())\n                    .build();\n                ProviderAgent::Gemini(agent)\n            }\n        }\n    }\n\n    /// 创建Extractor\n    pub fn create_extractor<T>(\n        &self,\n        model: &str,\n        system_prompt: &str,\n        config: &LLMConfig,\n    ) -> ProviderExtractor<T>\n    where\n        T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,\n    {\n        match self {\n            ProviderClient::OpenAI(client) => {\n                let extractor = client\n                    .extractor_completions_api::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::OpenAI(extractor)\n            }\n            ProviderClient::Moonshot(client) => {\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::Moonshot(extractor)\n            }\n            ProviderClient::DeepSeek(client) => {\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::DeepSeek(extractor)\n            }\n            ProviderClient::Mistral(client) => {\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::Mistral(extractor)\n            }\n            ProviderClient::OpenRouter(client) => {\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::OpenRouter(extractor)\n            }\n            ProviderClient::Anthropic(client) => {\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::Anthropic(extractor)\n            }\n            ProviderClient::Gemini(client) => {\n                let gen_cfg = GenerationConfig::default();\n                let cfg = AdditionalParameters::default().with_config(gen_cfg);\n\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .additional_params(serde_json::to_value(cfg).unwrap())\n                    .build();\n                ProviderExtractor::Gemini(extractor)\n            }\n        }\n    }\n}\n\n/// 统一的Agent枚举\npub enum ProviderAgent {\n    OpenAI(Agent<rig::providers::openai::CompletionModel>),\n    Mistral(Agent<rig::providers::mistral::CompletionModel>),\n    OpenRouter(Agent<rig::providers::openrouter::CompletionModel>),\n    Anthropic(Agent<rig::providers::anthropic::completion::CompletionModel>),\n    Gemini(Agent<rig::providers::gemini::completion::CompletionModel>),\n    Moonshot(Agent<rig::providers::moonshot::CompletionModel>),\n    DeepSeek(Agent<rig::providers::deepseek::CompletionModel>),\n}\n\nimpl ProviderAgent {\n    /// 执行prompt\n    pub async fn prompt(&self, prompt: &str) -> Result<String> {\n        match self {\n            ProviderAgent::OpenAI(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::Moonshot(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::DeepSeek(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::Mistral(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::OpenRouter(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::Anthropic(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::Gemini(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n        }\n    }\n\n    /// 执行多轮对话\n    pub async fn multi_turn(\n        &self,\n        prompt: &str,\n        max_iterations: usize,\n    ) -> Result<String, PromptError> {\n        match self {\n            ProviderAgent::OpenAI(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,\n            ProviderAgent::Moonshot(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,\n            ProviderAgent::DeepSeek(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,\n            ProviderAgent::Mistral(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,\n            ProviderAgent::OpenRouter(agent) => {\n                agent.prompt(prompt).multi_turn(max_iterations).await\n            }\n            ProviderAgent::Anthropic(agent) => {\n                agent.prompt(prompt).multi_turn(max_iterations).await\n            }\n            ProviderAgent::Gemini(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,\n        }\n    }\n}\n\n/// 统一的Extractor枚举\npub enum ProviderExtractor<T>\nwhere\n    T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,\n{\n    OpenAI(Extractor<rig::providers::openai::CompletionModel, T>),\n    Mistral(Extractor<rig::providers::mistral::CompletionModel, T>),\n    OpenRouter(Extractor<rig::providers::openrouter::CompletionModel, T>),\n    Anthropic(Extractor<rig::providers::anthropic::completion::CompletionModel, T>),\n    Gemini(Extractor<rig::providers::gemini::completion::CompletionModel, T>),\n    Moonshot(Extractor<rig::providers::moonshot::CompletionModel, T>),\n    DeepSeek(Extractor<rig::providers::deepseek::CompletionModel, T>),\n}\n\nimpl<T> ProviderExtractor<T>\nwhere\n    T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,\n{\n    /// 执行提取\n    pub async fn extract(&self, prompt: &str) -> Result<T> {\n        match self {\n            ProviderExtractor::OpenAI(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::Moonshot(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::DeepSeek(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::Mistral(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::OpenRouter(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::Anthropic(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::Gemini(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n        }\n    }\n}\n"
+      "source_summary": "//! LLM Provider支持模块\n\nuse anyhow::Result;\nuse rig::{\n    agent::Agent,\n    client::CompletionClient,\n    completion::{Prompt, PromptError},\n    extractor::Extractor,\n    providers::gemini::completion::gemini_api_types::{AdditionalParameters, GenerationConfig},\n};\nuse schemars::JsonSchema;\nuse serde::{Deserialize, Serialize};\n\nuse crate::{\n    config::{LLMConfig, LLMProvider},\n    llm::tools::time::AgentToolTime,\n};\n\n/// 统一的Provider客户端枚举\n#[derive(Clone)]\npub enum ProviderClient {\n    OpenAI(rig::providers::openai::Client),\n    Moonshot(rig::providers::moonshot::Client),\n    DeepSeek(rig::providers::deepseek::Client),\n    Mistral(rig::providers::mistral::Client),\n    OpenRouter(rig::providers::openrouter::Client),\n    Anthropic(rig::providers::anthropic::Client),\n    Gemini(rig::providers::gemini::Client),\n}\n\nimpl ProviderClient {\n    /// 根据配置创建相应的provider客户端\n    pub fn new(config: &LLMConfig) -> Result<Self> {\n        match config.provider {\n            LLMProvider::OpenAI => {\n                let client = rig::providers::openai::Client::builder(&config.api_key)\n                    .base_url(&config.api_base_url)\n                    .build();\n                Ok(ProviderClient::OpenAI(client))\n            }\n            LLMProvider::Moonshot => {\n                let client = rig::providers::moonshot::Client::builder(&config.api_key)\n                    .base_url(&config.api_base_url)\n                    .build();\n                Ok(ProviderClient::Moonshot(client))\n            }\n            LLMProvider::DeepSeek => {\n                let client = rig::providers::deepseek::Client::builder(&config.api_key)\n                    .base_url(&config.api_base_url)\n                    .build();\n                Ok(ProviderClient::DeepSeek(client))\n            }\n            LLMProvider::Mistral => {\n                let client = rig::providers::mistral::Client::builder(&config.api_key).build();\n                Ok(ProviderClient::Mistral(client))\n            }\n            LLMProvider::OpenRouter => {\n                // reference： https://docs.rig.rs/docs/integrations/model_providers/anthropic#basic-usage\n                let client = rig::providers::openrouter::Client::builder(&config.api_key).build();\n                Ok(ProviderClient::OpenRouter(client))\n            }\n            LLMProvider::Anthropic => {\n                let client =\n                    rig::providers::anthropic::ClientBuilder::new(&config.api_key).build()?;\n                Ok(ProviderClient::Anthropic(client))\n            }\n            LLMProvider::Gemini => {\n                let client = rig::providers::gemini::Client::builder(&config.api_key).build()?;\n                Ok(ProviderClient::Gemini(client))\n            }\n        }\n    }\n\n    /// 创建Agent\n    pub fn create_agent(\n        &self,\n        model: &str,\n        system_prompt: &str,\n        config: &LLMConfig,\n    ) -> ProviderAgent {\n        match self {\n            ProviderClient::OpenAI(client) => {\n                let agent = client\n                    .completion_model(model)\n                    .completions_api()\n                    .into_agent_builder()\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::OpenAI(agent)\n            }\n            ProviderClient::Moonshot(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::Moonshot(agent)\n            }\n            ProviderClient::DeepSeek(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::DeepSeek(agent)\n            }\n            ProviderClient::Mistral(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::Mistral(agent)\n            }\n            ProviderClient::OpenRouter(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::OpenRouter(agent)\n            }\n            ProviderClient::Anthropic(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .build();\n                ProviderAgent::Anthropic(agent)\n            }\n            ProviderClient::Gemini(client) => {\n                let gen_cfg = GenerationConfig::default();\n                let cfg = AdditionalParameters::default().with_config(gen_cfg);\n\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .additional_params(serde_json::to_value(cfg).unwrap())\n                    .build();\n                ProviderAgent::Gemini(agent)\n            }\n        }\n    }\n\n    /// 创建带工具的Agent\n    pub fn create_agent_with_tools(\n        &self,\n        model: &str,\n        system_prompt: &str,\n        config: &LLMConfig,\n        file_explorer: &crate::llm::tools::file_explorer::AgentToolFileExplorer,\n        file_reader: &crate::llm::tools::file_reader::AgentToolFileReader,\n    ) -> ProviderAgent {\n        let tool_time = AgentToolTime::new();\n\n        match self {\n            ProviderClient::OpenAI(client) => {\n                let agent = client\n                    .completion_model(model)\n                    .completions_api()\n                    .into_agent_builder()\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .tool(tool_time)\n                    .build();\n                ProviderAgent::OpenAI(agent)\n            }\n            ProviderClient::Moonshot(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .tool(tool_time)\n                    .build();\n                ProviderAgent::Moonshot(agent)\n            }\n            ProviderClient::DeepSeek(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .tool(tool_time)\n                    .build();\n                ProviderAgent::DeepSeek(agent)\n            }\n            ProviderClient::Mistral(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .tool(tool_time)\n                    .build();\n                ProviderAgent::Mistral(agent)\n            }\n            ProviderClient::OpenRouter(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .tool(tool_time)\n                    .build();\n                ProviderAgent::OpenRouter(agent)\n            }\n            ProviderClient::Anthropic(client) => {\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .tool(tool_time)\n                    .build();\n                ProviderAgent::Anthropic(agent)\n            }\n            ProviderClient::Gemini(client) => {\n                let gen_cfg = GenerationConfig::default();\n                let cfg = AdditionalParameters::default().with_config(gen_cfg);\n\n                let agent = client\n                    .agent(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .temperature(config.temperature.into())\n                    .tool(file_explorer.clone())\n                    .tool(file_reader.clone())\n                    .tool(tool_time)\n                    .additional_params(serde_json::to_value(cfg).unwrap())\n                    .build();\n                ProviderAgent::Gemini(agent)\n            }\n        }\n    }\n\n    /// 创建Extractor\n    pub fn create_extractor<T>(\n        &self,\n        model: &str,\n        system_prompt: &str,\n        config: &LLMConfig,\n    ) -> ProviderExtractor<T>\n    where\n        T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,\n    {\n        match self {\n            ProviderClient::OpenAI(client) => {\n                let extractor = client\n                    .extractor_completions_api::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::OpenAI(extractor)\n            }\n            ProviderClient::Moonshot(client) => {\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::Moonshot(extractor)\n            }\n            ProviderClient::DeepSeek(client) => {\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::DeepSeek(extractor)\n            }\n            ProviderClient::Mistral(client) => {\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::Mistral(extractor)\n            }\n            ProviderClient::OpenRouter(client) => {\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::OpenRouter(extractor)\n            }\n            ProviderClient::Anthropic(client) => {\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .build();\n                ProviderExtractor::Anthropic(extractor)\n            }\n            ProviderClient::Gemini(client) => {\n                let gen_cfg = GenerationConfig::default();\n                let cfg = AdditionalParameters::default().with_config(gen_cfg);\n\n                let extractor = client\n                    .extractor::<T>(model)\n                    .preamble(system_prompt)\n                    .max_tokens(config.max_tokens.into())\n                    .additional_params(serde_json::to_value(cfg).unwrap())\n                    .build();\n                ProviderExtractor::Gemini(extractor)\n            }\n        }\n    }\n}\n\n/// 统一的Agent枚举\npub enum ProviderAgent {\n    OpenAI(Agent<rig::providers::openai::CompletionModel>),\n    Mistral(Agent<rig::providers::mistral::CompletionModel>),\n    OpenRouter(Agent<rig::providers::openrouter::CompletionModel>),\n    Anthropic(Agent<rig::providers::anthropic::completion::CompletionModel>),\n    Gemini(Agent<rig::providers::gemini::completion::CompletionModel>),\n    Moonshot(Agent<rig::providers::moonshot::CompletionModel>),\n    DeepSeek(Agent<rig::providers::deepseek::CompletionModel>),\n}\n\nimpl ProviderAgent {\n    /// 执行prompt\n    pub async fn prompt(&self, prompt: &str) -> Result<String> {\n        match self {\n            ProviderAgent::OpenAI(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::Moonshot(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::DeepSeek(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::Mistral(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::OpenRouter(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::Anthropic(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n            ProviderAgent::Gemini(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),\n        }\n    }\n\n    /// 执行多轮对话\n    pub async fn multi_turn(\n        &self,\n        prompt: &str,\n        max_iterations: usize,\n    ) -> Result<String, PromptError> {\n        match self {\n            ProviderAgent::OpenAI(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,\n            ProviderAgent::Moonshot(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,\n            ProviderAgent::DeepSeek(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,\n            ProviderAgent::Mistral(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,\n            ProviderAgent::OpenRouter(agent) => {\n                agent.prompt(prompt).multi_turn(max_iterations).await\n            }\n            ProviderAgent::Anthropic(agent) => {\n                agent.prompt(prompt).multi_turn(max_iterations).await\n            }\n            ProviderAgent::Gemini(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,\n        }\n    }\n}\n\n/// 统一的Extractor枚举\npub enum ProviderExtractor<T>\nwhere\n    T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,\n{\n    OpenAI(Extractor<rig::providers::openai::CompletionModel, T>),\n    Mistral(Extractor<rig::providers::mistral::CompletionModel, T>),\n    OpenRouter(Extractor<rig::providers::openrouter::CompletionModel, T>),\n    Anthropic(Extractor<rig::providers::anthropic::completion::CompletionModel, T>),\n    Gemini(Extractor<rig::providers::gemini::completion::CompletionModel, T>),\n    Moonshot(Extractor<rig::providers::moonshot::CompletionModel, T>),\n    DeepSeek(Extractor<rig::providers::deepseek::CompletionModel, T>),\n}\n\nimpl<T> ProviderExtractor<T>\nwhere\n    T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,\n{\n    /// 执行提取\n    pub async fn extract(&self, prompt: &str) -> Result<T> {\n        match self {\n            ProviderExtractor::OpenAI(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::Moonshot(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::DeepSeek(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::Mistral(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::OpenRouter(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::Anthropic(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n            ProviderExtractor::Gemini(extractor) => {\n                extractor.extract(prompt).await.map_err(|e| e.into())\n            }\n        }\n    }\n}\n"
     },
     "complexity_metrics": {
       "cyclomatic_complexity": 8.0,
-      "lines_of_code": 407,
-      "number_of_classes": 0,
+      "lines_of_code": 419,
+      "number_of_classes": 3,
       "number_of_functions": 7
     },
     "dependencies": [
       {
         "dependency_type": "crate",
         "is_external": true,
-        "line_number": null,
+        "line_number": 1,
         "name": "anyhow",
         "path": null,
         "version": null
@@ -2695,7 +2799,7 @@
       {
         "dependency_type": "crate",
         "is_external": true,
-        "line_number": null,
+        "line_number": 4,
         "name": "rig",
         "path": null,
         "version": null
@@ -2703,7 +2807,7 @@
       {
         "dependency_type": "crate",
         "is_external": true,
-        "line_number": null,
+        "line_number": 7,
         "name": "schemars",
         "path": null,
         "version": null
@@ -2711,16 +2815,48 @@
       {
         "dependency_type": "crate",
         "is_external": true,
-        "line_number": null,
+        "line_number": 8,
         "name": "serde",
         "path": null,
         "version": null
+      },
+      {
+        "dependency_type": "module",
+        "is_external": false,
+        "line_number": 11,
+        "name": "crate::config",
+        "path": "src/config.rs",
+        "version": null
+      },
+      {
+        "dependency_type": "module",
+        "is_external": false,
+        "line_number": 13,
+        "name": "crate::llm::tools::time",
+        "path": "src/llm/tools/time.rs",
+        "version": null
+      },
+      {
+        "dependency_type": "module",
+        "is_external": false,
+        "line_number": null,
+        "name": "crate::llm::tools::file_explorer",
+        "path": "src/llm/tools/file_explorer.rs",
+        "version": null
+      },
+      {
+        "dependency_type": "module",
+        "is_external": false,
+        "line_number": null,
+        "name": "crate::llm::tools::file_reader",
+        "path": "src/llm/tools/file_reader.rs",
+        "version": null
       }
     ],
-    "detailed_description": "该组件是一个统一的LLM（大语言模型）提供商客户端抽象层，封装了多种第三方LLM服务（如OpenAI、Anthropic、Gemini等）的客户端初始化、Agent创建和Extractor创建逻辑。它通过枚举类型（ProviderClient、ProviderAgent、ProviderExtractor）对不同提供商的API进行统一接口抽象，使得上层业务无需关心具体提供商的实现差异。核心功能包括：根据配置创建对应的客户端、创建标准Agent、创建带工具的Agent、创建类型安全的Extractor。该组件是LLM功能调用的入口枢纽，实现了策略模式和工厂模式，是系统中实现多提供商支持的关键模块。",
+    "detailed_description": "该组件为LLM（大语言模型）提供统一的客户端抽象层，封装了多种主流LLM服务提供商（如OpenAI、Anthropic、Gemini等）的接入逻辑。通过枚举类型ProviderClient统一管理不同厂商的客户端实例，并提供标准化的接口用于创建Agent和Extractor。核心功能包括：根据配置动态初始化指定的LLM客户端；构建具备系统提示、温度、最大token等参数配置的智能体(Agent)；支持为Agent注入工具（如文件读取、时间查询等）以增强能力；创建结构化数据提取器(Extractor)用于从LLM响应中解析特定格式的数据。所有操作均通过模式匹配对不同提供商进行适配，对外暴露一致的异步调用接口。",
     "interfaces": [
       {
-        "description": null,
+        "description": "封装所有LLM提供商客户端的枚举类型，提供工厂方法创建具体客户端",
         "interface_type": "enum",
         "name": "ProviderClient",
         "parameters": [],
@@ -2728,7 +2864,115 @@
         "visibility": "pub"
       },
       {
-        "description": null,
+        "description": "根据LLM配置创建对应提供商的客户端实例",
+        "interface_type": "function",
+        "name": "ProviderClient::new",
+        "parameters": [
+          {
+            "description": "包含API密钥、基础URL、模型参数等的配置对象",
+            "is_optional": false,
+            "name": "config",
+            "param_type": "&LLMConfig"
+          }
+        ],
+        "return_type": "Result<ProviderClient>",
+        "visibility": "pub"
+      },
+      {
+        "description": "创建不带工具的基础Agent",
+        "interface_type": "function",
+        "name": "ProviderClient::create_agent",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "model",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "system_prompt",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "config",
+            "param_type": "&LLMConfig"
+          }
+        ],
+        "return_type": "ProviderAgent",
+        "visibility": "pub"
+      },
+      {
+        "description": "创建集成了文件探索、文件读取和时间查询工具的Agent",
+        "interface_type": "function",
+        "name": "ProviderClient::create_agent_with_tools",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "model",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "system_prompt",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "config",
+            "param_type": "&LLMConfig"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "file_explorer",
+            "param_type": "&AgentToolFileExplorer"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "file_reader",
+            "param_type": "&AgentToolFileReader"
+          }
+        ],
+        "return_type": "ProviderAgent",
+        "visibility": "pub"
+      },
+      {
+        "description": "创建用于结构化数据提取的Extractor",
+        "interface_type": "function",
+        "name": "ProviderClient::create_extractor",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "model",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "system_prompt",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "config",
+            "param_type": "&LLMConfig"
+          }
+        ],
+        "return_type": "ProviderExtractor<T>",
+        "visibility": "pub"
+      },
+      {
+        "description": "封装各提供商Agent实例的枚举类型，提供统一调用接口",
         "interface_type": "enum",
         "name": "ProviderAgent",
         "parameters": [],
@@ -2736,20 +2980,71 @@
         "visibility": "pub"
       },
       {
-        "description": null,
+        "description": "执行单轮提示词推理",
+        "interface_type": "function",
+        "name": "ProviderAgent::prompt",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "prompt",
+            "param_type": "&str"
+          }
+        ],
+        "return_type": "Result<String>",
+        "visibility": "pub"
+      },
+      {
+        "description": "执行多轮对话推理",
+        "interface_type": "function",
+        "name": "ProviderAgent::multi_turn",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "prompt",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "max_iterations",
+            "param_type": "usize"
+          }
+        ],
+        "return_type": "Result<String, PromptError>",
+        "visibility": "pub"
+      },
+      {
+        "description": "泛型Extractor枚举，用于从LLM输出中提取符合T类型的结构化数据",
         "interface_type": "enum",
         "name": "ProviderExtractor",
         "parameters": [],
         "return_type": null,
         "visibility": "pub"
+      },
+      {
+        "description": "执行结构化数据提取",
+        "interface_type": "function",
+        "name": "ProviderExtractor::extract",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "prompt",
+            "param_type": "&str"
+          }
+        ],
+        "return_type": "Result<T>",
+        "visibility": "pub"
       }
     ],
     "responsibilities": [
-      "统一管理多种LLM提供商的客户端实例化",
-      "封装不同提供商的Agent创建逻辑，提供一致的接口",
-      "封装不同提供商的Extractor创建逻辑，支持泛型类型安全",
-      "处理不同提供商API的参数差异（如Gemini的AdditionalParameters）",
-      "为上层模块提供可扩展的LLM功能调用抽象"
+      "统一管理多种LLM服务提供商的客户端连接",
+      "基于配置和模型参数创建标准化的Agent实例",
+      "支持为Agent集成工具以扩展其交互能力",
+      "创建用于结构化数据提取的Extractor实例",
+      "提供跨平台一致的异步推理接口"
     ]
   },
   {
@@ -3246,9 +3541,10 @@
   {
     "code_dossier": {
       "code_purpose": "specificfeature",
-      "description": null,
+      "description": "缓存管理器，负责处理各类数据的持久化缓存操作，支持基于prompt哈希的键值存储、过期检查、性能监控和压缩内容缓存。",
       "file_path": "src/cache/mod.rs",
       "functions": [
+        "new",
         "hash_prompt",
         "get_cache_path",
         "is_expired",
@@ -3263,113 +3559,181 @@
       "importance_score": 0.8,
       "interfaces": [
         "CacheManager",
-        "CacheEntry<T>",
-        "CachePerformanceMonitor",
-        "CachePerformanceReport"
+        "CacheEntry"
       ],
       "name": "mod.rs",
-      "source_summary": "use anyhow::Result;\nuse md5::{Digest, Md5};\nuse serde::{Deserialize, Serialize};\nuse std::path::PathBuf;\nuse std::time::{Duration, SystemTime, UNIX_EPOCH};\nuse tokio::fs;\n\nuse crate::config::CacheConfig;\nuse crate::llm::client::types::TokenUsage;\n\npub mod performance_monitor;\npub use performance_monitor::{CachePerformanceMonitor, CachePerformanceReport};\n\n/// 缓存管理器\npub struct CacheManager {\n    config: CacheConfig,\n    performance_monitor: CachePerformanceMonitor,\n}\n\n/// 缓存条目\n#[derive(Debug, Serialize, Deserialize)]\npub struct CacheEntry<T> {\n    pub data: T,\n    pub timestamp: u64,\n    /// prompt的MD5哈希值，用于缓存键的生成和验证\n    pub prompt_hash: String,\n    /// token使用情况（可选，用于准确统计）\n    pub token_usage: Option<TokenUsage>,\n    /// 使用的模型名称（可选）\n    pub model_name: Option<String>,\n}\n\nimpl CacheManager {\n    pub fn new(config: CacheConfig) -> Self {\n        Self {\n            config,\n            performance_monitor: CachePerformanceMonitor::new(),\n        }\n    }\n\n    /// 生成prompt的MD5哈希\n    pub fn hash_prompt(&self, prompt: &str) -> String {\n        let mut hasher = Md5::new();\n        hasher.update(prompt.as_bytes());\n        format!(\"{:x}\", hasher.finalize())\n    }\n\n    /// 获取缓存文件路径\n    fn get_cache_path(&self, category: &str, hash: &str) -> PathBuf {\n        self.config\n            .cache_dir\n            .join(category)\n            .join(format!(\"{}.json\", hash))\n    }\n\n    /// 检查缓存是否过期\n    fn is_expired(&self, timestamp: u64) -> bool {\n        let now = SystemTime::now()\n            .duration_since(UNIX_EPOCH)\n            .unwrap()\n            .as_secs();\n        let expire_seconds = self.config.expire_hours * 3600;\n        now - timestamp > expire_seconds\n    }\n\n    /// 获取缓存\n    pub async fn get<T>(&self, category: &str, prompt: &str) -> Result<Option<T>>\n    where\n        T: for<'de> Deserialize<'de>,\n    {\n        if !self.config.enabled {\n            return Ok(None);\n        }\n\n        let hash = self.hash_prompt(prompt);\n        let cache_path = self.get_cache_path(category, &hash);\n\n        if !cache_path.exists() {\n            self.performance_monitor.record_cache_miss(category);\n            return Ok(None);\n        }\n\n        match fs::read_to_string(&cache_path).await {\n            Ok(content) => {\n                match serde_json::from_str::<CacheEntry<T>>(&content) {\n                    Ok(entry) => {\n                        if self.is_expired(entry.timestamp) {\n                            // 删除过期缓存\n                            let _ = fs::remove_file(&cache_path).await;\n                            self.performance_monitor.record_cache_miss(category);\n                            return Ok(None);\n                        }\n\n                        // 使用存储的token信息进行准确统计\n                        let estimated_inference_time = self.estimate_inference_time(&content);\n\n                        if let Some(token_usage) = &entry.token_usage {\n                            // 使用存储的准确信息\n                            self.performance_monitor.record_cache_hit(\n                                category,\n                                estimated_inference_time,\n                                token_usage.clone(),\n                                \"\",\n                            );\n                        }\n                        Ok(Some(entry.data))\n                    }\n                    Err(e) => {\n                        self.performance_monitor\n                            .record_cache_error(category, &format!(\"反序列化失败: {}\", e));\n                        Ok(None)\n                    }\n                }\n            }\n            Err(e) => {\n                self.performance_monitor\n                    .record_cache_error(category, &format!(\"读取文件失败: {}\", e));\n                Ok(None)\n            }\n        }\n    }\n\n    /// 设置缓存（带token使用情况）\n    pub async fn set_with_tokens<T>(\n        &self,\n        category: &str,\n        prompt: &str,\n        data: T,\n        token_usage: TokenUsage,\n    ) -> Result<()>\n    where\n        T: Serialize,\n    {\n        if !self.config.enabled {\n            return Ok(());\n        }\n\n        let hash = self.hash_prompt(prompt);\n        let cache_path = self.get_cache_path(category, &hash);\n\n        // 确保目录存在\n        if let Some(parent) = cache_path.parent() {\n            fs::create_dir_all(parent).await?;\n        }\n\n        let timestamp = SystemTime::now()\n            .duration_since(UNIX_EPOCH)\n            .unwrap()\n            .as_secs();\n\n        let entry = CacheEntry {\n            data,\n            timestamp,\n            prompt_hash: hash,\n            token_usage: Some(token_usage),\n            model_name: None,\n        };\n\n        match serde_json::to_string_pretty(&entry) {\n            Ok(content) => match fs::write(&cache_path, content).await {\n                Ok(_) => {\n                    self.performance_monitor.record_cache_write(category);\n                    Ok(())\n                }\n                Err(e) => {\n                    self.performance_monitor\n                        .record_cache_error(category, &format!(\"写入文件失败: {}\", e));\n                    Err(e.into())\n                }\n            },\n            Err(e) => {\n                self.performance_monitor\n                    .record_cache_error(category, &format!(\"序列化失败: {}\", e));\n                Err(e.into())\n            }\n        }\n    }\n\n    /// 获取压缩结果缓存\n    pub async fn get_compression_cache(&self, original_content: &str, content_type: &str) -> Result<Option<String>> {\n        let cache_key = format!(\"{}_{}\", content_type, self.hash_prompt(original_content));\n        self.get::<String>(\"prompt_compression\", &cache_key).await\n    }\n\n    /// 设置压缩结果缓存\n    pub async fn set_compression_cache(\n        &self,\n        original_content: &str,\n        content_type: &str,\n        compressed_content: String,\n    ) -> Result<()> {\n        let cache_key = format!(\"{}_{}\", content_type, self.hash_prompt(original_content));\n        self.set(\"prompt_compression\", &cache_key, compressed_content).await\n    }\n    pub async fn set<T>(&self, category: &str, prompt: &str, data: T) -> Result<()>\n    where\n        T: Serialize,\n    {\n        if !self.config.enabled {\n            return Ok(());\n        }\n\n        let hash = self.hash_prompt(prompt);\n        let cache_path = self.get_cache_path(category, &hash);\n\n        // 确保目录存在\n        if let Some(parent) = cache_path.parent() {\n            fs::create_dir_all(parent).await?;\n        }\n\n        let timestamp = SystemTime::now()\n            .duration_since(UNIX_EPOCH)\n            .unwrap()\n            .as_secs();\n\n        let entry = CacheEntry {\n            data,\n            timestamp,\n            prompt_hash: hash,\n            token_usage: None,\n            model_name: None,\n        };\n\n        match serde_json::to_string_pretty(&entry) {\n            Ok(content) => match fs::write(&cache_path, content).await {\n                Ok(_) => {\n                    self.performance_monitor.record_cache_write(category);\n                    Ok(())\n                }\n                Err(e) => {\n                    self.performance_monitor\n                        .record_cache_error(category, &format!(\"写入文件失败: {}\", e));\n                    Err(e.into())\n                }\n            },\n            Err(e) => {\n                self.performance_monitor\n                    .record_cache_error(category, &format!(\"序列化失败: {}\", e));\n                Err(e.into())\n            }\n        }\n    }\n\n    /// 估算推理时间（基于内容复杂度）\n    fn estimate_inference_time(&self, content: &str) -> Duration {\n        // 基于内容长度估算推理时间\n        let content_length = content.len();\n        let base_time = 2.0; // 基础推理时间2秒\n        let complexity_factor = (content_length as f64 / 1000.0).min(10.0); // 最多10倍复杂度\n        let estimated_seconds = base_time + complexity_factor;\n        Duration::from_secs_f64(estimated_seconds)\n    }\n\n    /// 生成性能报告\n    pub fn generate_performance_report(&self) -> CachePerformanceReport {\n        self.performance_monitor.generate_report()\n    }\n}\n"
+      "source_summary": "use anyhow::Result;\nuse md5::{Digest, Md5};\nuse serde::{Deserialize, Serialize};\nuse std::path::PathBuf;\nuse std::time::{Duration, SystemTime, UNIX_EPOCH};\nuse tokio::fs;\n\nuse crate::config::CacheConfig;\nuse crate::llm::client::types::TokenUsage;\n\npub mod performance_monitor;\npub use performance_monitor::{CachePerformanceMonitor, CachePerformanceReport};\n\n/// 缓存管理器\npub struct CacheManager {\n    config: CacheConfig,\n    performance_monitor: CachePerformanceMonitor,\n}\n\n/// 缓存条目\n#[derive(Debug, Serialize, Deserialize)]\npub struct CacheEntry<T> {\n    pub data: T,\n    pub timestamp: u64,\n    /// prompt的MD5哈希值，用于缓存键的生成和验证\n    pub prompt_hash: String,\n    /// token使用情况（可选，用于准确统计）\n    pub token_usage: Option<TokenUsage>,\n    /// 使用的模型名称（可选）\n    pub model_name: Option<String>,\n}\n\nimpl CacheManager {\n    pub fn new(config: CacheConfig) -> Self {\n        Self {\n            config,\n            performance_monitor: CachePerformanceMonitor::new(),\n        }\n    }\n\n    /// 生成prompt的MD5哈希\n    pub fn hash_prompt(&self, prompt: &str) -> String {\n        let mut hasher = Md5::new();\n        hasher.update(prompt.as_bytes());\n        format!(\"{:x}\", hasher.finalize())\n    }\n\n    /// 获取缓存文件路径\n    fn get_cache_path(&self, category: &str, hash: &str) -> PathBuf {\n        self.config\n            .cache_dir\n            .join(category)\n            .join(format!(\"{}.json\", hash))\n    }\n\n    /// 检查缓存是否过期\n    fn is_expired(&self, timestamp: u64) -> bool {\n        let now = SystemTime::now()\n            .duration_since(UNIX_EPOCH)\n            .unwrap()\n            .as_secs();\n        let expire_seconds = self.config.expire_hours * 3600;\n        now - timestamp > expire_seconds\n    }\n\n    /// 获取缓存\n    pub async fn get<T>(&self, category: &str, prompt: &str) -> Result<Option<T>>\n    where\n        T: for<'de> Deserialize<'de>,\n    {\n        if !self.config.enabled {\n            return Ok(None);\n        }\n\n        let hash = self.hash_prompt(prompt);\n        let cache_path = self.get_cache_path(category, &hash);\n\n        if !cache_path.exists() {\n            println!(\"缓存未找到{:?}\", cache_path);\n            self.performance_monitor.record_cache_miss(category);\n            return Ok(None);\n        }\n\n        match fs::read_to_string(&cache_path).await {\n            Ok(content) => {\n                match serde_json::from_str::<CacheEntry<T>>(&content) {\n                    Ok(entry) => {\n                        if self.is_expired(entry.timestamp) {\n                            // 删除过期缓存\n                            let _ = fs::remove_file(&cache_path).await;\n                            self.performance_monitor.record_cache_miss(category);\n                            return Ok(None);\n                        }\n\n                        // 使用存储的token信息进行准确统计\n                        let estimated_inference_time = self.estimate_inference_time(&content);\n\n                        if let Some(token_usage) = &entry.token_usage {\n                            // 使用存储的准确信息\n                            self.performance_monitor.record_cache_hit(\n                                category,\n                                estimated_inference_time,\n                                token_usage.clone(),\n                                \"\",\n                            );\n                        }\n                        Ok(Some(entry.data))\n                    }\n                    Err(e) => {\n                        self.performance_monitor\n                            .record_cache_error(category, &format!(\"反序列化失败: {}\", e));\n                        Ok(None)\n                    }\n                }\n            }\n            Err(e) => {\n                self.performance_monitor\n                    .record_cache_error(category, &format!(\"读取文件失败: {}\", e));\n                Ok(None)\n            }\n        }\n    }\n\n    /// 设置缓存（带token使用情况）\n    pub async fn set_with_tokens<T>(\n        &self,\n        category: &str,\n        prompt: &str,\n        data: T,\n        token_usage: TokenUsage,\n    ) -> Result<()>\n    where\n        T: Serialize,\n    {\n        if !self.config.enabled {\n            return Ok(());\n        }\n\n        let hash = self.hash_prompt(prompt);\n        let cache_path = self.get_cache_path(category, &hash);\n\n        // 确保目录存在\n        if let Some(parent) = cache_path.parent() {\n            fs::create_dir_all(parent).await?;\n        }\n\n        let timestamp = SystemTime::now()\n            .duration_since(UNIX_EPOCH)\n            .unwrap()\n            .as_secs();\n\n        let entry = CacheEntry {\n            data,\n            timestamp,\n            prompt_hash: hash,\n            token_usage: Some(token_usage),\n            model_name: None,\n        };\n\n        match serde_json::to_string_pretty(&entry) {\n            Ok(content) => match fs::write(&cache_path, content).await {\n                Ok(_) => {\n                    self.performance_monitor.record_cache_write(category);\n                    Ok(())\n                }\n                Err(e) => {\n                    self.performance_monitor\n                        .record_cache_error(category, &format!(\"写入文件失败: {}\", e));\n                    Err(e.into())\n                }\n            },\n            Err(e) => {\n                self.performance_monitor\n                    .record_cache_error(category, &format!(\"序列化失败: {}\", e));\n                Err(e.into())\n            }\n        }\n    }\n\n    /// 获取压缩结果缓存\n    pub async fn get_compression_cache(&self, original_content: &str, content_type: &str) -> Result<Option<String>> {\n        let cache_key = format!(\"{}_{}\", content_type, self.hash_prompt(original_content));\n        self.get::<String>(\"prompt_compression\", &cache_key).await\n    }\n\n    /// 设置压缩结果缓存\n    pub async fn set_compression_cache(\n        &self,\n        original_content: &str,\n        content_type: &str,\n        compressed_content: String,\n    ) -> Result<()> {\n        let cache_key = format!(\"{}_{}\", content_type, self.hash_prompt(original_content));\n        self.set(\"prompt_compression\", &cache_key, compressed_content).await\n    }\n    pub async fn set<T>(&self, category: &str, prompt: &str, data: T) -> Result<()>\n    where\n        T: Serialize,\n    {\n        if !self.config.enabled {\n            return Ok(());\n        }\n\n        let hash = self.hash_prompt(prompt);\n        let cache_path = self.get_cache_path(category, &hash);\n\n        // 确保目录存在\n        if let Some(parent) = cache_path.parent() {\n            fs::create_dir_all(parent).await?;\n        }\n\n        let timestamp = SystemTime::now()\n            .duration_since(UNIX_EPOCH)\n            .unwrap()\n            .as_secs();\n\n        let entry = CacheEntry {\n            data,\n            timestamp,\n            prompt_hash: hash,\n            token_usage: None,\n            model_name: None,\n        };\n\n        match serde_json::to_string_pretty(&entry) {\n            Ok(content) => match fs::write(&cache_path, content).await {\n                Ok(_) => {\n                    self.performance_monitor.record_cache_write(category);\n                    Ok(())\n                }\n                Err(e) => {\n                    self.performance_monitor\n                        .record_cache_error(category, &format!(\"写入文件失败: {}\", e));\n                    Err(e.into())\n                }\n            },\n            Err(e) => {\n                self.performance_monitor\n                    .record_cache_error(category, &format!(\"序列化失败: {}\", e));\n                Err(e.into())\n            }\n        }\n    }\n\n    /// 估算推理时间（基于内容复杂度）\n    fn estimate_inference_time(&self, content: &str) -> Duration {\n        // 基于内容长度估算推理时间\n        let content_length = content.len();\n        let base_time = 2.0; // 基础推理时间2秒\n        let complexity_factor = (content_length as f64 / 1000.0).min(10.0); // 最多10倍复杂度\n        let estimated_seconds = base_time + complexity_factor;\n        Duration::from_secs_f64(estimated_seconds)\n    }\n\n    /// 生成性能报告\n    pub fn generate_performance_report(&self) -> CachePerformanceReport {\n        self.performance_monitor.generate_report()\n    }\n}\n"
     },
     "complexity_metrics": {
       "cyclomatic_complexity": 15.0,
-      "lines_of_code": 258,
-      "number_of_classes": 4,
+      "lines_of_code": 259,
+      "number_of_classes": 2,
       "number_of_functions": 10
     },
     "dependencies": [
       {
-        "dependency_type": "crate",
+        "dependency_type": "error_handling",
         "is_external": true,
-        "line_number": null,
+        "line_number": 1,
         "name": "anyhow",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "crate",
+        "dependency_type": "crypto",
         "is_external": true,
-        "line_number": null,
+        "line_number": 2,
         "name": "md5",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "crate",
+        "dependency_type": "serialization",
         "is_external": true,
-        "line_number": null,
+        "line_number": 3,
         "name": "serde",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "crate",
-        "is_external": true,
-        "line_number": null,
-        "name": "tokio",
+        "dependency_type": "standard_library",
+        "is_external": false,
+        "line_number": 4,
+        "name": "std::path::PathBuf",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "standard_library",
         "is_external": false,
-        "line_number": null,
+        "line_number": 5,
+        "name": "std::time",
+        "path": null,
+        "version": null
+      },
+      {
+        "dependency_type": "async_io",
+        "is_external": true,
+        "line_number": 6,
+        "name": "tokio::fs",
+        "path": null,
+        "version": null
+      },
+      {
+        "dependency_type": "internal_module",
+        "is_external": false,
+        "line_number": 8,
         "name": "crate::config::CacheConfig",
         "path": "src/config/mod.rs",
         "version": null
       },
       {
-        "dependency_type": "internal",
+        "dependency_type": "internal_module",
         "is_external": false,
-        "line_number": null,
+        "line_number": 9,
         "name": "crate::llm::client::types::TokenUsage",
         "path": "src/llm/client/types.rs",
         "version": null
-      },
-      {
-        "dependency_type": "internal",
-        "is_external": false,
-        "line_number": null,
-        "name": "performance_monitor",
-        "path": "src/cache/performance_monitor.rs",
-        "version": null
-      },
-      {
-        "dependency_type": "crate",
-        "is_external": true,
-        "line_number": null,
-        "name": "serde_json",
-        "path": null,
-        "version": null
       }
     ],
-    "detailed_description": "该组件是一个异步缓存管理器，负责在LLM推理系统中管理基于哈希的缓存机制。它支持对提示词（prompt）进行MD5哈希计算，将序列化后的缓存数据存储在文件系统中，并提供缓存命中/未命中、写入和错误的性能监控。缓存条目包含原始数据、时间戳、提示词哈希、token使用统计和模型名称。支持通用缓存（set/get）和压缩结果缓存（set_compression_cache/get_compression_cache）。缓存过期策略基于配置的小时数，文件读写使用Tokio异步IO，序列化使用serde_json。性能监控通过独立的CachePerformanceMonitor实现，支持记录缓存命中、未命中、写入和错误事件，并可生成性能报告。",
+    "detailed_description": "该组件实现了基于文件系统的缓存机制，主要用于加速重复请求的响应。核心功能包括：使用MD5哈希生成缓存键；通过serde序列化/反序列化存储结构化数据；基于配置自动清理过期缓存；集成性能监控以记录命中率、错误和写入情况；支持带token用量信息的精细化缓存控制；提供专用接口用于压缩提示词结果的缓存。所有异步I/O操作均采用Tokio运行时，确保非阻塞执行。",
     "interfaces": [
       {
-        "description": "缓存管理器主结构体，封装缓存配置和性能监控器，提供所有缓存操作接口",
+        "description": "主缓存控制器，封装了所有缓存操作逻辑",
         "interface_type": "struct",
         "name": "CacheManager",
-        "parameters": [
-          {
-            "description": null,
-            "is_optional": false,
-            "name": "config",
-            "param_type": "CacheConfig"
-          },
-          {
-            "description": null,
-            "is_optional": false,
-            "name": "performance_monitor",
-            "param_type": "CachePerformanceMonitor"
-          }
-        ],
+        "parameters": [],
         "return_type": null,
         "visibility": "public"
       },
       {
-        "description": "缓存条目数据结构，用于序列化存储，包含数据、时间戳、哈希、token统计和模型名称",
+        "description": "泛型缓存条目结构，包含数据、时间戳、哈希值及可选的token使用信息",
         "interface_type": "struct",
-        "name": "CacheEntry<T>",
+        "name": "CacheEntry",
+        "parameters": [],
+        "return_type": null,
+        "visibility": "public"
+      },
+      {
+        "description": "构造一个新的CacheManager实例",
+        "interface_type": "function",
+        "name": "new",
         "parameters": [
+          {
+            "description": "缓存配置对象",
+            "is_optional": false,
+            "name": "config",
+            "param_type": "CacheConfig"
+          }
+        ],
+        "return_type": "CacheManager",
+        "visibility": "public"
+      },
+      {
+        "description": "根据分类和提示获取缓存数据",
+        "interface_type": "function",
+        "name": "get",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "category",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "prompt",
+            "param_type": "&str"
+          }
+        ],
+        "return_type": "Result<Option<T>>",
+        "visibility": "public"
+      },
+      {
+        "description": "将数据存入指定分类的缓存中",
+        "interface_type": "function",
+        "name": "set",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "category",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "prompt",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "data",
+            "param_type": "T"
+          }
+        ],
+        "return_type": "Result<()>",
+        "visibility": "public"
+      },
+      {
+        "description": "存储数据同时附带token使用信息用于性能统计",
+        "interface_type": "function",
+        "name": "set_with_tokens",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "category",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "prompt",
+            "param_type": "&str"
+          },
           {
             "description": null,
             "is_optional": false,
@@ -3379,54 +3743,76 @@
           {
             "description": null,
             "is_optional": false,
-            "name": "timestamp",
-            "param_type": "u64"
+            "name": "token_usage",
+            "param_type": "TokenUsage"
+          }
+        ],
+        "return_type": "Result<()>",
+        "visibility": "public"
+      },
+      {
+        "description": "获取压缩内容的缓存结果",
+        "interface_type": "function",
+        "name": "get_compression_cache",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "original_content",
+            "param_type": "&str"
           },
           {
             "description": null,
             "is_optional": false,
-            "name": "prompt_hash",
-            "param_type": "String"
-          },
-          {
-            "description": null,
-            "is_optional": true,
-            "name": "token_usage",
-            "param_type": "Option<TokenUsage>"
-          },
-          {
-            "description": null,
-            "is_optional": true,
-            "name": "model_name",
-            "param_type": "Option<String>"
+            "name": "content_type",
+            "param_type": "&str"
           }
         ],
-        "return_type": null,
+        "return_type": "Result<Option<String>>",
         "visibility": "public"
       },
       {
-        "description": "性能监控器，用于记录缓存操作事件并生成报告（定义在performance_monitor模块中）",
-        "interface_type": "struct",
-        "name": "CachePerformanceMonitor",
-        "parameters": [],
-        "return_type": null,
+        "description": "设置压缩内容的缓存结果",
+        "interface_type": "function",
+        "name": "set_compression_cache",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "original_content",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "content_type",
+            "param_type": "&str"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "compressed_content",
+            "param_type": "String"
+          }
+        ],
+        "return_type": "Result<()>",
         "visibility": "public"
       },
       {
-        "description": "性能报告结构，由CachePerformanceMonitor生成（定义在performance_monitor模块中）",
-        "interface_type": "struct",
-        "name": "CachePerformanceReport",
+        "description": "生成当前缓存系统的性能报告",
+        "interface_type": "function",
+        "name": "generate_performance_report",
         "parameters": [],
-        "return_type": null,
+        "return_type": "CachePerformanceReport",
         "visibility": "public"
       }
     ],
     "responsibilities": [
-      "管理基于文件系统的异步缓存读写操作",
-      "根据提示词生成MD5哈希作为缓存键并验证缓存有效性",
-      "实现缓存过期策略（基于配置的小时数）",
-      "记录和监控缓存性能指标（命中、未命中、写入、错误）",
-      "支持压缩内容的专用缓存通道"
+      "管理本地文件系统上的缓存读写操作",
+      "维护缓存的有效性和生命周期（基于时间过期策略）",
+      "生成并使用MD5哈希作为唯一缓存键",
+      "集成性能监控以收集缓存命中率、延迟和错误统计",
+      "提供类型安全的泛型缓存接口供上层模块调用"
     ]
   },
   {
@@ -4929,153 +5315,317 @@
   {
     "code_dossier": {
       "code_purpose": "agent",
-      "description": "提供极简化的智能Agent实现框架，支持标准化的执行流程、数据注入、Prompt构建和结果处理。",
+      "description": null,
       "file_path": "src/generator/step_forward_agent.rs",
       "functions": [
-        "format_project_structure",
-        "format_code_insights",
-        "format_readme_content",
-        "format_dependency_analysis",
-        "format_research_results",
-        "compress_content_if_needed",
-        "build_prompts",
-        "build_standard_user_prompt",
-        "execute"
+        "replace_time_placeholders",
+        "DataFormatter::new",
+        "DataFormatter::format_project_structure",
+        "DataFormatter::format_code_insights",
+        "DataFormatter::format_readme_content",
+        "DataFormatter::format_dependency_analysis",
+        "DataFormatter::get_dependency_priority",
+        "DataFormatter::format_research_results",
+        "DataFormatter::compress_content_if_needed",
+        "GeneratorPromptBuilder::new",
+        "GeneratorPromptBuilder::build_prompts",
+        "GeneratorPromptBuilder::build_standard_user_prompt",
+        "StepForwardAgent::agent_type",
+        "StepForwardAgent::memory_scope_key",
+        "StepForwardAgent::data_config",
+        "StepForwardAgent::prompt_template",
+        "StepForwardAgent::post_process",
+        "StepForwardAgent::provide_custom_prompt_content",
+        "StepForwardAgent::should_include_timestamp",
+        "StepForwardAgent::execute"
       ],
       "importance_score": 0.8,
       "interfaces": [
-        "StepForwardAgent",
         "DataSource",
-        "AgentDataConfig",
         "LLMCallMode",
         "FormatterConfig",
         "PromptTemplate",
+        "AgentDataConfig",
         "DataFormatter",
-        "GeneratorPromptBuilder"
+        "GeneratorPromptBuilder",
+        "StepForwardAgent"
       ],
       "name": "step_forward_agent.rs",
-      "source_summary": "use anyhow::{Result, anyhow};\nuse async_trait::async_trait;\nuse schemars::JsonSchema;\nuse serde::{Deserialize, Serialize};\nuse std::collections::HashMap;\n\nuse crate::generator::agent_executor::{AgentExecuteParams, extract, prompt, prompt_with_tools};\nuse crate::generator::preprocess::memory::{MemoryScope, ScopedKeys};\nuse crate::generator::research::memory::MemoryRetriever;\nuse crate::{\n    generator::context::GeneratorContext,\n    types::{\n        code::CodeInsight, code_releationship::RelationshipAnalysis,\n        project_structure::ProjectStructure,\n    },\n    utils::project_structure_formatter::ProjectStructureFormatter,\n    utils::prompt_compressor::{CompressionConfig, PromptCompressor},\n};\n\n/// 数据源配置 - 基于Memory Key的直接数据访问机制\n#[derive(Debug, Clone, PartialEq)]\npub enum DataSource {\n    /// 从Memory中获取数据\n    MemoryData {\n        scope: &'static str,\n        key: &'static str,\n    },\n    /// research agent的研究结果\n    ResearchResult(String),\n}\n\nimpl DataSource {\n    /// 预定义的常用数据源\n    pub const PROJECT_STRUCTURE: DataSource = DataSource::MemoryData {\n        scope: MemoryScope::PREPROCESS,\n        key: ScopedKeys::PROJECT_STRUCTURE,\n    };\n    pub const CODE_INSIGHTS: DataSource = DataSource::MemoryData {\n        scope: MemoryScope::PREPROCESS,\n        key: ScopedKeys::CODE_INSIGHTS,\n    };\n    pub const DEPENDENCY_ANALYSIS: DataSource = DataSource::MemoryData {\n        scope: MemoryScope::PREPROCESS,\n        key: ScopedKeys::RELATIONSHIPS,\n    };\n    pub const README_CONTENT: DataSource = DataSource::MemoryData {\n        scope: MemoryScope::PREPROCESS,\n        key: ScopedKeys::ORIGINAL_DOCUMENT,\n    };\n}\n\n/// Agent数据配置 - 声明所需的数据源\n#[derive(Debug, Clone)]\npub struct AgentDataConfig {\n    /// 必需的数据源 - 缺少时执行失败\n    pub required_sources: Vec<DataSource>,\n    /// 可选的数据源 - 缺少时不影响执行\n    pub optional_sources: Vec<DataSource>,\n}\n\n/// LLM调用方式配置\n#[derive(Debug, Clone, PartialEq)]\npub enum LLMCallMode {\n    /// 使用extract方法，返回特定要求的结构化数据\n    Extract,\n    /// 使用prompt方法，返回泛化推理文本\n    #[allow(dead_code)]\n    Prompt,\n    /// 使用prompt方法，并提供Built-in Tools返回泛化推理文本\n    PromptWithTools,\n}\n\n/// 数据格式化配置\n#[derive(Debug, Clone)]\npub struct FormatterConfig {\n    /// 当文件数大于限定值时，只包含文件夹信息。如果设置为None则包含所有文件夹和文件\n    pub only_directories_when_files_more_than: Option<usize>,\n    /// 代码洞察显示数量限制\n    pub code_insights_limit: usize,\n    /// 是否包含源码内容\n    pub include_source_code: bool,\n    /// 依赖关系显示数量限制\n    pub dependency_limit: usize,\n    /// README内容截断长度\n    pub readme_truncate_length: Option<usize>,\n    /// 是否启用智能压缩\n    pub enable_compression: bool,\n    /// 压缩配置\n    pub compression_config: CompressionConfig,\n}\n\nimpl Default for FormatterConfig {\n    fn default() -> Self {\n        Self {\n            code_insights_limit: 50,\n            include_source_code: false,\n            dependency_limit: 50,\n            readme_truncate_length: Some(16384),\n            enable_compression: true,\n            compression_config: CompressionConfig::default(),\n            only_directories_when_files_more_than: None,\n        }\n    }\n}\n\n/// Prompt模板配置\n#[derive(Debug, Clone)]\npub struct PromptTemplate {\n    /// 系统提示词\n    pub system_prompt: String,\n    /// 开头的说明性指令\n    pub opening_instruction: String,\n    /// 结尾的强调性指令\n    pub closing_instruction: String,\n    /// LLM调用方式\n    pub llm_call_mode: LLMCallMode,\n    /// 数据格式化配置\n    pub formatter_config: FormatterConfig,\n}\n\n/// 通用数据格式化器\npub struct DataFormatter {\n    config: FormatterConfig,\n    prompt_compressor: Option<PromptCompressor>,\n}\n\nimpl DataFormatter {\n    pub fn new(config: FormatterConfig) -> Self {\n        let prompt_compressor = if config.enable_compression {\n            Some(PromptCompressor::new(config.compression_config.clone()))\n        } else {\n            None\n        };\n\n        Self {\n            config,\n            prompt_compressor,\n        }\n    }\n\n    /// 格式化项目结构信息\n    pub fn format_project_structure(&self, structure: &ProjectStructure) -> String {\n        let config = &self.config;\n        if let Some(files_limit) = config.only_directories_when_files_more_than {\n            // 如果超限，则使用精简版项目结构信息（只显示目录）\n            if structure.total_files > files_limit {\n                return ProjectStructureFormatter::format_as_directory_tree(structure);\n            }\n        }\n\n        // 否则使用完整版项目结构信息\n        ProjectStructureFormatter::format_as_tree(structure)\n    }\n\n    /// 格式化代码洞察信息\n    pub fn format_code_insights(&self, insights: &[CodeInsight]) -> String {\n        let config = &self.config;\n\n        // 首先按重要性评分排序\n        let mut sorted_insights: Vec<_> = insights.iter().collect();\n        sorted_insights.sort_by(|a, b| {\n            b.code_dossier\n                .importance_score\n                .partial_cmp(&a.code_dossier.importance_score)\n                .unwrap_or(std::cmp::Ordering::Equal)\n        });\n\n        let mut content = String::from(\"### 源码洞察摘要\\n\");\n        for (i, insight) in sorted_insights\n            .iter()\n            .take(self.config.code_insights_limit)\n            .enumerate()\n        {\n            content.push_str(&format!(\n                \"{}. 文件`{}`，用途类型为`{}`，重要性: {:.2}\\n\",\n                i + 1,\n                insight.code_dossier.file_path.to_string_lossy(),\n                insight.code_dossier.code_purpose,\n                insight.code_dossier.importance_score\n            ));\n            if !insight.detailed_description.is_empty() {\n                content.push_str(&format!(\"   详细描述: {}\\n\", &insight.detailed_description));\n            }\n            if config.include_source_code {\n                content.push_str(&format!(\n                    \"   源码详情: ```code\\n{}\\n\\n\",\n                    &insight.code_dossier.source_summary\n                ));\n            }\n        }\n        content.push_str(\"\\n\");\n        content\n    }\n\n    /// 格式化README内容\n    pub fn format_readme_content(&self, readme: &str) -> String {\n        let content = if let Some(limit) = self.config.readme_truncate_length {\n            if readme.len() > limit {\n                format!(\"{}...(已截断)\", &readme[..limit])\n            } else {\n                readme.to_string()\n            }\n        } else {\n            readme.to_string()\n        };\n        format!(\n            \"### 先前README内容（为人工录入的信息，不一定准确，仅供参考）\\n{}\\n\\n\",\n            content\n        )\n    }\n\n    /// 格式化依赖关系分析\n    pub fn format_dependency_analysis(&self, deps: &RelationshipAnalysis) -> String {\n        let mut content = String::from(\"### 依赖关系分析\\n\");\n\n        // 按依赖强度排序，优先显示重要依赖\n        let mut sorted_deps: Vec<_> = deps.core_dependencies.iter().collect();\n        sorted_deps.sort_by(|a, b| {\n            // 可以根据依赖类型的重要性进行排序\n            let a_priority = self.get_dependency_priority(&a.dependency_type);\n            let b_priority = self.get_dependency_priority(&b.dependency_type);\n            b_priority.cmp(&a_priority)\n        });\n\n        for rel in sorted_deps.iter().take(self.config.dependency_limit) {\n            content.push_str(&format!(\n                \"{} -> {} ({})\\n\",\n                rel.from,\n                rel.to,\n                rel.dependency_type.as_str()\n            ));\n        }\n        content.push_str(\"\\n\");\n        content\n    }\n\n    /// 获取依赖类型的优先级\n    fn get_dependency_priority(\n        &self,\n        dep_type: &crate::types::code_releationship::DependencyType,\n    ) -> u8 {\n        use crate::types::code_releationship::DependencyType;\n        match dep_type {\n            DependencyType::Import => 10,\n            DependencyType::FunctionCall => 8,\n            DependencyType::Inheritance => 9,\n            DependencyType::Composition => 7,\n            DependencyType::DataFlow => 6,\n            DependencyType::Module => 5,\n        }\n    }\n\n    /// 格式化研究结果\n    pub fn format_research_results(&self, results: &HashMap<String, serde_json::Value>) -> String {\n        let mut content = String::from(\"### 已有调研结果\\n\");\n        for (key, value) in results {\n            content.push_str(&format!(\n                \"#### {}：\\n{}\\n\\n\",\n                key,\n                serde_json::to_string_pretty(value).unwrap_or_default()\n            ));\n        }\n        content\n    }\n\n    /// 智能压缩内容（如果启用且需要）\n    pub async fn compress_content_if_needed(\n        &self,\n        context: &GeneratorContext,\n        content: &str,\n        content_type: &str,\n    ) -> Result<String> {\n        if let Some(compressor) = &self.prompt_compressor {\n            let compression_result = compressor\n                .compress_if_needed(context, content, content_type)\n                .await?;\n\n            if compression_result.was_compressed {\n                println!(\"   📊 {}\", compression_result.compression_summary);\n            }\n\n            Ok(compression_result.compressed_content)\n        } else {\n            Ok(content.to_string())\n        }\n    }\n}\n\n/// 标准的研究Agent Prompt构建器\npub struct GeneratorPromptBuilder {\n    template: PromptTemplate,\n    formatter: DataFormatter,\n}\n\nimpl GeneratorPromptBuilder {\n    pub fn new(template: PromptTemplate) -> Self {\n        let formatter = DataFormatter::new(template.formatter_config.clone());\n        Self {\n            template,\n            formatter,\n        }\n    }\n\n    /// 构建标准的prompt（系统提示词和用户提示词）\n    /// 新增custom_content参数，用于插入自定义内容\n    /// 新增include_timestamp参数，控制是否包含时间戳信息\n    pub async fn build_prompts(\n        &self,\n        context: &GeneratorContext,\n        data_sources: &[DataSource],\n        custom_content: Option<String>,\n        include_timestamp: bool,\n    ) -> Result<(String, String)> {\n        let system_prompt = self.template.system_prompt.clone();\n        let user_prompt = self\n            .build_standard_user_prompt(context, data_sources, custom_content, include_timestamp)\n            .await?;\n        Ok((system_prompt, user_prompt))\n    }\n\n    /// 构建标准的用户提示词\n    /// 新增custom_content参数\n    /// 新增include_timestamp参数，控制是否包含时间戳信息\n    async fn build_standard_user_prompt(\n        &self,\n        context: &GeneratorContext,\n        data_sources: &[DataSource],\n        custom_content: Option<String>,\n        include_timestamp: bool,\n    ) -> Result<String> {\n        let mut prompt = String::new();\n\n        // 开头说明性指令\n        prompt.push_str(&self.template.opening_instruction);\n        prompt.push_str(\"\\n\\n\");\n\n        // 根据参数决定是否添加当前时间信息\n        if include_timestamp {\n            let now = chrono::Utc::now();\n            prompt.push_str(&format!(\n                \"## 当前时间信息\\n生成时间: {} (UTC)\\n时间戳: {}\\n\\n\",\n                now.format(\"%Y-%m-%d %H:%M:%S\"),\n                now.timestamp()\n            ));\n        }\n\n        // 调研材料参考部分\n        prompt.push_str(\"## 调研材料参考\\n\");\n\n        // 插入自定义内容（如果有）\n        if let Some(custom) = custom_content {\n            prompt.push_str(&custom);\n            prompt.push_str(\"\\n\");\n        }\n\n        // 收集并格式化各种数据源\n        let mut research_results = HashMap::new();\n\n        for source in data_sources {\n            match source {\n                DataSource::MemoryData { scope, key } => match *key {\n                    ScopedKeys::PROJECT_STRUCTURE => {\n                        if let Some(structure) = context\n                            .get_from_memory::<ProjectStructure>(scope, key)\n                            .await\n                        {\n                            let formatted = self.formatter.format_project_structure(&structure);\n                            let compressed = self\n                                .formatter\n                                .compress_content_if_needed(context, &formatted, \"项目结构\")\n                                .await?;\n                            prompt.push_str(&compressed);\n                        }\n                    }\n                    ScopedKeys::CODE_INSIGHTS => {\n                        if let Some(insights) = context\n                            .get_from_memory::<Vec<CodeInsight>>(scope, key)\n                            .await\n                        {\n                            let formatted = self.formatter.format_code_insights(&insights);\n                            let compressed = self\n                                .formatter\n                                .compress_content_if_needed(context, &formatted, \"代码洞察\")\n                                .await?;\n                            prompt.push_str(&compressed);\n                        }\n                    }\n                    ScopedKeys::ORIGINAL_DOCUMENT => {\n                        if let Some(readme) = context.get_from_memory::<String>(scope, key).await {\n                            let formatted = self.formatter.format_readme_content(&readme);\n                            let compressed = self\n                                .formatter\n                                .compress_content_if_needed(context, &formatted, \"README文档\")\n                                .await?;\n                            prompt.push_str(&compressed);\n                        }\n                    }\n                    ScopedKeys::RELATIONSHIPS => {\n                        if let Some(deps) = context\n                            .get_from_memory::<RelationshipAnalysis>(scope, key)\n                            .await\n                        {\n                            let formatted = self.formatter.format_dependency_analysis(&deps);\n                            let compressed = self\n                                .formatter\n                                .compress_content_if_needed(context, &formatted, \"依赖关系\")\n                                .await?;\n                            prompt.push_str(&compressed);\n                        }\n                    }\n                    _ => {}\n                },\n                DataSource::ResearchResult(agent_type) => {\n                    if let Some(result) = context.get_research(agent_type).await {\n                        research_results.insert(agent_type.clone(), result);\n                    }\n                }\n            }\n        }\n\n        // 添加研究结果\n        if !research_results.is_empty() {\n            let formatted = self.formatter.format_research_results(&research_results);\n            let compressed = self\n                .formatter\n                .compress_content_if_needed(context, &formatted, \"研究结果\")\n                .await?;\n            prompt.push_str(&compressed);\n        }\n\n        // 结尾强调性指令\n        prompt.push_str(&self.template.closing_instruction);\n\n        // 最终再次检测和压缩\n        self.formatter\n            .compress_content_if_needed(context, &prompt, \"StepForwardAgent_prompt_full\")\n            .await\n    }\n}\n\n/// 极简Agent trait - 大幅简化agent实现\n#[async_trait]\npub trait StepForwardAgent: Send + Sync {\n    /// Agent的输出类型 - 必须支持JSON序列化\n    type Output: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static;\n\n    /// Agent类型标识\n    fn agent_type(&self) -> String;\n\n    fn memory_scope_key(&self) -> String;\n\n    /// 数据源配置\n    fn data_config(&self) -> AgentDataConfig;\n\n    /// Prompt模板配置\n    fn prompt_template(&self) -> PromptTemplate;\n\n    /// 可选的后处理钩子\n    fn post_process(&self, _result: &Self::Output, _context: &GeneratorContext) -> Result<()> {\n        Ok(())\n    }\n\n    /// 可选的自定义prompt内容提供钩子\n    /// 返回自定义的prompt内容，将被插入到标准prompt的调研材料参考部分\n    async fn provide_custom_prompt_content(&self, _context: &GeneratorContext) -> Result<Option<String>> {\n        Ok(None)\n    }\n\n    /// 是否在prompt中包含时间戳信息\n    /// 默认为false，只有特定的agent（如compose目录下的editor agents）需要重写为true\n    fn should_include_timestamp(&self) -> bool {\n        false\n    }\n\n    /// 默认实现的execute方法 - 完全标准化，自动数据验证\n    async fn execute(&self, context: &GeneratorContext) -> Result<Self::Output> {\n        // 1. 获取数据配置\n        let config = self.data_config();\n\n        // 2. 检查required数据源是否可用（自动验证）\n        for source in &config.required_sources {\n            match source {\n                DataSource::MemoryData { scope, key } => {\n                    if !context.has_memory_data(scope, key).await {\n                        return Err(anyhow!(\"必需的数据源 {}:{} 不可用\", scope, key));\n                    }\n                }\n                DataSource::ResearchResult(agent_type) => {\n                    if context.get_research(agent_type).await.is_none() {\n                        return Err(anyhow!(\"必需的研究结果 {} 不可用\", agent_type));\n                    }\n                }\n            }\n        }\n\n        // 3. 收集所有数据源（required + optional）\n        let all_sources = [config.required_sources, config.optional_sources].concat();\n\n        // 4. 使用标准模板构建prompt，并根据目标语言调整\n        let mut template = self.prompt_template();\n        \n        // 根据配置的目标语言添加语言指令\n        let language_instruction = context.config.target_language.prompt_instruction();\n        template.system_prompt = format!(\"{}\\n\\n{}\", template.system_prompt, language_instruction);\n        \n        let prompt_builder = GeneratorPromptBuilder::new(template.clone());\n        \n        // 获取自定义prompt内容\n        let custom_content = self.provide_custom_prompt_content(context).await?;\n        \n        // 检查是否需要包含时间戳\n        let include_timestamp = self.should_include_timestamp();\n        \n        let (system_prompt, user_prompt) =\n            prompt_builder.build_prompts(context, &all_sources, custom_content, include_timestamp).await?;\n\n        // 5. 根据配置选择LLM调用方式\n        let params = AgentExecuteParams {\n            prompt_sys: system_prompt,\n            prompt_user: user_prompt,\n            cache_scope: format!(\"{}/{}\", self.memory_scope_key(), self.agent_type()),\n            log_tag: self.agent_type().to_string(),\n        };\n\n        let result_value = match template.llm_call_mode {\n            LLMCallMode::Extract => {\n                let result: Self::Output = extract(context, params).await?;\n                serde_json::to_value(&result)?\n            }\n            LLMCallMode::Prompt => {\n                let result_text: String = prompt(context, params).await?;\n                serde_json::to_value(&result_text)?\n            }\n            LLMCallMode::PromptWithTools => {\n                let result_text: String = prompt_with_tools(context, params).await?;\n                serde_json::to_value(&result_text)?\n            }\n        };\n\n        // 6. 存储结果\n        context\n            .store_to_memory(\n                &self.memory_scope_key(),\n                &self.agent_type(),\n                result_value.clone(),\n            )\n            .await?;\n\n        // 7. 执行后处理\n        if let Ok(typed_result) = serde_json::from_value::<Self::Output>(result_value) {\n            self.post_process(&typed_result, context)?;\n            println!(\"✅ Sub-Agent [{}]执行完成\", self.agent_type());\n            Ok(typed_result)\n        } else {\n            Err(anyhow::format_err!(\"\"))\n        }\n    }\n}\n"
+      "source_summary": "use anyhow::{Result, anyhow};\nuse async_trait::async_trait;\nuse schemars::JsonSchema;\nuse serde::{Deserialize, Serialize};\nuse std::collections::HashMap;\n\nuse crate::generator::agent_executor::{AgentExecuteParams, extract, prompt, prompt_with_tools};\nuse crate::generator::preprocess::memory::{MemoryScope, ScopedKeys};\nuse crate::generator::research::memory::MemoryRetriever;\nuse crate::{\n    generator::context::GeneratorContext,\n    types::{\n        code::CodeInsight, code_releationship::RelationshipAnalysis,\n        project_structure::ProjectStructure,\n    },\n    utils::project_structure_formatter::ProjectStructureFormatter,\n    utils::prompt_compressor::{CompressionConfig, PromptCompressor},\n};\n\n/// 替换时间占位符为实际时间信息\n/// 这个函数将LLM响应中的时间占位符替换为当前的实际时间\npub fn replace_time_placeholders(content: &str) -> String {\n    let now = chrono::Utc::now();\n    content\n        .replace(\"__CURRENT_UTC_TIME__\", &format!(\"{} (UTC)\", now.format(\"%Y-%m-%d %H:%M:%S\")))\n        .replace(\"__CURRENT_TIMESTAMP__\", &now.timestamp().to_string())\n}\n\n/// 数据源配置 - 基于Memory Key的直接数据访问机制\n#[derive(Debug, Clone, PartialEq)]\npub enum DataSource {\n    /// 从Memory中获取数据\n    MemoryData {\n        scope: &'static str,\n        key: &'static str,\n    },\n    /// research agent的研究结果\n    ResearchResult(String),\n}\n\nimpl DataSource {\n    /// 预定义的常用数据源\n    pub const PROJECT_STRUCTURE: DataSource = DataSource::MemoryData {\n        scope: MemoryScope::PREPROCESS,\n        key: ScopedKeys::PROJECT_STRUCTURE,\n    };\n    pub const CODE_INSIGHTS: DataSource = DataSource::MemoryData {\n        scope: MemoryScope::PREPROCESS,\n        key: ScopedKeys::CODE_INSIGHTS,\n    };\n    pub const DEPENDENCY_ANALYSIS: DataSource = DataSource::MemoryData {\n        scope: MemoryScope::PREPROCESS,\n        key: ScopedKeys::RELATIONSHIPS,\n    };\n    pub const README_CONTENT: DataSource = DataSource::MemoryData {\n        scope: MemoryScope::PREPROCESS,\n        key: ScopedKeys::ORIGINAL_DOCUMENT,\n    };\n}\n\n/// Agent数据配置 - 声明所需的数据源\n#[derive(Debug, Clone)]\npub struct AgentDataConfig {\n    /// 必需的数据源 - 缺少时执行失败\n    pub required_sources: Vec<DataSource>,\n    /// 可选的数据源 - 缺少时不影响执行\n    pub optional_sources: Vec<DataSource>,\n}\n\n/// LLM调用方式配置\n#[derive(Debug, Clone, PartialEq)]\npub enum LLMCallMode {\n    /// 使用extract方法，返回特定要求的结构化数据\n    Extract,\n    /// 使用prompt方法，返回泛化推理文本\n    #[allow(dead_code)]\n    Prompt,\n    /// 使用prompt方法，并提供Built-in Tools返回泛化推理文本\n    PromptWithTools,\n}\n\n/// 数据格式化配置\n#[derive(Debug, Clone)]\npub struct FormatterConfig {\n    /// 当文件数大于限定值时，只包含文件夹信息。如果设置为None则包含所有文件夹和文件\n    pub only_directories_when_files_more_than: Option<usize>,\n    /// 代码洞察显示数量限制\n    pub code_insights_limit: usize,\n    /// 是否包含源码内容\n    pub include_source_code: bool,\n    /// 依赖关系显示数量限制\n    pub dependency_limit: usize,\n    /// README内容截断长度\n    pub readme_truncate_length: Option<usize>,\n    /// 是否启用智能压缩\n    pub enable_compression: bool,\n    /// 压缩配置\n    pub compression_config: CompressionConfig,\n}\n\nimpl Default for FormatterConfig {\n    fn default() -> Self {\n        Self {\n            code_insights_limit: 50,\n            include_source_code: false,\n            dependency_limit: 50,\n            readme_truncate_length: Some(16384),\n            enable_compression: true,\n            compression_config: CompressionConfig::default(),\n            only_directories_when_files_more_than: None,\n        }\n    }\n}\n\n/// Prompt模板配置\n#[derive(Debug, Clone)]\npub struct PromptTemplate {\n    /// 系统提示词\n    pub system_prompt: String,\n    /// 开头的说明性指令\n    pub opening_instruction: String,\n    /// 结尾的强调性指令\n    pub closing_instruction: String,\n    /// LLM调用方式\n    pub llm_call_mode: LLMCallMode,\n    /// 数据格式化配置\n    pub formatter_config: FormatterConfig,\n}\n\n/// 通用数据格式化器\npub struct DataFormatter {\n    config: FormatterConfig,\n    prompt_compressor: Option<PromptCompressor>,\n}\n\nimpl DataFormatter {\n    pub fn new(config: FormatterConfig) -> Self {\n        let prompt_compressor = if config.enable_compression {\n            Some(PromptCompressor::new(config.compression_config.clone()))\n        } else {\n            None\n        };\n\n        Self {\n            config,\n            prompt_compressor,\n        }\n    }\n\n    /// 格式化项目结构信息\n    pub fn format_project_structure(&self, structure: &ProjectStructure) -> String {\n        let config = &self.config;\n        if let Some(files_limit) = config.only_directories_when_files_more_than {\n            // 如果超限，则使用精简版项目结构信息（只显示目录）\n            if structure.total_files > files_limit {\n                return ProjectStructureFormatter::format_as_directory_tree(structure);\n            }\n        }\n\n        // 否则使用完整版项目结构信息\n        ProjectStructureFormatter::format_as_tree(structure)\n    }\n\n    /// 格式化代码洞察信息\n    pub fn format_code_insights(&self, insights: &[CodeInsight]) -> String {\n        let config = &self.config;\n\n        // 首先按重要性评分排序\n        let mut sorted_insights: Vec<_> = insights.iter().collect();\n        sorted_insights.sort_by(|a, b| {\n            b.code_dossier\n                .importance_score\n                .partial_cmp(&a.code_dossier.importance_score)\n                .unwrap_or(std::cmp::Ordering::Equal)\n        });\n\n        let mut content = String::from(\"### 源码洞察摘要\\n\");\n        for (i, insight) in sorted_insights\n            .iter()\n            .take(self.config.code_insights_limit)\n            .enumerate()\n        {\n            content.push_str(&format!(\n                \"{}. 文件`{}`，用途类型为`{}`，重要性: {:.2}\\n\",\n                i + 1,\n                insight.code_dossier.file_path.to_string_lossy(),\n                insight.code_dossier.code_purpose,\n                insight.code_dossier.importance_score\n            ));\n            if !insight.detailed_description.is_empty() {\n                content.push_str(&format!(\"   详细描述: {}\\n\", &insight.detailed_description));\n            }\n            if config.include_source_code {\n                content.push_str(&format!(\n                    \"   源码详情: ```code\\n{}\\n\\n\",\n                    &insight.code_dossier.source_summary\n                ));\n            }\n        }\n        content.push_str(\"\\n\");\n        content\n    }\n\n    /// 格式化README内容\n    pub fn format_readme_content(&self, readme: &str) -> String {\n        let content = if let Some(limit) = self.config.readme_truncate_length {\n            if readme.len() > limit {\n                format!(\"{}...(已截断)\", &readme[..limit])\n            } else {\n                readme.to_string()\n            }\n        } else {\n            readme.to_string()\n        };\n        format!(\n            \"### 先前README内容（为人工录入的信息，不一定准确，仅供参考）\\n{}\\n\\n\",\n            content\n        )\n    }\n\n    /// 格式化依赖关系分析\n    pub fn format_dependency_analysis(&self, deps: &RelationshipAnalysis) -> String {\n        let mut content = String::from(\"### 依赖关系分析\\n\");\n\n        // 按依赖强度排序，优先显示重要依赖\n        let mut sorted_deps: Vec<_> = deps.core_dependencies.iter().collect();\n        sorted_deps.sort_by(|a, b| {\n            // 可以根据依赖类型的重要性进行排序\n            let a_priority = self.get_dependency_priority(&a.dependency_type);\n            let b_priority = self.get_dependency_priority(&b.dependency_type);\n            b_priority.cmp(&a_priority)\n        });\n\n        for rel in sorted_deps.iter().take(self.config.dependency_limit) {\n            content.push_str(&format!(\n                \"{} -> {} ({})\\n\",\n                rel.from,\n                rel.to,\n                rel.dependency_type.as_str()\n            ));\n        }\n        content.push_str(\"\\n\");\n        content\n    }\n\n    /// 获取依赖类型的优先级\n    fn get_dependency_priority(\n        &self,\n        dep_type: &crate::types::code_releationship::DependencyType,\n    ) -> u8 {\n        use crate::types::code_releationship::DependencyType;\n        match dep_type {\n            DependencyType::Import => 10,\n            DependencyType::FunctionCall => 8,\n            DependencyType::Inheritance => 9,\n            DependencyType::Composition => 7,\n            DependencyType::DataFlow => 6,\n            DependencyType::Module => 5,\n        }\n    }\n\n    /// 格式化研究结果\n    pub fn format_research_results(&self, results: &HashMap<String, serde_json::Value>) -> String {\n        let mut content = String::from(\"### 已有调研结果\\n\");\n        for (key, value) in results {\n            content.push_str(&format!(\n                \"#### {}：\\n{}\\n\\n\",\n                key,\n                serde_json::to_string_pretty(value).unwrap_or_default()\n            ));\n        }\n        content\n    }\n\n    /// 智能压缩内容（如果启用且需要）\n    pub async fn compress_content_if_needed(\n        &self,\n        context: &GeneratorContext,\n        content: &str,\n        content_type: &str,\n    ) -> Result<String> {\n        if let Some(compressor) = &self.prompt_compressor {\n            let compression_result = compressor\n                .compress_if_needed(context, content, content_type)\n                .await?;\n\n            if compression_result.was_compressed {\n                println!(\"   📊 {}\", compression_result.compression_summary);\n            }\n\n            Ok(compression_result.compressed_content)\n        } else {\n            Ok(content.to_string())\n        }\n    }\n}\n\n/// 标准的研究Agent Prompt构建器\npub struct GeneratorPromptBuilder {\n    template: PromptTemplate,\n    formatter: DataFormatter,\n}\n\nimpl GeneratorPromptBuilder {\n    pub fn new(template: PromptTemplate) -> Self {\n        let formatter = DataFormatter::new(template.formatter_config.clone());\n        Self {\n            template,\n            formatter,\n        }\n    }\n\n    /// 构建标准的prompt（系统提示词和用户提示词）\n    /// 新增custom_content参数，用于插入自定义内容\n    /// 新增include_timestamp参数，控制是否包含时间戳信息\n    pub async fn build_prompts(\n        &self,\n        context: &GeneratorContext,\n        data_sources: &[DataSource],\n        custom_content: Option<String>,\n        include_timestamp: bool,\n    ) -> Result<(String, String)> {\n        let system_prompt = self.template.system_prompt.clone();\n        let user_prompt = self\n            .build_standard_user_prompt(context, data_sources, custom_content, include_timestamp)\n            .await?;\n        Ok((system_prompt, user_prompt))\n    }\n\n    /// 构建标准的用户提示词\n    /// 新增custom_content参数\n    /// 新增include_timestamp参数，控制是否包含时间戳信息\n    async fn build_standard_user_prompt(\n        &self,\n        context: &GeneratorContext,\n        data_sources: &[DataSource],\n        custom_content: Option<String>,\n        include_timestamp: bool,\n    ) -> Result<String> {\n        let mut prompt = String::new();\n\n        // 开头说明性指令\n        prompt.push_str(&self.template.opening_instruction);\n        prompt.push_str(\"\\n\\n\");\n\n        // 根据参数决定是否添加当前时间信息（使用占位符）\n        if include_timestamp {\n            prompt.push_str(\n                \"## 当前时间信息\\n生成时间: __CURRENT_UTC_TIME__\\n时间戳: __CURRENT_TIMESTAMP__\\n\\n\"\n            );\n        }\n\n        // 调研材料参考部分\n        prompt.push_str(\"## 调研材料参考\\n\");\n\n        // 插入自定义内容（如果有）\n        if let Some(custom) = custom_content {\n            prompt.push_str(&custom);\n            prompt.push_str(\"\\n\");\n        }\n\n        // 收集并格式化各种数据源\n        let mut research_results = HashMap::new();\n\n        for source in data_sources {\n            match source {\n                DataSource::MemoryData { scope, key } => match *key {\n                    ScopedKeys::PROJECT_STRUCTURE => {\n                        if let Some(structure) = context\n                            .get_from_memory::<ProjectStructure>(scope, key)\n                            .await\n                        {\n                            let formatted = self.formatter.format_project_structure(&structure);\n                            let compressed = self\n                                .formatter\n                                .compress_content_if_needed(context, &formatted, \"项目结构\")\n                                .await?;\n                            prompt.push_str(&compressed);\n                        }\n                    }\n                    ScopedKeys::CODE_INSIGHTS => {\n                        if let Some(insights) = context\n                            .get_from_memory::<Vec<CodeInsight>>(scope, key)\n                            .await\n                        {\n                            let formatted = self.formatter.format_code_insights(&insights);\n                            let compressed = self\n                                .formatter\n                                .compress_content_if_needed(context, &formatted, \"代码洞察\")\n                                .await?;\n                            prompt.push_str(&compressed);\n                        }\n                    }\n                    ScopedKeys::ORIGINAL_DOCUMENT => {\n                        if let Some(readme) = context.get_from_memory::<String>(scope, key).await {\n                            let formatted = self.formatter.format_readme_content(&readme);\n                            let compressed = self\n                                .formatter\n                                .compress_content_if_needed(context, &formatted, \"README文档\")\n                                .await?;\n                            prompt.push_str(&compressed);\n                        }\n                    }\n                    ScopedKeys::RELATIONSHIPS => {\n                        if let Some(deps) = context\n                            .get_from_memory::<RelationshipAnalysis>(scope, key)\n                            .await\n                        {\n                            let formatted = self.formatter.format_dependency_analysis(&deps);\n                            let compressed = self\n                                .formatter\n                                .compress_content_if_needed(context, &formatted, \"依赖关系\")\n                                .await?;\n                            prompt.push_str(&compressed);\n                        }\n                    }\n                    _ => {}\n                },\n                DataSource::ResearchResult(agent_type) => {\n                    if let Some(result) = context.get_research(agent_type).await {\n                        research_results.insert(agent_type.clone(), result);\n                    }\n                }\n            }\n        }\n\n        // 添加研究结果\n        if !research_results.is_empty() {\n            let formatted = self.formatter.format_research_results(&research_results);\n            let compressed = self\n                .formatter\n                .compress_content_if_needed(context, &formatted, \"研究结果\")\n                .await?;\n            prompt.push_str(&compressed);\n        }\n\n        // 结尾强调性指令\n        prompt.push_str(&self.template.closing_instruction);\n\n        // 最终再次检测和压缩\n        self.formatter\n            .compress_content_if_needed(context, &prompt, \"StepForwardAgent_prompt_full\")\n            .await\n    }\n}\n\n/// 极简Agent trait - 大幅简化agent实现\n#[async_trait]\npub trait StepForwardAgent: Send + Sync {\n    /// Agent的输出类型 - 必须支持JSON序列化\n    type Output: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static;\n\n    /// Agent类型标识\n    fn agent_type(&self) -> String;\n\n    fn memory_scope_key(&self) -> String;\n\n    /// 数据源配置\n    fn data_config(&self) -> AgentDataConfig;\n\n    /// Prompt模板配置\n    fn prompt_template(&self) -> PromptTemplate;\n\n    /// 可选的后处理钩子\n    fn post_process(&self, _result: &Self::Output, _context: &GeneratorContext) -> Result<()> {\n        Ok(())\n    }\n\n    /// 可选的自定义prompt内容提供钩子\n    /// 返回自定义的prompt内容，将被插入到标准prompt的调研材料参考部分\n    async fn provide_custom_prompt_content(&self, _context: &GeneratorContext) -> Result<Option<String>> {\n        Ok(None)\n    }\n\n    /// 是否在prompt中包含时间戳信息\n    /// 默认为false，只有特定的agent（如compose目录下的editor agents）需要重写为true\n    fn should_include_timestamp(&self) -> bool {\n        false\n    }\n\n    /// 默认实现的execute方法 - 完全标准化，自动数据验证\n    async fn execute(&self, context: &GeneratorContext) -> Result<Self::Output> {\n        // 1. 获取数据配置\n        let config = self.data_config();\n\n        // 2. 检查required数据源是否可用（自动验证）\n        for source in &config.required_sources {\n            match source {\n                DataSource::MemoryData { scope, key } => {\n                    if !context.has_memory_data(scope, key).await {\n                        return Err(anyhow!(\"必需的数据源 {}:{} 不可用\", scope, key));\n                    }\n                }\n                DataSource::ResearchResult(agent_type) => {\n                    if context.get_research(agent_type).await.is_none() {\n                        return Err(anyhow!(\"必需的研究结果 {} 不可用\", agent_type));\n                    }\n                }\n            }\n        }\n\n        // 3. 收集所有数据源（required + optional）\n        let all_sources = [config.required_sources, config.optional_sources].concat();\n\n        // 4. 使用标准模板构建prompt，并根据目标语言调整\n        let mut template = self.prompt_template();\n        \n        // 根据配置的目标语言添加语言指令\n        let language_instruction = context.config.target_language.prompt_instruction();\n        template.system_prompt = format!(\"{}\\n\\n{}\", template.system_prompt, language_instruction);\n        \n        let prompt_builder = GeneratorPromptBuilder::new(template.clone());\n        \n        // 获取自定义prompt内容\n        let custom_content = self.provide_custom_prompt_content(context).await?;\n        \n        // 检查是否需要包含时间戳\n        let include_timestamp = self.should_include_timestamp();\n        \n        let (system_prompt, user_prompt) =\n            prompt_builder.build_prompts(context, &all_sources, custom_content, include_timestamp).await?;\n\n        // 5. 根据配置选择LLM调用方式\n        let params = AgentExecuteParams {\n            prompt_sys: system_prompt,\n            prompt_user: user_prompt,\n            cache_scope: format!(\"{}/{}\", self.memory_scope_key(), self.agent_type()),\n            log_tag: self.agent_type().to_string(),\n        };\n\n        let result_value = match template.llm_call_mode {\n            LLMCallMode::Extract => {\n                let result: Self::Output = extract(context, params).await?;\n                serde_json::to_value(&result)?\n            }\n            LLMCallMode::Prompt => {\n                let result_text: String = prompt(context, params).await?;\n                // 替换时间占位符\n                let processed_text = replace_time_placeholders(&result_text);\n                serde_json::to_value(&processed_text)?\n            }\n            LLMCallMode::PromptWithTools => {\n                let result_text: String = prompt_with_tools(context, params).await?;\n                // 替换时间占位符\n                let processed_text = replace_time_placeholders(&result_text);\n                serde_json::to_value(&processed_text)?\n            }\n        };\n\n        // 6. 存储结果\n        context\n            .store_to_memory(\n                &self.memory_scope_key(),\n                &self.agent_type(),\n                result_value.clone(),\n            )\n            .await?;\n\n        // 7. 执行后处理\n        if let Ok(typed_result) = serde_json::from_value::<Self::Output>(result_value) {\n            self.post_process(&typed_result, context)?;\n            println!(\"✅ Sub-Agent [{}]执行完成\", self.agent_type());\n            Ok(typed_result)\n        } else {\n            Err(anyhow::format_err!(\"\"))\n        }\n    }\n}\n"
     },
     "complexity_metrics": {
       "cyclomatic_complexity": 32.0,
-      "lines_of_code": 558,
-      "number_of_classes": 8,
-      "number_of_functions": 16
+      "lines_of_code": 568,
+      "number_of_classes": 6,
+      "number_of_functions": 20
     },
     "dependencies": [
       {
-        "dependency_type": "error_handling",
+        "dependency_type": "crate",
         "is_external": true,
-        "line_number": 1,
+        "line_number": null,
         "name": "anyhow",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "language_extension",
+        "dependency_type": "crate",
         "is_external": true,
-        "line_number": 2,
+        "line_number": null,
         "name": "async_trait",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "serialization_schema",
+        "dependency_type": "crate",
         "is_external": true,
-        "line_number": 3,
+        "line_number": null,
         "name": "schemars",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "serialization",
+        "dependency_type": "crate",
         "is_external": true,
-        "line_number": 4,
+        "line_number": null,
         "name": "serde",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "standard_library",
-        "is_external": false,
-        "line_number": 5,
-        "name": "std::collections::HashMap",
+        "dependency_type": "crate",
+        "is_external": true,
+        "line_number": null,
+        "name": "chrono",
         "path": null,
         "version": null
       },
       {
-        "dependency_type": "module",
+        "dependency_type": "internal",
         "is_external": false,
-        "line_number": 7,
+        "line_number": null,
         "name": "crate::generator::agent_executor",
         "path": "src/generator/agent_executor.rs",
         "version": null
       },
       {
-        "dependency_type": "module",
+        "dependency_type": "internal",
         "is_external": false,
-        "line_number": 8,
+        "line_number": null,
         "name": "crate::generator::preprocess::memory",
         "path": "src/generator/preprocess/memory.rs",
         "version": null
       },
       {
-        "dependency_type": "module",
+        "dependency_type": "internal",
         "is_external": false,
-        "line_number": 9,
+        "line_number": null,
         "name": "crate::generator::research::memory",
         "path": "src/generator/research/memory.rs",
         "version": null
       },
       {
-        "dependency_type": "module",
+        "dependency_type": "internal",
         "is_external": false,
-        "line_number": 10,
-        "name": "crate::generator::context::GeneratorContext",
-        "path": "src/generator/context.rs",
+        "line_number": null,
+        "name": "crate::utils::prompt_compressor",
+        "path": "src/utils/prompt_compressor.rs",
         "version": null
       }
     ],
-    "detailed_description": "该组件定义了一个通用的智能Agent执行框架（StepForwardAgent trait），通过标准化的数据源管理、Prompt模板构建、内容格式化与压缩机制，实现了高度可复用的Agent行为。核心功能包括：基于Memory和Research结果的数据获取、多类型LLM调用模式（extract/prompt）、智能内容压缩、结构化输出支持以及自动化的执行流程控制。所有Agent继承此trait后只需配置数据源和Prompt模板即可完成实现，大幅降低开发复杂度。",
+    "detailed_description": "该组件是一个通用的智能Agent框架，用于在代码生成流程中动态构建LLM提示（Prompt），整合来自内存和研究代理的多源数据（如项目结构、代码洞察、依赖关系、README等），并通过标准化的LLM调用方式（extract/prompt/prompt_with_tools）执行任务。它采用面向接口设计，通过StepForwardAgent trait定义统一的Agent执行契约，支持数据源验证、提示压缩、时间戳注入、后处理钩子等高级功能，是系统中实现自动化代码生成与上下文感知决策的核心引擎。",
     "interfaces": [
       {
-        "description": "极简Agent的核心trait，定义了标准化的执行流程和扩展钩子",
+        "description": null,
+        "interface_type": "enum",
+        "name": "DataSource",
+        "parameters": [],
+        "return_type": null,
+        "visibility": "pub"
+      },
+      {
+        "description": null,
+        "interface_type": "enum",
+        "name": "LLMCallMode",
+        "parameters": [],
+        "return_type": null,
+        "visibility": "pub"
+      },
+      {
+        "description": null,
+        "interface_type": "struct",
+        "name": "FormatterConfig",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": true,
+            "name": "only_directories_when_files_more_than",
+            "param_type": "Option<usize>"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "code_insights_limit",
+            "param_type": "usize"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "include_source_code",
+            "param_type": "bool"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "dependency_limit",
+            "param_type": "usize"
+          },
+          {
+            "description": null,
+            "is_optional": true,
+            "name": "readme_truncate_length",
+            "param_type": "Option<usize>"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "enable_compression",
+            "param_type": "bool"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "compression_config",
+            "param_type": "CompressionConfig"
+          }
+        ],
+        "return_type": null,
+        "visibility": "pub"
+      },
+      {
+        "description": null,
+        "interface_type": "struct",
+        "name": "PromptTemplate",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "system_prompt",
+            "param_type": "String"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "opening_instruction",
+            "param_type": "String"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "closing_instruction",
+            "param_type": "String"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "llm_call_mode",
+            "param_type": "LLMCallMode"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "formatter_config",
+            "param_type": "FormatterConfig"
+          }
+        ],
+        "return_type": null,
+        "visibility": "pub"
+      },
+      {
+        "description": null,
+        "interface_type": "struct",
+        "name": "AgentDataConfig",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "required_sources",
+            "param_type": "Vec<DataSource>"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "optional_sources",
+            "param_type": "Vec<DataSource>"
+          }
+        ],
+        "return_type": null,
+        "visibility": "pub"
+      },
+      {
+        "description": null,
+        "interface_type": "struct",
+        "name": "DataFormatter",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "config",
+            "param_type": "FormatterConfig"
+          },
+          {
+            "description": null,
+            "is_optional": true,
+            "name": "prompt_compressor",
+            "param_type": "Option<PromptCompressor>"
+          }
+        ],
+        "return_type": null,
+        "visibility": "pub"
+      },
+      {
+        "description": null,
+        "interface_type": "struct",
+        "name": "GeneratorPromptBuilder",
+        "parameters": [
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "template",
+            "param_type": "PromptTemplate"
+          },
+          {
+            "description": null,
+            "is_optional": false,
+            "name": "formatter",
+            "param_type": "DataFormatter"
+          }
+        ],
+        "return_type": null,
+        "visibility": "pub"
+      },
+      {
+        "description": null,
         "interface_type": "trait",
         "name": "StepForwardAgent",
         "parameters": [
           {
-            "description": "生成器上下文，包含内存、配置和研究结果",
+            "description": null,
             "is_optional": false,
-            "name": "context",
-            "param_type": "GeneratorContext"
+            "name": "Output",
+            "param_type": "Self::Output"
           }
         ],
-        "return_type": "Result<Self::Output>",
-        "visibility": "public"
-      },
-      {
-        "description": "通用数据格式化器，负责将各类分析数据转换为LLM友好的文本格式",
-        "interface_type": "struct",
-        "name": "DataFormatter",
-        "parameters": [],
         "return_type": null,
-        "visibility": "public"
-      },
-      {
-        "description": "标准Prompt构建器，整合系统提示词、用户提示词和动态数据源",
-        "interface_type": "struct",
-        "name": "GeneratorPromptBuilder",
-        "parameters": [],
-        "return_type": null,
-        "visibility": "public"
+        "visibility": "pub"
       }
     ],
     "responsibilities": [
-      "定义智能Agent的标准执行流程和接口规范",
-      "提供灵活的数据源注入机制（Memory数据与Research结果）",
-      "实现统一的Prompt模板构建与内容格式化策略",
-      "集成智能内容压缩功能以优化LLM输入长度",
-      "确保执行过程中的数据验证与错误处理"
+      "动态构建和管理LLM提示模板，整合多源上下文数据（项目结构、代码洞察、依赖分析、README、研究结果）",
+      "提供标准化的Agent执行流程，包含数据源验证、LLM调用、结果存储和后处理",
+      "实现智能内容压缩机制，优化提示长度以适配LLM上下文窗口限制",
+      "支持可扩展的Agent插件架构，通过trait定义统一接口，允许自定义数据源、提示模板和后处理逻辑",
+      "提供时间占位符替换和格式化工具，确保生成内容包含准确的时间上下文"
     ]
   },
   {
@@ -9974,7 +10524,7 @@
   {
     "code_dossier": {
       "code_purpose": "agent",
-      "description": "智能Agent执行器，提供LLM交互和缓存管理的核心功能",
+      "description": "智能代理执行器，负责调用LLM并缓存结果。提供三种调用模式：基础提示、工具增强提示和结构化数据提取。",
       "file_path": "src/generator/agent_executor.rs",
       "functions": [
         "prompt",
@@ -9989,17 +10539,17 @@
         "extract"
       ],
       "name": "agent_executor.rs",
-      "source_summary": "use anyhow::Result;\nuse schemars::JsonSchema;\nuse serde::{Deserialize, Serialize};\n\nuse crate::generator::context::GeneratorContext;\nuse crate::llm::client::utils::estimate_token_usage;\n\npub struct AgentExecuteParams {\n    pub prompt_sys: String,\n    pub prompt_user: String,\n    pub cache_scope: String,\n    pub log_tag: String,\n}\n\npub async fn prompt(context: &GeneratorContext, params: AgentExecuteParams) -> Result<String> {\n    let prompt_sys = &params.prompt_sys;\n    let prompt_user = &params.prompt_user;\n    let cache_scope = &params.cache_scope;\n    let log_tag = &params.log_tag;\n\n    let prompt_key = format!(\"{}|{}|reply-prompt\", prompt_sys, prompt_user);\n    // 尝试从缓存获取 - 直接使用prompt作为key，CacheManager会自动计算hash\n    if let Some(cached_reply) = context\n        .cache_manager\n        .read()\n        .await\n        .get::<serde_json::Value>(cache_scope, &prompt_key)\n        .await?\n    {\n        println!(\"   ✅ 使用缓存的AI分析结果: {}\", log_tag);\n        return Ok(cached_reply.to_string());\n    }\n\n    println!(\"   🤖 正在进行AI分析: {}\", log_tag);\n\n    let reply = context\n        .llm_client\n        .prompt_without_react(prompt_sys, prompt_user)\n        .await\n        .map_err(|e| anyhow::anyhow!(\"AI分析失败: {}\", e))?;\n\n    // 估算token使用情况\n    let input_text = format!(\"{} {}\", prompt_sys, prompt_user);\n    let token_usage = estimate_token_usage(&input_text, &reply);\n\n    // 缓存结果 - 使用带token信息的方法\n    context\n        .cache_manager\n        .write()\n        .await\n        .set_with_tokens(cache_scope, &prompt_key, &reply, token_usage)\n        .await?;\n\n    Ok(reply)\n}\n\npub async fn prompt_with_tools(\n    context: &GeneratorContext,\n    params: AgentExecuteParams,\n) -> Result<String> {\n    let prompt_sys = &params.prompt_sys;\n    let prompt_user = &params.prompt_user;\n    let cache_scope = &params.cache_scope;\n    let log_tag = &params.log_tag;\n\n    let prompt_key = format!(\"{}|{}|reply-prompt+tool\", prompt_sys, prompt_user);\n    // 尝试从缓存获取 - 直接使用prompt作为key，CacheManager会自动计算hash\n    if let Some(cached_reply) = context\n        .cache_manager\n        .read()\n        .await\n        .get::<serde_json::Value>(cache_scope, &prompt_key)\n        .await?\n    {\n        println!(\"   ✅ 使用缓存的AI分析结果: {}\", log_tag);\n        return Ok(cached_reply.to_string());\n    }\n\n    println!(\"   🤖 正在进行AI分析: {}\", log_tag);\n\n    let reply = context\n        .llm_client\n        .prompt(prompt_sys, prompt_user)\n        .await\n        .map_err(|e| anyhow::anyhow!(\"AI分析失败: {}\", e))?;\n\n    Ok(reply)\n}\n\npub async fn extract<T>(context: &GeneratorContext, params: AgentExecuteParams) -> Result<T>\nwhere\n    T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,\n{\n    let prompt_sys = &params.prompt_sys;\n    let prompt_user = &params.prompt_user;\n    let cache_scope = &params.cache_scope;\n    let log_tag = &params.log_tag;\n\n    let prompt_key = format!(\"{}|{}\", prompt_sys, prompt_user);\n    // 尝试从缓存获取 - 直接使用prompt作为key，CacheManager会自动计算hash\n    if let Some(cached_reply) = context\n        .cache_manager\n        .read()\n        .await\n        .get::<T>(cache_scope, &prompt_key)\n        .await?\n    {\n        println!(\"   ✅ 使用缓存的AI分析结果: {}\", log_tag);\n        return Ok(cached_reply);\n    }\n\n    println!(\"   🤖 正在进行AI分析: {}\", log_tag);\n\n    let reply = context\n        .llm_client\n        .extract::<T>(prompt_sys, prompt_user)\n        .await\n        .map_err(|e| anyhow::anyhow!(\"AI分析失败: {}\", e))?;\n\n    // 估算token使用情况\n    let input_text = format!(\"{} {}\", prompt_sys, prompt_user);\n    let output_text = serde_json::to_string(&reply).unwrap_or_default();\n    let token_usage = estimate_token_usage(&input_text, &output_text);\n\n    // 缓存结果 - 使用带token信息的方法\n    context\n        .cache_manager\n        .write()\n        .await\n        .set_with_tokens(cache_scope, &prompt_key, &reply, token_usage)\n        .await?;\n\n    Ok(reply)\n}\n"
+      "source_summary": "use anyhow::Result;\nuse schemars::JsonSchema;\nuse serde::{Deserialize, Serialize};\n\nuse crate::generator::context::GeneratorContext;\nuse crate::llm::client::utils::estimate_token_usage;\n\npub struct AgentExecuteParams {\n    pub prompt_sys: String,\n    pub prompt_user: String,\n    pub cache_scope: String,\n    pub log_tag: String,\n}\n\npub async fn prompt(context: &GeneratorContext, params: AgentExecuteParams) -> Result<String> {\n    let prompt_sys = &params.prompt_sys;\n    let prompt_user = &params.prompt_user;\n    let cache_scope = &params.cache_scope;\n    let log_tag = &params.log_tag;\n\n    let prompt_key = format!(\"{}|{}|reply-prompt\", prompt_sys, prompt_user);\n    // 尝试从缓存获取 - 直接使用prompt作为key，CacheManager会自动计算hash\n    if let Some(cached_reply) = context\n        .cache_manager\n        .read()\n        .await\n        .get::<serde_json::Value>(cache_scope, &prompt_key)\n        .await?\n    {\n        println!(\"   ✅ 使用缓存的AI分析结果: {}\", log_tag);\n        return Ok(cached_reply.to_string());\n    }\n\n    println!(\"   🤖 正在进行AI分析: {}\", log_tag);\n\n    let reply = context\n        .llm_client\n        .prompt_without_react(prompt_sys, prompt_user)\n        .await\n        .map_err(|e| anyhow::anyhow!(\"AI分析失败: {}\", e))?;\n\n    // 估算token使用情况\n    let input_text = format!(\"{} {}\", prompt_sys, prompt_user);\n    let token_usage = estimate_token_usage(&input_text, &reply);\n\n    // 缓存结果 - 使用带token信息的方法\n    context\n        .cache_manager\n        .write()\n        .await\n        .set_with_tokens(cache_scope, &prompt_key, &reply, token_usage)\n        .await?;\n\n    Ok(reply)\n}\n\npub async fn prompt_with_tools(\n    context: &GeneratorContext,\n    params: AgentExecuteParams,\n) -> Result<String> {\n    let prompt_sys = &params.prompt_sys;\n    let prompt_user = &params.prompt_user;\n    let cache_scope = &params.cache_scope;\n    let log_tag = &params.log_tag;\n\n    let prompt_key = format!(\"{}|{}|reply-prompt+tool\", prompt_sys, prompt_user);\n    // 尝试从缓存获取 - 直接使用prompt作为key，CacheManager会自动计算hash\n    if let Some(cached_reply) = context\n        .cache_manager\n        .read()\n        .await\n        .get::<serde_json::Value>(cache_scope, &prompt_key)\n        .await?\n    {\n        println!(\"   ✅ 使用缓存的AI分析结果: {}\", log_tag);\n        return Ok(cached_reply.to_string());\n    }\n\n    println!(\"   🤖 正在进行AI分析: {}\", log_tag);\n\n    let reply = context\n        .llm_client\n        .prompt(prompt_sys, prompt_user)\n        .await\n        .map_err(|e| anyhow::anyhow!(\"AI分析失败: {}\", e))?;\n\n    // 估算token使用情况\n    let input_text = format!(\"{} {}\", prompt_sys, prompt_user);\n    let output_text = serde_json::to_string(&reply).unwrap_or_default();\n    let token_usage = estimate_token_usage(&input_text, &output_text);\n\n    // 缓存结果 - 使用带token信息的方法\n    context\n        .cache_manager\n        .write()\n        .await\n        .set_with_tokens(cache_scope, &prompt_key, &reply, token_usage)\n        .await?;\n\n    Ok(reply)\n}\n\npub async fn extract<T>(context: &GeneratorContext, params: AgentExecuteParams) -> Result<T>\nwhere\n    T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,\n{\n    let prompt_sys = &params.prompt_sys;\n    let prompt_user = &params.prompt_user;\n    let cache_scope = &params.cache_scope;\n    let log_tag = &params.log_tag;\n\n    let prompt_key = format!(\"{}|{}\", prompt_sys, prompt_user);\n    // 尝试从缓存获取 - 直接使用prompt作为key，CacheManager会自动计算hash\n    if let Some(cached_reply) = context\n        .cache_manager\n        .read()\n        .await\n        .get::<T>(cache_scope, &prompt_key)\n        .await?\n    {\n        println!(\"   ✅ 使用缓存的AI分析结果: {}\", log_tag);\n        return Ok(cached_reply);\n    }\n\n    println!(\"   🤖 正在进行AI分析: {}\", log_tag);\n\n    let reply = context\n        .llm_client\n        .extract::<T>(prompt_sys, prompt_user)\n        .await\n        .map_err(|e| anyhow::anyhow!(\"AI分析失败: {}\", e))?;\n\n    // 估算token使用情况\n    let input_text = format!(\"{} {}\", prompt_sys, prompt_user);\n    let output_text = serde_json::to_string(&reply).unwrap_or_default();\n    let token_usage = estimate_token_usage(&input_text, &output_text);\n\n    // 缓存结果 - 使用带token信息的方法\n    context\n        .cache_manager\n        .write()\n        .await\n        .set_with_tokens(cache_scope, &prompt_key, &reply, token_usage)\n        .await?;\n\n    Ok(reply)\n}\n"
     },
     "complexity_metrics": {
       "cyclomatic_complexity": 4.0,
-      "lines_of_code": 134,
+      "lines_of_code": 147,
       "number_of_classes": 1,
       "number_of_functions": 3
     },
     "dependencies": [
       {
-        "dependency_type": "crate",
+        "dependency_type": "error_handling",
         "is_external": true,
         "line_number": 1,
         "name": "anyhow",
@@ -10007,7 +10557,7 @@
         "version": null
       },
       {
-        "dependency_type": "crate",
+        "dependency_type": "serialization",
         "is_external": true,
         "line_number": 2,
         "name": "schemars",
@@ -10015,7 +10565,7 @@
         "version": null
       },
       {
-        "dependency_type": "crate",
+        "dependency_type": "serialization",
         "is_external": true,
         "line_number": 3,
         "name": "serde",
@@ -10023,127 +10573,102 @@
         "version": null
       },
       {
-        "dependency_type": "module",
+        "dependency_type": "internal_module",
         "is_external": false,
         "line_number": 5,
-        "name": "GeneratorContext",
-        "path": "crate::generator::context",
+        "name": "crate::generator::context::GeneratorContext",
+        "path": "src/generator/context.rs",
         "version": null
       },
       {
-        "dependency_type": "function",
+        "dependency_type": "internal_util",
         "is_external": false,
         "line_number": 6,
-        "name": "estimate_token_usage",
-        "path": "crate::llm::client::utils",
+        "name": "crate::llm::client::utils::estimate_token_usage",
+        "path": "src/llm/client/utils.rs",
         "version": null
       }
     ],
-    "detailed_description": "这是一个智能Agent执行器组件，作为代码生成器系统中与大语言模型(LLM)交互的核心抽象层。该组件提供了三种不同的AI交互模式：基础提示对话、工具增强对话和结构化数据提取。组件的核心设计理念是通过缓存机制优化AI调用性能，减少重复的API请求成本。它封装了复杂的缓存逻辑、token使用统计和错误处理，为上层业务提供简洁统一的AI能力调用接口。在系统架构中，它位于业务逻辑层和LLM服务层之间，起到适配器和优化器的双重作用。",
+    "detailed_description": "该组件是系统中智能代理的核心执行模块，封装了与大语言模型（LLM）交互的通用逻辑。它提供了三个主要异步函数：`prompt`用于执行基础AI推理，`prompt_with_tools`支持工具调用的复杂推理，`extract`用于从AI响应中解析结构化数据。所有方法均实现智能缓存机制，通过结合系统提示、用户提示和作用域生成唯一键来复用结果，显著提升性能并降低成本。同时集成token使用量估算功能，有助于资源监控和优化。",
     "interfaces": [
       {
-        "description": "Agent执行参数结构体，包含提示信息和缓存配置",
+        "description": "封装AI调用所需参数，包括系统提示、用户提示、缓存作用域和日志标签",
         "interface_type": "struct",
         "name": "AgentExecuteParams",
-        "parameters": [
-          {
-            "description": "系统提示词",
-            "is_optional": false,
-            "name": "prompt_sys",
-            "param_type": "String"
-          },
-          {
-            "description": "用户提示词",
-            "is_optional": false,
-            "name": "prompt_user",
-            "param_type": "String"
-          },
-          {
-            "description": "缓存作用域",
-            "is_optional": false,
-            "name": "cache_scope",
-            "param_type": "String"
-          },
-          {
-            "description": "日志标签",
-            "is_optional": false,
-            "name": "log_tag",
-            "param_type": "String"
-          }
-        ],
+        "parameters": [],
         "return_type": null,
-        "visibility": "public"
+        "visibility": "pub"
       },
       {
-        "description": "基础提示对话接口，不使用工具",
-        "interface_type": "async function",
+        "description": "执行基础AI提示并返回字符串响应",
+        "interface_type": "function",
         "name": "prompt",
         "parameters": [
           {
-            "description": "生成器上下文",
+            "description": "生成器上下文，包含LLM客户端和缓存管理器",
             "is_optional": false,
             "name": "context",
             "param_type": "&GeneratorContext"
           },
           {
-            "description": "执行参数",
+            "description": "AI执行参数配置",
             "is_optional": false,
             "name": "params",
             "param_type": "AgentExecuteParams"
           }
         ],
         "return_type": "Result<String>",
-        "visibility": "public"
+        "visibility": "pub"
       },
       {
-        "description": "工具增强提示对话接口",
-        "interface_type": "async function",
+        "description": "执行支持工具调用的AI提示并返回字符串响应",
+        "interface_type": "function",
         "name": "prompt_with_tools",
         "parameters": [
           {
-            "description": "生成器上下文",
+            "description": "生成器上下文，包含LLM客户端和缓存管理器",
             "is_optional": false,
             "name": "context",
             "param_type": "&GeneratorContext"
           },
           {
-            "description": "执行参数",
+            "description": "AI执行参数配置",
             "is_optional": false,
             "name": "params",
             "param_type": "AgentExecuteParams"
           }
         ],
         "return_type": "Result<String>",
-        "visibility": "public"
+        "visibility": "pub"
       },
       {
-        "description": "结构化数据提取接口，支持泛型类型",
-        "interface_type": "async generic function",
+        "description": "从AI响应中提取符合JsonSchema的结构化数据",
+        "interface_type": "function",
         "name": "extract",
         "parameters": [
           {
-            "description": "生成器上下文",
+            "description": "生成器上下文，包含LLM客户端和缓存管理器",
             "is_optional": false,
             "name": "context",
             "param_type": "&GeneratorContext"
           },
           {
-            "description": "执行参数",
+            "description": "AI执行参数配置",
             "is_optional": false,
             "name": "params",
             "param_type": "AgentExecuteParams"
           }
         ],
         "return_type": "Result<T>",
-        "visibility": "public"
+        "visibility": "pub"
       }
     ],
     "responsibilities": [
-      "提供统一的LLM交互接口，封装不同类型的AI调用模式",
-      "实现智能缓存管理，通过缓存机制优化AI调用性能和成本",
-      "管理token使用统计，跟踪和记录AI调用的资源消耗",
-      "提供结构化数据提取能力，支持类型安全的AI输出解析",
-      "处理AI调用的错误和异常，提供统一的错误处理机制"
+      "执行与大语言模型的交互请求",
+      "管理AI响应结果的缓存策略以提高效率",
+      "估算每次AI调用的token消耗用于成本控制",
+      "提供结构化数据提取能力支持复杂业务场景",
+      "统一处理AI调用过程中的错误和日志记录"
     ]
   },
   {
@@ -10355,15 +10880,15 @@
     },
     "dependencies": [
       {
-        "dependency_type": "function",
+        "dependency_type": "function_call",
         "is_external": false,
-        "line_number": 1,
+        "line_number": 13,
         "name": "crate::generator::workflow::launch",
         "path": "src/generator/workflow.rs",
         "version": null
       },
       {
-        "dependency_type": "library",
+        "dependency_type": "error_handling",
         "is_external": true,
         "line_number": 2,
         "name": "anyhow",
@@ -10371,7 +10896,7 @@
         "version": null
       },
       {
-        "dependency_type": "library",
+        "dependency_type": "cli_parsing",
         "is_external": true,
         "line_number": 3,
         "name": "clap",
@@ -10379,9 +10904,9 @@
         "version": null
       },
       {
-        "dependency_type": "library",
+        "dependency_type": "runtime",
         "is_external": true,
-        "line_number": 9,
+        "line_number": 11,
         "name": "tokio",
         "path": null,
         "version": null
@@ -10459,7 +10984,7 @@
         "version": null
       }
     ],
-    "detailed_description": "该组件是项目的主入口点，使用Tokio异步运行时驱动。它通过clap库解析命令行参数，将其转换为配置对象，并调用generator模块中的launch函数来启动核心业务流程。整体逻辑简洁清晰，遵循Rust异步编程的最佳实践。",
+    "detailed_description": "该组件是项目的执行入口点，使用Tokio异步运行时驱动。它通过clap库解析命令行参数，转换为配置对象，并调用generator模块中的launch函数来启动主工作流程。整体逻辑简洁，专注于初始化和引导应用。",
     "interfaces": [
       {
         "description": "异步主函数，负责启动整个应用程序",
@@ -10471,10 +10996,10 @@
       }
     ],
     "responsibilities": [
-      "作为应用程序的启动入口点",
+      "作为应用程序的唯一入口点",
       "解析命令行参数",
-      "初始化应用配置",
-      "启动核心工作流引擎"
+      "构建运行时配置",
+      "启动核心生成工作流"
     ]
   },
   {
@@ -11100,30 +11625,30 @@
   },
   {
     "code_dossier": {
-      "code_purpose": "util",
+      "code_purpose": "module",
       "description": null,
       "file_path": "src/llm/tools/mod.rs",
       "functions": [],
       "importance_score": 0.6,
       "interfaces": [],
       "name": "mod.rs",
-      "source_summary": "pub mod file_explorer;\npub mod file_reader;"
+      "source_summary": "pub mod file_explorer;\npub mod file_reader;\npub mod time;\n"
     },
     "complexity_metrics": {
       "cyclomatic_complexity": 1.0,
-      "lines_of_code": 2,
+      "lines_of_code": 3,
       "number_of_classes": 0,
       "number_of_functions": 0
     },
     "dependencies": [],
-    "detailed_description": "该组件是一个模块聚合文件，用于组织和导出位于同一目录下的两个子模块：file_explorer 和 file_reader。它本身不包含任何业务逻辑或实现代码，仅作为 Rust 模块系统的命名空间管理工具，提供清晰的模块结构入口。其核心作用是将相关工具模块统一暴露给上层代码，提升代码组织性和可维护性。",
+    "detailed_description": "该模块是一个聚合模块（mod.rs），用于组织和导出位于同一目录下的三个子模块：file_explorer、file_reader 和 time。它本身不包含任何业务逻辑或实现代码，仅作为命名空间的容器，用于简化外部对这些工具模块的导入和管理。这种结构符合 Rust 的模块系统最佳实践，便于维护和按需加载。",
     "interfaces": [],
     "responsibilities": [
       "作为工具模块的聚合入口，统一导出子模块",
-      "维护模块命名空间的逻辑分组，提升代码可读性",
-      "为上层代码提供简洁的导入路径，降低耦合",
-      "遵循 Rust 模块系统最佳实践，实现模块化设计",
-      "支持未来模块扩展，保持结构可扩展性"
+      "提供清晰的命名空间结构，降低外部依赖的复杂度",
+      "支持模块化开发，便于未来扩展新的工具模块",
+      "遵循 Rust 模块系统的惯用模式，提升代码可读性",
+      "作为工具集的门面（Facade），隐藏内部子模块的层级细节"
     ]
   },
   {
@@ -12054,24 +12579,23 @@
 
 ## Memory存储统计
 
-**总存储大小**: 1069445 bytes
+**总存储大小**: 1019390 bytes
 
-- **studies_research**: 102598 bytes (9.6%)
-- **timing**: 35 bytes (0.0%)
-- **documentation**: 167446 bytes (15.7%)
-- **preprocess**: 799366 bytes (74.7%)
+- **studies_research**: 74867 bytes (7.3%)
+- **documentation**: 136519 bytes (13.4%)
+- **preprocess**: 807971 bytes (79.3%)
+- **timing**: 33 bytes (0.0%)
 
 ## 生成文档统计
 
-生成文档数量: 10 个
+生成文档数量: 9 个
 
-- 核心模块与组件调研报告_缓存与性能监控域
+- 核心模块与组件调研报告_配置与基础设施域
+- 项目概述
+- 架构说明
+- 核心模块与组件调研报告_预处理与代码分析域
+- 核心模块与组件调研报告_LLM交互与工具支撑域
 - 核心模块与组件调研报告_文档生成域
 - 核心流程
-- 核心模块与组件调研报告_LLM客户端域
-- 核心模块与组件调研报告_配置管理域
-- 项目概述
 - 边界调用
-- 架构说明
-- 核心模块与组件调研报告_研究分析域
-- 核心模块与组件调研报告_预处理域
+- 核心模块与组件调研报告_智能分析代理域
