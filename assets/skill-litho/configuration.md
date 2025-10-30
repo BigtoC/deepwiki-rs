@@ -88,7 +88,7 @@ deepwiki-rs -p ./project \
 # Generate Japanese documentation
 deepwiki-rs -p ./src --target-language ja
 
-# Generate Chinese documentation  
+# Generate Chinese documentation
 deepwiki-rs -p ./src --target-language zh
 ```
 
@@ -123,7 +123,7 @@ deepwiki-rs -p ./src  # Automatically uses env vars
 ```
 
 ## Configuration File Support
-Create `~/.litho/config.toml`:
+Create `~/litho.toml`:
 ```toml
 [default]
 model_efficient = "gpt-4o-mini"

@@ -127,7 +127,7 @@
         {
           "code_entry_point": "src/config.rs -> Config::load",
           "domain_module": "配置与基础设施域",
-          "operation": "加载项目配置文件(config.toml)，初始化系统运行环境",
+          "operation": "加载项目配置文件(litho.toml)，初始化系统运行环境",
           "step": 1,
           "sub_module": "配置管理"
         },

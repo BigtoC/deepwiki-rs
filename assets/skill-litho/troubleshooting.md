@@ -62,7 +62,7 @@ export OPENAI_API_KEY="your-openai-key"
 ```bash
 deepwiki-rs -p ./src --llm-api-key "your-api-key"
 ```
-3. Create config file `~/.litho/config.toml`:
+3. Create config file `~/litho.toml`:
 ```toml
 [default]
 llm_api_key = "your-api-key"

@@ -30,3 +30,4 @@ litho.docs/
 .idea/
 
 **/.DS_Store
+litho.toml
