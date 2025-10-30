@@ -97,12 +97,28 @@ impl Args {
     /// 将CLI参数转换为配置
     pub fn to_config(self) -> Config {
         let mut config = if let Some(config_path) = &self.config {
-            Config::from_file(config_path).unwrap_or_else(|_| {
-                eprintln!("⚠️ 警告: 无法读取配置文件 {:?}，使用默认配置", config_path);
-                Config::default()
-            })
+            // 如果显式指定了配置文件路径，从该路径加载
+            return Config::from_file(config_path).expect(
+                format!("⚠️ 警告: 无法读取配置文件 {:?}，使用默认配置", config_path).as_str(),
+            );
         } else {
-            Config::default()
+            // 如果没有显式指定配置文件，尝试从默认位置加载
+            let default_config_path = std::env::current_dir()
+                .unwrap_or_else(|_| std::path::PathBuf::from("."))
+                .join("litho.toml");
+
+            if default_config_path.exists() {
+                return Config::from_file(&default_config_path).expect(
+                    format!(
+                        "⚠️ 警告: 无法读取默认配置文件 {:?}，使用默认配置",
+                        default_config_path
+                    )
+                    .as_str(),
+                );
+            } else {
+                // 默认配置文件不存在，使用默认值
+                Config::default()
+            }
         };
 
         // 覆盖配置文件中的设置
