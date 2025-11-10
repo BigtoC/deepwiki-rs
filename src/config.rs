@@ -23,6 +23,8 @@ pub enum LLMProvider {
     Anthropic,
     #[serde(rename = "gemini")]
     Gemini,
+    #[serde(rename = "ollama")]
+    Ollama
 }
 
 impl Default for LLMProvider {
@@ -41,6 +43,7 @@ impl std::fmt::Display for LLMProvider {
             LLMProvider::OpenRouter => write!(f, "openrouter"),
             LLMProvider::Anthropic => write!(f, "anthropic"),
             LLMProvider::Gemini => write!(f, "gemini"),
+            LLMProvider::Ollama => write!(f, "ollama"),
         }
     }
 }
@@ -57,6 +60,7 @@ impl std::str::FromStr for LLMProvider {
             "openrouter" => Ok(LLMProvider::OpenRouter),
             "anthropic" => Ok(LLMProvider::Anthropic),
             "gemini" => Ok(LLMProvider::Gemini),
+            "ollama" => Ok(LLMProvider::Ollama),
             _ => Err(format!("Unknown provider: {}", s)),
         }
     }
