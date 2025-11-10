@@ -26,6 +26,7 @@ pub enum ProviderClient {
     OpenRouter(rig::providers::openrouter::Client),
     Anthropic(rig::providers::anthropic::Client),
     Gemini(rig::providers::gemini::Client),
+    Ollama(rig::providers::ollama::Client),
 }
 
 impl ProviderClient {
@@ -67,6 +68,10 @@ impl ProviderClient {
             LLMProvider::Gemini => {
                 let client = rig::providers::gemini::Client::builder(&config.api_key).build()?;
                 Ok(ProviderClient::Gemini(client))
+            }
+            LLMProvider::Ollama => {
+                let client = rig::providers::ollama::Client::builder().build();
+                Ok(ProviderClient::Ollama(client))
             }
         }
     }
@@ -143,6 +148,15 @@ impl ProviderClient {
                     .additional_params(serde_json::to_value(cfg).unwrap())
                     .build();
                 ProviderAgent::Gemini(agent)
+            }
+            ProviderClient::Ollama(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .temperature(config.temperature.into())
+                    .build();
+                ProviderAgent::Ollama(agent)
             }
         }
     }
@@ -247,6 +261,18 @@ impl ProviderClient {
                     .build();
                 ProviderAgent::Gemini(agent)
             }
+            ProviderClient::Ollama(client) => {
+                let agent = client
+                    .agent(model)
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .temperature(config.temperature.into())
+                    .tool(file_explorer.clone())
+                    .tool(file_reader.clone())
+                    .tool(tool_time)
+                    .build();
+                ProviderAgent::Ollama(agent)
+            }
         }
     }
 
@@ -321,6 +347,14 @@ impl ProviderClient {
                     .build();
                 ProviderExtractor::Gemini(extractor)
             }
+            ProviderClient::Ollama(client) => {
+                let extractor = client
+                    .extractor::<T>(model)
+                    .preamble(system_prompt)
+                    .max_tokens(config.max_tokens.into())
+                    .build();
+                ProviderExtractor::Ollama(extractor)
+            }
         }
     }
 }
@@ -334,6 +368,7 @@ pub enum ProviderAgent {
     Gemini(Agent<rig::providers::gemini::completion::CompletionModel>),
     Moonshot(Agent<rig::providers::moonshot::CompletionModel>),
     DeepSeek(Agent<rig::providers::deepseek::CompletionModel>),
+    Ollama(Agent<rig::providers::ollama::CompletionModel<reqwest::Client>>),
 }
 
 impl ProviderAgent {
@@ -347,6 +382,7 @@ impl ProviderAgent {
             ProviderAgent::OpenRouter(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
             ProviderAgent::Anthropic(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
             ProviderAgent::Gemini(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
+            ProviderAgent::Ollama(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
         }
     }
 
@@ -368,6 +404,7 @@ impl ProviderAgent {
                 agent.prompt(prompt).multi_turn(max_iterations).await
             }
             ProviderAgent::Gemini(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
+            ProviderAgent::Ollama(agent) => agent.prompt(prompt).multi_turn(max_iterations).await,
         }
     }
 }
@@ -384,6 +421,7 @@ where
     Gemini(Extractor<rig::providers::gemini::completion::CompletionModel, T>),
     Moonshot(Extractor<rig::providers::moonshot::CompletionModel, T>),
     DeepSeek(Extractor<rig::providers::deepseek::CompletionModel, T>),
+    Ollama(Extractor<rig::providers::ollama::CompletionModel<reqwest::Client>, T>),
 }
 
 impl<T> ProviderExtractor<T>
@@ -412,6 +450,9 @@ where
                 extractor.extract(prompt).await.map_err(|e| e.into())
             }
             ProviderExtractor::Gemini(extractor) => {
+                extractor.extract(prompt).await.map_err(|e| e.into())
+            }
+            ProviderExtractor::Ollama(extractor) => {
                 extractor.extract(prompt).await.map_err(|e| e.into())
             }
         }
