@@ -54,7 +54,7 @@ impl std::str::FromStr for TargetLanguage {
             "de" | "german" | "deutsch" | "德文" => Ok(TargetLanguage::German),
             "fr" | "french" | "français" | "法文" => Ok(TargetLanguage::French),
             "ru" | "russian" | "русский" | "俄文" => Ok(TargetLanguage::Russian),
-            "vi" | "vietnamese" | "tiếng việt" | "tieng viet" => Ok(TargetLanguage::Vietnamese),
+            "vi" | "vietnamese" | "vn" | "vietnam" => Ok(TargetLanguage::Vietnamese),
             _ => Err(format!("Unknown target language: {}", s)),
         }
     }
@@ -134,7 +134,12 @@ impl TargetLanguage {
                     _ => dir_type.to_string(),
                 }
             }
-            TargetLanguage::Vietnamese => dir_type.to_string(),
+            TargetLanguage::Vietnamese => {
+                match dir_type {
+                    "deep_exploration" => "4-Khám-phá-chi-tiết".to_string(),
+                    _ => dir_type.to_string(),
+                }
+            }
         }
     }
 
