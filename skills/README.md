@@ -76,7 +76,7 @@ When setting up on a new development machine:
 
 ```bash
 # 1. Clone repo
-git clone https://github.com/your-org/deepwiki-rs.git
+git clone https://github.com/sopaco/deepwiki-rs.git
 cd deepwiki-rs
 
 # 2. Install skills
