@@ -160,7 +160,7 @@ When setting up on a new machine:
 
 ```bash
 # 1. Clone deepwiki-rs repo
-git clone https://github.com/your-org/deepwiki-rs.git
+git clone https://github.com/sopaco/deepwiki-rs.git
 
 # 2. Install skill
 cd deepwiki-rs
