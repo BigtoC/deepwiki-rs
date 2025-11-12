@@ -17,6 +17,8 @@ pub enum TargetLanguage {
     French,
     #[serde(rename = "ru")]
     Russian,
+    #[serde(rename = "vi")]
+    Vietnamese,
 }
 
 impl Default for TargetLanguage {
@@ -35,6 +37,7 @@ impl std::fmt::Display for TargetLanguage {
             TargetLanguage::German => write!(f, "de"),
             TargetLanguage::French => write!(f, "fr"),
             TargetLanguage::Russian => write!(f, "ru"),
+            TargetLanguage::Vietnamese => write!(f, "vi"),
         }
     }
 }
@@ -51,6 +54,7 @@ impl std::str::FromStr for TargetLanguage {
             "de" | "german" | "deutsch" | "德文" => Ok(TargetLanguage::German),
             "fr" | "french" | "français" | "法文" => Ok(TargetLanguage::French),
             "ru" | "russian" | "русский" | "俄文" => Ok(TargetLanguage::Russian),
+            "vi" | "vietnamese" | "tiếng việt" | "tieng viet" => Ok(TargetLanguage::Vietnamese),
             _ => Err(format!("Unknown target language: {}", s)),
         }
     }
@@ -67,6 +71,7 @@ impl TargetLanguage {
             TargetLanguage::German => "Deutsch",
             TargetLanguage::French => "Français",
             TargetLanguage::Russian => "Русский",
+            TargetLanguage::Vietnamese => "Tiếng Việt",
         }
     }
 
@@ -80,6 +85,7 @@ impl TargetLanguage {
             TargetLanguage::German => "Bitte schreiben Sie die Dokumentation auf Deutsch und stellen Sie sicher, dass die Sprache präzise, professionell und leicht verständlich ist.",
             TargetLanguage::French => "Veuillez rédiger la documentation en français, en vous assurant que le langage soit précis, professionnel et facile à comprendre.",
             TargetLanguage::Russian => "Пожалуйста, напишите документацию на русском языке, обеспечив точность, профессионализм и понятность изложения.",
+            TargetLanguage::Vietnamese => "Hãy viết toàn bộ tài liệu bằng tiếng Việt tự nhiên, chính xác và dễ hiểu, sử dụng đúng thuật ngữ kỹ thuật.",
         }
     }
 
@@ -128,6 +134,7 @@ impl TargetLanguage {
                     _ => dir_type.to_string(),
                 }
             }
+            TargetLanguage::Vietnamese => dir_type.to_string(),
         }
     }
 
@@ -194,6 +201,15 @@ impl TargetLanguage {
                     "architecture" => "2-Обзор-Архитектуры.md".to_string(),
                     "workflow" => "3-Рабочий-Процесс.md".to_string(),
                     "boundary" => "5-Граничные-Интерфейсы.md".to_string(),
+                    _ => format!("{}.md", doc_type),
+                }
+            }
+            TargetLanguage::Vietnamese => {
+                match doc_type {
+                    "overview" => "1-Tổng-quan-Dự-án.md".to_string(),
+                    "architecture" => "2-Kiến-trúc.md".to_string(),
+                    "workflow" => "3-Luồng-xử-lý.md".to_string(),
+                    "boundary" => "5-Lớp-giao-tiếp-biên.md".to_string(),
                     _ => format!("{}.md", doc_type),
                 }
             }

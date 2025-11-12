@@ -76,7 +76,7 @@ pub struct Args {
     #[arg(long)]
     pub llm_provider: Option<String>,
 
-    /// 目标语言 (zh, en, ja, ko, de, fr, ru)
+    /// 目标语言 (zh, en, ja, ko, de, fr, ru, vi)
     #[arg(long)]
     pub target_language: Option<String>,
 
