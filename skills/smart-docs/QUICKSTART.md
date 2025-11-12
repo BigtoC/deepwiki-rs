@@ -251,7 +251,7 @@ Update the Architecture Overview to reflect new microservices
 
 - **Skill File**: `~/.claude/skills/smart-docs/SKILL.md`
 - **This Guide**: `~/.claude/skills/smart-docs/QUICKSTART.md`
-- **Examples**: See `/Users/vovanduc/Code/dcnet/seller/docs/` for sample output
+- **Examples**: See `[path-to-example-project]/docs/` for sample output
 
 ---
 
