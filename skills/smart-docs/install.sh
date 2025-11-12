@@ -35,6 +35,10 @@ mkdir -p "$SKILL_DIR"
 
 # Copy skill files
 echo "📦 Copying skill files..."
+if [ ! -f "$SCRIPT_DIR/SKILL.md" ] || [ ! -f "$SCRIPT_DIR/QUICKSTART.md" ]; then
+    echo "❌ Required skill files not found in $SCRIPT_DIR"
+    exit 1
+fi
 cp "$SCRIPT_DIR/SKILL.md" "$SKILL_DIR/"
 cp "$SCRIPT_DIR/QUICKSTART.md" "$SKILL_DIR/"
 
