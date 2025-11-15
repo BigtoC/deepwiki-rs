@@ -144,6 +144,10 @@ pub enum CodePurpose {
     Test,
     /// 文档组件
     Doc,
+    /// 数据访问层组件
+    Dao,
+    /// 上下文组件
+    Context,
     /// 其他未归类或未知
     Other,
 }
@@ -174,6 +178,8 @@ impl CodePurpose {
             CodePurpose::Doc => "文档组件",
             CodePurpose::Other => "其他组件",
             CodePurpose::Types => "程序接口定义",
+            CodePurpose::Dao => "数据访问层组件",
+            CodePurpose::Context => "上下文组件",
         }
     }
 }
@@ -248,8 +254,16 @@ impl CodePurposeMapper {
         {
             return CodePurpose::Database;
         }
-        if path_lower.contains("/api/")
-            || path_lower.contains("/api")
+        if path_lower.contains("/dao/")
+            || path_lower.contains("/repository/")
+            || path_lower.contains("/persistence/")
+        {
+            return CodePurpose::Dao;
+        }
+        if path_lower.contains("/context") || path_lower.contains("/ctx/") {
+            return CodePurpose::Context;
+        }
+        if path_lower.contains("/api")
             || path_lower.contains("/endpoint")
             || path_lower.contains("/controller")
             || path_lower.contains("/native_module")
@@ -304,6 +318,12 @@ impl CodePurposeMapper {
         }
         if name_lower.contains("database") {
             return CodePurpose::Database;
+        }
+        if name_lower.contains("repository") || name_lower.contains("persistence") {
+            return CodePurpose::Dao;
+        }
+        if name_lower.contains("context") || name_lower.contains("ctx") {
+            return CodePurpose::Context;
         }
         if name_lower.contains("api") || name_lower.contains("endpoint") {
             return CodePurpose::Api;
