@@ -24,7 +24,7 @@ pub enum LLMProvider {
     #[serde(rename = "gemini")]
     Gemini,
     #[serde(rename = "ollama")]
-    Ollama
+    Ollama,
 }
 
 impl Default for LLMProvider {
@@ -133,7 +133,8 @@ pub struct LLMConfig {
     /// LLM Provider类型
     pub provider: LLMProvider,
 
-    /// LLM API KEY
+    /// LLM API KEY (optional for local providers like Ollama)
+    #[serde(default)]
     pub api_key: String,
 
     /// LLM API基地址
@@ -437,6 +438,7 @@ impl Default for Config {
                 "bun.lock".to_string(),
                 "package-lock.json".to_string(),
                 "yarn.lock".to_string(),
+                "pnpm-lock.yaml".to_string(),
                 "Cargo.lock".to_string(),
                 ".gitignore".to_string(),
                 "*.tpl".to_string(),

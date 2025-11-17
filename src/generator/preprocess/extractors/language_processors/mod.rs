@@ -44,6 +44,7 @@ impl LanguageProcessorManager {
                 Box::new(rust::RustProcessor::new()),
                 Box::new(javascript::JavaScriptProcessor::new()),
                 Box::new(typescript::TypeScriptProcessor::new()),
+                Box::new(php::PhpProcessor::new()),
                 Box::new(react::ReactProcessor::new()),
                 Box::new(vue::VueProcessor::new()),
                 Box::new(svelte::SvelteProcessor::new()),
@@ -137,6 +138,7 @@ impl LanguageProcessorManager {
 pub mod java;
 pub mod javascript;
 pub mod kotlin;
+pub mod php;
 pub mod python;
 pub mod react;
 pub mod rust;
