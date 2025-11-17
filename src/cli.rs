@@ -144,6 +144,10 @@ impl Args {
         }
         if let Some(llm_api_base_url) = self.llm_api_base_url {
             config.llm.api_base_url = llm_api_base_url;
+        } else {
+            if (config.llm.provider == LLMProvider::Ollama) {
+                config.llm.api_base_url = "http://localhost:11434".to_owned();
+            }
         }
         if let Some(llm_api_key) = self.llm_api_key {
             config.llm.api_key = llm_api_key;
