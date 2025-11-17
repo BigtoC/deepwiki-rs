@@ -72,7 +72,9 @@ impl ProviderClient {
                 Ok(ProviderClient::Gemini(client))
             }
             LLMProvider::Ollama => {
-                let client = rig::providers::ollama::Client::builder().build();
+                let client = rig::providers::ollama::Client::builder()
+                    .base_url(&config.api_base_url)
+                    .build();
                 Ok(ProviderClient::Ollama(client))
             }
         }

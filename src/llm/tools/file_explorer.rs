@@ -403,6 +403,8 @@ impl AgentToolFileExplorer {
                 "js" | "ts" | "mjs" | "cjs" => score += 0.3,
                 // 前端框架文件
                 "vue" | "svelte" => score += 0.3,
+                // 小程序
+                "wxml" | "ttml" | "ksml" => score += 0.3,
                 // 配置文件
                 "toml" | "yaml" | "yml" | "json" | "xml" | "ini" | "env" => score += 0.1,
                 // 构建和包管理文件
@@ -410,7 +412,7 @@ impl AgentToolFileExplorer {
                 "package" => score += 0.15,
                 "lock" => score += 0.05,
                 // 样式文件
-                "css" | "scss" | "sass" | "less" | "styl" => score += 0.1,
+                "css" | "scss" | "sass" | "less" | "styl" | "wxss" => score += 0.1,
                 // 模板文件
                 "html" | "htm" | "hbs" | "mustache" | "ejs" => score += 0.1,
                 _ => {}
