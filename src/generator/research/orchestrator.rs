@@ -9,54 +9,60 @@ use crate::generator::research::agents::system_context_researcher::SystemContext
 use crate::generator::research::agents::workflow_researcher::WorkflowResearcher;
 use crate::generator::step_forward_agent::StepForwardAgent;
 
-/// 多智能体研究编排器
+/// Multi-agent research orchestrator
 #[derive(Default)]
 pub struct ResearchOrchestrator;
 
 impl ResearchOrchestrator {
-    /// 执行所有智能体的分析流程
+    /// Execute all agent analysis pipelines
     pub async fn execute_research_pipeline(&self, context: &GeneratorContext) -> Result<()> {
-        println!("🚀 开始执行Litho Studies Research调研流程...");
+        println!("🚀 Starting Litho Studies Research investigation pipeline...");
 
-        // 第一层：宏观分析（C1）
-        self.execute_agent("SystemContextResearcher", &SystemContextResearcher, context)
-            .await?;
-
-        // 第二层：中观分析（C2）
-        self.execute_agent("DomainModulesDetector", &DomainModulesDetector, context)
-            .await?;
-        self.execute_agent("ArchitectureResearcher", &ArchitectureResearcher, context)
-            .await?;
-        self.execute_agent("WorkflowResearcher", &WorkflowResearcher, context)
+        // First layer: Macro analysis (C1)
+        self.execute_agent(&SystemContextResearcher, context)
             .await?;
 
-        // 第三层：微观分析（C3-C4）
-        self.execute_agent("KeyModulesInsight", &KeyModulesInsight, context)
+        // Second layer: Meso analysis (C2)
+        self.execute_agent(&DomainModulesDetector, context)
+            .await?;
+        self.execute_agent(&ArchitectureResearcher, context)
+            .await?;
+        self.execute_agent(&WorkflowResearcher, context)
             .await?;
 
-        // 边界接口分析
-        self.execute_agent("BoundaryAnalyzer", &BoundaryAnalyzer::default(), context)
+        // Third layer: Micro analysis (C3-C4)
+        self.execute_agent(&KeyModulesInsight, context)
             .await?;
 
-        println!("✓ Litho Studies Research流程执行完毕");
+        // Boundary interface analysis
+        self.execute_agent(&BoundaryAnalyzer::default(), context)
+            .await?;
+
+        println!("✓ Litho Studies Research pipeline execution completed");
 
         Ok(())
     }
 
-    /// 执行单个智能体
+    /// Execute a single agent
     async fn execute_agent<T>(
         &self,
-        name: &str,
         agent: &T,
         context: &GeneratorContext,
     ) -> Result<()>
     where
         T: StepForwardAgent + Send + Sync,
     {
-        println!("🤖 执行 {} 智能体分析...", name);
+        // Use localized agent name if available
+        let agent_name = if let Some(agent_enum) = agent.agent_type_enum() {
+            agent_enum.display_name(&context.config.target_language)
+        } else {
+            agent.agent_type()
+        };
+        
+        println!("🤖 Executing {} agent analysis...", agent_name);
 
         agent.execute(context).await?;
-        println!("✓ {} 分析完成", name);
+        println!("✓ {} analysis completed", agent_name);
         Ok(())
     }
 }

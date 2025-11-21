@@ -4,15 +4,19 @@ use crate::generator::step_forward_agent::{
     AgentDataConfig, DataSource, FormatterConfig, LLMCallMode, PromptTemplate, StepForwardAgent,
 };
 
-/// 架构调研员 - 负责分析项目的整体架构
+/// Architecture Researcher - Responsible for analyzing the overall architecture of the project
 #[derive(Default)]
 pub struct ArchitectureResearcher;
 
 impl StepForwardAgent for ArchitectureResearcher {
-    type Output = String; // 返回文本结果
+    type Output = String; // Returns text result
 
     fn agent_type(&self) -> String {
         AgentType::ArchitectureResearcher.to_string()
+    }
+
+    fn agent_type_enum(&self) -> Option<AgentType> {
+        Some(AgentType::ArchitectureResearcher)
     }
 
     fn memory_scope_key(&self) -> String {
@@ -35,19 +39,19 @@ impl StepForwardAgent for ArchitectureResearcher {
     fn prompt_template(&self) -> PromptTemplate {
         PromptTemplate {
             system_prompt:
-                "你是一个专业的软件架构分析师，根据调研报告分析系统架构，输出项目的架构调研文档"
+                "You are a professional software architecture analyst, analyze system architecture based on research reports, output project architecture research documentation"
                     .to_string(),
 
-            opening_instruction: "为你提供如下调研报告，用于分析系统的架构：".to_string(),
+            opening_instruction: "The following research reports are provided for analyzing the system architecture:".to_string(),
 
             closing_instruction: r#"
-## 分析要求：
-- 基于提供的项目信息和调研材料绘制系统架构图
-- 采用mermaid格式表示架构关系
-- 重点体现核心组件和交互模式"#
+## Analysis Requirements:
+- Draw system architecture diagram based on the provided project information and research materials
+- Use mermaid format to represent architecture relationships
+- Highlight core components and interaction patterns"#
                 .to_string(),
 
-            llm_call_mode: LLMCallMode::PromptWithTools, // 使用prompt模式
+            llm_call_mode: LLMCallMode::PromptWithTools, // Use prompt mode
             formatter_config: FormatterConfig::default(),
         }
     }

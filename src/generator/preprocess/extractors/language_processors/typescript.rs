@@ -40,7 +40,7 @@ impl LanguageProcessor for TypeScriptProcessor {
         let source_file = file_path.to_string_lossy().to_string();
 
         for (line_num, line) in content.lines().enumerate() {
-            // 提取type import语句
+            // Extract type import statements
             if let Some(captures) = self.type_import_regex.captures(line) {
                 if let Some(import_path) = captures.get(1) {
                     let path_str = import_path.as_str();
@@ -56,7 +56,7 @@ impl LanguageProcessor for TypeScriptProcessor {
                     });
                 }
             }
-            // 提取普通import语句
+            // Extract regular import statements
             else if let Some(captures) = self.import_regex.captures(line) {
                 if let Some(import_path) = captures.get(1) {
                     let path_str = import_path.as_str();
@@ -80,7 +80,7 @@ impl LanguageProcessor for TypeScriptProcessor {
     fn determine_component_type(&self, file_path: &Path, content: &str) -> String {
         let file_name = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
 
-        // 检查特殊文件名
+        // Check special file names
         if file_name == "index.ts" || file_name == "main.ts" || file_name == "app.ts" {
             return "ts_main".to_string();
         }
@@ -93,12 +93,12 @@ impl LanguageProcessor for TypeScriptProcessor {
             return "ts_config".to_string();
         }
 
-        // 检查文件名后缀
+        // Check file name suffix
         if file_name.ends_with(".test.ts") || file_name.ends_with(".spec.ts") {
             return "ts_test".to_string();
         }
 
-        // 检查路径组件中是否包含测试相关目录（避免误判）
+        // Check if path components contain test-related directories (avoid false positives)
         let has_test_dir = file_path.components().any(|component| {
             if let std::path::Component::Normal(name) = component {
                 let name_str = name.to_string_lossy().to_lowercase();
@@ -116,7 +116,7 @@ impl LanguageProcessor for TypeScriptProcessor {
             return "ts_test".to_string();
         }
 
-        // 检查内容模式
+        // Check content patterns
         if content.contains("interface ") || content.contains("type ") {
             "ts_types".to_string()
         } else if content.contains("class ") && content.contains("extends") {
@@ -135,7 +135,7 @@ impl LanguageProcessor for TypeScriptProcessor {
     fn is_important_line(&self, line: &str) -> bool {
         let trimmed = line.trim();
 
-        // 函数定义
+        // Function definitions
         if trimmed.starts_with("function ")
             || trimmed.starts_with("async function ")
             || trimmed.contains("=> {")
@@ -144,7 +144,7 @@ impl LanguageProcessor for TypeScriptProcessor {
             return true;
         }
 
-        // 类、接口、类型定义
+        // Class, interface, type definitions
         if trimmed.starts_with("class ")
             || trimmed.starts_with("interface ")
             || trimmed.starts_with("type ")
@@ -153,12 +153,12 @@ impl LanguageProcessor for TypeScriptProcessor {
             return true;
         }
 
-        // 导入导出语句
+        // Import/export statements
         if trimmed.starts_with("import ") || trimmed.starts_with("export ") {
             return true;
         }
 
-        // 重要注释
+        // Important comments
         if trimmed.contains("TODO")
             || trimmed.contains("FIXME")
             || trimmed.contains("NOTE")
@@ -179,7 +179,7 @@ impl LanguageProcessor for TypeScriptProcessor {
         let lines: Vec<&str> = content.lines().collect();
 
         for (i, line) in lines.iter().enumerate() {
-            // 提取函数定义
+            // Extract function definitions
             if let Some(captures) = self.function_regex.captures(line) {
                 let is_exported = captures.get(1).is_some();
                 let is_async = captures.get(2).is_some();
@@ -209,7 +209,7 @@ impl LanguageProcessor for TypeScriptProcessor {
                 });
             }
 
-            // 提取接口定义
+            // Extract interface definitions
             if let Some(captures) = self.interface_regex.captures(line) {
                 let is_exported = captures.get(1).is_some();
                 let name = captures
@@ -229,7 +229,7 @@ impl LanguageProcessor for TypeScriptProcessor {
                 });
             }
 
-            // 提取类型别名
+            // Extract type alias definitions
             if let Some(captures) = self.type_alias_regex.captures(line) {
                 let is_exported = captures.get(1).is_some();
                 let name = captures
@@ -249,7 +249,7 @@ impl LanguageProcessor for TypeScriptProcessor {
                 });
             }
 
-            // 提取类定义
+            // Extract class definitions
             if let Some(captures) = self.class_regex.captures(line) {
                 let is_exported = captures.get(1).is_some();
                 let is_abstract = captures.get(2).is_some();
@@ -275,7 +275,7 @@ impl LanguageProcessor for TypeScriptProcessor {
                 });
             }
 
-            // 提取枚举定义
+            // Extract enum definitions
             if let Some(captures) = self.enum_regex.captures(line) {
                 let is_exported = captures.get(1).is_some();
                 let name = captures
@@ -295,7 +295,7 @@ impl LanguageProcessor for TypeScriptProcessor {
                 });
             }
 
-            // 提取方法定义（类内部）
+            // Extract method definitions (inside classes)
             if let Some(captures) = self.method_regex.captures(line) {
                 let visibility = captures.get(1).map(|m| m.as_str()).unwrap_or("public");
                 let is_static = captures.get(2).is_some();
@@ -334,7 +334,7 @@ impl LanguageProcessor for TypeScriptProcessor {
 }
 
 impl TypeScriptProcessor {
-    /// 解析TypeScript函数参数
+    /// Parse TypeScript function parameters
     fn parse_typescript_parameters(&self, params_str: &str) -> Vec<ParameterInfo> {
         let mut parameters = Vec::new();
 
@@ -342,14 +342,14 @@ impl TypeScriptProcessor {
             return parameters;
         }
 
-        // 简单的参数解析，处理基本情况
+        // Simple parameter parsing, handling basic cases
         for param in params_str.split(',') {
             let param = param.trim();
             if param.is_empty() {
                 continue;
             }
 
-            // 解析参数格式: name: type 或 name?: type 或 name: type = default
+            // Parse parameter format: name: type or name?: type or name: type = default
             let is_optional = param.contains('?') || param.contains('=');
 
             if let Some(colon_pos) = param.find(':') {
@@ -374,19 +374,19 @@ impl TypeScriptProcessor {
         parameters
     }
 
-    /// 提取JSDoc注释
+    /// Extract JSDoc comment
     fn extract_jsdoc_comment(&self, lines: &[&str], current_line: usize) -> Option<String> {
         let mut doc_lines = Vec::new();
         let mut in_jsdoc = false;
 
-        // 向上查找JSDoc注释
+        // Search upward for JSDoc comments
         for i in (0..current_line).rev() {
             let line = lines[i].trim();
 
             if line.ends_with("*/") {
                 in_jsdoc = true;
                 if line.starts_with("/**") {
-                    // 单行JSDoc
+                    // Single-line JSDoc
                     let content = line.trim_start_matches("/**").trim_end_matches("*/").trim();
                     if !content.is_empty() {
                         doc_lines.insert(0, content.to_string());

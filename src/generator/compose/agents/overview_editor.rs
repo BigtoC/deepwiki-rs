@@ -35,79 +35,79 @@ impl StepForwardAgent for OverviewEditor {
 
     fn prompt_template(&self) -> PromptTemplate {
         PromptTemplate {
-            system_prompt: r#"你是一个专业的软件架构文档编写专家，专注于生成C4架构模型SystemContext层级文档。
+            system_prompt: r#"You are a professional software architecture documentation expert, focused on generating C4 architecture model SystemContext level documentation.
 
-你的任务是基于提供的系统上下文调研报告和领域模块分析结果，编写一份以`项目概述`为标题的完整、深入且详细的、易于阅读的C4 SystemContext文档。
+Your task is to write a complete, in-depth, detailed, and easy-to-read C4 SystemContext document titled `Project Overview` based on the provided system context research report and domain module analysis results.
 
-## C4 SystemContext文档要求：
-1. **系统概览**：清晰描述系统的核心目标、业务价值和技术特征
-2. **用户角色**：明确定义目标用户群体和使用场景
-3. **系统边界**：准确划定系统范围，明确包含和排除的组件
-4. **外部交互**：详细说明与外部系统的交互关系和依赖
-5. **架构视图**：提供清晰的系统上下文图和关键信息
+## C4 SystemContext Documentation Requirements:
+1. **System Overview**: Clearly describe the system's core objectives, business value, and technical characteristics
+2. **User Roles**: Clearly define target user groups and usage scenarios
+3. **System Boundaries**: Accurately delineate system scope, clearly stating included and excluded components
+4. **External Interactions**: Detail interactions and dependencies with external systems
+5. **Architecture View**: Provide clear system context diagrams and key information
 
-## 文档结构要求：
-- 包含适当的标题层级和章节组织
-- 提供清晰的图表和可视化内容
-- 确保内容逻辑清晰、表达准确"#.to_string(),
+## Document Structure Requirements:
+- Include appropriate heading levels and chapter organization
+- Provide clear diagrams and visual content
+- Ensure content logic is clear and expression is accurate"#.to_string(),
 
-            opening_instruction: r#"基于以下调研材料，编写一份完整、深入、详细的C4 SystemContext架构文档：
+            opening_instruction: r#"Based on the following research materials, write a complete, in-depth, and detailed C4 SystemContext architecture document:
 
-## 编写指导：
-1. 首先分析系统上下文调研报告，提取核心信息
-2. 结合领域模块分析结果，理解系统内部结构
-3. 按照C4模型SystemContext层级的要求组织内容
-4. 确保文档内容准确反映系统的实际情况"#.to_string(),
+## Writing Guidelines:
+1. First analyze the system context research report and extract core information
+2. Combine domain module analysis results to understand the internal system structure
+3. Organize content according to C4 model SystemContext level requirements
+4. Ensure document content accurately reflects the actual system situation"#.to_string(),
 
             closing_instruction: r#"
-## 输出要求：
-1. **完整性**：确保涵盖C4 SystemContext的所有关键要素
-2. **准确性**：基于调研数据，避免主观臆测和不准确信息
-3. **专业性**：使用专业的架构术语和表达方式
-4. **可读性**：结构清晰，便于技术团队和业务人员理解
-5. **实用性**：提供有价值的架构洞察和指导信息
+## Output Requirements:
+1. **Completeness**: Ensure coverage of all key elements of C4 SystemContext
+2. **Accuracy**: Based on research data, avoid subjective speculation and inaccurate information
+3. **Professionalism**: Use professional architecture terminology and expression
+4. **Readability**: Clear structure, easy for both technical teams and business personnel to understand
+5. **Practicality**: Provide valuable architecture insights and guidance
 
-## 文档格式：
-- 包含必要的图表说明（如Mermaid图表）
-- 保持章节结构的逻辑性和层次性
-- 确保内容的完整性和连贯性
+## Document Format:
+- Include necessary diagram descriptions (such as Mermaid diagrams)
+- Maintain logical and hierarchical chapter structure
+- Ensure content completeness and coherence
 
-## 推荐文档结构：
+## Recommended Document Structure:
 ```sample
-# 系统概览 (System Context)
+# System Context Overview
 
-## 1. 项目简介
-- 项目名称和描述
-- 核心功能与价值
-- 技术特征概述
+## 1. Project Introduction
+- Project name and description
+- Core functionality and value
+- Technical characteristics overview
 
-## 2. 目标用户
-- 用户角色定义
-- 使用场景描述
-- 用户需求分析
+## 2. Target Users
+- User role definitions
+- Usage scenario descriptions
+- User requirement analysis
 
-## 3. 系统边界
-- 系统范围定义
-- 包含的核心组件
-- 排除的外部依赖
+## 3. System Boundaries
+- System scope definition
+- Included core components
+- Excluded external dependencies
 
-## 4. 外部系统交互
-- 外部系统列表
-- 交互方式说明
-- 依赖关系分析
+## 4. External System Interactions
+- External system list
+- Interaction method descriptions
+- Dependency relationship analysis
 
-## 5. 系统上下文图
-- C4 SystemContext图表
-- 关键交互流程
-- 架构决策说明
+## 5. System Context Diagram
+- C4 SystemContext diagram
+- Key interaction flows
+- Architecture decision descriptions
 
-## 6. 技术架构概览
-- 主要技术栈
-- 架构模式
-- 关键设计决策
+## 6. Technical Architecture Overview
+- Main technology stack
+- Architecture patterns
+- Key design decisions
 ```
 
-请生成一份高质量的C4 SystemContext架构文档。"#.to_string(),
+Please generate a high-quality C4 SystemContext architecture document."#.to_string(),
 
             llm_call_mode: LLMCallMode::Prompt,
             formatter_config: FormatterConfig::default(),

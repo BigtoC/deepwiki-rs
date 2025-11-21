@@ -28,7 +28,7 @@ impl LanguageProcessor for KotlinProcessor {
         let source_file = file_path.to_string_lossy().to_string();
 
         for (line_num, line) in content.lines().enumerate() {
-            // 提取import语句
+            // Extract import statements
             if let Some(captures) = self.import_regex.captures(line) {
                 if let Some(import_path) = captures.get(1) {
                     let import_str = import_path.as_str();
@@ -49,7 +49,7 @@ impl LanguageProcessor for KotlinProcessor {
                 }
             }
 
-            // 提取package语句
+            // Extract package statement
             if let Some(captures) = self.package_regex.captures(line) {
                 if let Some(package_name) = captures.get(1) {
                     dependencies.push(Dependency {
@@ -70,7 +70,7 @@ impl LanguageProcessor for KotlinProcessor {
     fn determine_component_type(&self, file_path: &Path, content: &str) -> String {
         let file_name = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
 
-        // 检查特殊文件名模式
+        // Check special file name patterns
         if file_name.ends_with("Activity.kt") {
             return "android_activity".to_string();
         }
@@ -99,7 +99,7 @@ impl LanguageProcessor for KotlinProcessor {
             return "kotlin_utility".to_string();
         }
 
-        // 检查内容模式
+        // Check content patterns
         if content.contains("class ") && content.contains(": Activity") {
             "android_activity".to_string()
         } else if content.contains("class ") && content.contains(": Fragment") {
@@ -126,7 +126,7 @@ impl LanguageProcessor for KotlinProcessor {
     fn is_important_line(&self, line: &str) -> bool {
         let trimmed = line.trim();
 
-        // 类、接口、对象定义
+        // Class, interface, object definitions
         if trimmed.starts_with("class ")
             || trimmed.starts_with("interface ")
             || trimmed.starts_with("object ")
@@ -137,7 +137,7 @@ impl LanguageProcessor for KotlinProcessor {
             return true;
         }
 
-        // 函数定义
+        // Function definitions
         if trimmed.starts_with("fun ")
             || trimmed.starts_with("suspend fun ")
             || trimmed.starts_with("inline fun ")
@@ -148,7 +148,7 @@ impl LanguageProcessor for KotlinProcessor {
             return true;
         }
 
-        // 属性定义
+        // Property definitions
         if trimmed.starts_with("val ")
             || trimmed.starts_with("var ")
             || trimmed.starts_with("const val ")
@@ -157,17 +157,17 @@ impl LanguageProcessor for KotlinProcessor {
             return true;
         }
 
-        // 注解
+        // Annotations
         if trimmed.starts_with("@") {
             return true;
         }
 
-        // 导入和包声明
+        // Imports and package declarations
         if trimmed.starts_with("import ") || trimmed.starts_with("package ") {
             return true;
         }
 
-        // 重要注释
+        // Important comments
         if trimmed.contains("TODO")
             || trimmed.contains("FIXME")
             || trimmed.contains("NOTE")
@@ -190,7 +190,7 @@ impl LanguageProcessor for KotlinProcessor {
         for (i, line) in lines.iter().enumerate() {
             let trimmed = line.trim();
 
-            // 提取函数定义
+            // Extract function definitions
             if trimmed.starts_with("fun ") || trimmed.contains(" fun ") {
                 if let Some(func_name) = self.extract_kotlin_function(trimmed) {
                     let visibility = self.extract_kotlin_visibility(trimmed);
@@ -212,9 +212,9 @@ impl LanguageProcessor for KotlinProcessor {
                 }
             }
 
-            // 提取类定义
+            // Extract class definitions
             if trimmed.starts_with("class ") || trimmed.contains(" class ") {
-                if let Some(class_name) = self.extract_kotlin_class(trimmed) {
+                if let Some(class_name) = self.extract_kotlin_class_name(trimmed) {
                     let visibility = self.extract_kotlin_visibility(trimmed);
                     let is_data = trimmed.contains("data class");
                     let is_sealed = trimmed.contains("sealed class");
@@ -237,9 +237,9 @@ impl LanguageProcessor for KotlinProcessor {
                 }
             }
 
-            // 提取接口定义
+            // Extract interface definitions
             if trimmed.starts_with("interface ") || trimmed.contains(" interface ") {
-                if let Some(interface_name) = self.extract_kotlin_interface(trimmed) {
+                if let Some(interface_name) = self.extract_kotlin_interface_name(trimmed) {
                     let visibility = self.extract_kotlin_visibility(trimmed);
 
                     interfaces.push(InterfaceInfo {
@@ -253,9 +253,9 @@ impl LanguageProcessor for KotlinProcessor {
                 }
             }
 
-            // 提取对象定义
+            // Extract object definitions
             if trimmed.starts_with("object ") || trimmed.contains(" object ") {
-                if let Some(object_name) = self.extract_kotlin_object(trimmed) {
+                if let Some(object_name) = self.extract_kotlin_object_name(trimmed) {
                     let visibility = self.extract_kotlin_visibility(trimmed);
 
                     interfaces.push(InterfaceInfo {
@@ -275,7 +275,7 @@ impl LanguageProcessor for KotlinProcessor {
 }
 
 impl KotlinProcessor {
-    /// 提取Kotlin函数名称
+    /// Extract Kotlin function name
     fn extract_kotlin_function(&self, line: &str) -> Option<String> {
         if let Some(fun_pos) = line.find("fun ") {
             let after_fun = &line[fun_pos + 4..];
@@ -289,8 +289,8 @@ impl KotlinProcessor {
         None
     }
 
-    /// 提取Kotlin类名称
-    fn extract_kotlin_class(&self, line: &str) -> Option<String> {
+    /// Extract Kotlin class name
+    fn extract_kotlin_class_name(&self, line: &str) -> Option<String> {
         if let Some(class_pos) = line.find("class ") {
             let after_class = &line[class_pos + 6..];
             let class_name = if let Some(space_pos) = after_class.find(' ') {
@@ -310,8 +310,8 @@ impl KotlinProcessor {
         None
     }
 
-    /// 提取Kotlin接口名称
-    fn extract_kotlin_interface(&self, line: &str) -> Option<String> {
+    /// Extract Kotlin interface name
+    fn extract_kotlin_interface_name(&self, line: &str) -> Option<String> {
         if let Some(interface_pos) = line.find("interface ") {
             let after_interface = &line[interface_pos + 10..];
             let interface_name = if let Some(space_pos) = after_interface.find(' ') {
@@ -329,8 +329,8 @@ impl KotlinProcessor {
         None
     }
 
-    /// 提取Kotlin对象名称
-    fn extract_kotlin_object(&self, line: &str) -> Option<String> {
+    /// Extract Kotlin object name
+    fn extract_kotlin_object_name(&self, line: &str) -> Option<String> {
         if let Some(object_pos) = line.find("object ") {
             let after_object = &line[object_pos + 7..];
             let object_name = if let Some(space_pos) = after_object.find(' ') {
@@ -348,7 +348,7 @@ impl KotlinProcessor {
         None
     }
 
-    /// 提取Kotlin可见性修饰符
+    /// Extract Kotlin visibility modifiers
     fn extract_kotlin_visibility(&self, line: &str) -> String {
         if line.contains("private ") {
             "private".to_string()
@@ -361,7 +361,7 @@ impl KotlinProcessor {
         }
     }
 
-    /// 提取Kotlin返回类型
+    /// Extract Kotlin return type
     fn extract_kotlin_return_type(&self, line: &str) -> Option<String> {
         if let Some(colon_pos) = line.find(": ") {
             let after_colon = &line[colon_pos + 2..];
@@ -380,11 +380,11 @@ impl KotlinProcessor {
         None
     }
 
-    /// 提取Kotlin注释
+    /// Extract Kotlin comments
     fn extract_kotlin_comment(&self, lines: &[&str], current_line: usize) -> Option<String> {
         let mut doc_lines = Vec::new();
 
-        // 向上查找注释
+        // Search upward for comments
         for i in (0..current_line).rev() {
             let line = lines[i].trim();
 

@@ -1,4 +1,4 @@
-//! 文件读取工具
+//! File reading tool
 
 #[cfg(debug_assertions)]
 use std::time::Duration;
@@ -9,13 +9,13 @@ use serde::{Deserialize, Serialize};
 
 use crate::{config::Config, utils::file_utils::is_binary_file_path};
 
-/// 文件读取工具
+/// File reading tool
 #[derive(Debug, Clone)]
 pub struct AgentToolFileReader {
     config: Config,
 }
 
-/// 文件读取参数
+/// File reading parameters
 #[derive(Debug, Deserialize)]
 pub struct FileReaderArgs {
     pub file_path: String,
@@ -24,7 +24,7 @@ pub struct FileReaderArgs {
     pub max_lines: Option<usize>,
 }
 
-/// 文件读取结果
+/// File reading result
 #[derive(Debug, Serialize, Default)]
 pub struct FileReaderResult {
     pub content: String,
@@ -80,13 +80,13 @@ impl AgentToolFileReader {
                 let selected_lines = &lines[..max_lines.min(lines.len())];
                 (selected_lines.join("\n"), selected_lines.len())
             } else {
-                // 如果文件太大，限制读取行数
+                // If file is too large, limit read lines
                 let max_default_lines = 200;
                 if lines.len() > max_default_lines {
                     let selected_lines = &lines[..max_default_lines];
                     (
                         format!(
-                            "{}\n\n... (文件太大，只显示前{}行)",
+                            "{}\n\n... (File too large, showing only first {} lines)",
                             selected_lines.join("\n"),
                             max_default_lines
                         ),
@@ -122,26 +122,26 @@ impl Tool for AgentToolFileReader {
     async fn definition(&self, _prompt: String) -> rig::completion::ToolDefinition {
         rig::completion::ToolDefinition {
             name: Self::NAME.to_string(),
-            description: "读取项目的源代码或基于文本的内容，支持指定行范围和最大行数限制。自动处理大文件和二进制文件。"
+            description: "Read source code or text-based content from the project, with support for specifying line ranges and maximum line limits. Automatically handles large files and binary files."
                 .to_string(),
             parameters: serde_json::json!({
                 "type": "object",
                 "properties": {
                     "file_path": {
                         "type": "string",
-                        "description": "要读取的文件路径（相对于项目根目录）"
+                        "description": "File path to read (relative to project root)"
                     },
                     "start_line": {
                         "type": "integer",
-                        "description": "起始行号（从1开始，包含）"
+                        "description": "Start line number (1-based, inclusive)"
                     },
                     "end_line": {
                         "type": "integer",
-                        "description": "结束行号（包含）"
+                        "description": "End line number (inclusive)"
                     },
                     "max_lines": {
                         "type": "integer",
-                        "description": "最大读取行数限制（从文件开头开始，默认为200）"
+                        "description": "Maximum number of lines to read (from file start, default is 200)"
                     }
                 },
                 "required": ["file_path"]

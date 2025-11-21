@@ -73,7 +73,7 @@ impl LanguageProcessor for SvelteProcessor {
     fn determine_component_type(&self, file_path: &Path, content: &str) -> String {
         let file_name = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
 
-        // 检查特殊文件名
+        // Check special file names
         if file_name == "App.svelte" {
             return "svelte_app".to_string();
         }
@@ -92,7 +92,7 @@ impl LanguageProcessor for SvelteProcessor {
             return "svelte_layout".to_string();
         }
 
-        // 检查内容模式
+        // Check content patterns
         if content.contains("<script>") && content.contains("export") {
             if content.contains("export let") {
                 "svelte_component".to_string()
@@ -112,12 +112,12 @@ impl LanguageProcessor for SvelteProcessor {
     fn is_important_line(&self, line: &str) -> bool {
         let trimmed = line.trim();
 
-        // Svelte标签
+        // Svelte tags
         if trimmed.starts_with("<script>") || trimmed.starts_with("<style>") {
             return true;
         }
 
-        // Svelte特有语法
+        // Svelte-specific syntax
         if trimmed.starts_with("export let ") || trimmed.contains("$:") {
             return true;
         }
@@ -131,12 +131,12 @@ impl LanguageProcessor for SvelteProcessor {
             return true;
         }
 
-        // 导入语句
+        // Import statements
         if trimmed.starts_with("import ") {
             return true;
         }
 
-        // Svelte指令
+        // Svelte directives
         if trimmed.contains("on:")
             || trimmed.contains("bind:")
             || trimmed.contains("use:")
@@ -147,7 +147,7 @@ impl LanguageProcessor for SvelteProcessor {
             return true;
         }
 
-        // 条件和循环
+        // Conditionals and loops
         if trimmed.contains("{#if")
             || trimmed.contains("{#each")
             || trimmed.contains("{#await")
@@ -158,7 +158,7 @@ impl LanguageProcessor for SvelteProcessor {
             return true;
         }
 
-        // 重要注释
+        // Important comments
         if trimmed.contains("TODO")
             || trimmed.contains("FIXME")
             || trimmed.contains("NOTE")
@@ -177,23 +177,23 @@ impl LanguageProcessor for SvelteProcessor {
     fn extract_interfaces(&self, content: &str, _file_path: &Path) -> Vec<InterfaceInfo> {
         let mut interfaces = Vec::new();
 
-        // Svelte组件的接口分析
+        // Svelte component interface analysis
         interfaces.push(InterfaceInfo {
             name: "SvelteComponent".to_string(),
             interface_type: "svelte_component".to_string(),
             visibility: "public".to_string(),
             parameters: Vec::new(),
             return_type: None,
-            description: Some("Svelte单文件组件".to_string()),
+            description: Some("Svelte single file component".to_string()),
         });
 
-        // 提取script标签中的函数
+        // Extract functions in script tag
         if content.contains("<script") {
             let lines: Vec<&str> = content.lines().collect();
             for line in lines {
                 let trimmed = line.trim();
 
-                // 提取函数定义
+                // Extract function definitions
                 if trimmed.starts_with("function ") || trimmed.contains("= function") {
                     if let Some(func_name) = self.extract_svelte_function(trimmed) {
                         interfaces.push(InterfaceInfo {
@@ -207,7 +207,7 @@ impl LanguageProcessor for SvelteProcessor {
                     }
                 }
 
-                // 提取响应式声明
+                // Extract reactive declarations
                 if trimmed.starts_with("$:") {
                     interfaces.push(InterfaceInfo {
                         name: "reactive_statement".to_string(),
@@ -215,7 +215,7 @@ impl LanguageProcessor for SvelteProcessor {
                         visibility: "public".to_string(),
                         parameters: Vec::new(),
                         return_type: None,
-                        description: Some("Svelte响应式声明".to_string()),
+                        description: Some("Svelte reactive declaration".to_string()),
                     });
                 }
             }
@@ -226,7 +226,7 @@ impl LanguageProcessor for SvelteProcessor {
 }
 
 impl SvelteProcessor {
-    /// 提取Svelte函数名称
+    /// Extract Svelte function name
     fn extract_svelte_function(&self, line: &str) -> Option<String> {
         if line.contains("function ") {
             if let Some(start) = line.find("function ") {

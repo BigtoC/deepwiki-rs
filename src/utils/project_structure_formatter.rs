@@ -3,28 +3,28 @@ use std::path::{Path, PathBuf};
 
 use crate::types::project_structure::ProjectStructure;
 
-/// 项目结构格式化器 - 负责将项目结构数据转换为树形字符串表示
+/// Project structure formatter - Responsible for converting project structure data into tree-string representation
 pub struct ProjectStructureFormatter;
 
 impl ProjectStructureFormatter {
-    /// 格式化项目结构信息为树形结构
+    /// Format project structure information as a tree structure
     pub fn format_as_tree(structure: &ProjectStructure) -> String {
         let mut result = format!(
-            "### 项目结构信息\n项目名称: {}\n根目录: {}\n\n项目目录结构：\n```\n",
+            "### Project Structure Information\nProject Name: {}\nRoot Directory: {}\n\nProject Directory Structure:\n```\n",
             structure.project_name,
             structure.root_path.to_string_lossy()
         );
 
-        // 构建路径树，区分文件和目录
+        // Build path tree, distinguishing files and directories
         let mut tree = PathTree::new();
 
-        // 先插入所有文件（这些是确定的文件）
+        // First insert all files (these are confirmed files)
         for file in &structure.files {
             let normalized_path = Self::normalize_path(&file.path);
             tree.insert_file(&normalized_path);
         }
 
-        // 生成树形字符串
+        // Generate tree string
         let tree_output = tree.to_tree_string();
         result.push_str(&tree_output);
         result.push_str("```\n");
@@ -32,18 +32,18 @@ impl ProjectStructureFormatter {
         result
     }
 
-    /// 格式化项目目录结构为简化的目录树（只包含文件夹）
+    /// Format project directory structure as a simplified directory tree (folders only)
     pub fn format_as_directory_tree(structure: &ProjectStructure) -> String {
         let mut result = format!(
-            "### 项目目录结构\n项目名称: {}\n根目录: {}\n\n目录树：\n```\n",
+            "### Project Directory Structure\nProject Name: {}\nRoot Directory: {}\n\nDirectory Tree:\n```\n",
             structure.project_name,
             structure.root_path.to_string_lossy()
         );
 
-        // 构建目录树，只包含目录
+        // Build directory tree, only including directories
         let mut dir_tree = DirectoryTree::new();
 
-        // 从所有文件路径中提取目录路径
+        // Extract directory paths from all file paths
         for file in &structure.files {
             let normalized_path = Self::normalize_path(&file.path);
             if let Some(parent_dir) = normalized_path.parent() {
@@ -51,7 +51,7 @@ impl ProjectStructureFormatter {
             }
         }
 
-        // 生成目录树字符串
+        // Generate directory tree string
         let tree_output = dir_tree.to_tree_string();
         result.push_str(&tree_output);
         result.push_str("```\n");
@@ -59,7 +59,7 @@ impl ProjectStructureFormatter {
         result
     }
 
-    /// 标准化路径格式，移除 "./" 前缀
+    /// Normalize path format, remove "./" prefix
     fn normalize_path(path: &Path) -> PathBuf {
         let path_str = path.to_string_lossy();
         if path_str.starts_with("./") {
@@ -70,7 +70,7 @@ impl ProjectStructureFormatter {
     }
 }
 
-/// 路径树节点
+/// Path tree node
 #[derive(Debug)]
 struct PathNode {
     name: String,
@@ -86,13 +86,13 @@ impl PathNode {
     }
 }
 
-/// 路径树结构
+/// Path tree structure
 #[derive(Debug)]
 struct PathTree {
     root: PathNode,
 }
 
-/// 目录树节点（只包含目录）
+/// Directory tree node (only directories)
 #[derive(Debug)]
 struct DirectoryNode {
     name: String,
@@ -108,7 +108,7 @@ impl DirectoryNode {
     }
 }
 
-/// 目录树结构（只包含目录）
+/// Directory tree structure (only directories)
 #[derive(Debug)]
 struct DirectoryTree {
     root: DirectoryNode,
@@ -121,7 +121,7 @@ impl DirectoryTree {
         }
     }
 
-    /// 插入目录路径到树中
+    /// Insert directory path into tree
     fn insert_directory(&mut self, path: &Path) {
         let components: Vec<&str> = path
             .components()
@@ -144,14 +144,14 @@ impl DirectoryTree {
         }
     }
 
-    /// 生成目录树字符串表示
+    /// Generate directory tree string representation
     fn to_tree_string(&self) -> String {
         let mut result = String::new();
         self.render_directory_node(&self.root, "", true, &mut result);
         result
     }
 
-    /// 递归渲染目录节点
+    /// Recursively render directory node
     fn render_directory_node(&self, node: &DirectoryNode, prefix: &str, is_last: bool, result: &mut String) {
         if !node.name.is_empty() {
             let connector = if is_last { "└── " } else { "├── " };
@@ -181,12 +181,12 @@ impl PathTree {
         }
     }
 
-    /// 插入文件路径到树中
+    /// Insert file path into tree
     fn insert_file(&mut self, path: &Path) {
         self.insert_path(path);
     }
 
-    /// 插入路径到树中
+    /// Insert path into tree
     fn insert_path(&mut self, path: &Path) {
         let components: Vec<&str> = path
             .components()
@@ -209,14 +209,14 @@ impl PathTree {
         }
     }
 
-    /// 生成树形字符串表示
+    /// Generate tree string representation
     fn to_tree_string(&self) -> String {
         let mut result = String::new();
         self.render_node(&self.root, "", true, &mut result);
         result
     }
 
-    /// 递归渲染节点
+    /// Recursively render node
     fn render_node(&self, node: &PathNode, prefix: &str, is_last: bool, result: &mut String) {
         if !node.name.is_empty() {
             let connector = if is_last { "└── " } else { "├── " };
@@ -302,7 +302,7 @@ mod tests {
                     last_modified: Some("2024-01-01".to_string()),
                 },
             ],
-            directories: vec![], // 添加必需字段
+            directories: vec![], // Add required field
             total_files: 5,
             total_directories: 4,
             file_types: std::collections::HashMap::new(),
@@ -311,18 +311,18 @@ mod tests {
 
         let result = ProjectStructureFormatter::format_as_directory_tree(&structure);
         
-        // 检查基本格式
-        assert!(result.contains("### 项目目录结构"));
+        // Check basic format
+        assert!(result.contains("### Project Directory Structure"));
         assert!(result.contains("test_project"));
         assert!(result.contains("/test"));
         
-        // 检查目录结构（应该只包含目录，不包含文件）
+        // Check directory structure (should only include directories, not files)
         assert!(result.contains("src/"));
         assert!(result.contains("utils/"));
         assert!(result.contains("tests/"));
         assert!(result.contains("docs/"));
         
-        // 确保不包含文件名
+        // Ensure filenames are not included
         assert!(!result.contains("main.rs"));
         assert!(!result.contains("lib.rs"));
         assert!(!result.contains("mod.rs"));
@@ -336,7 +336,7 @@ mod tests {
     fn test_directory_tree_structure() {
         let mut dir_tree = DirectoryTree::new();
         
-        // 插入一些目录路径
+        // Insert some directory paths
         dir_tree.insert_directory(&PathBuf::from("src"));
         dir_tree.insert_directory(&PathBuf::from("src/utils"));
         dir_tree.insert_directory(&PathBuf::from("tests"));
@@ -344,13 +344,13 @@ mod tests {
         
         let result = dir_tree.to_tree_string();
         
-        // 检查树形结构
+        // Check tree structure
         assert!(result.contains("src/"));
         assert!(result.contains("utils/"));
         assert!(result.contains("tests/"));
         assert!(result.contains("docs/"));
         
-        // 检查树形连接符
+        // Check tree connectors
         assert!(result.contains("├──") || result.contains("└──"));
         
         println!("Tree structure:\n{}", result);

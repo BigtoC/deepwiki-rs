@@ -1,32 +1,32 @@
-请基于以下源代码对组件进行深度分析：
+Please conduct an in-depth analysis of the component based on the following source code:
 
-## 组件基本信息
-- 组件名称: {}
-- 文件路径: {}
-- 组件类型: {}
-- 重要性分数: {:.2}
+## Component Basic Information
+- Component Name: {}
+- File Path: {}
+- Component Type: {}
+- Importance Score: {:.2}
 
-## 当前静态分析结果
-- 职责: {}
-- 接口数量: {}
-- 依赖数量: {}
-- 代码行数: {}
-- 圈复杂度: {:.1}
+## Current Static Analysis Results
+- Responsibilities: {}
+- Number of Interfaces: {}
+- Number of Dependencies: {}
+- Lines of Code: {}
+- Cyclomatic Complexity: {:.1}
 
-## 组件源代码
+## Component Source Code
 ```
 {}
 ```
 
-## 依赖组件代码片段
+## Dependent Component Code Snippets
 {}
 
-请基于源代码进行深度分析，重点关注：
-1. 组件的详细功能描述和业务逻辑
-2. 核心职责识别（3-5个）
-3. 在系统架构中的角色定位
-4. 代码质量评估（结构、命名、最佳实践等）
-5. 依赖关系合理性分析
-6. 具体的改进建议
+Please conduct an in-depth analysis based on the source code, focusing on:
+1. Detailed functional description and business logic of the component
+2. Core responsibility identification (3-5 items)
+3. Role positioning in the system architecture
+4. Code quality assessment (structure, naming, best practices, etc.)
+5. Analysis of dependency relationship rationality
+6. Specific improvement recommendations
 
-分析要基于实际代码内容，提供具体且可操作的洞察。
+The analysis should be based on actual code content and provide specific and actionable insights.

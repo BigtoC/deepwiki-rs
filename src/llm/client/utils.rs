@@ -20,9 +20,9 @@ pub fn evaluate_befitting_model(
     return (llm_config.model_powerful.clone(), None);
 }
 
-/// 估算token使用情况（基于文本长度）
+/// Estimate token usage (based on text length)
 pub fn estimate_token_usage(input_text: &str, output_text: &str) -> TokenUsage {
-    // 粗略估算：1个token约等于4个字符（英文）或—1.5个字符（中文）
+    // Rough estimate: 1 token ≈ 4 characters (English) or ~1.5 characters (Chinese)
     let input_estimate = TOKEN_ESTIMATOR.estimate_tokens(input_text);
     let output_estimate = TOKEN_ESTIMATOR.estimate_tokens(output_text);
     TokenUsage::new(

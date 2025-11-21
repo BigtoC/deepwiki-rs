@@ -1,15 +1,15 @@
-//! 总结推理模块 - 当ReAct模式达到最大迭代次数时的fallover机制
+//! Summary reasoning module - Fallover mechanism when ReAct mode reaches max iterations
 
 use anyhow::Result;
 use rig::completion::Message;
 
 use super::providers::ProviderAgent;
 
-/// 总结推理器
+/// Summary reasoner
 pub struct SummaryReasoner;
 
 impl SummaryReasoner {
-    /// 基于ReAct对话历史和工具调用记录进行总结推理
+    /// Summarize and reason based on ReAct chat history and tool call records
     pub async fn summarize_and_reason(
         agent_without_tools: &ProviderAgent,
         original_system_prompt: &str,
@@ -17,7 +17,7 @@ impl SummaryReasoner {
         chat_history: &[Message],
         tool_calls_history: &[String],
     ) -> Result<String> {
-        // 构建总结推理的提示词
+        // Build summary reasoning prompt
         let summary_prompt = Self::build_summary_prompt(
             original_system_prompt,
             original_user_prompt,
@@ -25,13 +25,13 @@ impl SummaryReasoner {
             tool_calls_history,
         );
 
-        // 使用无工具的agent进行单轮推理
+        // Use agent without tools for single-turn reasoning
         let result = agent_without_tools.prompt(&summary_prompt).await?;
         
         Ok(result)
     }
 
-    /// 构建总结推理的提示词
+    /// Build summary reasoning prompt
     fn build_summary_prompt(
         original_system_prompt: &str,
         original_user_prompt: &str,
@@ -40,77 +40,76 @@ impl SummaryReasoner {
     ) -> String {
         let mut prompt = String::new();
         
-        // 添加原始系统提示
-        prompt.push_str("# 原始任务背景\n");
+        // Add original system prompt
+        prompt.push_str("# Original Task Background\n");
         prompt.push_str(original_system_prompt);
         prompt.push_str("\n\n");
         
-        // 添加原始用户问题
-        prompt.push_str("# 原始用户问题\n");
+        // Add original user question
+        prompt.push_str("# Original User Question\n");
         prompt.push_str(original_user_prompt);
         prompt.push_str("\n\n");
         
-        // 添加工具调用历史
+        // Add tool call history
         if !tool_calls_history.is_empty() {
-            prompt.push_str("# 已执行的工具调用记录\n");
+            prompt.push_str("# Executed Tool Call Records\n");
             for (index, tool_call) in tool_calls_history.iter().enumerate() {
                 prompt.push_str(&format!("{}. {}\n", index + 1, tool_call));
             }
             prompt.push_str("\n");
         }
         
-        // 添加详细的对话历史信息
+        // Add detailed conversation history information
         let conversation_details = Self::extract_detailed_conversation_info(chat_history);
         if !conversation_details.is_empty() {
-            prompt.push_str("# 详细对话历史与工具结果\n");
+            prompt.push_str("# Detailed Conversation History and Tool Results\n");
             prompt.push_str(&conversation_details);
             prompt.push_str("\n\n");
         }
         
-        // 添加总结推理指令
-        prompt.push_str("# 总结推理任务\n");
-        prompt.push_str("基于以上信息，虽然多轮推理过程因达到最大迭代次数而被截断，但请你根据已有的上下文信息、工具调用记录和对话历史，");
-        prompt.push_str("对原始用户问题提供一个完整的、有价值的回答。请综合分析已获得的信息，给出最佳的解决方案或答案。\n\n");
-        prompt.push_str("注意：\n");
-        prompt.push_str("1. 请基于已有信息进行推理，不要虚构不存在的内容\n");
-        prompt.push_str("2. 如果信息不足以完全回答问题，请说明已知的部分并指出需要进一步了解的方面\n");
-        prompt.push_str("3. 请提供具体可行的建议或解决方案\n");
-        prompt.push_str("4. 充分利用已经执行的工具调用和其结果来形成答案\n");
+        // Add summary reasoning instructions
+        prompt.push_str("# Summary Reasoning Task\n");
+        prompt.push_str("Based on the above information, although the multi-turn reasoning process was truncated due to reaching max iterations, please provide a complete and valuable answer to the original user question based on the available context, tool call records, and conversation history. Please comprehensively analyze the obtained information and provide the best solution or answer.\n\n");
+        prompt.push_str("Note:\n");
+        prompt.push_str("1. Please reason based on available information, do not fabricate non-existent content\n");
+        prompt.push_str("2. If information is insufficient to fully answer the question, please state the known parts and indicate aspects that need further understanding\n");
+        prompt.push_str("3. Please provide specific and actionable suggestions or solutions\n");
+        prompt.push_str("4. Make full use of the executed tool calls and their results to form the answer\n");
         
         prompt
     }
     
-    /// 提取更详细的对话信息，包括工具调用和相关上下文
+    /// Extract more detailed conversation information, including tool calls and related context
     fn extract_detailed_conversation_info(chat_history: &[Message]) -> String {
         let mut details = String::new();
         
         for (index, message) in chat_history.iter().enumerate() {
-            if index == 0 { // 跳过第一个用户输入（原user prompt），因为上面已经拼接过了
+            if index == 0 { // Skip the first user input (original user prompt), as it's already included above
                 continue;
             }
             match message {
                 Message::User { content } => {
-                    // 更详细地处理用户消息
-                    details.push_str(&format!("## 用户输入 [轮次{}]\n", index + 1));
+                    // Handle user messages in more detail
+                    details.push_str(&format!("## User Input [Round {}]\n", index + 1));
                     details.push_str(&format!("{:#?}\n\n", content));
                 }
                 Message::Assistant { content, .. } => {
-                    details.push_str(&format!("## 助手响应 [轮次{}]\n", index + 1));
+                    details.push_str(&format!("## Assistant Response [Round {}]\n", index + 1));
                     
-                    // 分别处理文本内容和工具调用
+                    // Handle text content and tool calls separately
                     let mut has_content = false;
                     
                     for item in content.iter() {
                         match item {
                             rig::completion::AssistantContent::Text(text) => {
                                 if !text.text.is_empty() {
-                                    details.push_str(&format!("**文本回复:** {}\n\n", text.text));
+                                    details.push_str(&format!("**Text Reply:** {}\n\n", text.text));
                                     has_content = true;
                                 }
                             }
                             rig::completion::AssistantContent::ToolCall(tool_call) => {
                                 details.push_str(&format!(
-                                    "**工具调用:** `{}` \n参数: `{}`\n\n",
+                                    "**Tool Call:** `{}` \nArguments: `{}`\n\n",
                                     tool_call.function.name, 
                                     tool_call.function.arguments
                                 ));
@@ -119,7 +118,7 @@ impl SummaryReasoner {
                             rig::completion::AssistantContent::Reasoning(reasoning) => {
                                 if !reasoning.reasoning.is_empty() {
                                     let reasoning_text = reasoning.reasoning.join("\n");
-                                    details.push_str(&format!("**推理过程:** {}\n\n", reasoning_text));
+                                    details.push_str(&format!("**Reasoning Process:** {}\n\n", reasoning_text));
                                     has_content = true;
                                 }
                             }
@@ -127,7 +126,7 @@ impl SummaryReasoner {
                     }
                     
                     if !has_content {
-                        details.push_str("无具体内容\n\n");
+                        details.push_str("No specific content\n\n");
                     }
                 }
             }

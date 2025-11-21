@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::types::{DirectoryInfo, FileInfo};
 
-/// 项目结构信息
+/// Project structure information
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ProjectStructure {
     pub project_name: String,

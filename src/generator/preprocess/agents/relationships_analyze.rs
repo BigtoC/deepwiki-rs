@@ -31,15 +31,15 @@ impl RelationshipsAnalyze {
         extract::<RelationshipAnalysis>(context, agent_params).await
     }
 
-    /// 构建优化的分析参数，支持智能压缩
+    /// Build optimized analysis parameters, supports intelligent compression
     async fn build_optimized_analysis_params(
         &self,
         context: &GeneratorContext,
         code_insights: &[CodeInsight],
     ) -> Result<AgentExecuteParams> {
-        let prompt_sys = "你是一个专业的软件架构分析师，专门分析项目级别的代码依赖关系图谱。基于提供的代码洞察和依赖关系，生成项目的整体架构关系分析。".to_string();
+        let prompt_sys = "You are a professional software architecture analyst specializing in analyzing project-level code dependency relationship graphs. Based on the provided code insights and dependencies, generate an overall architectural relationship analysis for the project.".to_string();
 
-        // 按重要性排序并智能选择
+        // Sort by importance and intelligently select
         let mut sorted_insights: Vec<_> = code_insights.iter().collect();
         sorted_insights.sort_by(|a, b| {
             b.code_dossier
@@ -48,34 +48,34 @@ impl RelationshipsAnalyze {
                 .unwrap_or(std::cmp::Ordering::Equal)
         });
 
-        // 构建代码洞察内容
+        // Build code insights content
         let insights_content = self.build_insights_content(&sorted_insights);
 
         let compression_result = self
             .prompt_compressor
-            .compress_if_needed(context, &insights_content, "代码洞察")
+            .compress_if_needed(context, &insights_content, "Code Insights")
             .await?;
 
         if compression_result.was_compressed {
             println!(
-                "   ✅ 压缩完成: {} -> {} tokens",
+                "   ✅ Compression complete: {} -> {} tokens",
                 compression_result.original_tokens, compression_result.compressed_tokens
             );
         }
         let compressed_insights = compression_result.compressed_content;
 
         let prompt_user = format!(
-            "请基于以下代码洞察和依赖关系，分析项目的整体架构关系图谱：
+            "Please analyze the overall architectural relationship graph of the project based on the following code insights and dependencies:
 
-## 核心代码洞察
+## Core Code Insights
 {}
 
-## 分析要求：
-生成项目级别的依赖关系图谱，重点关注：
-1. 核心模块间的依赖关系
-2. 关键数据流向
-3. 架构层次结构
-4. 潜在的循环依赖",
+## Analysis Requirements:
+Generate a project-level dependency relationship graph, focusing on:
+1. Dependencies between core modules
+2. Key data flows
+3. Architectural hierarchy
+4. Potential circular dependencies",
             compressed_insights
         );
 
@@ -83,27 +83,27 @@ impl RelationshipsAnalyze {
             prompt_sys,
             prompt_user,
             cache_scope: "ai_relationships_insights".to_string(),
-            log_tag: "依赖关系分析".to_string(),
+            log_tag: "Dependency Relationship Analysis".to_string(),
         })
     }
 
-    /// 构建代码洞察内容
+    /// Build code insights content
     fn build_insights_content(&self, sorted_insights: &[&CodeInsight]) -> String {
         sorted_insights
             .iter()
             .filter(|insight| insight.code_dossier.importance_score >= 0.6)
-            .take(150) // 增加数量限制
+            .take(150) // Increase quantity limit
             .map(|insight| {
                 let dependencies_introduce = insight
                     .dependencies
                     .iter()
-                    .take(20) // 限制每个文件的依赖数量
+                    .take(20) // Limit number of dependencies per file
                     .map(|r| format!("{}({})", r.name, r.dependency_type))
                     .collect::<Vec<_>>()
                     .join(", ");
 
                 format!(
-                    "- {}: {} (路径: `{}`，重要性: {:.2}, 复杂度: {:.1}, 依赖: [{}])",
+                    "- {}: {} (path: `{}`, importance: {:.2}, complexity: {:.1}, dependencies: [{}])",
                     insight.code_dossier.name,
                     insight.code_dossier.code_purpose.display_name(),
                     insight.code_dossier.file_path.to_string_lossy(),

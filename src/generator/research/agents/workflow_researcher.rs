@@ -16,6 +16,10 @@ impl StepForwardAgent for WorkflowResearcher {
         AgentType::WorkflowResearcher.to_string()
     }
 
+    fn agent_type_enum(&self) -> Option<AgentType> {
+        Some(AgentType::WorkflowResearcher)
+    }
+
     fn memory_scope_key(&self) -> String {
         MemoryScope::STUDIES_RESEARCH.to_string()
     }
@@ -33,9 +37,9 @@ impl StepForwardAgent for WorkflowResearcher {
     
     fn prompt_template(&self) -> PromptTemplate {
         PromptTemplate {
-            system_prompt: "分析项目的核心功能流程，要从功能视角分析，不要局限于过度的技术细节".to_string(),
-            opening_instruction: "为你提供如下调研报告，用于分析系统的主干工作流程".to_string(),
-            closing_instruction: "请基于调研材料分析系统的核心工作流程".to_string(),
+            system_prompt: "Analyze the project's core functional workflows, focusing from a functional perspective without being limited to excessive technical details".to_string(),
+            opening_instruction: "The following research reports are provided for analyzing the system's main workflows".to_string(),
+            closing_instruction: "Please analyze the system's core workflows based on the research materials".to_string(),
             llm_call_mode: LLMCallMode::Extract,
             formatter_config: FormatterConfig::default(),
         }

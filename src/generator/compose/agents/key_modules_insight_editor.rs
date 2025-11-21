@@ -22,11 +22,11 @@ impl KeyModulesInsightEditor {
             let max_parallels = context.config.llm.max_parallels;
 
             println!(
-                "🚀 启动并发分析insight reports，最大并发数：{}",
+                "🚀 Starting concurrent analysis of insight reports, max concurrency: {}",
                 max_parallels
             );
 
-            // 创建并发任务
+            // Create concurrent tasks
             let analysis_futures: Vec<_> = insight_reports
                 .into_iter()
                 .map(|insight_report| {
@@ -46,12 +46,12 @@ impl KeyModulesInsightEditor {
                 })
                 .collect();
 
-            // 使用do_parallel_with_limit进行并发控制
+            // Use do_parallel_with_limit for concurrency control
             let analysis_results = do_parallel_with_limit(analysis_futures, max_parallels).await;
 
-            // 处理结果并更新doc_tree
+            // Process results and update doc_tree
             for (insight_key, domain_name, result) in analysis_results {
-                result?; // 检查是否有错误
+                result?; // Check for errors
 
                 doc_tree.insert(
                     &insight_key,
@@ -109,19 +109,19 @@ impl StepForwardAgent for KeyModuleInsightEditor {
     fn prompt_template(&self) -> PromptTemplate {
         let report = &self.report;
         let opening_instruction = format!(
-            r#"你要分析的主题为{}
-            ## 文档质量要求：
-            1. **完整性**：根据调研材料，涵盖该主题`{}`的所有重要方面，不遗漏关键信息
-            2. **准确性**：基于调研数据，确保技术细节的准确性
-            3. **专业性**：使用标准的架构术语和表达方式
-            4. **可读性**：结构清晰，丰富的语言叙述且便于理解
-            5. **实用性**：提供有价值的模块知识、技术实现细节。
+            r#"The topic you need to analyze is: {}
+            ## Documentation Quality Requirements:
+            1. **Completeness**: Based on research materials, cover all important aspects of the topic `{}`, without omitting key information
+            2. **Accuracy**: Based on research data, ensure accuracy of technical details
+            3. **Professionalism**: Use standard architecture terminology and expressions
+            4. **Readability**: Clear structure, rich language narrative, and easy to understand
+            5. **Practicality**: Provide valuable module knowledge and technical implementation details.
             "#,
             &report.domain_name, &report.domain_name
         );
 
         PromptTemplate {
-            system_prompt: r#"你是一位善于编写技术文档的软件专家，根据用户提供的调研材料和要求，为已有项目中对应模块编写其技术实现的技术文档"#.to_string(),
+            system_prompt: r#"You are a software expert skilled at writing technical documentation. Based on the research materials and requirements provided by users, write technical documentation for the technical implementation of corresponding modules in existing projects"#.to_string(),
 
             opening_instruction,
 

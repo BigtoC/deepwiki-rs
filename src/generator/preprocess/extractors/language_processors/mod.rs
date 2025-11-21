@@ -2,30 +2,30 @@ use std::path::Path;
 
 use crate::types::code::{CodeComplexity, Dependency, InterfaceInfo};
 
-/// 语言处理器特征
+/// Language processor trait
 pub trait LanguageProcessor: Send + Sync + std::fmt::Debug {
-    /// 获取支持的文件扩展名
+    /// Get supported file extensions
     fn supported_extensions(&self) -> Vec<&'static str>;
 
-    /// 提取文件依赖
+    /// Extract file dependencies
     fn extract_dependencies(&self, content: &str, file_path: &Path) -> Vec<Dependency>;
 
-    /// 判断组件类型
+    /// Determine component type
     #[allow(dead_code)]
     fn determine_component_type(&self, file_path: &Path, content: &str) -> String;
 
-    /// 识别重要代码行
+    /// Identify important code lines
     fn is_important_line(&self, line: &str) -> bool;
 
-    /// 获取语言名称
+    /// Get language name
     #[allow(dead_code)]
     fn language_name(&self) -> &'static str;
 
-    /// 提取代码接口定义
+    /// Extract code interface definitions
     fn extract_interfaces(&self, content: &str, file_path: &Path) -> Vec<InterfaceInfo>;
 }
 
-/// 语言处理器管理器
+/// Language processor manager
 #[derive(Debug)]
 pub struct LanguageProcessorManager {
     processors: Vec<Box<dyn LanguageProcessor>>,
@@ -51,11 +51,12 @@ impl LanguageProcessorManager {
                 Box::new(kotlin::KotlinProcessor::new()),
                 Box::new(python::PythonProcessor::new()),
                 Box::new(java::JavaProcessor::new()),
+                Box::new(csharp::CSharpProcessor::new()),
             ],
         }
     }
 
-    /// 根据文件扩展名获取处理器
+    /// Get processor by file extension
     pub fn get_processor(&self, file_path: &Path) -> Option<&dyn LanguageProcessor> {
         let extension = file_path.extension()?.to_str()?;
 
@@ -68,7 +69,7 @@ impl LanguageProcessorManager {
         None
     }
 
-    /// 提取文件依赖
+    /// Extract file dependencies
     pub fn extract_dependencies(&self, file_path: &Path, content: &str) -> Vec<Dependency> {
         if let Some(processor) = self.get_processor(file_path) {
             processor.extract_dependencies(content, file_path)
@@ -77,7 +78,7 @@ impl LanguageProcessorManager {
         }
     }
 
-    /// 判断组件类型
+    /// Determine component type
     #[allow(dead_code)]
     pub fn determine_component_type(&self, file_path: &Path, content: &str) -> String {
         if let Some(processor) = self.get_processor(file_path) {
@@ -87,7 +88,7 @@ impl LanguageProcessorManager {
         }
     }
 
-    /// 识别重要代码行
+    /// Identify important code lines
     pub fn is_important_line(&self, file_path: &Path, line: &str) -> bool {
         if let Some(processor) = self.get_processor(file_path) {
             processor.is_important_line(line)
@@ -96,7 +97,7 @@ impl LanguageProcessorManager {
         }
     }
 
-    /// 提取代码接口定义
+    /// Extract code interface definitions
     pub fn extract_interfaces(&self, file_path: &Path, content: &str) -> Vec<InterfaceInfo> {
         if let Some(processor) = self.get_processor(file_path) {
             processor.extract_interfaces(content, file_path)
@@ -109,20 +110,25 @@ impl LanguageProcessorManager {
         let lines: Vec<&str> = content.lines().collect();
         let lines_of_code = lines.len();
 
-        // 简化的复杂度计算
+        // Simplified complexity calculation
         let number_of_functions = content.matches("fn ").count()
             + content.matches("def ").count()
-            + content.matches("function ").count();
+            + content.matches("function ").count()
+            + content.matches("async ").count();  // C# async methods
 
         let number_of_classes =
-            content.matches("class ").count() + content.matches("struct ").count();
+            content.matches("class ").count() 
+            + content.matches("struct ").count()
+            + content.matches("interface ").count();  // C# interfaces
 
-        // 简化的圈复杂度计算
+        // Simplified cyclomatic complexity calculation
         let cyclomatic_complexity = 1.0
             + content.matches("if ").count() as f64
             + content.matches("while ").count() as f64
             + content.matches("for ").count() as f64
+            + content.matches("foreach ").count() as f64  // C# foreach
             + content.matches("match ").count() as f64
+            + content.matches("switch ").count() as f64  // C# switch
             + content.matches("case ").count() as f64;
 
         CodeComplexity {
@@ -134,7 +140,8 @@ impl LanguageProcessorManager {
     }
 }
 
-// 子模块
+// Submodules
+pub mod csharp;
 pub mod java;
 pub mod javascript;
 pub mod kotlin;

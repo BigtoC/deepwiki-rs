@@ -36,7 +36,7 @@ impl LanguageProcessor for PythonProcessor {
         let source_file = file_path.to_string_lossy().to_string();
         
         for (line_num, line) in content.lines().enumerate() {
-            // 提取from...import语句
+            // Extract from...import statements
             if let Some(captures) = self.from_import_regex.captures(line) {
                 if let Some(module_path) = captures.get(1) {
                     let module_str = module_path.as_str();
@@ -53,7 +53,7 @@ impl LanguageProcessor for PythonProcessor {
                     });
                 }
             }
-            // 提取import语句
+            // Extract import statements
             else if let Some(captures) = self.import_regex.captures(line) {
                 if let Some(import_path) = captures.get(1) {
                     let import_str = import_path.as_str();
@@ -127,7 +127,7 @@ impl LanguageProcessor for PythonProcessor {
         let lines: Vec<&str> = content.lines().collect();
         
         for (i, line) in lines.iter().enumerate() {
-            // 提取异步函数定义
+            // Extract async function definitions
             if let Some(captures) = self.async_function_regex.captures(line) {
                 let name = captures.get(1).map(|m| m.as_str()).unwrap_or("").to_string();
                 let params_str = captures.get(2).map(|m| m.as_str()).unwrap_or("");
@@ -144,7 +144,7 @@ impl LanguageProcessor for PythonProcessor {
                     description: self.extract_docstring(&lines, i),
                 });
             }
-            // 提取普通函数定义
+            // Extract regular function definitions
             else if let Some(captures) = self.function_regex.captures(line) {
                 let name = captures.get(1).map(|m| m.as_str()).unwrap_or("").to_string();
                 let params_str = captures.get(2).map(|m| m.as_str()).unwrap_or("");
@@ -162,7 +162,7 @@ impl LanguageProcessor for PythonProcessor {
                 });
             }
             
-            // 提取类定义
+            // Extract class definitions
             if let Some(captures) = self.class_regex.captures(line) {
                 let name = captures.get(1).map(|m| m.as_str()).unwrap_or("").to_string();
                 
@@ -176,7 +176,7 @@ impl LanguageProcessor for PythonProcessor {
                 });
             }
             
-            // 提取方法定义（类内部）
+            // Extract method definitions (inside classes)
             if let Some(captures) = self.method_regex.captures(line) {
                 let name = captures.get(1).map(|m| m.as_str()).unwrap_or("").to_string();
                 let params_str = captures.get(2).map(|m| m.as_str()).unwrap_or("");
@@ -209,7 +209,7 @@ impl LanguageProcessor for PythonProcessor {
 }
 
 impl PythonProcessor {
-    /// 解析Python函数参数
+    /// Parse Python function parameters
     fn parse_python_parameters(&self, params_str: &str) -> Vec<ParameterInfo> {
         let mut parameters = Vec::new();
         
@@ -217,19 +217,19 @@ impl PythonProcessor {
             return parameters;
         }
         
-        // 简单的参数解析，处理基本情况
+        // Simple parameter parsing, handling basic cases
         for param in params_str.split(',') {
             let param = param.trim();
             if param.is_empty() || param == "self" || param == "cls" {
                 continue;
             }
             
-            // 解析参数格式: name, name: type, name = default, name: type = default
+            // Parse parameter format: name, name: type, name = default, name: type = default
             let is_optional = param.contains('=');
             let mut param_type = "Any".to_string();
             let mut name = param.to_string();
             
-            // 处理类型注解
+            // Handle type annotations
             if let Some(colon_pos) = param.find(':') {
                 name = param[..colon_pos].trim().to_string();
                 let type_part = param[colon_pos + 1..].trim();
@@ -243,7 +243,7 @@ impl PythonProcessor {
                 name = param[..eq_pos].trim().to_string();
             }
             
-            // 处理特殊参数
+            // Handle special parameters
             if name.starts_with('*') {
                 if name.starts_with("**") {
                     name = name.trim_start_matches("**").to_string();
@@ -265,13 +265,13 @@ impl PythonProcessor {
         parameters
     }
     
-    /// 提取Python文档字符串
+    /// Extract Python docstrings
     fn extract_docstring(&self, lines: &[&str], current_line: usize) -> Option<String> {
-        // 查找函数/类定义后的文档字符串
+        // Find docstring after function/class definition
         if current_line + 1 < lines.len() {
             let next_line = lines[current_line + 1].trim();
             
-            // 单行文档字符串
+            // Single-line docstring
             if (next_line.starts_with("\"\"\"") && next_line.ends_with("\"\"\"") && next_line.len() > 6) ||
                (next_line.starts_with("'''") && next_line.ends_with("'''") && next_line.len() > 6) {
                 let content = if next_line.starts_with("\"\"\"") {
@@ -282,18 +282,18 @@ impl PythonProcessor {
                 return Some(content.to_string());
             }
             
-            // 多行文档字符串
+            // Multi-line docstring
             if next_line.starts_with("\"\"\"") || next_line.starts_with("'''") {
                 let quote_type = if next_line.starts_with("\"\"\"") { "\"\"\"" } else { "'''" };
                 let mut doc_lines = Vec::new();
                 
-                // 第一行可能包含内容
+                // First line may contain content
                 let first_content = next_line.trim_start_matches(quote_type).trim();
                 if !first_content.is_empty() && !first_content.ends_with(quote_type) {
                     doc_lines.push(first_content.to_string());
                 }
                 
-                // 查找结束标记
+                // Find ending marker
                 for i in (current_line + 2)..lines.len() {
                     let line = lines[i].trim();
                     if line.ends_with(quote_type) {

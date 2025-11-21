@@ -1,4 +1,4 @@
-//! 时间查询工具
+//! Time query tool
 
 use anyhow::Result;
 use rig::tool::Tool;
@@ -7,18 +7,18 @@ use serde::{Deserialize, Serialize};
 use std::time::Duration;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-/// 时间工具
+/// Time tool
 #[derive(Debug, Clone)]
 pub struct AgentToolTime;
 
-/// 时间查询参数
+/// Time query parameters
 #[derive(Debug, Deserialize)]
 pub struct TimeArgs {
     #[serde(rename = "format")]
     pub format: Option<String>,
 }
 
-/// 时间查询结果
+/// Time query result
 #[derive(Debug, Serialize)]
 pub struct TimeResult {
     pub current_time: String,
@@ -26,7 +26,7 @@ pub struct TimeResult {
     pub utc_time: String,
 }
 
-/// 时间工具错误
+/// Time tool error
 #[derive(Debug)]
 pub struct TimeToolError;
 
@@ -44,18 +44,18 @@ impl AgentToolTime {
     }
 
     async fn get_current_time(&self, args: &TimeArgs) -> Result<TimeResult> {
-        // 获取当前系统时间
+        // Get current system time
         let now = SystemTime::now();
         let timestamp = now.duration_since(UNIX_EPOCH)?.as_secs();
 
-        // 格式化时间
+        // Format time
         let format = args.format.as_deref().unwrap_or("%Y-%m-%d %H:%M:%S");
 
-        // 本地时间
+        // Local time
         let datetime: chrono::DateTime<chrono::Local> = now.into();
         let current_time = datetime.format(format).to_string();
 
-        // UTC时间
+        // UTC time
         let utc_datetime: chrono::DateTime<chrono::Utc> = now.into();
         let utc_time = utc_datetime.format(format).to_string();
 
@@ -77,13 +77,13 @@ impl Tool for AgentToolTime {
     async fn definition(&self, _prompt: String) -> rig::completion::ToolDefinition {
         rig::completion::ToolDefinition {
             name: Self::NAME.to_string(),
-            description: "获取当前日期和时间信息，包括本地时间和UTC时间以及时间戳。".to_string(),
+            description: "Get current date and time information, including local time, UTC time, and timestamp.".to_string(),
             parameters: serde_json::json!({
                 "type": "object",
                 "properties": {
                     "format": {
                         "type": "string",
-                        "description": "时间格式字符串（默认为'%Y-%m-%d %H:%M:%S'）。支持chrono格式化语法。"
+                        "description": "Time format string (default is '%Y-%m-%d %H:%M:%S'). Supports chrono formatting syntax."
                     }
                 },
                 "required": []

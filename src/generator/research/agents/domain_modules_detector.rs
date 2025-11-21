@@ -9,7 +9,7 @@ use crate::generator::{
     },
 };
 
-/// 领域划分与顶层抽象模块研究员 - 识别High-Level-System领域架构与抽象模块，以及其内部关联关系。
+/// Domain Division and Top-Level Abstract Module Researcher - Identifies high-level system domain architecture and abstract modules, as well as their internal relationships.
 #[derive(Default)]
 pub struct DomainModulesDetector;
 
@@ -18,6 +18,10 @@ impl StepForwardAgent for DomainModulesDetector {
 
     fn agent_type(&self) -> String {
         AgentType::DomainModulesDetector.to_string()
+    }
+
+    fn agent_type_enum(&self) -> Option<AgentType> {
+        Some(AgentType::DomainModulesDetector)
     }
 
     fn memory_scope_key(&self) -> String {
@@ -37,17 +41,17 @@ impl StepForwardAgent for DomainModulesDetector {
 
     fn prompt_template(&self) -> PromptTemplate {
         PromptTemplate {
-            system_prompt: r#"你是一个专业的软件架构分析师，专注于根据提供的信息和调研材料，识别项目中的领域架构与模块"#
+            system_prompt: r#"You are a professional software architecture analyst, specializing in identifying domain architecture and modules in projects based on the provided information and research materials"#
                 .to_string(),
 
-            opening_instruction: "基于以下调研材料，进行高层次架构分析：".to_string(),
+            opening_instruction: "Based on the following research materials, conduct a high-level architecture analysis:".to_string(),
 
             closing_instruction: r#"
-## 分析要求：
-- 采用自顶向下的分析方法，先领域后模块
-- 领域划分要体现功能价值，不是技术实现
-- 保持合理的抽象层次，避免过度细化
-- 重点关注核心业务逻辑和关键依赖关系"#
+## Analysis Requirements:
+- Use a top-down analysis approach, domains first then modules
+- Domain division should reflect functional value, not technical implementation
+- Maintain a reasonable level of abstraction, avoid excessive detail
+- Focus on core business logic and key dependency relationships"#
                 .to_string(),
 
             llm_call_mode: LLMCallMode::Extract,
@@ -58,25 +62,25 @@ impl StepForwardAgent for DomainModulesDetector {
         }
     }
 
-    /// 后处理 - 存储分析结果到内存
+    /// Post-processing - Store analysis results to memory
     fn post_process(
         &self,
         result: &DomainModulesReport,
         _context: &GeneratorContext,
     ) -> Result<()> {
-        // 简化版存储逻辑
-        println!("✅ 领域架构分析完成:");
-        println!("   - 识别领域模块: {} 个", result.domain_modules.len());
+        // Simplified storage logic
+        println!("✅ Domain architecture analysis completed:");
+        println!("   - Identified domain modules: {}", result.domain_modules.len());
 
         let total_sub_modules: usize = result
             .domain_modules
             .iter()
             .map(|d| d.sub_modules.len())
             .sum();
-        println!("   - 子模块总数: {} 个", total_sub_modules);
-        println!("   - 领域关系: {} 个", result.domain_relations.len());
-        println!("   - 执行流程: {} 个", result.business_flows.len());
-        println!("   - 置信度: {:.1}/10", result.confidence_score);
+        println!("   - Total sub-modules: {}", total_sub_modules);
+        println!("   - Domain relations: {}", result.domain_relations.len());
+        println!("   - Business flows: {}", result.business_flows.len());
+        println!("   - Confidence score: {:.1}/10", result.confidence_score);
 
         Ok(())
     }

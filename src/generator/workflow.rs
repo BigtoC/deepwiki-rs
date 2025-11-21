@@ -16,29 +16,29 @@ use crate::{
 use anyhow::Result;
 use tokio::sync::RwLock;
 
-/// 工作流程耗时统计的Memory作用域和键定义
+/// Memory scope and key definitions for workflow timing statistics
 pub struct TimingScope;
 
 impl TimingScope {
-    /// 耗时统计的Memory作用域
+    /// Memory scope for timing statistics
     pub const TIMING: &'static str = "timing";
 }
 
-/// 工作流程各阶段的Memory键定义
+/// Memory key definitions for each workflow stage
 pub struct TimingKeys;
 
 impl TimingKeys {
-    /// 预处理阶段耗时
+    /// Preprocessing stage duration
     pub const PREPROCESS: &'static str = "preprocess";
-    /// 研究阶段耗时
+    /// Research stage duration
     pub const RESEARCH: &'static str = "research";
-    /// 文档生成阶段耗时
+    /// Document generation stage duration
     pub const COMPOSE: &'static str = "compose";
-    /// 输出阶段耗时
+    /// Output stage duration
     pub const OUTPUT: &'static str = "output";
-    /// 文档生成时间
+    /// Document generation time
     pub const DOCUMENT_GENERATION: &'static str = "document_generation";
-    /// 总执行时间
+    /// Total execution time
     pub const TOTAL_EXECUTION: &'static str = "total_execution";
 }
 
@@ -47,7 +47,10 @@ pub async fn launch(c: &Config) -> Result<()> {
 
     let config = c.clone();
     let llm_client = LLMClient::new(config.clone())?;
-    let cache_manager = Arc::new(RwLock::new(CacheManager::new(config.cache.clone())));
+    let cache_manager = Arc::new(RwLock::new(CacheManager::new(
+        config.cache.clone(),
+        config.target_language.clone(),
+    )));
     let memory = Arc::new(RwLock::new(Memory::new()));
 
     let context = GeneratorContext {
@@ -57,7 +60,7 @@ pub async fn launch(c: &Config) -> Result<()> {
         memory,
     };
 
-    // 预处理阶段
+    // Preprocessing stage
     let preprocess_start = Instant::now();
     let preprocess_agent = PreProcessAgent::new();
     preprocess_agent.execute(context.clone()).await?;
@@ -66,11 +69,11 @@ pub async fn launch(c: &Config) -> Result<()> {
         .store_to_memory(TimingScope::TIMING, TimingKeys::PREPROCESS, preprocess_time)
         .await?;
     println!(
-        "=== 预处理完成，结果已存储到Memory（耗时: {:.2}s）=== ",
+        "=== Preprocessing completed, results stored to Memory (Duration: {:.2}s) ===",
         preprocess_time
     );
 
-    // 执行多智能体研究阶段
+    // Execute multi-agent research stage
     let research_start = Instant::now();
     let research_orchestrator = ResearchOrchestrator::default();
     research_orchestrator
@@ -80,9 +83,9 @@ pub async fn launch(c: &Config) -> Result<()> {
     context
         .store_to_memory(TimingScope::TIMING, TimingKeys::RESEARCH, research_time)
         .await?;
-    println!("\n=== 项目深度调研完成（耗时: {:.2}s） ===", research_time);
+    println!("\n=== Project in-depth research completed (Duration: {:.2}s) ===", research_time);
 
-    // 执行文档生成流程
+    // Execute document generation process
     let compose_start = Instant::now();
     let mut doc_tree = DocTree::new(&context.config.target_language);
     let documentation_orchestrator = DocumentationComposer::default();
@@ -93,14 +96,14 @@ pub async fn launch(c: &Config) -> Result<()> {
     context
         .store_to_memory(TimingScope::TIMING, TimingKeys::COMPOSE, compose_time)
         .await?;
-    println!("\n=== 文档生成完成（耗时: {:.2}s） ===", compose_time);
+    println!("\n=== Document generation completed (Duration: {:.2}s) ===", compose_time);
 
-    // 执行文档存储
+    // Execute document storage
     let output_start = Instant::now();
     let outlet = DiskOutlet::new(doc_tree);
     outlet.save(&context).await?;
 
-    // 生成并保存summary报告
+    // Generate and save summary report
     let summary_outlet = SummaryOutlet::new();
     summary_outlet.save(&context).await?;
 
@@ -108,15 +111,15 @@ pub async fn launch(c: &Config) -> Result<()> {
     context
         .store_to_memory(TimingScope::TIMING, TimingKeys::OUTPUT, output_time)
         .await?;
-    println!("\n=== 文档存储完成（耗时: {:.2}s） ===", output_time);
+    println!("\n=== Document storage completed (Duration: {:.2}s) ===", output_time);
 
-    // 记录总执行时间
+    // Record total execution time
     let total_time = overall_start.elapsed().as_secs_f64();
     context
         .store_to_memory(TimingScope::TIMING, TimingKeys::TOTAL_EXECUTION, total_time)
         .await?;
 
-    println!("\n🎉 所有流程执行完成！总耗时: {:.2}s", total_time);
+    println!("\n🎉 All processes execution completed! Total duration: {:.2}s", total_time);
 
     Ok(())
 }

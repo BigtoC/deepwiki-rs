@@ -28,7 +28,7 @@ impl LanguageProcessor for ReactProcessor {
         let source_file = file_path.to_string_lossy().to_string();
 
         for (line_num, line) in content.lines().enumerate() {
-            // 提取import语句
+            // Extract import statements
             if let Some(captures) = self.import_regex.captures(line) {
                 if let Some(import_path) = captures.get(1) {
                     let path_str = import_path.as_str();
@@ -60,7 +60,7 @@ impl LanguageProcessor for ReactProcessor {
     fn determine_component_type(&self, file_path: &Path, content: &str) -> String {
         let file_name = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
 
-        // 检查特殊文件名
+        // Check special file names
         if file_name == "App.jsx" || file_name == "App.tsx" {
             return "react_app".to_string();
         }
@@ -79,7 +79,7 @@ impl LanguageProcessor for ReactProcessor {
             return "react_hook".to_string();
         }
 
-        // 检查内容模式
+        // Check content patterns
         if content.contains("export default")
             && (content.contains("return (") || content.contains("return <"))
         {
@@ -98,7 +98,7 @@ impl LanguageProcessor for ReactProcessor {
     fn is_important_line(&self, line: &str) -> bool {
         let trimmed = line.trim();
 
-        // React组件定义
+        // React component definitions
         if trimmed.starts_with("function ")
             && (trimmed.contains("()") || trimmed.contains("(props"))
             || trimmed.starts_with("const ") && trimmed.contains("= (") && trimmed.contains("=>")
@@ -118,17 +118,17 @@ impl LanguageProcessor for ReactProcessor {
             return true;
         }
 
-        // JSX返回语句
+        // JSX return statements
         if trimmed.starts_with("return (") || trimmed.starts_with("return <") {
             return true;
         }
 
-        // 导入导出语句
+        // Import/export statements
         if trimmed.starts_with("import ") || trimmed.starts_with("export ") {
             return true;
         }
 
-        // React特有的模式
+        // React-specific patterns
         if trimmed.contains("createContext")
             || trimmed.contains("forwardRef")
             || trimmed.contains("memo(")
@@ -137,7 +137,7 @@ impl LanguageProcessor for ReactProcessor {
             return true;
         }
 
-        // 重要注释
+        // Important comments
         if trimmed.contains("TODO")
             || trimmed.contains("FIXME")
             || trimmed.contains("NOTE")
@@ -157,11 +157,11 @@ impl LanguageProcessor for ReactProcessor {
         let mut interfaces = Vec::new();
         let lines: Vec<&str> = content.lines().collect();
 
-        // React组件的接口分析主要关注组件定义和Hook使用
+        // React component interface analysis focuses on component definitions and Hook usage
         for (i, line) in lines.iter().enumerate() {
             let trimmed = line.trim();
 
-            // 提取函数组件定义
+            // Extract function component definitions
             if let Some(component_name) = self.extract_function_component(trimmed) {
                 interfaces.push(InterfaceInfo {
                     name: component_name,
@@ -173,7 +173,7 @@ impl LanguageProcessor for ReactProcessor {
                 });
             }
 
-            // 提取类组件定义
+            // Extract class component definitions
             if let Some(component_name) = self.extract_class_component(trimmed) {
                 interfaces.push(InterfaceInfo {
                     name: component_name,
@@ -185,7 +185,7 @@ impl LanguageProcessor for ReactProcessor {
                 });
             }
 
-            // 提取自定义Hook定义
+            // Extract custom Hook definitions
             if let Some(hook_name) = self.extract_custom_hook(trimmed) {
                 interfaces.push(InterfaceInfo {
                     name: hook_name,
@@ -203,9 +203,9 @@ impl LanguageProcessor for ReactProcessor {
 }
 
 impl ReactProcessor {
-    /// 提取函数组件名称
+    /// Extract function component name
     fn extract_function_component(&self, line: &str) -> Option<String> {
-        // 匹配: function ComponentName, const ComponentName = (), export function ComponentName
+        // Match: function ComponentName, const ComponentName = (), export function ComponentName
         if line.contains("function") && (line.contains("return") || line.contains("=>")) {
             if let Some(start) = line.find("function") {
                 let after_function = &line[start + 8..].trim();
@@ -218,7 +218,7 @@ impl ReactProcessor {
             }
         }
 
-        // 匹配: const ComponentName = () => 或 const ComponentName: React.FC
+        // Match: const ComponentName = () => or const ComponentName: React.FC
         if line.starts_with("const") || line.starts_with("export const") {
             if let Some(eq_pos) = line.find('=') {
                 let before_eq = &line[..eq_pos];
@@ -234,7 +234,7 @@ impl ReactProcessor {
         None
     }
 
-    /// 提取类组件名称
+    /// Extract class component name
     fn extract_class_component(&self, line: &str) -> Option<String> {
         if line.contains("class")
             && (line.contains("extends React.Component") || line.contains("extends Component"))
@@ -252,9 +252,9 @@ impl ReactProcessor {
         None
     }
 
-    /// 提取自定义Hook名称
+    /// Extract custom Hook name
     fn extract_custom_hook(&self, line: &str) -> Option<String> {
-        // 匹配: function useCustomHook, const useCustomHook =
+        // Match: function useCustomHook, const useCustomHook =
         if line.contains("function use") || (line.contains("const use") && line.contains('=')) {
             if line.contains("function") {
                 if let Some(start) = line.find("function") {
@@ -281,11 +281,11 @@ impl ReactProcessor {
         None
     }
 
-    /// 提取组件注释
+    /// Extract component comment
     fn extract_component_comment(&self, lines: &[&str], current_line: usize) -> Option<String> {
         let mut doc_lines = Vec::new();
 
-        // 向上查找注释
+        // Search upward for comments
         for i in (0..current_line).rev() {
             let line = lines[i].trim();
 

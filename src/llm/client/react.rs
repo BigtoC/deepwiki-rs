@@ -1,17 +1,17 @@
-//! ReAct (Reasoning and Acting) 模式相关类型和配置
+//! ReAct (Reasoning and Acting) pattern related types and configuration
 
 use rig::completion::Message;
 
-/// ReAct模式配置
+/// ReAct mode configuration
 #[derive(Debug, Clone)]
 pub struct ReActConfig {
-    /// 最大迭代次数
+    /// Maximum number of iterations
     pub max_iterations: usize,
-    /// 是否启用详细日志
+    /// Whether to enable verbose logging
     pub verbose: bool,
-    /// 是否在达到最大迭代次数时返回部分结果
+    /// Whether to return partial results when max iterations reached
     pub return_partial_on_max_depth: bool,
-    /// 是否启用总结推理fallover机制
+    /// Whether to enable summary reasoning fallover mechanism
     pub enable_summary_reasoning: bool,
 }
 
@@ -26,23 +26,23 @@ impl Default for ReActConfig {
     }
 }
 
-/// ReAct响应结果
+/// ReAct response result
 #[derive(Debug, Clone)]
 pub struct ReActResponse {
-    /// 最终响应内容
+    /// Final response content
     pub content: String,
-    /// 实际使用的迭代次数
+    /// Actual number of iterations used
     pub iterations_used: usize,
-    /// 是否因为达到最大迭代次数而停止
+    /// Whether stopped due to reaching max iterations
     pub stopped_by_max_depth: bool,
-    /// 工具调用历史
+    /// Tool call history
     pub tool_calls_history: Vec<String>,
-    /// 对话历史（仅在达到最大深度时包含）
+    /// Chat history (only included when max depth reached)
     pub chat_history: Option<Vec<Message>>,
 }
 
 impl ReActResponse {
-    /// 创建新的ReAct响应
+    /// Create a new ReAct response
     pub fn new(
         content: String,
         iterations_used: usize,
@@ -59,12 +59,12 @@ impl ReActResponse {
         }
     }
 
-    /// 创建成功完成的响应
+    /// Create successfully completed response
     pub fn success(content: String, iterations_used: usize) -> Self {
         Self::new(content, iterations_used, false, Vec::new(), None)
     }
 
-    /// 创建因最大深度停止的响应（带对话历史）
+    /// Create response stopped by max depth (with chat history)
     pub fn max_depth_reached_with_history(
         content: String,
         max_depth: usize,
@@ -80,7 +80,7 @@ impl ReActResponse {
         )
     }
 
-    /// 创建通过总结推理生成的响应
+    /// Create response generated through summary reasoning
     pub fn from_summary_reasoning(
         content: String,
         max_depth: usize,

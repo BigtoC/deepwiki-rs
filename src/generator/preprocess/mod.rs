@@ -24,16 +24,16 @@ pub mod agents;
 pub mod extractors;
 pub mod memory;
 
-/// 预处理结果
+/// Preprocessing result
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PreprocessingResult {
-    // 工程中提取的原始人为编写的文档素材，不一定准确仅供参考
+    // Original document materials extracted from the project, may not be accurate and is for reference only
     pub original_document: OriginalDocument,
-    // 工程结构信息
+    // Project structure information
     pub project_structure: ProjectStructure,
-    // 核心代码的智能洞察信息
+    // Intelligent insights of core code
     pub core_code_insights: Vec<CodeInsight>,
-    // 代码之间的依赖关系
+    // Dependencies between code
     pub relationships: RelationshipAnalysis,
     pub processing_time: f64,
 }
@@ -53,40 +53,40 @@ impl Generator<PreprocessingResult> for PreProcessAgent {
         let structure_extractor = StructureExtractor::new(context.clone());
         let config = &context.config;
 
-        println!("🔍 开始项目预处理阶段...");
+        println!("🔍 Starting project preprocessing phase...");
 
-        // 1. 提取项目原始文档素材
-        println!("📁 提取项目原始文档素材...");
+        // 1. Extract project original document materials
+        println!("📁 Extracting project original document materials...");
         let original_document = original_document_extractor::extract(&context).await?;
 
-        // 2. 提取项目结构
-        println!("📁 提取项目结构...");
+        // 2. Extract project structure
+        println!("📁 Extracting project structure...");
         let project_structure = structure_extractor
             .extract_structure(&config.project_path)
             .await?;
 
         println!(
-            "   🔭 发现 {} 个文件，{} 个目录",
+            "   🔭 Discovered {} files, {} directories",
             project_structure.total_files, project_structure.total_directories
         );
 
-        // 3. 识别核心组件
-        println!("🎯 识别主要的源码文件...");
+        // 3. Identify core components
+        println!("🎯 Identifying main source code files...");
         let important_codes = structure_extractor
             .identify_core_codes(&project_structure)
             .await?;
 
-        println!("   识别出 {} 个主要的源码文件", important_codes.len());
+        println!("   Identified {} main source code files", important_codes.len());
 
-        // 4. 使用AI分析核心组件
-        println!("🤖 使用AI分析核心文件...");
+        // 4. Analyze core components using AI
+        println!("🤖 Analyzing core files using AI...");
         let code_analyze = CodeAnalyze::new();
         let core_code_insights = code_analyze
             .execute(&context, &important_codes, &project_structure)
             .await?;
 
-        // 5. 分析组件关系
-        println!("🔗 分析组件关系...");
+        // 5. Analyze component relationships
+        println!("🔗 Analyzing component relationships...");
         let relationships_analyze = RelationshipsAnalyze::new();
         let relationships = relationships_analyze
             .execute(&context, &core_code_insights, &project_structure)
@@ -94,9 +94,9 @@ impl Generator<PreprocessingResult> for PreProcessAgent {
 
         let processing_time = start_time.elapsed().as_secs_f64();
 
-        println!("✅ 项目预处理完成，耗时 {:.2}秒", processing_time);
+        println!("✅ Project preprocessing completed, took {:.2} seconds", processing_time);
 
-        // 6. 存储预处理结果到 Memory
+        // 6. Store preprocessing results to Memory
         context
             .store_to_memory(
                 MemoryScope::PREPROCESS,
