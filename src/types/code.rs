@@ -6,43 +6,43 @@ use std::{
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-/// 代码基本信息
+/// Code basic information
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct CodeDossier {
-    /// 代码文件名称
+    /// Code file name
     pub name: String,
-    /// 文件路径
+    /// File path
     pub file_path: PathBuf,
-    /// 源码摘要
+    /// Source code summary
     #[schemars(skip)]
     #[serde(default)]
     pub source_summary: String,
-    /// 用途类型
+    /// Purpose type
     pub code_purpose: CodePurpose,
-    /// 重要性分数
+    /// Importance score
     pub importance_score: f64,
     pub description: Option<String>,
     pub functions: Vec<String>,
-    /// 接口清单
+    /// Interfaces list
     pub interfaces: Vec<String>,
 }
 
-/// 代码文件的智能洞察信息
+/// Intelligent insight information of code file
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct CodeInsight {
-    /// 代码基本信息
+    /// Code basic information
     pub code_dossier: CodeDossier,
     pub detailed_description: String,
-    /// 职责
+    /// Responsibilities
     pub responsibilities: Vec<String>,
-    /// 包含的接口
+    /// Contained interfaces
     pub interfaces: Vec<InterfaceInfo>,
-    /// 依赖信息
+    /// Dependency information
     pub dependencies: Vec<Dependency>,
     pub complexity_metrics: CodeComplexity,
 }
 
-/// 接口信息
+/// Interface information
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct InterfaceInfo {
     pub name: String,
@@ -53,7 +53,7 @@ pub struct InterfaceInfo {
     pub description: Option<String>,
 }
 
-/// 参数信息
+/// Parameter information
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct ParameterInfo {
     pub name: String,
@@ -62,7 +62,7 @@ pub struct ParameterInfo {
     pub description: Option<String>,
 }
 
-/// 依赖信息
+/// Dependency information
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct Dependency {
     pub name: String,
@@ -89,7 +89,7 @@ impl Display for Dependency {
     }
 }
 
-/// 组件复杂度指标
+/// Component complexity metrics
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct CodeComplexity {
     pub cyclomatic_complexity: f64,
@@ -98,88 +98,93 @@ pub struct CodeComplexity {
     pub number_of_classes: usize,
 }
 
-/// 代码功能分类枚举
+/// Code functionality classification enum
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Hash, JsonSchema)]
 #[serde(rename_all = "lowercase")]
 pub enum CodePurpose {
-    /// 项目执行入口
+    /// Project execution entry
     Entry,
-    /// 智能Agent
+    /// Intelligent Agent
     Agent,
-    /// 前端UI页面
+    /// Frontend UI page
     Page,
-    /// 前端UI组件
+    /// Frontend UI component
     Widget,
-    /// 用于处理实现特定逻辑功能的代码模块
+    /// Code module for implementing specific logical functionality
     SpecificFeature,
-    /// 数据类型或模型
+    /// Data type or model
     Model,
-    /// 程序内部接口定义
+    /// Program internal interface definition
     Types,
-    /// 特定场景下的功能工具代码
+    /// Functional tool code for specific scenarios
     Tool,
-    /// 通用、基础的工具函数和类，提供与业务逻辑无关的底层辅助功能
+    /// Common, basic utility functions and classes, providing low-level auxiliary functions unrelated to business logic
     Util,
-    /// 配置
+    /// Configuration
+    #[serde(alias = "configuration")]
     Config,
-    /// 中间件
+    /// Middleware
     Middleware,
-    /// 插件
+    /// Plugin
     Plugin,
-    /// 前端或后端系统内的路由
+    /// Router in frontend or backend system
     Router,
-    /// 数据库组件
+    /// Database component
     Database,
-    /// 供外部调用的服务API，提供基于HTTP、RPC、IPC等协议等调用能力。
+    /// Service API for external calls, providing calling capabilities based on HTTP, RPC, IPC and other protocols.
     Api,
-    /// MVC架构中的Controller组件，负责处理业务逻辑
+    /// Controller component in MVC architecture, responsible for handling business logic
     Controller,
-    /// MVC架构中的Service组件，负责处理业务规则
+    /// Service component in MVC architecture, responsible for handling business rules
     Service,
-    /// 明确的边界和职责的一组相关代码（函数、类、资源）的集合
-    Module,
-    /// 依赖库
+    /// Collection of related code (functions, classes, resources) with clear boundaries and responsibilities
+        Module,
+    /// Dependency library
+    #[serde(alias = "library", alias = "package")]
     Lib,
-    /// 测试组件
+    /// Test component
+    #[serde(alias = "testing", alias = "tests")]
     Test,
-    /// 文档组件
+    /// Documentation component
+    #[serde(alias = "documentation", alias = "docs")]
     Doc,
-    /// 数据访问层组件
+    /// Data Access Layer component
     Dao,
-    /// 上下文组件
+    /// Context component
     Context,
-    /// 其他未归类或未知
+    /// Other uncategorized or unknown
+    #[serde(alias = "unknown", alias = "misc", alias = "miscellaneous")]
     Other,
 }
 
 impl CodePurpose {
-    /// 获取组件类型的显示名称
+    /// Get component type display name
     pub fn display_name(&self) -> &'static str {
         match self {
-            CodePurpose::Entry => "项目执行入口",
-            CodePurpose::Agent => "智能Agent",
-            CodePurpose::Page => "前端UI页面",
-            CodePurpose::Widget => "前端UI组件",
-            CodePurpose::SpecificFeature => "用于处理实现特定逻辑功能",
-            CodePurpose::Model => "数据类型或模型",
-            CodePurpose::Util => "基础工具函数",
-            CodePurpose::Tool => "特定场景下的功能工具代码",
-            CodePurpose::Config => "配置",
-            CodePurpose::Middleware => "中间件",
-            CodePurpose::Plugin => "插件",
-            CodePurpose::Router => "路由组件",
-            CodePurpose::Database => "数据库组件",
-            CodePurpose::Api => "各类接口定义",
-            CodePurpose::Controller => "Controller组件",
-            CodePurpose::Service => "Service组件",
-            CodePurpose::Module => "模块组件",
-            CodePurpose::Lib => "依赖库",
-            CodePurpose::Test => "测试组件",
-            CodePurpose::Doc => "文档组件",
-            CodePurpose::Other => "其他组件",
-            CodePurpose::Types => "程序接口定义",
-            CodePurpose::Dao => "数据访问层组件",
-            CodePurpose::Context => "上下文组件",
+            CodePurpose::Entry => "Project Execution Entry",
+            CodePurpose::Agent => "Intelligent Agent",
+            CodePurpose::Page => "Frontend UI Page",
+            CodePurpose::Widget => "Frontend UI Component",
+            CodePurpose::SpecificFeature => "Specific Logic Functionality",
+            CodePurpose::Model => "Data Type or Model",
+            CodePurpose::Util => "Basic Utility Functions",
+            CodePurpose::Tool => "Functional Tool Code for Specific Scenarios",
+            CodePurpose::Config => "Configuration",
+            CodePurpose::Middleware => "Middleware",
+            CodePurpose::Plugin => "Plugin",
+            CodePurpose::Router => "Router Component",
+            CodePurpose::Database => "Database Component",
+            CodePurpose::Api => "Various Interface Definitions",
+            CodePurpose::Controller => "Controller Component",
+            CodePurpose::Service => "Service Component",
+            CodePurpose::Module => "Module Component",
+            CodePurpose::Lib => "Dependency Library",
+            CodePurpose::Test => "Test Component",
+            CodePurpose::Doc => "Documentation Component",
+            CodePurpose::Other => "Other Component",
+            CodePurpose::Types => "Program Interface Definition",
+            CodePurpose::Dao => "Data Access Layer Component",
+            CodePurpose::Context => "Context Component",
         }
     }
 }
@@ -196,16 +201,16 @@ impl Default for CodePurpose {
     }
 }
 
-/// 组件类型映射器，用于将原有的字符串类型映射到新的枚举类型
+/// Component type mapper, used to map original string types to new enum types
 pub struct CodePurposeMapper;
 
 impl CodePurposeMapper {
-    /// 基于文件路径和名称进行智能映射
+    /// Intelligent mapping based on file path and name
     pub fn map_by_path_and_name(file_path: &str, file_name: &str) -> CodePurpose {
         let path_lower = file_path.to_lowercase();
         let name_lower = file_name.to_lowercase();
 
-        // 基于路径的映射
+        // Path-based mapping
         if path_lower.contains("/pages/")
             || path_lower.contains("/views/")
             || path_lower.contains("/screens/")
@@ -284,7 +289,7 @@ impl CodePurposeMapper {
             return CodePurpose::Doc;
         }
 
-        // 基于文件名的映射
+        // Filename-based mapping
         if name_lower.contains("main") || name_lower.contains("index") || name_lower.contains("app")
         {
             return CodePurpose::Entry;

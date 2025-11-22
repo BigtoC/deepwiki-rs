@@ -31,3 +31,5 @@ litho.docs/
 
 **/.DS_Store
 litho.toml
+.vs/*
+

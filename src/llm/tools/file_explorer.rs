@@ -1,4 +1,4 @@
-//! 文件系统探索工具
+//! File system exploration tool
 
 use anyhow::Result;
 use rig::tool::Tool;
@@ -13,13 +13,13 @@ use crate::config::Config;
 use crate::types::FileInfo;
 use crate::utils::file_utils::is_test_file;
 
-/// 文件探索工具
+/// File exploration tool
 #[derive(Debug, Clone)]
 pub struct AgentToolFileExplorer {
     config: Config,
 }
 
-/// 文件探索参数
+/// File exploration parameters
 #[derive(Debug, Deserialize)]
 pub struct FileExplorerArgs {
     pub action: String, // "list_directory", "find_files", "get_file_info"
@@ -29,7 +29,7 @@ pub struct FileExplorerArgs {
     pub max_files: Option<usize>,
 }
 
-/// 文件探索结果
+/// File exploration result
 #[derive(Debug, Serialize, Default)]
 pub struct FileExplorerResult {
     pub files: Vec<FileInfo>,
@@ -53,7 +53,7 @@ impl AgentToolFileExplorer {
 
         if !target_path.exists() {
             return Ok(FileExplorerResult {
-                insights: vec![format!("路径不存在: {}", target_path.display())],
+                insights: vec![format!("Path does not exist: {}", target_path.display())],
                 ..Default::default()
             });
         }
@@ -65,7 +65,7 @@ impl AgentToolFileExplorer {
         let mut file_types = HashMap::new();
 
         if recursive {
-            // 递归遍历，限制深度为3
+            // Recursive traversal, limit depth to 3
             for entry in WalkDir::new(&target_path).max_depth(3) {
                 if files.len() >= max_files {
                     break;
@@ -94,7 +94,7 @@ impl AgentToolFileExplorer {
                 }
             }
         } else {
-            // 非递归，只列出当前目录
+            // Non-recursive, only list current directory
             for entry in std::fs::read_dir(&target_path)? {
                 if files.len() >= max_files {
                     break;
@@ -149,7 +149,7 @@ impl AgentToolFileExplorer {
 
         if !search_path.exists() {
             return Ok(FileExplorerResult {
-                insights: vec![format!("搜索路径不存在: {}", search_path.display())],
+                insights: vec![format!("Search path does not exist: {}", search_path.display())],
                 ..Default::default()
             });
         }
@@ -158,7 +158,7 @@ impl AgentToolFileExplorer {
         let mut files = Vec::new();
         let mut file_types = HashMap::new();
 
-        // 使用walkdir递归搜索，限制深度为5
+        // Use walkdir for recursive search, limit depth to 5
         for entry in WalkDir::new(&search_path).max_depth(5) {
             if files.len() >= max_files {
                 break;
@@ -173,7 +173,7 @@ impl AgentToolFileExplorer {
 
             let file_name = path.file_name().and_then(|n| n.to_str()).unwrap_or("");
 
-            // 简单的模式匹配
+            // Simple pattern matching
             if self.matches_pattern(file_name, pattern) {
                 let file_info = self.create_file_info(path)?;
                 if let Some(ext) = &file_info.extension {
@@ -184,9 +184,9 @@ impl AgentToolFileExplorer {
         }
 
         let insights = vec![
-            format!("搜索模式: {}", pattern),
-            format!("搜索路径: {}", search_path.display()),
-            format!("找到 {} 个匹配文件", files.len()),
+            format!("Search pattern: {}", pattern),
+            format!("Search path: {}", search_path.display()),
+            format!("Found {} matching files", files.len()),
         ];
 
         Ok(FileExplorerResult {
@@ -208,21 +208,21 @@ impl AgentToolFileExplorer {
 
         if !target_path.exists() {
             return Ok(FileExplorerResult {
-                insights: vec![format!("文件不存在: {}", target_path.display())],
+                insights: vec![format!("File does not exist: {}", target_path.display())],
                 ..Default::default()
             });
         }
 
         if !target_path.is_file() {
             return Ok(FileExplorerResult {
-                insights: vec![format!("路径不是文件: {}", target_path.display())],
+                insights: vec![format!("Path is not a file: {}", target_path.display())],
                 ..Default::default()
             });
         }
 
         if self.is_ignored(&target_path) {
             return Ok(FileExplorerResult {
-                insights: vec![format!("文件被忽略: {}", target_path.display())],
+                insights: vec![format!("File is ignored: {}", target_path.display())],
                 ..Default::default()
             });
         }
@@ -234,16 +234,16 @@ impl AgentToolFileExplorer {
         }
 
         let insights = vec![
-            format!("文件路径: {}", file_info.path.display()),
-            format!("文件大小: {} 字节", file_info.size),
+            format!("File path: {}", file_info.path.display()),
+            format!("File size: {} bytes", file_info.size),
             format!(
-                "文件扩展名: {}",
-                file_info.extension.as_deref().unwrap_or("无")
+                "File extension: {}",
+                file_info.extension.as_deref().unwrap_or("none")
             ),
-            format!("重要性分数: {:.2}", file_info.importance_score),
+            format!("Importance score: {:.2}", file_info.importance_score),
             format!(
-                "最后修改时间: {}",
-                file_info.last_modified.as_deref().unwrap_or("未知")
+                "Last modified: {}",
+                file_info.last_modified.as_deref().unwrap_or("unknown")
             ),
         ];
 
@@ -264,17 +264,17 @@ impl AgentToolFileExplorer {
             .unwrap_or("")
             .to_lowercase();
 
-        // 检查排除的目录
+        // Check excluded directories
         for excluded_dir in &self.config.excluded_dirs {
             if path_str.contains(&excluded_dir.to_lowercase()) {
                 return true;
             }
         }
 
-        // 检查排除的文件
+        // Check excluded files
         for excluded_file in &self.config.excluded_files {
             if excluded_file.contains('*') {
-                // 简单的通配符匹配
+                // Simple wildcard matching
                 let pattern = excluded_file.replace('*', "");
                 if file_name.contains(&pattern.to_lowercase()) {
                     return true;
@@ -284,7 +284,7 @@ impl AgentToolFileExplorer {
             }
         }
 
-        // 检查排除的扩展名
+        // Check excluded extensions
         if let Some(extension) = path.extension().and_then(|e| e.to_str()) {
             if self
                 .config
@@ -295,7 +295,7 @@ impl AgentToolFileExplorer {
             }
         }
 
-        // 检查包含的扩展名（如果指定了）
+        // Check included extensions (if specified)
         if !self.config.included_extensions.is_empty() {
             if let Some(extension) = path.extension().and_then(|e| e.to_str()) {
                 if !self
@@ -306,21 +306,21 @@ impl AgentToolFileExplorer {
                     return true;
                 }
             } else {
-                return true; // 没有扩展名且指定了包含列表
+                return true; // No extension and included list is specified
             }
         }
 
-        // 检查测试文件（如果不包含测试文件）
+        // Check test files (if not including test files)
         if !self.config.include_tests && is_test_file(path) {
             return true;
         }
 
-        // 检查隐藏文件
+        // Check hidden files
         if !self.config.include_hidden && file_name.starts_with('.') {
             return true;
         }
 
-        // 检查文件大小
+        // Check file size
         if let Ok(metadata) = std::fs::metadata(path) {
             if metadata.len() > self.config.max_file_size {
                 return true;
@@ -355,7 +355,7 @@ impl AgentToolFileExplorer {
             .and_then(|time| time.duration_since(std::time::UNIX_EPOCH).ok())
             .map(|duration| duration.as_secs().to_string());
 
-        // 计算简单的重要性分数
+        // Calculate simple importance score
         let importance_score = self.calculate_importance_score(path, &metadata);
 
         Ok(FileInfo {
@@ -365,7 +365,7 @@ impl AgentToolFileExplorer {
             extension,
             is_core: importance_score > 0.5,
             importance_score,
-            complexity_score: 0.0, // 暂时设为0，可以后续扩展
+            complexity_score: 0.0, // Temporarily set to 0, can be extended later
             last_modified,
         })
     }
@@ -373,7 +373,7 @@ impl AgentToolFileExplorer {
     fn calculate_importance_score(&self, path: &Path, metadata: &std::fs::Metadata) -> f64 {
         let mut score: f64 = 0.0;
 
-        // 基于文件位置的权重
+        // Weight based on file location
         let path_str = path.to_string_lossy().to_lowercase();
         if path_str.contains("src") || path_str.contains("lib") {
             score += 0.3;
@@ -385,35 +385,35 @@ impl AgentToolFileExplorer {
             score += 0.1;
         }
 
-        // 基于文件大小的权重
+        // Weight based on file size
         let size = metadata.len();
         if size > 1000 && size < 50000 {
             score += 0.2;
         }
 
-        // 基于文件类型的权重
+        // Weight based on file type
         if let Some(extension) = path.extension().and_then(|e| e.to_str()) {
             match extension.to_lowercase().as_str() {
-                // 主要编程语言
+                // Main programming languages
                 "rs" | "py" | "java" | "kt" | "cpp" | "c" | "go" | "rb" | "php" | "m" | "swift"
-                | "dart" => score += 0.3,
-                // React 特殊文件
+                | "dart" | "cs" => score += 0.3,
+                // React special files
                 "jsx" | "tsx" => score += 0.3,
-                // JavaScript/TypeScript 生态
+                // JavaScript/TypeScript ecosystem
                 "js" | "ts" | "mjs" | "cjs" => score += 0.3,
-                // 前端框架文件
+                // Frontend framework files
                 "vue" | "svelte" => score += 0.3,
-                // 小程序
+                // Mini Apps
                 "wxml" | "ttml" | "ksml" => score += 0.3,
-                // 配置文件
+                // Configuration files
                 "toml" | "yaml" | "yml" | "json" | "xml" | "ini" | "env" => score += 0.1,
-                // 构建和包管理文件
-                "gradle" | "pom" => score += 0.15,
+                // Build and package management files
+                "gradle" | "pom" | "csproj" | "sln" => score += 0.15,
                 "package" => score += 0.15,
                 "lock" => score += 0.05,
-                // 样式文件
+                // Style files
                 "css" | "scss" | "sass" | "less" | "styl" | "wxss" => score += 0.1,
-                // 模板文件
+                // Template files
                 "html" | "htm" | "hbs" | "mustache" | "ejs" => score += 0.1,
                 _ => {}
             }
@@ -424,7 +424,7 @@ impl AgentToolFileExplorer {
 
     fn matches_pattern(&self, file_name: &str, pattern: &str) -> bool {
         if pattern.contains('*') {
-            // 简单的通配符匹配
+            // Simple wildcard matching
             let parts: Vec<&str> = pattern.split('*').collect();
             if parts.len() == 2 {
                 let prefix = parts[0];
@@ -433,7 +433,7 @@ impl AgentToolFileExplorer {
             }
         }
 
-        // 包含匹配
+        // Contains matching
         file_name.to_lowercase().contains(&pattern.to_lowercase())
     }
 
@@ -446,7 +446,7 @@ impl AgentToolFileExplorer {
         let mut insights = Vec::new();
 
         insights.push(format!(
-            "找到 {} 个文件和 {} 个目录",
+            "Found {} files and {} directories",
             files.len(),
             directories.len()
         ));
@@ -459,17 +459,17 @@ impl AgentToolFileExplorer {
                 }
                 type_summary.push_str(&format!("{}: {}", ext, count));
             }
-            insights.push(format!("文件类型分布: {}", type_summary));
+            insights.push(format!("File type distribution: {}", type_summary));
         }
 
         let total_size: u64 = files.iter().map(|f| f.size).sum();
         if total_size > 0 {
-            insights.push(format!("总文件大小: {} 字节", total_size));
+            insights.push(format!("Total file size: {} bytes", total_size));
         }
 
         let core_files: Vec<_> = files.iter().filter(|f| f.is_core).collect();
         if !core_files.is_empty() {
-            insights.push(format!("核心文件数量: {}", core_files.len()));
+            insights.push(format!("Core files count: {}", core_files.len()));
         }
 
         insights
@@ -491,7 +491,7 @@ impl Tool for AgentToolFileExplorer {
         rig::completion::ToolDefinition {
             name: Self::NAME.to_string(),
             description:
-                "探索项目文件结构，列出目录内容，查找特定文件模式。支持递归搜索和文件过滤。"
+                "Explore project file structure, list directory contents, find specific file patterns. Supports recursive search and file filtering."
                     .to_string(),
             parameters: serde_json::json!({
                 "type": "object",
@@ -499,23 +499,23 @@ impl Tool for AgentToolFileExplorer {
                     "action": {
                         "type": "string",
                         "enum": ["list_directory", "find_files", "get_file_info"],
-                        "description": "要执行的操作类型：list_directory(列出目录), find_files(查找文件), get_file_info(获取文件信息)"
+                        "description": "Action type to execute: list_directory (list directory), find_files (find files), get_file_info (get file info)"
                     },
                     "path": {
                         "type": "string",
-                        "description": "目标路径（相对于项目根目录）"
+                        "description": "Target path (relative to project root)"
                     },
                     "pattern": {
                         "type": "string",
-                        "description": "文件搜索模式（用于find_files操作）"
+                        "description": "File search pattern (for find_files operation)"
                     },
                     "recursive": {
                         "type": "boolean",
-                        "description": "是否递归搜索子目录（默认false）"
+                        "description": "Whether to recursively search subdirectories (default false)"
                     },
                     "max_files": {
                         "type": "integer",
-                        "description": "最大返回文件数量（默认100）"
+                        "description": "Maximum number of files to return (default 100)"
                     }
                 },
                 "required": ["action"]

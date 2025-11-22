@@ -12,7 +12,7 @@ use crate::generator::step_forward_agent::{
 use anyhow::Result;
 use async_trait::async_trait;
 
-/// 边界接口文档编辑器 - 将边界分析结果编排为标准化文档
+/// Boundary Interface Documentation Editor - Orchestrates boundary analysis results into standardized documentation
 #[derive(Default)]
 pub struct BoundaryEditor;
 
@@ -46,29 +46,29 @@ impl StepForwardAgent for BoundaryEditor {
 
     fn prompt_template(&self) -> PromptTemplate {
         PromptTemplate {
-            system_prompt: r#"你是一个专业的软件接口文档编写专家，专注于生成清晰、详细的边界调用文档。你的任务是基于提供的调研报告，编写一份以`边界调用`为标题的接口说明文档。
+            system_prompt: r#"You are a professional software interface documentation expert, focused on generating clear, detailed boundary interface documentation. Your task is to write an interface documentation with the title `Boundary Interfaces` based on the provided research report.
 
-## 文档要求
-1. **接口完整**：详细描述所有对外接口
-2. **参数清晰**：每个参数都要有明确的说明
-3. **示例丰富**：提供实用的调用示例
-4. **易于理解**：为开发者提供有价值的参考
+## Documentation Requirements
+1. **Complete Interfaces**: Describe all external interfaces in detail
+2. **Clear Parameters**: Each parameter must have a clear explanation
+3. **Rich Examples**: Provide practical usage examples
+4. **Easy to Understand**: Provide valuable references for developers
 
-## 输出格式
-- 使用Markdown格式
-- 包含适当的标题层级
-- 使用代码块展示示例
-- 确保内容的逻辑性和可读性"#.to_string(),
+## Output Format
+- Use Markdown format
+- Include appropriate heading levels
+- Use code blocks to show examples
+- Ensure logical and readable content"#.to_string(),
 
-            opening_instruction: "基于以下边界分析结果，生成系统边界接口文档：".to_string(),
+            opening_instruction: "Based on the following boundary analysis results, generate system boundary interface documentation:".to_string(),
 
             closing_instruction: r#"
-## 文档要求：
-- 使用标准Markdown格式
-- 为每种边界类型创建独立章节
-- 包含详细的参数说明和使用示例
-- 突出显示安全考虑和最佳实践
-- 确保文档结构清晰、内容完整"#
+## Documentation Requirements:
+- Use standard Markdown format
+- Create separate sections for each boundary type
+- Include detailed parameter descriptions and usage examples
+- Highlight security considerations and best practices
+- Ensure clear document structure and complete content"#
                 .to_string(),
 
             llm_call_mode: crate::generator::step_forward_agent::LLMCallMode::Prompt,
@@ -76,21 +76,21 @@ impl StepForwardAgent for BoundaryEditor {
         }
     }
 
-    /// 自定义execute实现，直接生成文档而不使用LLM
+    /// Custom execute implementation that generates documentation directly without using LLM
     async fn execute(&self, context: &GeneratorContext) -> Result<Self::Output> {
-        // 从内存中获取边界分析结果
+        // Get boundary analysis results from memory
         let boundary_analysis = context
             .get_research(&ResearchAgentType::BoundaryAnalyzer.to_string())
             .await
-            .ok_or_else(|| anyhow::anyhow!("BoundaryAnalyzer结果未找到"))?;
+            .ok_or_else(|| anyhow::anyhow!("BoundaryAnalyzer result not found"))?;
 
-        // 解析为BoundaryAnalysisReport
+        // Parse as BoundaryAnalysisReport
         let report: BoundaryAnalysisReport = serde_json::from_value(boundary_analysis)?;
 
-        // 生成文档内容
+        // Generate documentation content
         let content = self.generate_boundary_documentation(&report);
 
-        // 存储到内存
+        // Store to memory
         let value = serde_json::to_value(&content)?;
         context
             .store_to_memory(&self.memory_scope_key(), &self.agent_type(), value)
@@ -101,39 +101,39 @@ impl StepForwardAgent for BoundaryEditor {
 }
 
 impl BoundaryEditor {
-    /// 生成边界接口文档
+    /// Generate boundary interface documentation
     fn generate_boundary_documentation(&self, report: &BoundaryAnalysisReport) -> String {
         let mut content = String::new();
-        content.push_str("# 系统边界接口文档\n\n");
+        content.push_str("# System Boundary Interface Documentation\n\n");
         content.push_str(
-            "本文档描述了系统的外部调用接口，包括CLI命令、API端点、配置参数等边界机制。\n\n",
+            "This document describes the system's external invocation interfaces, including CLI commands, API endpoints, configuration parameters, and other boundary mechanisms.\n\n",
         );
 
-        // 生成CLI接口文档
+        // Generate CLI interface documentation
         if !report.cli_boundaries.is_empty() {
             content.push_str(&self.generate_cli_documentation(&report.cli_boundaries));
         }
 
-        // 生成API接口文档
+        // Generate API interface documentation
         if !report.api_boundaries.is_empty() {
             content.push_str(&self.generate_api_documentation(&report.api_boundaries));
         }
 
-        // 生成Router路由文档
+        // Generate Router route documentation
         if !report.router_boundaries.is_empty() {
             content.push_str(&self.generate_router_documentation(&report.router_boundaries));
         }
 
-        // 生成集成建议
+        // Generate integration suggestions
         if !report.integration_suggestions.is_empty() {
             content.push_str(
                 &self.generate_integration_documentation(&report.integration_suggestions),
             );
         }
 
-        // 添加分析置信度
+        // Add analysis confidence score
         content.push_str(&format!(
-            "\n---\n\n**分析置信度**: {:.1}/10\n",
+            "\n---\n\n**Analysis Confidence**: {:.1}/10\n",
             report.confidence_score
         ));
 
@@ -146,21 +146,21 @@ impl BoundaryEditor {
         }
 
         let mut content = String::new();
-        content.push_str("## 命令行接口 (CLI)\n\n");
+        content.push_str("## Command Line Interface (CLI)\n\n");
 
         for cli in cli_boundaries {
             content.push_str(&format!("### {}\n\n", cli.command));
-            content.push_str(&format!("**描述**: {}\n\n", cli.description));
-            content.push_str(&format!("**源文件**: `{}`\n\n", cli.source_location));
+            content.push_str(&format!("**Description**: {}\n\n", cli.description));
+            content.push_str(&format!("**Source File**: `{}`\n\n", cli.source_location));
 
             if !cli.arguments.is_empty() {
-                content.push_str("**参数**:\n\n");
+                content.push_str("**Arguments**:\n\n");
                 for arg in &cli.arguments {
-                    let required_text = if arg.required { "必需" } else { "可选" };
+                    let required_text = if arg.required { "required" } else { "optional" };
                     let default_text = arg
                         .default_value
                         .as_ref()
-                        .map(|v| format!(" (默认: `{}`)", v))
+                        .map(|v| format!(" (default: `{}`)", v))
                         .unwrap_or_default();
                     content.push_str(&format!(
                         "- `{}` ({}): {} - {}{}\n",
@@ -171,18 +171,18 @@ impl BoundaryEditor {
             }
 
             if !cli.options.is_empty() {
-                content.push_str("**选项**:\n\n");
+                content.push_str("**Options**:\n\n");
                 for option in &cli.options {
                     let short_text = option
                         .short_name
                         .as_ref()
                         .map(|s| format!(", {}", s))
                         .unwrap_or_default();
-                    let required_text = if option.required { "必需" } else { "可选" };
+                    let required_text = if option.required { "required" } else { "optional" };
                     let default_text = option
                         .default_value
                         .as_ref()
-                        .map(|v| format!(" (默认: `{}`)", v))
+                        .map(|v| format!(" (default: `{}`)", v))
                         .unwrap_or_default();
                     content.push_str(&format!(
                         "- `{}{}`({}): {} - {}{}\n",
@@ -198,7 +198,7 @@ impl BoundaryEditor {
             }
 
             if !cli.examples.is_empty() {
-                content.push_str("**使用示例**:\n\n");
+                content.push_str("**Usage Examples**:\n\n");
                 for example in &cli.examples {
                     content.push_str(&format!("```bash\n{}\n```\n\n", example));
                 }
@@ -214,23 +214,23 @@ impl BoundaryEditor {
         }
 
         let mut content = String::new();
-        content.push_str("## API接口\n\n");
+        content.push_str("## API Interfaces\n\n");
 
         for api in api_boundaries {
             content.push_str(&format!("### {} {}\n\n", api.method, api.endpoint));
-            content.push_str(&format!("**描述**: {}\n\n", api.description));
-            content.push_str(&format!("**源文件**: `{}`\n\n", api.source_location));
+            content.push_str(&format!("**Description**: {}\n\n", api.description));
+            content.push_str(&format!("**Source File**: `{}`\n\n", api.source_location));
 
             if let Some(request_format) = &api.request_format {
-                content.push_str(&format!("**请求格式**: {}\n\n", request_format));
+                content.push_str(&format!("**Request Format**: {}\n\n", request_format));
             }
 
             if let Some(response_format) = &api.response_format {
-                content.push_str(&format!("**响应格式**: {}\n\n", response_format));
+                content.push_str(&format!("**Response Format**: {}\n\n", response_format));
             }
 
             if let Some(auth) = &api.authentication {
-                content.push_str(&format!("**认证方式**: {}\n\n", auth));
+                content.push_str(&format!("**Authentication**: {}\n\n", auth));
             }
         }
 
@@ -243,15 +243,15 @@ impl BoundaryEditor {
         }
 
         let mut content = String::new();
-        content.push_str("## Router路由\n\n");
+        content.push_str("## Router Routes\n\n");
 
         for router in router_boundaries {
             content.push_str(&format!("### {}\n\n", router.path));
-            content.push_str(&format!("**描述**: {}\n\n", router.description));
-            content.push_str(&format!("**源文件**: `{}`\n\n", router.source_location));
+            content.push_str(&format!("**Description**: {}\n\n", router.description));
+            content.push_str(&format!("**Source File**: `{}`\n\n", router.source_location));
 
             if !router.params.is_empty() {
-                content.push_str("**参数**:\n\n");
+                content.push_str("**Parameters**:\n\n");
                 for param in &router.params {
                     content.push_str(&format!(
                         "- `{}` ({}): {}\n",
@@ -273,19 +273,19 @@ impl BoundaryEditor {
         }
 
         let mut content = String::new();
-        content.push_str("## 集成建议\n\n");
+        content.push_str("## Integration Suggestions\n\n");
 
         for suggestion in integration_suggestions {
             content.push_str(&format!("### {}\n\n", suggestion.integration_type));
             content.push_str(&format!("{}\n\n", suggestion.description));
 
             if !suggestion.example_code.is_empty() {
-                content.push_str("**示例代码**:\n\n");
+                content.push_str("**Example Code**:\n\n");
                 content.push_str(&format!("```\n{}\n```\n\n", suggestion.example_code));
             }
 
             if !suggestion.best_practices.is_empty() {
-                content.push_str("**最佳实践**:\n\n");
+                content.push_str("**Best Practices**:\n\n");
                 for practice in &suggestion.best_practices {
                     content.push_str(&format!("- {}\n", practice));
                 }

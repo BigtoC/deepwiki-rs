@@ -4,65 +4,67 @@ use std::sync::Arc;
 use std::sync::atomic::{AtomicU64, AtomicUsize, Ordering};
 use std::time::Duration;
 
+use crate::i18n::TargetLanguage;
 use crate::llm::client::types::TokenUsage;
 
-/// 缓存性能监控器
+/// Cache performance monitor
 #[derive(Clone)]
 pub struct CachePerformanceMonitor {
     metrics: Arc<CacheMetrics>,
+    target_language: TargetLanguage,
 }
 
-/// 缓存指标
+/// Cache metrics
 #[derive(Default)]
 pub struct CacheMetrics {
-    /// 缓存命中次数
+    /// Cache hit count
     pub cache_hits: AtomicUsize,
-    /// 缓存未命中次数
+    /// Cache miss count
     pub cache_misses: AtomicUsize,
-    /// 缓存写入次数
+    /// Cache write count
     pub cache_writes: AtomicUsize,
-    /// 缓存错误次数
+    /// Cache error count
     pub cache_errors: AtomicUsize,
-    /// 总节省的推理时间（秒）
+    /// Total inference time saved (seconds)
     pub total_inference_time_saved: AtomicU64,
-    /// 总节省的推理成本（估算）
+    /// Total cost saved (estimated)
     pub total_cost_saved: AtomicUsize,
-    /// 总节省的输入token数量
+    /// Total input tokens saved
     pub total_input_tokens_saved: AtomicUsize,
-    /// 总节省的输出token数量
+    /// Total output tokens saved
     pub total_output_tokens_saved: AtomicUsize,
 }
 
-/// 缓存性能报告
+/// Cache performance report
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CachePerformanceReport {
-    /// 缓存命中率
+    /// Cache hit rate
     pub hit_rate: f64,
-    /// 总缓存操作次数
+    /// Total cache operations
     pub total_operations: usize,
-    /// 缓存命中次数
+    /// Cache hit count
     pub cache_hits: usize,
-    /// 缓存未命中次数
+    /// Cache miss count
     pub cache_misses: usize,
-    /// 缓存写入次数
+    /// Cache write count
     pub cache_writes: usize,
-    /// 缓存错误次数
+    /// Cache error count
     pub cache_errors: usize,
-    /// 节省的推理时间（秒）
+    /// Inference time saved (seconds)
     pub inference_time_saved: f64,
-    /// 节省的推理成本（美元，估算）
+    /// Cost saved (USD, estimated)
     pub cost_saved: f64,
-    /// 性能提升百分比
+    /// Performance improvement percentage
     pub performance_improvement: f64,
-    /// 节省的输入token数量
+    /// Input tokens saved
     pub input_tokens_saved: usize,
-    /// 节省的输出token数量
+    /// Output tokens saved
     pub output_tokens_saved: usize,
-    /// 分类统计
+    /// Category statistics
     pub category_stats: HashMap<String, CategoryPerformanceStats>,
 }
 
-/// 分类性能统计
+/// Category performance statistics
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CategoryPerformanceStats {
     pub hits: u64,
@@ -73,13 +75,14 @@ pub struct CategoryPerformanceStats {
 }
 
 impl CachePerformanceMonitor {
-    pub fn new() -> Self {
+    pub fn new(target_language: TargetLanguage) -> Self {
         Self {
             metrics: Arc::new(CacheMetrics::default()),
+            target_language,
         }
     }
 
-    /// 记录缓存命中
+    /// Record cache hit
     pub fn record_cache_hit(
         &self,
         category: &str,
@@ -92,7 +95,7 @@ impl CachePerformanceMonitor {
             .total_inference_time_saved
             .fetch_add(inference_time_saved.as_millis() as u64, Ordering::Relaxed);
 
-        // 记录节省的token数量
+        // Record saved token count
         self.metrics
             .total_input_tokens_saved
             .fetch_add(token_usage.input_tokens, Ordering::Relaxed);
@@ -100,42 +103,51 @@ impl CachePerformanceMonitor {
             .total_output_tokens_saved
             .fetch_add(token_usage.output_tokens, Ordering::Relaxed);
 
-        // 基于实际token使用情况计算节省的成本
+        // Calculate saved cost based on actual token usage
         let estimated_cost_saved = token_usage.estimate_cost(model_name);
         self.metrics.total_cost_saved.fetch_add(
-            (estimated_cost_saved * 1000.0) as usize, // 存储为毫美元
+            (estimated_cost_saved * 1000.0) as usize, // Store as milli-dollars
             Ordering::Relaxed,
         );
 
-        println!(
-            "   💰 缓存命中 [{}] - 节省推理时间: {:.2}秒, 节省tokens: {}输入+{}输出, 估算节省成本: ${:.4}",
-            category,
-            inference_time_saved.as_secs_f64(),
-            token_usage.input_tokens,
-            token_usage.output_tokens,
-            estimated_cost_saved
-        );
+        // Use localized message for cache hit with detailed statistics
+        let msg = match &self.target_language {
+            TargetLanguage::Chinese => format!(
+                "   💰 缓存命中 [{}] - 节省推理时间: {:.2}秒, 节省tokens: {}输入+{}输出, 估算节省成本: ${:.4}",
+                category, inference_time_saved.as_secs_f64(), token_usage.input_tokens, token_usage.output_tokens, estimated_cost_saved
+            ),
+            _ => format!(
+                "   💰 Cache hit [{}] - Time saved: {:.2}s, Tokens saved: {} input + {} output, Cost saved: ${:.4}",
+                category, inference_time_saved.as_secs_f64(), token_usage.input_tokens, token_usage.output_tokens, estimated_cost_saved
+            ),
+        };
+        println!("{}", msg);
     }
 
-    /// 记录缓存未命中
+    /// Record cache miss
     pub fn record_cache_miss(&self, category: &str) {
         self.metrics.cache_misses.fetch_add(1, Ordering::Relaxed);
-        println!("   ⌛ 缓存未命中 [{}] - 需要进行AI推理", category);
+        let msg = self.target_language.msg_cache_miss().replace("{}", category);
+        println!("{}", msg);
     }
 
-    /// 记录缓存写入
+    /// Record cache write
     pub fn record_cache_write(&self, category: &str) {
         self.metrics.cache_writes.fetch_add(1, Ordering::Relaxed);
-        println!("   💾 缓存写入 [{}] - 结果已缓存", category);
+        let msg = self.target_language.msg_cache_write().replace("{}", category);
+        println!("{}", msg);
     }
 
-    /// 记录缓存错误
+    /// Record cache error
     pub fn record_cache_error(&self, category: &str, error: &str) {
         self.metrics.cache_errors.fetch_add(1, Ordering::Relaxed);
-        eprintln!("   ❌ 缓存错误 [{}]: {}", category, error);
+        let msg = self.target_language.msg_cache_error()
+            .replace("{}", category)
+            .replacen("{}", error, 1);
+        eprintln!("{}", msg);
     }
 
-    /// 生成性能报告
+    /// Generate performance report
     pub fn generate_report(&self) -> CachePerformanceReport {
         let hits = self.metrics.cache_hits.load(Ordering::Relaxed);
         let misses = self.metrics.cache_misses.load(Ordering::Relaxed);
@@ -153,8 +165,8 @@ impl CachePerformanceMonitor {
             .metrics
             .total_inference_time_saved
             .load(Ordering::Relaxed) as f64
-            / 1000.0; // 转换为秒
-        let cost_saved = self.metrics.total_cost_saved.load(Ordering::Relaxed) as f64 / 1000.0; // 转换为美元
+            / 1000.0; // Convert to seconds
+        let cost_saved = self.metrics.total_cost_saved.load(Ordering::Relaxed) as f64 / 1000.0; // Convert to dollars
 
         let input_tokens_saved = self
             .metrics
@@ -183,13 +195,13 @@ impl CachePerformanceMonitor {
             performance_improvement,
             input_tokens_saved,
             output_tokens_saved,
-            category_stats: HashMap::new(), // TODO: 实现分类统计
+            category_stats: HashMap::new(), // TODO: Implement category statistics
         }
     }
 }
 
 impl Default for CachePerformanceMonitor {
     fn default() -> Self {
-        Self::new()
+        Self::new(TargetLanguage::default())
     }
 }

@@ -1,24 +1,26 @@
-//! ReAct执行器 - 负责执行ReAct模式的多轮对话逻辑
+//! ReAct executor - Responsible for executing ReAct pattern multi-turn dialogue logic
 
 use anyhow::Result;
 use rig::completion::{AssistantContent, Message, PromptError};
 
+use crate::i18n::TargetLanguage;
 use super::react::{ReActConfig, ReActResponse};
 use super::providers::ProviderAgent;
 
-/// ReAct执行器
+/// ReAct executor
 pub struct ReActExecutor;
 
 impl ReActExecutor {
-    /// 执行ReAct循环逻辑
+    /// Execute ReAct loop logic
     pub async fn execute(
         agent: &ProviderAgent,
         user_prompt: &str,
         config: &ReActConfig,
+        target_language: &TargetLanguage,
     ) -> Result<ReActResponse> {
         if config.verbose {
             println!(
-                "   ♻️ 激活ReAct Agent模式，最大迭代次数: {}",
+                "   ♻️ Activating ReAct Agent mode, max iterations: {}",
                 config.max_iterations
             );
         }
@@ -28,7 +30,7 @@ impl ReActExecutor {
         match agent.multi_turn(user_prompt, config.max_iterations).await {
             Ok(response) => {
                 if config.verbose {
-                    println!("   ✅ ReAct Agent任务完成");
+                    println!("   ✅ ReAct Agent task completed");
                 }
 
                 Ok(ReActResponse::success(response, config.max_iterations))
@@ -39,7 +41,8 @@ impl ReActExecutor {
                 prompt: _,
             }) => {
                 if config.verbose {
-                    println!("   ⚠️ 达到最大迭代次数 ({}), 触发中断", max_depth);
+                    let msg = target_language.msg_max_iterations();
+                    println!("{}", msg.replace("{}", &max_depth.to_string()));
                 }
 
                 if config.return_partial_on_max_depth {
@@ -48,7 +51,7 @@ impl ReActExecutor {
 
                     Ok(ReActResponse::max_depth_reached_with_history(
                         format!(
-                            "{}\n\n[注意: 因达到最大迭代次数({})而被中断]",
+                            "{}\n\n[Notice: Interrupted due to reaching max iterations ({})]",
                             content, max_depth
                         ),
                         max_depth,
@@ -57,25 +60,25 @@ impl ReActExecutor {
                     ))
                 } else {
                     Err(anyhow::anyhow!(
-                        "ReAct Agent因达到最大迭代次数({})而未完成任务",
+                        "ReAct Agent task incomplete due to reaching max iterations ({})",
                         max_depth
                     ))
                 }
             }
             Err(e) => {
                 if config.verbose {
-                    println!("   ❌ ReAct Agent出错: {:?}", e);
+                    println!("   ❌ ReAct Agent error: {:?}", e);
                 }
-                Err(anyhow::anyhow!("ReAct Agent任务执行失败: {}", e))
+                Err(anyhow::anyhow!("ReAct Agent task execution failed: {}", e))
             }
         }
     }
 
-    /// 从聊天历史中提取部分结果
+    /// Extract partial result from chat history
     fn extract_partial_result(chat_history: &[Message]) -> (String, Vec<String>) {
         let mut tool_calls = Vec::new();
 
-        // 尝试从聊天历史中提取最后的助手响应
+        // Try to extract the last assistant response from chat history
         let last_assistant_message = chat_history
             .iter()
             .rev()
@@ -104,10 +107,10 @@ impl ReActExecutor {
                 }
             })
             .unwrap_or_else(|| {
-                "ReAct Agent因达到最大迭代次数而被中断，未能获得完整响应。".to_string()
+                "ReAct Agent interrupted due to reaching max iterations, unable to obtain complete response.".to_string()
             });
 
-        // 从聊天历史中提取工具调用信息
+        // Extract tool call information from chat history
         for msg in chat_history {
             if let Message::Assistant { content, .. } = msg {
                 for c in content.iter() {

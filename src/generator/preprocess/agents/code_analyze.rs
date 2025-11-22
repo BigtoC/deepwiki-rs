@@ -31,7 +31,7 @@ impl CodeAnalyze {
     ) -> Result<Vec<CodeInsight>> {
         let max_parallels = context.config.llm.max_parallels;
 
-        // 创建并发任务
+        // Create concurrent tasks
         let analysis_futures: Vec<_> = codes
             .iter()
             .map(|code| {
@@ -48,7 +48,7 @@ impl CodeAnalyze {
                     let mut code_insight =
                         extract::<CodeInsight>(&context_clone, agent_params).await?;
 
-                    // LLM会重写source_summary，在这里排除掉并做覆盖
+                    // LLM will rewrite source_summary, so exclude it and override here
                     code_insight.code_dossier.source_summary = code_clone.source_summary.to_owned();
 
                     Result::<CodeInsight>::Ok(code_insight)
@@ -56,10 +56,10 @@ impl CodeAnalyze {
             })
             .collect();
 
-        // 使用do_parallel_with_limit进行并发控制
+        // Use do_parallel_with_limit for concurrency control
         let analysis_results = do_parallel_with_limit(analysis_futures, max_parallels).await;
 
-        // 处理分析结果
+        // Process analysis results
         let mut code_insights = Vec::new();
         for result in analysis_results {
             match result {
@@ -67,13 +67,13 @@ impl CodeAnalyze {
                     code_insights.push(code_insight);
                 }
                 Err(e) => {
-                    eprintln!("❌ 代码分析失败: {}", e);
+                    eprintln!("❌ Code analysis failed: {}", e);
                     return Err(e);
                 }
             }
         }
 
-        println!("✓ 并发代码分析完成，成功分析{}个文件", code_insights.len());
+        println!("✓ Concurrent code analysis completed, successfully analyzed {} files", code_insights.len());
         Ok(code_insights)
     }
 }
@@ -84,10 +84,10 @@ impl CodeAnalyze {
         project_structure: &ProjectStructure,
         codes: &CodeDossier,
     ) -> Result<AgentExecuteParams> {
-        // 首先进行静态分析
+        // First perform static analysis
         let code_analyse = self.analyze_code_by_rules(codes, project_structure).await?;
 
-        // 然后使用AI增强分析
+        // Then use AI for enhanced analysis
         let prompt_user = self.build_code_analysis_prompt(project_structure, &code_analyse);
         let prompt_sys = include_str!("prompts/code_analyze_sys.tpl").to_string();
 
@@ -108,7 +108,7 @@ impl CodeAnalyze {
     ) -> String {
         let project_path = &project_structure.root_path;
 
-        // 读取依赖组件的源码片段
+        // Read source code snippets of dependency components
         let dependency_code =
             read_dependency_code_source(&self.language_processor, analysis, project_path);
 
@@ -135,31 +135,31 @@ impl CodeAnalyze {
     ) -> Result<CodeInsight> {
         let full_path = project_structure.root_path.join(&code.file_path);
 
-        // 读取文件内容
+        // Read file content
         let content = if full_path.exists() {
             tokio::fs::read_to_string(&full_path).await?
         } else {
             String::new()
         };
 
-        // 分析接口
+        // Analyze interfaces
         let interfaces = self
             .language_processor
             .extract_interfaces(&code.file_path, &content);
 
-        // 分析依赖
+        // Analyze dependencies
         let dependencies = self
             .language_processor
             .extract_dependencies(&code.file_path, &content);
 
-        // 计算复杂度指标
+        // Calculate complexity metrics
         let complexity_metrics = self
             .language_processor
             .calculate_complexity_metrics(&content);
 
         Ok(CodeInsight {
             code_dossier: code.clone(),
-            detailed_description: format!("详细分析 {}", code.name),
+            detailed_description: format!("Detailed analysis of {}", code.name),
             interfaces,
             dependencies,
             complexity_metrics,

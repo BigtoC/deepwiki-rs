@@ -2,7 +2,9 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use std::fmt::Display;
 
-/// 智能体类型枚举
+use crate::i18n::TargetLanguage;
+
+/// Agent type enumeration
 #[derive(Debug, Clone, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum AgentType {
     SystemContextResearcher,
@@ -13,23 +15,38 @@ pub enum AgentType {
     BoundaryAnalyzer,
 }
 
+impl AgentType {
+    /// Get localized display name for the agent type
+    pub fn display_name(&self, target_language: &TargetLanguage) -> String {
+        match self {
+            AgentType::SystemContextResearcher => target_language.msg_agent_type("system_context"),
+            AgentType::DomainModulesDetector => target_language.msg_agent_type("domain_modules"),
+            AgentType::ArchitectureResearcher => target_language.msg_agent_type("architecture"),
+            AgentType::WorkflowResearcher => target_language.msg_agent_type("workflow"),
+            AgentType::KeyModulesInsight => target_language.msg_agent_type("key_modules"),
+            AgentType::BoundaryAnalyzer => target_language.msg_agent_type("boundary"),
+        }
+    }
+}
+
 impl Display for AgentType {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        // Use English as default for Display trait (used for keys/internal purposes)
         let str = match self {
-            AgentType::SystemContextResearcher => "项目概览调研报告".to_string(),
-            AgentType::DomainModulesDetector => "领域模块调研报告".to_string(),
-            AgentType::ArchitectureResearcher => "系统架构调研报告".to_string(),
-            AgentType::WorkflowResearcher => "工作流调研报告".to_string(),
-            AgentType::KeyModulesInsight => "核心模块与组件调研报告".to_string(),
-            AgentType::BoundaryAnalyzer => "边界接口调研报告".to_string(),
+            AgentType::SystemContextResearcher => "System Context Research Report",
+            AgentType::DomainModulesDetector => "Domain Modules Research Report",
+            AgentType::ArchitectureResearcher => "System Architecture Research Report",
+            AgentType::WorkflowResearcher => "Workflow Research Report",
+            AgentType::KeyModulesInsight => "Key Modules and Components Research Report",
+            AgentType::BoundaryAnalyzer => "Boundary Interface Research Report",
         };
         write!(f, "{}", str)
     }
 }
 
-// =========================== 具体智能体结果类型 ===========================
+// =========================== Specific Agent Result Types ===========================
 
-/// 项目类型
+/// Project type
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub enum ProjectType {
     FrontendApp,
@@ -43,7 +60,7 @@ pub enum ProjectType {
     Other,
 }
 
-/// 用户角色
+/// User persona
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct UserPersona {
     pub name: String,
@@ -51,7 +68,7 @@ pub struct UserPersona {
     pub needs: Vec<String>,
 }
 
-/// 外部系统
+/// External system
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct ExternalSystem {
     pub name: String,
@@ -59,7 +76,7 @@ pub struct ExternalSystem {
     pub interaction_type: String,
 }
 
-/// 系统边界
+/// System boundary
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct SystemBoundary {
     pub scope: String,
@@ -67,7 +84,7 @@ pub struct SystemBoundary {
     pub excluded_components: Vec<String>,
 }
 
-/// 项目目标调研结果
+/// Project objective research result
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct SystemContextReport {
     pub project_name: String,
@@ -80,126 +97,126 @@ pub struct SystemContextReport {
     pub confidence_score: f64,
 }
 
-/// 子模块定义 - 表示大模块内部的具体实现模块
+/// Sub-module definition - represents specific implementation modules within a larger module
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct SubModule {
-    /// 子模块名称，应该简洁明确，体现具体功能特点
+    /// Sub-module name, should be concise and clear, reflecting specific functionality
     pub name: String,
-    /// 子模块功能描述，说明该子模块的具体作用和职责
+    /// Sub-module function description, explaining the specific role and responsibilities
     pub description: String,
-    /// 相关代码文件路径列表，包含实现该子模块功能的所有代码文件
+    /// Related code file path list, containing all code files implementing this sub-module's functionality
     pub code_paths: Vec<String>,
-    /// 核心功能点列表，列出该子模块提供的主要功能和操作
+    /// Core function list, listing the main functions and operations provided by this sub-module
     pub key_functions: Vec<String>,
-    /// 重要性评分 (1-10分)，评估该子模块在整个系统中的重要程度
+    /// Importance score (1-10), assessing the importance of this sub-module in the overall system
     pub importance: f64,
 }
 
-/// 功能领域模块 - 表示高层次的业务领域或功能域
+/// Functional domain module - represents high-level business domain or functional domain
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct DomainModule {
-    /// 领域模块名称，应该体现高层次的业务领域或功能域，如"用户管理域"、"数据处理域"、"配置管理域"等
+    /// Domain module name, should reflect high-level business or functional domain, e.g., "User Management Domain", "Data Processing Domain", "Configuration Management Domain"
     pub name: String,
-    /// 领域模块描述，详细说明该领域的职责、核心价值和在系统中的作用
+    /// Domain module description, detailing the domain's responsibilities, core value, and role in the system
     pub description: String,
-    /// 领域类型，标识该领域在系统架构中的层次，如"核心业务域"、"基础设施域"、"工具支撑域"等
+    /// Domain type, identifying the domain's layer in system architecture, e.g., "Core Business Domain", "Infrastructure Domain", "Tool Support Domain"
     pub domain_type: String,
-    /// 子模块列表，包含该领域下的所有具体实现模块，体现领域内部的功能分解
+    /// Sub-module list, containing all specific implementation modules under this domain, reflecting functional decomposition within the domain
     pub sub_modules: Vec<SubModule>,
-    /// 相关代码文件路径列表，包含实现该领域模块功能的所有代码文件
+    /// Related code file path list, containing all code files implementing this domain module's functionality
     pub code_paths: Vec<String>,
-    /// 领域重要性评分 (1-10分)，评估该领域在整个系统中的战略重要性
+    /// Domain importance score (1-10), assessing the strategic importance of this domain in the overall system
     pub importance: f64,
-    /// 领域复杂度评分 (1-10分)，评估该领域的技术复杂度和实现难度
+    /// Domain complexity score (1-10), assessing the technical complexity and implementation difficulty of this domain
     pub complexity: f64,
 }
 
-/// 领域间关系 - 表示不同领域模块之间的依赖和协作关系
+/// Inter-domain relationship - represents dependency and collaboration relationships between different domain modules
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct DomainRelation {
-    /// 源领域模块名称，表示依赖关系的发起方
+    /// Source domain module name, representing the initiator of the dependency relationship
     pub from_domain: String,
-    /// 目标领域模块名称，表示依赖关系的接收方
+    /// Target domain module name, representing the receiver of the dependency relationship
     pub to_domain: String,
-    /// 关系类型，描述两个领域之间的具体关系，如"数据依赖"、"服务调用"、"配置依赖"、"工具支撑"等
+    /// Relationship type, describing the specific relationship between two domains, e.g., "Data Dependency", "Service Call", "Configuration Dependency", "Tool Support"
     pub relation_type: String,
-    /// 依赖强度 (1-10分)，评估两个领域之间的耦合程度，10表示强依赖，1表示弱依赖
+    /// Dependency strength (1-10), assessing the coupling degree between two domains, 10 indicates strong dependency, 1 indicates weak dependency
     pub strength: f64,
-    /// 关系描述，详细说明两个领域之间的具体交互方式和依赖内容
+    /// Relationship description, detailing the specific interaction methods and dependency content between two domains
     pub description: String,
 }
 
-/// 流程步骤 - 表示执行流程中的单个执行步骤
+/// Process step - represents a single execution step in the workflow
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct BusinessFlowStep {
-    /// 步骤序号，表示该步骤在整个流程中的执行顺序
+    /// Step number, indicating the execution order of this step in the overall process
     pub step: usize,
-    /// 涉及的领域模块名称，标识执行该步骤的主要领域
+    /// Involved domain module name, identifying the primary domain executing this step
     pub domain_module: String,
-    /// 涉及的子模块名称（可选），如果步骤涉及特定子模块，则指定具体的子模块
+    /// Involved sub-module name (optional), if the step involves a specific sub-module, specify the particular sub-module
     pub sub_module: Option<String>,
-    /// 具体操作描述，说明该步骤执行的具体功能操作或技术动作
+    /// Specific operation description, explaining the specific functional operation or technical action executed in this step
     pub operation: String,
-    /// 代码入口点（可选），指向实现该步骤的主要代码位置或函数
+    /// Code entry point (optional), pointing to the main code location or function implementing this step
     pub code_entry_point: Option<String>,
 }
 
-/// 核心流程 - 表示系统中的关键功能场景和执行路径
+/// Core process - represents key functional scenarios and execution paths in the system
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct BusinessFlow {
-    /// 流程名称，应该体现具体的功能场景，如"项目分析流程"、"代码洞察生成流程"等
+    /// Process name, should reflect specific functional scenario, e.g., "Project Analysis Process", "Code Insight Generation Process"
     pub name: String,
-    /// 流程描述，详细说明该功能流程的目标、触发条件和预期结果
+    /// Process description, detailing the functional process's objectives, trigger conditions, and expected results
     pub description: String,
-    /// 流程步骤列表，按执行顺序排列的步骤，体现完整的功能执行路径
+    /// Process step list, steps arranged in execution order, reflecting the complete functional execution path
     pub steps: Vec<BusinessFlowStep>,
-    /// 流程入口点，说明该功能流程的启动方式或触发条件
+    /// Process entry point, explaining the startup method or trigger condition of this functional process
     pub entry_point: String,
-    /// 流程重要性评分 (1-10分)，评估该功能流程在系统中的重要程度
+    /// Process importance score (1-10), assessing the importance of this functional process in the system
     pub importance: f64,
-    /// 涉及的领域数量，统计该流程跨越的领域模块数量，体现流程的复杂度
+    /// Number of involved domains, counting the number of domain modules this process spans, reflecting process complexity
     pub involved_domains_count: usize,
 }
 
-/// 核心组件分析结果
+/// Core component analysis result
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct KeyModuleReport {
-    /// 领域名称
+    /// Domain name
     pub domain_name: String,
-    /// 模块名称
+    /// Module name
     pub module_name: String,
-    /// 阐述项目当前的技术方案
+    /// Explain the project's current technical solution
     pub module_description: String,
-    /// 阐述定义接口与交互方式
+    /// Explain the defined interfaces and interaction methods
     pub interaction: String,
-    /// 阐述技术细节
+    /// Explain technical details
     pub implementation: String,
     pub associated_files: Vec<String>,
     pub flowchart_mermaid: String,
     pub sequence_diagram_mermaid: String,
 }
 
-/// 高层次架构视角下的领域模块分析结果
+/// Domain module analysis result from high-level architecture perspective
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct DomainModulesReport {
-    /// 识别到的领域模块列表，按领域划分的高层次功能模块，每个领域可包含多个子模块
+    /// Identified domain module list, high-level functional modules divided by domain, each domain can contain multiple sub-modules
     pub domain_modules: Vec<DomainModule>,
-    /// 领域间关系列表，描述不同领域模块之间的依赖、协作和交互关系
+    /// Inter-domain relationship list, describing dependencies, collaboration, and interaction relationships between different domain modules
     pub domain_relations: Vec<DomainRelation>,
-    /// 核心业务流程列表，识别系统中重要的功能场景和执行路径
+    /// Core business process list, identifying important functional scenarios and execution paths in the system
     pub business_flows: Vec<BusinessFlow>,
-    /// 架构层次总结，从宏观角度总结系统的整体架构特点、技术选型
+    /// Architecture layer summary, summarizing the overall architectural characteristics and technology selection from a macro perspective
     pub architecture_summary: String,
-    /// 分析置信度 (1-10分)，评估本次分析结果的可信度和准确性
+    /// Analysis confidence score (1-10), assessing the credibility and accuracy of this analysis result
     pub confidence_score: f64,
 }
 
-/// 工作流程调研结果
+/// Workflow research result
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct WorkflowReport {
-    // 系统主工作流程
+    // System main workflow
     pub main_workflow: Workflow,
-    // 其他重要工作流
+    // Other important workflows
     pub other_important_workflows: Vec<Workflow>,
 }
 
@@ -210,18 +227,18 @@ pub struct Workflow {
     pub flowchart_mermaid: String,
 }
 
-/// 边界接口分析结果
+/// Boundary interface analysis result
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
 pub struct BoundaryAnalysisReport {
-    /// CLI边界接口
+    /// CLI boundary interface
     pub cli_boundaries: Vec<CLIBoundary>,
-    /// 供外部调用的网络API边界接口（包括HTTP、RPC等协议）
+    /// Network API boundary interface for external invocation (including HTTP, RPC, and other protocols)
     pub api_boundaries: Vec<APIBoundary>,
-    /// 页面路由
+    /// Page routing
     pub router_boundaries: Vec<RouterBoundary>,
-    /// 集成建议
+    /// Integration suggestions
     pub integration_suggestions: Vec<IntegrationSuggestion>,
-    /// 分析置信度 (1-10分)
+    /// Analysis confidence score (1-10)
     pub confidence_score: f64,
 }
 
@@ -301,4 +318,4 @@ impl Default for BoundaryAnalysisReport {
 }
 
 // https://c4model.com/abstractions/software-system
-// 系统名称，项目的作用和价值，系统类型，谁在使用它，如何使用，与哪些外表系统交互，diagram
+// System name, project's role and value, system type, who is using it, how to use, which external systems it interacts with, diagram

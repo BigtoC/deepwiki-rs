@@ -3,7 +3,7 @@ use crate::i18n::TargetLanguage;
 use clap::Parser;
 use std::path::PathBuf;
 
-/// DeepWiki-RS - 由Rust与AI驱动的项目知识库生成引擎
+/// DeepWiki-RS - Project knowledge base generation engine powered by Rust and AI
 #[derive(Parser, Debug)]
 #[command(name = "Litho (deepwiki-rs)")]
 #[command(
@@ -12,47 +12,47 @@ use std::path::PathBuf;
 #[command(author = "Sopaco")]
 #[command(version)]
 pub struct Args {
-    /// 项目路径
+    /// Project path
     #[arg(short, long, default_value = ".")]
     pub project_path: PathBuf,
 
-    /// 输出路径
+    /// Output path
     #[arg(short, long, default_value = "./litho.docs")]
     pub output_path: PathBuf,
 
-    /// 配置文件路径
+    /// Configuration file path
     #[arg(short, long)]
     pub config: Option<PathBuf>,
 
-    /// 项目名称
+    /// Project name
     #[arg(short, long)]
     pub name: Option<String>,
 
-    /// 是否跳过项目预处理
+    /// Skip project preprocessing
     #[arg(long)]
     pub skip_preprocessing: bool,
 
-    /// 是否跳过调研文档生成
+    /// Skip research document generation
     #[arg(long)]
     pub skip_research: bool,
 
-    /// 是否跳过最终文档生成
+    /// Skip final document generation
     #[arg(long)]
     pub skip_documentation: bool,
 
-    /// 是否启用详细日志
+    /// Enable verbose logging
     #[arg(short, long)]
     pub verbose: bool,
 
-    /// 高能效模型，优先用于Litho引擎的常规推理任务
+    /// High-efficiency model, prioritized for Litho engine's regular inference tasks
     #[arg(long)]
     pub model_efficient: Option<String>,
 
-    /// 高质量模型，优先用于Litho引擎的复杂推理任务，以及作为efficient失效情况下的兜底
+    /// High-quality model, prioritized for Litho engine's complex inference tasks, and as fallback when efficient fails
     #[arg(long)]
     pub model_powerful: Option<String>,
 
-    /// LLM API基地址
+    /// LLM API base URL
     #[arg(long)]
     pub llm_api_base_url: Option<String>,
 
@@ -60,15 +60,15 @@ pub struct Args {
     #[arg(long)]
     pub llm_api_key: Option<String>,
 
-    /// 最大tokens数
+    /// Maximum number of tokens
     #[arg(long)]
     pub max_tokens: Option<u32>,
 
-    /// 温度参数
+    /// Temperature parameter
     #[arg(long)]
     pub temperature: Option<f64>,
 
-    /// 温度参数
+    /// Max parallelism parameter
     #[arg(long)]
     pub max_parallels: Option<usize>,
 
@@ -76,70 +76,69 @@ pub struct Args {
     #[arg(long)]
     pub llm_provider: Option<String>,
 
-    /// 目标语言 (zh, en, ja, ko, de, fr, ru, vi)
+    /// Target language (zh, en, ja, ko, de, fr, ru, vi)
     #[arg(long)]
     pub target_language: Option<String>,
 
-    /// 生成报告后,自动使用报告助手查看报告
+    /// Auto use report assistant to view report after generation
     #[arg(long, default_value = "false", action = clap::ArgAction::SetTrue)]
     pub disable_preset_tools: bool,
 
-    /// 是否禁用缓存
+    /// Disable cache
     #[arg(long)]
     pub no_cache: bool,
 
-    /// 强制重新生成（清除缓存）
+    /// Force regeneration (clear cache)
     #[arg(long)]
     pub force_regenerate: bool,
 }
 
 impl Args {
-    /// 将CLI参数转换为配置
+    /// Convert CLI arguments to configuration
     pub fn to_config(self) -> Config {
-        let mut config = if let Some(config_path) = &self.config {
-            // 如果显式指定了配置文件路径，从该路径加载
-            return Config::from_file(config_path).expect(
-                format!("⚠️ 警告: 无法读取配置文件 {:?}，使用默认配置", config_path).as_str(),
-            );
+        // Determine target language early for proper message localization
+        let target_lang = if let Some(ref lang_str) = self.target_language {
+            lang_str.parse::<TargetLanguage>().unwrap_or_default()
         } else {
-            // 如果没有显式指定配置文件，尝试从默认位置加载
+            TargetLanguage::default()
+        };
+
+        let mut config = if let Some(config_path) = &self.config {
+            // If config file path is explicitly specified, load from that path
+            let msg = target_lang.msg_config_read_error().replace("{:?}", &format!("{:?}", config_path));
+            return Config::from_file(config_path).expect(&msg);
+        } else {
+            // If no config file is explicitly specified, try loading from default location
             let default_config_path = std::env::current_dir()
                 .unwrap_or_else(|_| std::path::PathBuf::from("."))
                 .join("litho.toml");
 
             if default_config_path.exists() {
-                return Config::from_file(&default_config_path).expect(
-                    format!(
-                        "⚠️ 警告: 无法读取默认配置文件 {:?}，使用默认配置",
-                        default_config_path
-                    )
-                    .as_str(),
-                );
+                let msg = target_lang.msg_config_read_error().replace("{:?}", &format!("{:?}", default_config_path));
+                return Config::from_file(&default_config_path).expect(&msg);
             } else {
-                // 默认配置文件不存在，使用默认值
+                // Default config file doesn't exist, use default values
                 Config::default()
             }
         };
 
-        // 覆盖配置文件中的设置
+        // Override settings from config file
         config.project_path = self.project_path.clone();
         config.output_path = self.output_path;
         config.internal_path = self.project_path.join(".litho");
 
-        // 项目名称处理：CLI参数优先级最高，如果CLI没有指定且配置文件也没有，get_project_name()会自动推断
+        // Project name handling: CLI argument has highest priority, if CLI doesn't specify and config file doesn't have it, get_project_name() will auto-infer
         if let Some(name) = self.name {
             config.project_name = Some(name);
         }
 
-        // 覆盖LLM配置
+        // Override LLM configuration
         if let Some(provider_str) = self.llm_provider {
             if let Ok(provider) = provider_str.parse::<LLMProvider>() {
                 config.llm.provider = provider;
             } else {
-                eprintln!(
-                    "⚠️ 警告: 未知的provider: {}，使用默认provider",
-                    provider_str
-                );
+                let msg = target_lang.msg_unknown_provider().replace("{}", &provider_str);
+                eprintln!("{}", msg);
             }
         }
         if let Some(llm_api_base_url) = self.llm_api_base_url {
@@ -164,26 +163,24 @@ impl Args {
             config.llm.max_tokens = max_tokens;
         }
         if let Some(temperature) = self.temperature {
-            config.llm.temperature = temperature;
+            config.llm.temperature = Some(temperature);
         }
         if let Some(max_parallels) = self.max_parallels {
             config.llm.max_parallels = max_parallels;
         }
         config.llm.disable_preset_tools = self.disable_preset_tools;
 
-        // 目标语言配置
+        // Target language configuration
         if let Some(target_language_str) = self.target_language {
             if let Ok(target_language) = target_language_str.parse::<TargetLanguage>() {
                 config.target_language = target_language;
             } else {
-                eprintln!(
-                    "⚠️ 警告: 未知的目标语言: {}，使用默认语言 (English)",
-                    target_language_str
-                );
+                let msg = target_lang.msg_unknown_language().replace("{}", &target_language_str);
+                eprintln!("{}", msg);
             }
         }
 
-        // 缓存配置
+        // Cache configuration
         if self.no_cache {
             config.cache.enabled = false;
         }

@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 use std::collections::HashMap;
 
-/// Memory元数据
+/// Memory metadata
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct MemoryMetadata {
     pub created_at: DateTime<Utc>,
@@ -26,7 +26,7 @@ impl MemoryMetadata {
     }
 }
 
-/// 统一内存管理器
+/// Unified memory manager
 #[derive(Debug)]
 pub struct Memory {
     data: HashMap<String, Value>,
@@ -41,7 +41,7 @@ impl Memory {
         }
     }
 
-    /// 存储数据到指定作用域和键
+    /// Store data to specified scope and key
     pub fn store<T>(&mut self, scope: &str, key: &str, data: T) -> Result<()>
     where
         T: Serialize,
@@ -49,10 +49,10 @@ impl Memory {
         let full_key = format!("{}:{}", scope, key);
         let serialized = serde_json::to_value(data)?;
 
-        // 计算数据大小
+        // Calculate data size
         let data_size = serialized.to_string().len();
 
-        // 更新元数据
+        // Update metadata
         if let Some(old_size) = self.metadata.data_sizes.get(&full_key) {
             self.metadata.total_size -= old_size;
         }
@@ -64,14 +64,14 @@ impl Memory {
         Ok(())
     }
 
-    /// 从指定作用域和键获取数据
+    /// Get data from specified scope and key
     pub fn get<T>(&mut self, scope: &str, key: &str) -> Option<T>
     where
         T: for<'a> Deserialize<'a>,
     {
         let full_key = format!("{}:{}", scope, key);
 
-        // 更新访问计数
+        // Update access count
         *self
             .metadata
             .access_counts
@@ -83,7 +83,7 @@ impl Memory {
             .and_then(|value| serde_json::from_value(value.clone()).ok())
     }
 
-    /// 列出指定作用域的所有键
+    /// List all keys in the specified scope
     pub fn list_keys(&self, scope: &str) -> Vec<String> {
         let prefix = format!("{}:", scope);
         self.data
@@ -93,13 +93,13 @@ impl Memory {
             .collect()
     }
 
-    /// 检查是否存在指定数据
+    /// Check if specified data exists
     pub fn has_data(&self, scope: &str, key: &str) -> bool {
         let full_key = format!("{}:{}", scope, key);
         self.data.contains_key(&full_key)
     }
 
-    /// 获取内存使用统计
+    /// Get memory usage statistics
     pub fn get_usage_stats(&self) -> HashMap<String, usize> {
         let mut stats = HashMap::new();
 

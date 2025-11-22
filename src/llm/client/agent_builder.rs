@@ -1,4 +1,4 @@
-//! Agent构建器 - 负责构建和配置LLM Agent
+//! Agent builder - Responsible for building and configuring LLM Agent
 
 use crate::{
     config::Config,
@@ -6,19 +6,19 @@ use crate::{
     llm::tools::{file_explorer::AgentToolFileExplorer, file_reader::AgentToolFileReader},
 };
 
-/// Agent构建器
+/// Agent builder
 pub struct AgentBuilder<'a> {
     client: &'a ProviderClient,
     config: &'a Config,
 }
 
 impl<'a> AgentBuilder<'a> {
-    /// 创建新的Agent构建器
+    /// Create a new Agent builder
     pub fn new(client: &'a ProviderClient, config: &'a Config) -> Self {
         Self { client, config }
     }
 
-    /// 构建内置预设工具的Agent
+    /// Build Agent with built-in preset tools
     pub fn build_agent_with_tools(&self, system_prompt: &str) -> ProviderAgent {
         let llm_config = &self.config.llm;
 
@@ -27,7 +27,7 @@ impl<'a> AgentBuilder<'a> {
             let file_reader = AgentToolFileReader::new(self.config.clone());
 
             let system_prompt_with_tools = format!(
-                "{}\n不要虚构不存在的代码，如果你需要了解更多项目的工程结构和源码内容，积极的调用工具来获得更多上下文补充",
+                "{}\nDo not fabricate non-existent code. If you need to learn more about the project structure and source code content, actively call tools to obtain more contextual information",
                 system_prompt
             );
 
@@ -44,7 +44,7 @@ impl<'a> AgentBuilder<'a> {
         }
     }
 
-    /// 构建无工具Agent
+    /// Build Agent without tools
     pub fn build_agent_without_tools(&self, system_prompt: &str) -> ProviderAgent {
         let llm_config = &self.config.llm;
         self.client

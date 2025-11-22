@@ -17,7 +17,7 @@ pub trait Outlet {
 }
 
 pub struct DocTree {
-    /// key为Memory中Documentation的ScopedKey，value为文档输出的相对路径
+    /// key is the ScopedKey of Documentation in Memory, value is the relative path for document output
     structure: HashMap<String, String>,
 }
 
@@ -52,7 +52,7 @@ impl DocTree {
 
 impl Default for DocTree {
     fn default() -> Self {
-        // 默认使用英文
+        // Default to English
         Self::new(&TargetLanguage::English)
     }
 }
@@ -69,47 +69,49 @@ impl DiskOutlet {
 
 impl Outlet for DiskOutlet {
     async fn save(&self, context: &GeneratorContext) -> Result<()> {
-        println!("\n🖊️ 文档存储中...");
-        // 创建输出目录
+        println!("\n🖊️ Saving documentation...");
+        // Create output directory
         let output_dir = &context.config.output_path;
         if output_dir.exists() {
             fs::remove_dir_all(output_dir)?;
         }
         fs::create_dir_all(output_dir)?;
 
-        // 遍历文档树结构，保存每个文档
+        // Iterate through document tree structure and save each document
         for (scoped_key, relative_path) in &self.doc_tree.structure {
-            // 从内存中获取文档内容
+            // Get document content from memory
             if let Some(doc_markdown) = context
                 .get_from_memory::<String>(MemoryScope::DOCUMENTATION, scoped_key)
                 .await
             {
-                // 构建完整的输出文件路径
+                // Build full output file path
                 let output_file_path = output_dir.join(relative_path);
 
-                // 确保父目录存在
+                // Ensure parent directory exists
                 if let Some(parent_dir) = output_file_path.parent() {
                     if !parent_dir.exists() {
                         fs::create_dir_all(parent_dir)?;
                     }
                 }
 
-                // 写入文档内容到文件
+                // Write document content to file
                 fs::write(&output_file_path, doc_markdown)?;
 
-                println!("💾 已保存文档: {}", output_file_path.display());
+                println!("💾 Document saved: {}", output_file_path.display());
             } else {
-                // 如果文档不存在，记录警告但不中断流程
-                eprintln!("⚠️ 警告: 未找到文档内容，键: {}", scoped_key);
+                // If document doesn't exist, log warning but don't interrupt the process
+                let msg = context.config.target_language.msg_doc_not_found();
+                eprintln!("{}", msg.replace("{}", scoped_key));
             }
         }
 
-        println!("💾 文档保存完成，输出目录: {}", output_dir.display());
+        println!("💾 Document save completed, output directory: {}", output_dir.display());
 
-        // 文档保存完成后，自动修复mermaid图表
+        // Automatically fix mermaid charts after document save
         if let Err(e) = MermaidFixer::auto_fix_after_output(context).await {
-            eprintln!("⚠️ mermaid图表修复过程中出现错误: {}", e);
-            eprintln!("💡 这不会影响文档生成的主要流程");
+            let msg = context.config.target_language.msg_mermaid_error();
+            eprintln!("{}", msg.replace("{}", &e.to_string()));
+            eprintln!("💡 This will not affect the main documentation generation process");
         }
 
         Ok(())

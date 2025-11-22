@@ -6,46 +6,49 @@ use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use tokio::fs;
 
 use crate::config::CacheConfig;
+use crate::i18n::TargetLanguage;
 use crate::llm::client::types::TokenUsage;
 
 pub mod performance_monitor;
 pub use performance_monitor::{CachePerformanceMonitor, CachePerformanceReport};
 
-/// 缓存管理器
+/// Cache manager
 pub struct CacheManager {
     config: CacheConfig,
     performance_monitor: CachePerformanceMonitor,
+    target_language: TargetLanguage,
 }
 
-/// 缓存条目
+/// Cache entry
 #[derive(Debug, Serialize, Deserialize)]
 pub struct CacheEntry<T> {
     pub data: T,
     pub timestamp: u64,
-    /// prompt的MD5哈希值，用于缓存键的生成和验证
+    /// MD5 hash of the prompt, used for cache key generation and verification
     pub prompt_hash: String,
-    /// token使用情况（可选，用于准确统计）
+    /// Token usage information (optional, for accurate statistics)
     pub token_usage: Option<TokenUsage>,
-    /// 使用的模型名称（可选）
+    /// Model name used (optional)
     pub model_name: Option<String>,
 }
 
 impl CacheManager {
-    pub fn new(config: CacheConfig) -> Self {
+    pub fn new(config: CacheConfig, target_language: TargetLanguage) -> Self {
         Self {
             config,
-            performance_monitor: CachePerformanceMonitor::new(),
+            performance_monitor: CachePerformanceMonitor::new(target_language.clone()),
+            target_language,
         }
     }
 
-    /// 生成prompt的MD5哈希
+    /// Generate MD5 hash of the prompt
     pub fn hash_prompt(&self, prompt: &str) -> String {
         let mut hasher = Md5::new();
         hasher.update(prompt.as_bytes());
         format!("{:x}", hasher.finalize())
     }
 
-    /// 获取缓存文件路径
+    /// Get cache file path
     fn get_cache_path(&self, category: &str, hash: &str) -> PathBuf {
         self.config
             .cache_dir
@@ -53,7 +56,7 @@ impl CacheManager {
             .join(format!("{}.json", hash))
     }
 
-    /// 检查缓存是否过期
+    /// Check if cache is expired
     fn is_expired(&self, timestamp: u64) -> bool {
         let now = SystemTime::now()
             .duration_since(UNIX_EPOCH)
@@ -63,7 +66,7 @@ impl CacheManager {
         now - timestamp > expire_seconds
     }
 
-    /// 获取缓存
+    /// Get cache
     pub async fn get<T>(&self, category: &str, prompt: &str) -> Result<Option<T>>
     where
         T: for<'de> Deserialize<'de>,
@@ -85,17 +88,17 @@ impl CacheManager {
                 match serde_json::from_str::<CacheEntry<T>>(&content) {
                     Ok(entry) => {
                         if self.is_expired(entry.timestamp) {
-                            // 删除过期缓存
+                            // Delete expired cache
                             let _ = fs::remove_file(&cache_path).await;
                             self.performance_monitor.record_cache_miss(category);
                             return Ok(None);
                         }
 
-                        // 使用存储的token信息进行准确统计
+                        // Use stored token information for accurate statistics
                         let estimated_inference_time = self.estimate_inference_time(&content);
 
                         if let Some(token_usage) = &entry.token_usage {
-                            // 使用存储的准确信息
+                            // Use stored accurate information
                             self.performance_monitor.record_cache_hit(
                                 category,
                                 estimated_inference_time,
@@ -107,20 +110,20 @@ impl CacheManager {
                     }
                     Err(e) => {
                         self.performance_monitor
-                            .record_cache_error(category, &format!("反序列化失败: {}", e));
+                            .record_cache_error(category, &format!("Deserialization failed: {}", e));
                         Ok(None)
                     }
                 }
             }
             Err(e) => {
                 self.performance_monitor
-                    .record_cache_error(category, &format!("读取文件失败: {}", e));
+                    .record_cache_error(category, &format!("Failed to read file: {}", e));
                 Ok(None)
             }
         }
     }
 
-    /// 设置缓存（带token使用情况）
+    /// Set cache (with token usage information)
     pub async fn set_with_tokens<T>(
         &self,
         category: &str,
@@ -138,7 +141,7 @@ impl CacheManager {
         let hash = self.hash_prompt(prompt);
         let cache_path = self.get_cache_path(category, &hash);
 
-        // 确保目录存在
+        // Ensure directory exists
         if let Some(parent) = cache_path.parent() {
             fs::create_dir_all(parent).await?;
         }
@@ -164,25 +167,25 @@ impl CacheManager {
                 }
                 Err(e) => {
                     self.performance_monitor
-                        .record_cache_error(category, &format!("写入文件失败: {}", e));
+                        .record_cache_error(category, &format!("Failed to write file: {}", e));
                     Err(e.into())
                 }
             },
             Err(e) => {
                 self.performance_monitor
-                    .record_cache_error(category, &format!("序列化失败: {}", e));
+                    .record_cache_error(category, &format!("Serialization failed: {}", e));
                 Err(e.into())
             }
         }
     }
 
-    /// 获取压缩结果缓存
+    /// Get compression result cache
     pub async fn get_compression_cache(&self, original_content: &str, content_type: &str) -> Result<Option<String>> {
         let cache_key = format!("{}_{}", content_type, self.hash_prompt(original_content));
         self.get::<String>("prompt_compression", &cache_key).await
     }
 
-    /// 设置压缩结果缓存
+    /// Set compression result cache
     pub async fn set_compression_cache(
         &self,
         original_content: &str,
@@ -203,7 +206,7 @@ impl CacheManager {
         let hash = self.hash_prompt(prompt);
         let cache_path = self.get_cache_path(category, &hash);
 
-        // 确保目录存在
+        // Ensure directory exists
         if let Some(parent) = cache_path.parent() {
             fs::create_dir_all(parent).await?;
         }
@@ -229,29 +232,29 @@ impl CacheManager {
                 }
                 Err(e) => {
                     self.performance_monitor
-                        .record_cache_error(category, &format!("写入文件失败: {}", e));
+                        .record_cache_error(category, &format!("Failed to write file: {}", e));
                     Err(e.into())
                 }
             },
             Err(e) => {
                 self.performance_monitor
-                    .record_cache_error(category, &format!("序列化失败: {}", e));
+                    .record_cache_error(category, &format!("Serialization failed: {}", e));
                 Err(e.into())
             }
         }
     }
 
-    /// 估算推理时间（基于内容复杂度）
+    /// Estimate inference time (based on content complexity)
     fn estimate_inference_time(&self, content: &str) -> Duration {
-        // 基于内容长度估算推理时间
+        // Estimate inference time based on content length
         let content_length = content.len();
-        let base_time = 2.0; // 基础推理时间2秒
-        let complexity_factor = (content_length as f64 / 1000.0).min(10.0); // 最多10倍复杂度
+        let base_time = 2.0; // Base inference time 2 seconds
+        let complexity_factor = (content_length as f64 / 1000.0).min(10.0); // Maximum 10x complexity
         let estimated_seconds = base_time + complexity_factor;
         Duration::from_secs_f64(estimated_seconds)
     }
 
-    /// 生成性能报告
+    /// Generate performance report
     pub fn generate_performance_report(&self) -> CachePerformanceReport {
         self.performance_monitor.generate_report()
     }

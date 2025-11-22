@@ -19,7 +19,7 @@ pub struct FileInfo {
     pub last_modified: Option<String>,
 }
 
-/// 目录信息
+/// Directory information
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct DirectoryInfo {
     pub path: PathBuf,

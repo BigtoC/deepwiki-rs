@@ -2,6 +2,6 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct OriginalDocument {
-    /// 项目中的readme文件内容，不一定准确仅供参考
+    /// README file content in the project, not necessarily accurate and for reference only
     pub readme: Option<String>,
 }

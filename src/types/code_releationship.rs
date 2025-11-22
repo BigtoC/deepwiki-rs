@@ -1,65 +1,65 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-/// 精简的关系分析结果
+/// Streamlined relationship analysis result
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct RelationshipAnalysis {
-    /// 核心依赖关系（只保留重要的）
+    /// Core dependency relationships (only keep important ones)
     pub core_dependencies: Vec<CoreDependency>,
 
-    /// 架构层次信息
+    /// Architecture layer information
     pub architecture_layers: Vec<ArchitectureLayer>,
 
-    /// 关键问题和建议
+    /// Key issues and recommendations
     pub key_insights: Vec<String>,
 }
 
-/// 核心依赖关系（简化版）
+/// Core dependency (simplified version)
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct CoreDependency {
-    /// 源组件
+    /// Source component
     pub from: String,
 
-    /// 目标组件
+    /// Target component
     pub to: String,
 
-    /// 依赖类型
+    /// Dependency type
     pub dependency_type: DependencyType,
 
-    /// 重要性评分（1-5，只保留重要的）
+    /// Importance score (1-5, only keep important ones)
     pub importance: u8,
 
-    /// 简要描述
+    /// Brief description
     pub description: Option<String>,
 }
 
-/// 架构层次
+/// Architecture layer
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct ArchitectureLayer {
-    /// 层次名称
+    /// Layer name
     pub name: String,
 
-    /// 该层的组件
+    /// Components in this layer
     pub components: Vec<String>,
 
-    /// 层次级别（数字越小越底层）
+    /// Layer level (smaller number means lower level)
     pub level: u8,
 }
 
-/// 依赖类型枚举
+/// Dependency type enumeration
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub enum DependencyType {
-    /// 导入依赖（use、import语句）
+    /// Import dependency (use, import statements)
     Import,
-    /// 函数调用依赖
+    /// Function call dependency
     FunctionCall,
-    /// 继承关系
+    /// Inheritance relationship
     Inheritance,
-    /// 组合关系
+    /// Composition relationship
     Composition,
-    /// 数据流依赖
+    /// Data flow dependency
     DataFlow,
-    /// 模块依赖
+    /// Module dependency
     Module,
 }
 

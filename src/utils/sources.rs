@@ -2,6 +2,7 @@ use std::path::PathBuf;
 
 use crate::{
     generator::preprocess::extractors::language_processors::LanguageProcessorManager,
+    i18n::TargetLanguage,
     types::code::CodeInsight,
 };
 
@@ -9,16 +10,18 @@ pub fn read_code_source(
     language_processor: &LanguageProcessorManager,
     project_path: &PathBuf,
     file_path: &PathBuf,
+    target_language: &TargetLanguage,
 ) -> String {
-    // 构建完整文件路径
+    // Build full file path
     let full_path = project_path.join(file_path);
 
-    // 读取源代码
+    // Read source code
     if let Ok(content) = std::fs::read_to_string(&full_path) {
-        // 如果代码太长，进行智能截取
+        // If code is too long, intelligently truncate
         truncate_source_code(language_processor, &full_path, &content, 8_1024)
     } else {
-        format!("无法读取文件: {}", full_path.display())
+        let msg = target_language.msg_cannot_read_file();
+        msg.replace("{}", &full_path.display().to_string())
     }
 }
 
@@ -32,14 +35,14 @@ fn truncate_source_code(
         return content.to_string();
     }
 
-    // 智能截取：优先保留函数定义、结构体定义等重要部分
+    // Smart truncation: prioritize function definitions, struct definitions, and other important parts
     let lines: Vec<&str> = content.lines().collect();
     let mut result = String::new();
     let mut current_length = 0;
     let mut important_lines = Vec::new();
     let mut other_lines = Vec::new();
 
-    // 分类行：重要行和普通行
+    // Classify lines: important and regular
     for (i, line) in lines.iter().enumerate() {
         let trimmed = line.trim();
         if language_processor.is_important_line(file_path, trimmed) {
@@ -49,7 +52,7 @@ fn truncate_source_code(
         }
     }
 
-    // 首先添加重要行
+    // First add important lines
     for (_, line) in important_lines {
         if current_length + line.len() > max_length {
             break;
@@ -59,7 +62,7 @@ fn truncate_source_code(
         current_length += line.len() + 1;
     }
 
-    // 然后添加普通行，直到达到长度限制
+    // Then add regular lines until length limit is reached
     for (_, line) in other_lines {
         if current_length + line.len() > max_length {
             break;
@@ -70,7 +73,7 @@ fn truncate_source_code(
     }
 
     if current_length >= max_length {
-        result.push_str("\n... (代码已截取) ...\n");
+        result.push_str("\n... (code truncated) ...\n");
     }
 
     result
@@ -83,17 +86,17 @@ pub fn read_dependency_code_source(
 ) -> String {
     let mut dependency_code = String::new();
 
-    // 限制依赖代码的总长度
+    // Limit total length of dependency code
     let mut total_length = 0;
     const MAX_DEPENDENCY_CODE_LENGTH: usize = 4000;
 
     for dep_info in &analysis.dependencies {
         if total_length >= MAX_DEPENDENCY_CODE_LENGTH {
-            dependency_code.push_str("\n... (更多依赖代码已省略) ...\n");
+            dependency_code.push_str("\n... (more dependency code omitted) ...\n");
             break;
         }
 
-        // 尝试找到依赖文件
+        // Try to find dependency file
         if let Some(dep_path) =
             find_dependency_file(language_processor, project_path, &dep_info.name)
         {
@@ -101,7 +104,7 @@ pub fn read_dependency_code_source(
                 let truncated =
                     truncate_source_code(language_processor, &dep_path, &content, 8_1024);
                 dependency_code.push_str(&format!(
-                    "\n### 依赖: {} ({})\n```\n{}\n```\n",
+                    "\n### Dependency: {} ({})\n```\n{}\n```\n",
                     dep_info.name,
                     dep_path.display(),
                     truncated
@@ -112,26 +115,26 @@ pub fn read_dependency_code_source(
     }
 
     if dependency_code.is_empty() {
-        "无可用的依赖代码".to_string()
+        "No available dependency code".to_string()
     } else {
         dependency_code
     }
 }
 
-/// Todo: 使用LanguageProcessorManager方案
+/// Todo: Use LanguageProcessorManager approach
 fn find_dependency_file(
     _language_processor: &LanguageProcessorManager,
     project_path: &PathBuf,
     dep_name: &str,
 ) -> Option<std::path::PathBuf> {
-    // 清理依赖名称，移除路径前缀
+    // Clean dependency name, remove path prefix
     let clean_name = dep_name
         .trim_start_matches("./")
         .trim_start_matches("../")
         .trim_start_matches("@/")
         .trim_start_matches("/");
 
-    // 尝试多种可能的文件路径
+    // Try various possible file paths
     let possible_paths = vec![
         // Rust
         format!("{}.rs", clean_name),
@@ -186,6 +189,22 @@ fn find_dependency_file(
         format!("{}.java", clean_name),
         format!("src/main/java/{}.java", clean_name),
         format!("app/src/main/java/{}.java", clean_name),
+        // C#
+        format!("{}.cs", clean_name),
+        format!("{}.csx", clean_name),
+        format!("src/{}.cs", clean_name),
+        format!("{}Program.cs", clean_name),
+        format!("Controllers/{}.cs", clean_name),
+        format!("Models/{}.cs", clean_name),
+        format!("Services/{}.cs", clean_name),
+        format!("Views/{}.cs", clean_name),
+        format!("ViewModels/{}.cs", clean_name),
+        format!("Helpers/{}.cs", clean_name),
+        format!("Utils/{}.cs", clean_name),
+        format!("Core/{}.cs", clean_name),
+        format!("Data/{}.cs", clean_name),
+        format!("Repositories/{}.cs", clean_name),
+        format!("Interfaces/{}.cs", clean_name),
     ];
 
     for path_str in possible_paths {
@@ -195,19 +214,20 @@ fn find_dependency_file(
         }
     }
 
-    // 如果直接路径查找失败，尝试递归搜索
+    // If direct path lookup fails, try recursive search
     recursive_find_file(project_path, clean_name)
 }
 
 fn recursive_find_file(project_path: &PathBuf, file_name: &str) -> Option<std::path::PathBuf> {
     use std::fs;
 
-    // 定义搜索的扩展名
+    // Define search extensions
     let extensions = vec![
         "rs", "py", "js", "ts", "jsx", "tsx", "vue", "svelte", "kt", "java", "mjs", "cjs",
+        "cs", "csx",
     ];
 
-    // 递归搜索函数
+    // Recursive search function
     fn search_directory(
         dir: &PathBuf,
         target_name: &str,
@@ -228,7 +248,7 @@ fn recursive_find_file(project_path: &PathBuf, file_name: &str) -> Option<std::p
                         }
                     }
                 } else if path.is_dir() {
-                    // 跳过常见的忽略目录
+                    // Skip common ignored directories
                     if let Some(dir_name) = path.file_name() {
                         let dir_name_str = dir_name.to_string_lossy();
                         if !dir_name_str.starts_with('.')

@@ -1,19 +1,19 @@
-请分析以下代码文件的组件类型：
+Please analyze the component type of the following code file:
 
-## 文件信息
-- **文件路径**: {}
-- **文件名**: {}
+## File Information
+- **File Path**: {}
+- **File Name**: {}
 
-## 文件内容预览
+## File Content Preview
 ```
 {}
 ```
 
-## 分析要求
-请基于以下因素进行分析：
-1. 文件路径和目录结构
-2. 文件名称和扩展名
-3. 文件内容和代码结构
-4. 导入导出的模块
-5. 函数和类的定义
-6. 业务逻辑的特征
+## Analysis Requirements
+Please conduct the analysis based on the following factors:
+1. File path and directory structure
+2. File name and extension
+3. File content and code structure
+4. Imported and exported modules
+5. Function and class definitions
+6. Characteristics of business logic

@@ -1,6 +1,6 @@
 use std::path::Path;
 
-/// 检查文件是否为测试文件
+/// Check if a file is a test file
 pub fn is_test_file(path: &Path) -> bool {
     let file_name = path
         .file_name()
@@ -10,7 +10,7 @@ pub fn is_test_file(path: &Path) -> bool {
 
     let path_str = path.to_string_lossy().to_lowercase();
 
-    // 基于路径的检查 (支持不同的路径分隔符)
+    // Path-based checks (support different path separators)
     if path_str.contains("/test/")
         || path_str.contains("\\test\\")
         || path_str.contains("/tests/")
@@ -35,13 +35,13 @@ pub fn is_test_file(path: &Path) -> bool {
         return true;
     }
 
-    // 基于文件名的检查
-    // Python测试文件
+    // Filename-based checks
+    // Python test files
     if file_name.starts_with("test_") || file_name.ends_with("_test.py") {
         return true;
     }
 
-    // JavaScript/TypeScript测试文件
+    // JavaScript/TypeScript test files
     if file_name.ends_with(".test.js")
         || file_name.ends_with(".spec.js")
         || file_name.ends_with(".test.ts")
@@ -54,22 +54,30 @@ pub fn is_test_file(path: &Path) -> bool {
         return true;
     }
 
-    // Java测试文件
+    // Java test files
     if file_name.ends_with("test.java") || file_name.ends_with("tests.java") {
         return true;
     }
 
-    // Rust测试文件
+    // C# test files
+    if file_name.ends_with("test.cs") 
+        || file_name.ends_with("tests.cs")
+        || file_name.ends_with(".test.cs")
+        || file_name.ends_with(".tests.cs") {
+        return true;
+    }
+
+    // Rust test files
     if file_name.ends_with("_test.rs") || file_name.ends_with("_tests.rs") {
         return true;
     }
 
-    // Go测试文件
+    // Go test files
     if file_name.ends_with("_test.go") {
         return true;
     }
 
-    // C/C++测试文件
+    // C/C++ test files
     if file_name.ends_with("_test.c")
         || file_name.ends_with("_test.cpp")
         || file_name.ends_with("_test.cc")
@@ -80,7 +88,7 @@ pub fn is_test_file(path: &Path) -> bool {
         return true;
     }
 
-    // 通用测试文件名模式
+    // Generic test filename patterns
     if file_name.contains("test")
         && (file_name.starts_with("test")
             || file_name.ends_with("test")
@@ -99,11 +107,11 @@ pub fn is_test_file(path: &Path) -> bool {
     false
 }
 
-/// 检查目录是否为测试目录
+/// Check if a directory is a test directory
 pub fn is_test_directory(dir_name: &str) -> bool {
     let name_lower = dir_name.to_lowercase();
 
-    // 常见的测试目录名
+    // Common test directory names
     matches!(
         name_lower.as_str(),
         "test"
@@ -125,27 +133,27 @@ pub fn is_test_directory(dir_name: &str) -> bool {
         || name_lower.ends_with("-tests")
 }
 
-/// 检查是否为二进制文件路径
+/// Check if a file path is a binary file
 pub fn is_binary_file_path(path: &Path) -> bool {
     if let Some(extension) = path.extension().and_then(|e| e.to_str()) {
         let ext_lower = extension.to_lowercase();
         matches!(
             ext_lower.as_str(),
-            // 图片文件
+            // Image files
             "jpg" | "jpeg" | "png" | "gif" | "bmp" | "ico" | "svg" | "webp" |
-            // 音频文件
+            // Audio files
             "mp3" | "wav" | "flac" | "aac" | "ogg" | "m4a" |
-            // 视频文件
+            // Video files
             "mp4" | "avi" | "mkv" | "mov" | "wmv" | "flv" | "webm" |
-            // 压缩文件
+            // Compressed files
             "zip" | "rar" | "7z" | "tar" | "gz" | "bz2" | "xz" |
-            // 可执行文件
+            // Executable files
             "exe" | "dll" | "so" | "dylib" | "bin" |
-            // 文档文件
+            // Document files
             "pdf" | "doc" | "docx" | "xls" | "xlsx" | "ppt" | "pptx" |
-            // 字体文件
+            // Font files
             "ttf" | "otf" | "woff" | "woff2" |
-            // 其他二进制文件
+            // Other binary files
             "db" | "sqlite" | "sqlite3" | "dat" | "cache" |
             "archive"
         )

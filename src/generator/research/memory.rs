@@ -14,12 +14,12 @@ pub trait MemoryRetriever {
 }
 
 impl MemoryRetriever for GeneratorContext {
-    /// 存储研究结果
+    /// Store research results
     async fn store_research(&self, agent_type: &str, result: Value) -> anyhow::Result<()> {
         self.store_to_memory(MemoryScope::STUDIES_RESEARCH, agent_type, result).await
     }
 
-    /// 获取研究结果
+    /// Get research results
     async fn get_research(&self, agent_type: &str) -> Option<Value> {
         self.get_from_memory(MemoryScope::STUDIES_RESEARCH, agent_type).await
     }

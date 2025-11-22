@@ -9,18 +9,18 @@ use crate::{cache::CacheManager, config::Config, llm::client::LLMClient, memory:
 
 #[derive(Clone)]
 pub struct GeneratorContext {
-    /// LLM调用器，用于与AI通信。
+    /// LLM client for communicating with AI.
     pub llm_client: LLMClient,
-    /// 配置
+    /// Configuration
     pub config: Config,
-    /// 缓存管理器
+    /// Cache manager
     pub cache_manager: Arc<RwLock<CacheManager>>,
-    /// 生成器记忆
+    /// Generator memory
     pub memory: Arc<RwLock<Memory>>,
 }
 
 impl GeneratorContext {
-    /// 存储数据到 Memory
+    /// Store data to Memory
     pub async fn store_to_memory<T>(&self, scope: &str, key: &str, data: T) -> Result<()>
     where
         T: Serialize + Send + Sync,
@@ -29,7 +29,7 @@ impl GeneratorContext {
         memory.store(scope, key, data)
     }
 
-    /// 从 Memory 获取数据
+    /// Get data from Memory
     pub async fn get_from_memory<T>(&self, scope: &str, key: &str) -> Option<T>
     where
         T: for<'a> Deserialize<'a> + Send + Sync,
@@ -38,19 +38,19 @@ impl GeneratorContext {
         memory.get(scope, key)
     }
 
-    /// 检查Memory中是否存在指定数据
+    /// Check if data exists in Memory
     pub async fn has_memory_data(&self, scope: &str, key: &str) -> bool {
         let memory = self.memory.read().await;
         memory.has_data(scope, key)
     }
 
-    /// 获取作用域内的所有数据键
+    /// Get all data keys within a scope
     pub async fn list_memory_keys(&self, scope: &str) -> Vec<String> {
         let memory = self.memory.read().await;
         memory.list_keys(scope)
     }
 
-    /// 获取Memory使用统计
+    /// Get Memory usage statistics
     pub async fn get_memory_stats(&self) -> HashMap<String, usize> {
         let memory = self.memory.read().await;
         memory.get_usage_stats()

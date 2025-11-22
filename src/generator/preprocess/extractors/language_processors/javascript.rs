@@ -46,7 +46,7 @@ impl LanguageProcessor for JavaScriptProcessor {
         let source_file = file_path.to_string_lossy().to_string();
 
         for (line_num, line) in content.lines().enumerate() {
-            // 提取import语句
+            // Extract import statements
             if let Some(captures) = self.import_regex.captures(line) {
                 if let Some(import_path) = captures.get(1) {
                     let path_str = import_path.as_str();
@@ -63,7 +63,7 @@ impl LanguageProcessor for JavaScriptProcessor {
                 }
             }
 
-            // 提取require语句
+            // Extract require statements
             if let Some(captures) = self.require_regex.captures(line) {
                 if let Some(require_path) = captures.get(1) {
                     let path_str = require_path.as_str();
@@ -80,7 +80,7 @@ impl LanguageProcessor for JavaScriptProcessor {
                 }
             }
 
-            // 提取动态import
+            // Extract dynamic imports
             if let Some(captures) = self.dynamic_import_regex.captures(line) {
                 if let Some(import_path) = captures.get(1) {
                     let path_str = import_path.as_str();
@@ -104,7 +104,7 @@ impl LanguageProcessor for JavaScriptProcessor {
     fn determine_component_type(&self, file_path: &Path, content: &str) -> String {
         let file_name = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
 
-        // 检查特殊文件名
+        // Check special file names
         if file_name == "index.js" || file_name == "main.js" || file_name == "app.js" {
             return "js_main".to_string();
         }
@@ -113,12 +113,12 @@ impl LanguageProcessor for JavaScriptProcessor {
             return "js_config".to_string();
         }
 
-        // 检查文件名后缀
+        // Check file name suffix
         if file_name.ends_with(".test.js") || file_name.ends_with(".spec.js") {
             return "js_test".to_string();
         }
 
-        // 检查路径组件中是否包含测试相关目录（避免误判）
+        // Check if path components contain test-related directories (to avoid misidentification)
         let has_test_dir = file_path.components().any(|component| {
             if let std::path::Component::Normal(name) = component {
                 let name_str = name.to_string_lossy().to_lowercase();
@@ -136,7 +136,7 @@ impl LanguageProcessor for JavaScriptProcessor {
             return "js_test".to_string();
         }
 
-        // 检查内容模式
+        // Check content patterns
         if content.contains("module.exports") || content.contains("exports.") {
             "js_module".to_string()
         } else if content.contains("export default") || content.contains("export {") {
@@ -154,7 +154,7 @@ impl LanguageProcessor for JavaScriptProcessor {
     fn is_important_line(&self, line: &str) -> bool {
         let trimmed = line.trim();
 
-        // 函数定义
+        // Function definitions
         if trimmed.starts_with("function ")
             || trimmed.starts_with("async function ")
             || trimmed.contains("=> {")
@@ -163,12 +163,12 @@ impl LanguageProcessor for JavaScriptProcessor {
             return true;
         }
 
-        // 类定义
+        // Class definitions
         if trimmed.starts_with("class ") {
             return true;
         }
 
-        // 导入导出语句
+        // Import/export statements
         if trimmed.starts_with("import ")
             || trimmed.starts_with("export ")
             || trimmed.starts_with("module.exports")
@@ -177,7 +177,7 @@ impl LanguageProcessor for JavaScriptProcessor {
             return true;
         }
 
-        // 重要注释
+        // Important comments
         if trimmed.contains("TODO")
             || trimmed.contains("FIXME")
             || trimmed.contains("NOTE")
@@ -198,7 +198,7 @@ impl LanguageProcessor for JavaScriptProcessor {
         let lines: Vec<&str> = content.lines().collect();
 
         for (i, line) in lines.iter().enumerate() {
-            // 提取导出函数定义
+            // Extract exported function definitions
             if let Some(captures) = self.export_function_regex.captures(line) {
                 let is_async = captures.get(1).is_some();
                 let name = captures
@@ -224,7 +224,7 @@ impl LanguageProcessor for JavaScriptProcessor {
                     description: self.extract_jsdoc_comment(&lines, i),
                 });
             }
-            // 提取普通函数定义
+            // Extract regular function definitions
             else if let Some(captures) = self.function_regex.captures(line) {
                 let is_async = captures.get(1).is_some();
                 let name = captures
@@ -251,7 +251,7 @@ impl LanguageProcessor for JavaScriptProcessor {
                 });
             }
 
-            // 提取箭头函数定义
+            // Extract arrow function definitions
             if let Some(captures) = self.arrow_function_regex.captures(line) {
                 let _var_type = captures.get(1).map(|m| m.as_str()).unwrap_or("");
                 let name = captures
@@ -279,7 +279,7 @@ impl LanguageProcessor for JavaScriptProcessor {
                 });
             }
 
-            // 提取类定义
+            // Extract class definitions
             if let Some(captures) = self.class_regex.captures(line) {
                 let name = captures
                     .get(1)
@@ -297,7 +297,7 @@ impl LanguageProcessor for JavaScriptProcessor {
                 });
             }
 
-            // 提取方法定义（类内部）
+            // Extract method definitions (inside classes)
             if let Some(captures) = self.method_regex.captures(line) {
                 let is_async = captures.get(1).is_some();
                 let name = captures
@@ -307,7 +307,7 @@ impl LanguageProcessor for JavaScriptProcessor {
                     .to_string();
                 let params_str = captures.get(3).map(|m| m.as_str()).unwrap_or("");
 
-                // 跳过一些常见的非方法模式
+                // Skip some common non-method patterns
                 if name == "if" || name == "for" || name == "while" || name == "switch" {
                     continue;
                 }
@@ -331,7 +331,7 @@ impl LanguageProcessor for JavaScriptProcessor {
 }
 
 impl JavaScriptProcessor {
-    /// 解析JavaScript函数参数
+    /// Parse JavaScript function parameters
     fn parse_javascript_parameters(&self, params_str: &str) -> Vec<ParameterInfo> {
         let mut parameters = Vec::new();
 
@@ -339,14 +339,14 @@ impl JavaScriptProcessor {
             return parameters;
         }
 
-        // 简单的参数解析，处理基本情况
+        // Simple parameter parsing, handling basic cases
         for param in params_str.split(',') {
             let param = param.trim();
             if param.is_empty() {
                 continue;
             }
 
-            // 处理默认参数
+            // Handle default parameters
             let is_optional = param.contains('=');
             let name = if let Some(eq_pos) = param.find('=') {
                 param[..eq_pos].trim().to_string()
@@ -354,7 +354,7 @@ impl JavaScriptProcessor {
                 param.to_string()
             };
 
-            // 处理解构参数
+            // Handle destructured parameters
             let clean_name = if name.starts_with('{') && name.ends_with('}') {
                 format!("destructured_{}", parameters.len())
             } else if name.starts_with('[') && name.ends_with(']') {
@@ -365,7 +365,7 @@ impl JavaScriptProcessor {
 
             parameters.push(ParameterInfo {
                 name: clean_name,
-                param_type: "any".to_string(), // JavaScript没有静态类型
+                param_type: "any".to_string(), // JavaScript doesn't have static types
                 is_optional,
                 description: None,
             });
@@ -374,19 +374,19 @@ impl JavaScriptProcessor {
         parameters
     }
 
-    /// 提取JSDoc注释
+    /// Extract JSDoc comments
     fn extract_jsdoc_comment(&self, lines: &[&str], current_line: usize) -> Option<String> {
         let mut doc_lines = Vec::new();
         let mut in_jsdoc = false;
 
-        // 向上查找JSDoc注释
+        // Search upward for JSDoc comments
         for i in (0..current_line).rev() {
             let line = lines[i].trim();
 
             if line.ends_with("*/") {
                 in_jsdoc = true;
                 if line.starts_with("/**") {
-                    // 单行JSDoc
+                    // Single-line JSDoc
                     let content = line.trim_start_matches("/**").trim_end_matches("*/").trim();
                     if !content.is_empty() {
                         doc_lines.insert(0, content.to_string());

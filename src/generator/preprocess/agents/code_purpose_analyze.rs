@@ -9,17 +9,17 @@ use crate::{
 use crate::generator::agent_executor::{AgentExecuteParams, extract};
 use crate::generator::context::GeneratorContext;
 
-/// AI组件类型分析结果
+/// AI component type analysis result
 #[derive(Debug, Serialize, Deserialize, Clone, JsonSchema)]
 pub struct AICodePurposeAnalysis {
-    // 推测的代码功能分类
+    // Inferred code functionality classification
     pub code_purpose: CodePurpose,
-    // 推测结果的置信度(最低0.0，最高1.0),大于0.7说明置信度较高。
+    // Confidence of the inference result (min 0.0, max 1.0), confidence is high when > 0.7.
     pub confidence: f64,
     pub reasoning: String,
 }
 
-/// 组件类型增强器，结合规则和AI分析
+/// Component type enhancer, combining rules and AI analysis
 pub struct CodePurposeEnhancer;
 
 impl CodePurposeEnhancer {
@@ -34,17 +34,17 @@ impl CodePurposeEnhancer {
         file_name: &str,
         file_content: &str) -> Result<CodePurpose>
     {
-        // 首先使用规则映射
+        // First use rule mapping
         let rule_based_type =
             CodePurposeMapper::map_by_path_and_name(&file_path.to_string_lossy(), file_name);
 
-        // 如果规则映射得到明确类型且有高置信度，直接返回
+        // If rule mapping gets explicit type with high confidence, return directly
         if rule_based_type != CodePurpose::Other {
             return Ok(rule_based_type);
         }
 
-        // 如果有AI分析器且有文件内容，使用AI增强分析
-        let prompt_sys = "你是一个专业的代码架构分析师，专门分析代码文件的组件类型。".to_string();
+        // If there's AI analyzer and file content, use AI enhanced analysis
+        let prompt_sys = "You are a professional code architecture analyst specializing in analyzing component types of code files.".to_string();
         let prompt_user = self.build_code_purpose_analysis_prompt(file_path, file_content, file_name);
 
         let analyze_result = extract::<AICodePurposeAnalysis>(context, AgentExecuteParams {
@@ -56,11 +56,11 @@ impl CodePurposeEnhancer {
 
         return match analyze_result {
             Ok(ai_analysis) => {
-                // 如果AI分析置信度高，使用AI结果
+                // If AI analysis confidence is high, use AI result
                 if ai_analysis.confidence > 0.7 {
                     return Ok(ai_analysis.code_purpose);
                 }
-                // 否则结合规则和AI结果
+                // Otherwise combine rule and AI results
                 if rule_based_type != CodePurpose::Other {
                     Ok(rule_based_type)
                 } else {
@@ -68,20 +68,20 @@ impl CodePurposeEnhancer {
                 }
             }
             Err(_) => {
-                // AI分析失败，使用规则结果
+                // AI analysis failed, use rule result
                 Ok(rule_based_type)
             }
         }
     }
 
-    /// 构建组件类型分析提示
+    /// Build component type analysis prompt
     fn build_code_purpose_analysis_prompt(
         &self,
         file_path: &Path,
         file_content: &str,
         file_name: &str,
     ) -> String {
-        // 安全地截取文件内容的前1000个字符用于分析
+        // Safely truncate first 1000 characters of file content for analysis
         let content_preview = if file_content.chars().count() > 1000 {
             let truncated: String = file_content.chars().take(1000).collect();
             format!("{}...", truncated)

@@ -1,16 +1,16 @@
-请基于以下组件信息和现有关系分析组件间的深层关系：
+Please analyze the deep relationships between components based on the following component information and existing relationships:
 
-## 核心组件列表
+## Core Component List
 {}
 
-## 已识别的静态关系
+## Identified Static Relationships
 {}
 
-请分析并识别：
-1. 组件间的逻辑关系（聚合、组合、继承等）
-2. 架构层次关系（上下层依赖、同层协作等）
-3. 数据流关系（数据传递、状态共享等）
-4. 控制流关系（调用链、事件驱动等）
-5. 整体耦合度评估和优化建议
+Please analyze and identify:
+1. Logical relationships between components (aggregation, composition, inheritance, etc.)
+2. Architectural hierarchy relationships (upstream-downstream dependencies, same-level collaboration, etc.)
+3. Data flow relationships (data transfer, state sharing, etc.)
+4. Control flow relationships (call chains, event-driven, etc.)
+5. Overall coupling degree assessment and optimization recommendations
 
-分析要基于组件的类型、职责和现有依赖关系。
+The analysis should be based on the types, responsibilities, and existing dependency relationships of components.

@@ -6,7 +6,7 @@ use std::path::PathBuf;
 
 use crate::i18n::TargetLanguage;
 
-/// LLM Provider类型
+/// LLM Provider type
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub enum LLMProvider {
     #[serde(rename = "openai")]
@@ -66,99 +66,99 @@ impl std::str::FromStr for LLMProvider {
     }
 }
 
-/// 应用程序配置
+/// Application configuration
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Config {
-    /// 项目名称
+    /// Project name
     pub project_name: Option<String>,
 
-    /// 项目路径
+    /// Project path
     pub project_path: PathBuf,
 
-    /// 输出路径
+    /// Output path
     pub output_path: PathBuf,
 
-    /// 内部工作目录路径 (.litho)
+    /// Internal working directory path (.litho)
     pub internal_path: PathBuf,
 
-    /// 目标语言
+    /// Target language
     pub target_language: TargetLanguage,
 
-    /// 是否分析依赖关系
+    /// Whether to analyze dependencies
     pub analyze_dependencies: bool,
 
-    /// 是否识别核心组件
+    /// Whether to identify core components
     pub identify_components: bool,
 
-    /// 最大递归深度
+    /// Maximum recursion depth
     pub max_depth: u8,
 
-    /// 核心组件的百分比
+    /// Core component percentage
     pub core_component_percentage: f64,
 
-    /// 最大文件大小限制（字节）
+    /// Maximum file size limit (bytes)
     pub max_file_size: u64,
 
-    /// 是否包括测试文件
+    /// Whether to include test files
     pub include_tests: bool,
 
-    /// 是否包括隐藏文件
+    /// Whether to include hidden files
     pub include_hidden: bool,
 
-    /// 要排除的目录
+    /// Directories to exclude
     pub excluded_dirs: Vec<String>,
 
-    /// 要排除的文件
+    /// Files to exclude
     pub excluded_files: Vec<String>,
 
-    /// 要排除的文件扩展名
+    /// File extensions to exclude
     pub excluded_extensions: Vec<String>,
 
-    /// 只包含指定的文件扩展名
+    /// Only include specified file extensions
     pub included_extensions: Vec<String>,
 
-    /// LLM模型配置
+    /// LLM model configuration
     pub llm: LLMConfig,
 
-    /// 缓存配置
+    /// Cache configuration
     pub cache: CacheConfig,
 
-    /// 架构元描述文件路径
+    /// Architecture meta description file path
     pub architecture_meta_path: Option<PathBuf>,
 }
 
-/// LLM模型配置
+/// LLM model configuration
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct LLMConfig {
-    /// LLM Provider类型
+    /// LLM Provider type
     pub provider: LLMProvider,
 
     /// LLM API KEY (optional for local providers like Ollama)
     #[serde(default)]
     pub api_key: String,
 
-    /// LLM API基地址
+    /// LLM API base URL
     pub api_base_url: String,
 
-    /// 高能效模型，优先用于Litho引擎的常规推理任务
+    /// Efficient model, prioritized for Litho engine's regular inference tasks
     pub model_efficient: String,
 
-    /// 高质量模型，优先用于Litho引擎的复杂推理任务，以及作为efficient失效情况下的兜底
+    /// Powerful model, prioritized for Litho engine's complex inference tasks, and as fallback when efficient fails
     pub model_powerful: String,
 
-    /// 最大tokens
+    /// Maximum tokens
     pub max_tokens: u32,
 
-    /// 温度
-    pub temperature: f64,
+    /// Temperature (optional - some models like o3-mini don't support it)
+    pub temperature: Option<f64>,
 
-    /// 重试次数
+    /// Retry attempts
     pub retry_attempts: u32,
 
-    /// 重试间隔（毫秒）
+    /// Retry interval (milliseconds)
     pub retry_delay_ms: u64,
 
-    /// 超时时间（秒）
+    /// Timeout duration (seconds)
     pub timeout_seconds: u64,
 
     pub disable_preset_tools: bool,
@@ -166,21 +166,21 @@ pub struct LLMConfig {
     pub max_parallels: usize,
 }
 
-/// 缓存配置
+/// Cache configuration
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct CacheConfig {
-    /// 是否启用缓存
+    /// Whether to enable cache
     pub enabled: bool,
 
-    /// 缓存目录
+    /// Cache directory
     pub cache_dir: PathBuf,
 
-    /// 缓存过期时间（小时）
+    /// Cache expiration time (hours)
     pub expire_hours: u64,
 }
 
 impl Config {
-    /// 从文件加载配置
+    /// Load configuration from file
     pub fn from_file(path: &PathBuf) -> Result<Self> {
         let mut file =
             File::open(path).context(format!("Failed to open config file: {:?}", path))?;
@@ -192,27 +192,27 @@ impl Config {
         Ok(config)
     }
 
-    /// 获取项目名称，优先使用配置的project_name，否则自动推断
+    /// Get project name, prioritize configured project_name, otherwise auto-infer
     pub fn get_project_name(&self) -> String {
-        // 优先使用配置的项目名称
+        // Prioritize configured project name
         if let Some(ref name) = self.project_name {
             if !name.trim().is_empty() {
                 return name.clone();
             }
         }
 
-        // 如果没有配置或配置为空，则自动推断
+        // If not configured or empty, auto-infer
         self.infer_project_name()
     }
 
-    /// 自动推断项目名称
+    /// Auto-infer project name
     fn infer_project_name(&self) -> String {
-        // 尝试从项目配置文件中提取项目名称
+        // Try to extract project name from project configuration files
         if let Some(name) = self.extract_project_name_from_config_files() {
             return name;
         }
 
-        // 从项目路径推断
+        // Infer from project path
         self.project_path
             .file_name()
             .unwrap_or_default()
@@ -220,32 +220,37 @@ impl Config {
             .to_string()
     }
 
-    /// 从项目配置文件中提取项目名称
+    /// Extract project name from project configuration files
     fn extract_project_name_from_config_files(&self) -> Option<String> {
-        // 尝试从 Cargo.toml 提取（Rust项目）
+        // Try to extract from Cargo.toml (Rust project)
         if let Some(name) = self.extract_from_cargo_toml() {
             return Some(name);
         }
 
-        // 尝试从 package.json 提取（Node.js项目）
+        // Try to extract from package.json (Node.js project)
         if let Some(name) = self.extract_from_package_json() {
             return Some(name);
         }
 
-        // 尝试从 pyproject.toml 提取（Python项目）
+        // Try to extract from pyproject.toml (Python project)
         if let Some(name) = self.extract_from_pyproject_toml() {
             return Some(name);
         }
 
-        // 尝试从 pom.xml 提取（Java Maven项目）
+        // Try to extract from pom.xml (Java Maven project)
         if let Some(name) = self.extract_from_pom_xml() {
+            return Some(name);
+        }
+
+        // Try to extract from .csproj (C# project)
+        if let Some(name) = self.extract_from_csproj() {
             return Some(name);
         }
 
         None
     }
 
-    /// 从 Cargo.toml 提取项目名称
+    /// Extract project name from Cargo.toml
     pub fn extract_from_cargo_toml(&self) -> Option<String> {
         let cargo_path = self.project_path.join("Cargo.toml");
         if !cargo_path.exists() {
@@ -254,7 +259,7 @@ impl Config {
 
         match std::fs::read_to_string(&cargo_path) {
             Ok(content) => {
-                // 查找 [package] 段落下的 name
+                // Find name under [package] section
                 let mut in_package_section = false;
                 for line in content.lines() {
                     let line = line.trim();
@@ -281,7 +286,7 @@ impl Config {
         None
     }
 
-    /// 从 package.json 提取项目名称
+    /// Extract project name from package.json
     pub fn extract_from_package_json(&self) -> Option<String> {
         let package_path = self.project_path.join("package.json");
         if !package_path.exists() {
@@ -290,7 +295,7 @@ impl Config {
 
         match std::fs::read_to_string(&package_path) {
             Ok(content) => {
-                // 简单的JSON解析，查找 "name": "..."
+                // Simple JSON parsing, find "name": "..."
                 for line in content.lines() {
                     let line = line.trim();
                     if line.starts_with("\"name\"") && line.contains(":") {
@@ -312,7 +317,7 @@ impl Config {
         None
     }
 
-    /// 从 pyproject.toml 提取项目名称
+    /// Extract project name from pyproject.toml
     pub fn extract_from_pyproject_toml(&self) -> Option<String> {
         let pyproject_path = self.project_path.join("pyproject.toml");
         if !pyproject_path.exists() {
@@ -321,7 +326,7 @@ impl Config {
 
         match std::fs::read_to_string(&pyproject_path) {
             Ok(content) => {
-                // 查找 [project] 或 [tool.poetry] 下的 name
+                // Find name under [project] or [tool.poetry]
                 let mut in_project_section = false;
                 let mut in_poetry_section = false;
 
@@ -360,7 +365,49 @@ impl Config {
         None
     }
 
-    /// 从 pom.xml 提取项目名称
+    /// Extract project name from .csproj
+    fn extract_from_csproj(&self) -> Option<String> {
+        // Find all .csproj files
+        if let Ok(entries) = std::fs::read_dir(&self.project_path) {
+            for entry in entries.flatten() {
+                let path = entry.path();
+                if path.extension().and_then(|e| e.to_str()) == Some("csproj") {
+                    if let Ok(content) = std::fs::read_to_string(&path) {
+                        // Extract project name from filename (remove .csproj extension)
+                        if let Some(file_stem) = path.file_stem() {
+                            if let Some(name) = file_stem.to_str() {
+                                return Some(name.to_string());
+                            }
+                        }
+                        
+                        // Try to extract <AssemblyName> or <PackageId> from XML
+                        for line in content.lines() {
+                            let line = line.trim();
+                            if line.starts_with("<AssemblyName>") && line.ends_with("</AssemblyName>") {
+                                let name = line
+                                    .trim_start_matches("<AssemblyName>")
+                                    .trim_end_matches("</AssemblyName>");
+                                if !name.is_empty() {
+                                    return Some(name.to_string());
+                                }
+                            }
+                            if line.starts_with("<PackageId>") && line.ends_with("</PackageId>") {
+                                let name = line
+                                    .trim_start_matches("<PackageId>")
+                                    .trim_end_matches("</PackageId>");
+                                if !name.is_empty() {
+                                    return Some(name.to_string());
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        None
+    }
+
+    /// Extract project name from pom.xml
     fn extract_from_pom_xml(&self) -> Option<String> {
         let pom_path = self.project_path.join("pom.xml");
         if !pom_path.exists() {
@@ -369,11 +416,11 @@ impl Config {
 
         match std::fs::read_to_string(&pom_path) {
             Ok(content) => {
-                // 简单的XML解析，查找 <artifactId> 或 <name>
+                // Simple XML parsing, find <artifactId> or <name>
                 let lines: Vec<&str> = content.lines().collect();
                 for line in lines {
                     let line = line.trim();
-                    // 优先使用 <name> 标签
+                    // Prioritize <name> tag
                     if line.starts_with("<name>") && line.ends_with("</name>") {
                         let name = line
                             .trim_start_matches("<name>")
@@ -382,7 +429,7 @@ impl Config {
                             return Some(name.to_string());
                         }
                     }
-                    // 其次使用 <artifactId> 标签
+                    // Use <artifactId> tag as fallback
                     if line.starts_with("<artifactId>") && line.ends_with("</artifactId>") {
                         let name = line
                             .trim_start_matches("<artifactId>")
@@ -481,7 +528,7 @@ impl Default for LLMConfig {
             model_efficient: String::from("Qwen/Qwen3-Next-80B-A3B-Instruct"),
             model_powerful: String::from("Qwen/Qwen3-235B-A22B-Instruct-2507"),
             max_tokens: 131072,
-            temperature: 0.1,
+            temperature: Some(0.1),
             retry_attempts: 5,
             retry_delay_ms: 5000,
             timeout_seconds: 300,

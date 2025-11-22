@@ -11,43 +11,43 @@ use crate::generator::research::memory::MemoryScope as ResearchMemoryScope;
 use crate::generator::research::types::AgentType as ResearchAgentType;
 use crate::generator::workflow::{TimingKeys, TimingScope};
 
-/// Summary数据收集器 - 负责从context中提取四类调研材料
+/// Summary data collector - responsible for extracting four types of research materials from context
 pub struct SummaryDataCollector;
 
-/// Summary内容生成器 - 负责格式化和组织内容
+/// Summary content generator - responsible for formatting and organizing content
 pub struct SummaryContentGenerator;
 
-/// Summary生成模式
+/// Summary generation mode
 #[derive(Debug, Clone)]
 pub enum SummaryMode {
-    /// 完整模式 - 包含所有详细数据
+    /// Full mode - includes all detailed data
     Full,
-    /// 摘要模式 - 只包含基本信息和核心指标
+    /// Brief mode - includes only basic information and core metrics
     Brief,
 }
 
-/// Summary数据结构
+/// Summary data structure
 #[derive(Debug)]
 pub struct SummaryData {
-    /// 系统上下文调研报告
+    /// System context research report
     pub system_context: Option<Value>,
-    /// 领域模块调研报告
+    /// Domain modules research report
     pub domain_modules: Option<Value>,
-    /// 工作流调研报告
+    /// Workflow research report
     pub workflow: Option<Value>,
-    /// 代码洞察数据
+    /// Code insights data
     pub code_insights: Option<Value>,
-    /// Memory存储统计
+    /// Memory storage statistics
     pub memory_stats: HashMap<String, usize>,
-    /// 缓存性能统计
+    /// Cache performance statistics
     pub cache_stats: CacheStatsData,
-    /// 生成文档列表
+    /// Generated documents list
     pub generated_docs: Vec<String>,
-    /// 耗时统计
+    /// Timing statistics
     pub timing_stats: TimingStats,
 }
 
-/// 缓存统计数据
+/// Cache statistics data
 #[derive(Debug)]
 pub struct CacheStatsData {
     pub hit_rate: f64,
@@ -63,31 +63,31 @@ pub struct CacheStatsData {
     pub output_tokens_saved: usize,
 }
 
-/// 耗时统计数据
+/// Timing statistics data
 #[derive(Debug)]
 pub struct TimingStats {
-    /// 总执行时间（秒）
+    /// Total execution time (seconds)
     pub total_execution_time: f64,
-    /// 预处理阶段耗时（秒）
+    /// Preprocessing phase time (seconds)
     pub preprocess_time: f64,
-    /// 研究阶段耗时（秒）
+    /// Research phase time (seconds)
     pub research_time: f64,
-    /// 文档生成阶段耗时（秒）
+    /// Document generation phase time (seconds)
     pub compose_time: f64,
-    /// 输出阶段耗时（秒）
+    /// Output phase time (seconds)
     pub output_time: f64,
-    /// 文档生成时间
+    /// Document generation time
     pub document_generation_time: f64,
-    /// Summary生成时间
+    /// Summary generation time
     pub summary_generation_time: f64,
 }
 
 impl SummaryDataCollector {
-    /// 从GeneratorContext中收集所有需要的数据
+    /// Collect all required data from GeneratorContext
     pub async fn collect_data(context: &GeneratorContext) -> Result<SummaryData> {
         let start_time = Instant::now();
 
-        // 收集四类调研材料
+        // Collect four types of research materials
         let system_context = context
             .get_from_memory::<Value>(
                 ResearchMemoryScope::STUDIES_RESEARCH,
@@ -113,10 +113,10 @@ impl SummaryDataCollector {
             .get_from_memory::<Value>(PreprocessMemoryScope::PREPROCESS, ScopedKeys::CODE_INSIGHTS)
             .await;
 
-        // 收集Memory统计
+        // Collect Memory statistics
         let memory_stats = context.get_memory_stats().await;
 
-        // 收集缓存统计
+        // Collect cache statistics
         let cache_report = context
             .cache_manager
             .read()
@@ -136,12 +136,12 @@ impl SummaryDataCollector {
             output_tokens_saved: cache_report.output_tokens_saved,
         };
 
-        // 收集生成文档列表
+        // Collect generated documents list
         let generated_docs = context
             .list_memory_keys(ComposeMemoryScope::DOCUMENTATION)
             .await;
 
-        // 收集耗时统计（从各个阶段的memory中获取，如果有的话）
+        // Collect timing statistics (from various stages in memory, if available)
         let timing_stats = Self::collect_timing_stats(context).await;
 
         let summary_generation_time = start_time.elapsed().as_secs_f64();
@@ -160,9 +160,9 @@ impl SummaryDataCollector {
         })
     }
 
-    /// 收集耗时统计信息
+    /// Collect timing statistics information
     async fn collect_timing_stats(context: &GeneratorContext) -> TimingStats {
-        // 尝试从memory中获取各阶段的耗时信息
+        // Try to get timing information for each phase from memory
         let preprocess_time = context
             .get_from_memory::<f64>(TimingScope::TIMING, TimingKeys::PREPROCESS)
             .await
@@ -200,13 +200,13 @@ impl SummaryDataCollector {
             compose_time,
             output_time,
             document_generation_time,
-            summary_generation_time: 0.0, // 会在调用处设置
+            summary_generation_time: 0.0, // Will be set at call site
         }
     }
 }
 
 impl SummaryContentGenerator {
-    /// 根据收集的数据生成Markdown格式的summary内容
+    /// Generate Markdown-formatted summary content based on collected data
     pub fn generate_content(data: &SummaryData, mode: SummaryMode) -> String {
         match mode {
             SummaryMode::Full => Self::generate_full_content(data),
@@ -214,26 +214,26 @@ impl SummaryContentGenerator {
         }
     }
 
-    /// 生成完整版本的summary内容
+    /// Generate full version of summary content
     fn generate_full_content(data: &SummaryData) -> String {
         let mut content = String::new();
 
-        // 1. 基础信息
-        content.push_str("# 项目分析总结报告（完整版）\n\n");
+        // 1. Basic information
+        content.push_str("# Project Analysis Summary Report (Full Version)\n\n");
         content.push_str(&format!(
-            "生成时间: {}\n\n",
+            "Generation Time: {}\n\n",
             chrono::Utc::now().format("%Y-%m-%d %H:%M:%S UTC")
         ));
 
-        // 2. 执行耗时统计
-        content.push_str("## 执行耗时统计\n\n");
+        // 2. Execution timing statistics
+        content.push_str("## Execution Timing Statistics\n\n");
         let timing = &data.timing_stats;
         content.push_str(&format!(
-            "- **总执行时间**: {:.2} 秒\n",
+            "- **Total Execution Time**: {:.2} seconds\n",
             timing.total_execution_time
         ));
         content.push_str(&format!(
-            "- **预处理阶段**: {:.2} 秒 ({:.1}%)\n",
+            "- **Preprocessing Phase**: {:.2} seconds ({:.1}%)\n",
             timing.preprocess_time,
             if timing.total_execution_time > 0.0 {
                 (timing.preprocess_time / timing.total_execution_time) * 100.0
@@ -242,7 +242,7 @@ impl SummaryContentGenerator {
             }
         ));
         content.push_str(&format!(
-            "- **研究阶段**: {:.2} 秒 ({:.1}%)\n",
+            "- **Research Phase**: {:.2} seconds ({:.1}%)\n",
             timing.research_time,
             if timing.total_execution_time > 0.0 {
                 (timing.research_time / timing.total_execution_time) * 100.0
@@ -251,7 +251,7 @@ impl SummaryContentGenerator {
             }
         ));
         content.push_str(&format!(
-            "- **文档生成阶段**: {:.2} 秒 ({:.1}%)\n",
+            "- **Document Generation Phase**: {:.2} seconds ({:.1}%)\n",
             timing.compose_time,
             if timing.total_execution_time > 0.0 {
                 (timing.compose_time / timing.total_execution_time) * 100.0
@@ -260,7 +260,7 @@ impl SummaryContentGenerator {
             }
         ));
         content.push_str(&format!(
-            "- **输出阶段**: {:.2} 秒 ({:.1}%)\n",
+            "- **Output Phase**: {:.2} seconds ({:.1}%)\n",
             timing.output_time,
             if timing.total_execution_time > 0.0 {
                 (timing.output_time / timing.total_execution_time) * 100.0
@@ -270,112 +270,112 @@ impl SummaryContentGenerator {
         ));
         if timing.document_generation_time > 0.0 {
             content.push_str(&format!(
-                "- **文档生成时间**: {:.2} 秒\n",
+                "- **Document Generation Time**: {:.2} seconds\n",
                 timing.document_generation_time
             ));
         }
         content.push_str(&format!(
-            "- **Summary生成时间**: {:.3} 秒\n\n",
+            "- **Summary Generation Time**: {:.3} seconds\n\n",
             timing.summary_generation_time
         ));
 
-        // 3. 缓存性能统计与节约效果
-        content.push_str("## 缓存性能统计与节约效果\n\n");
+        // 3. Cache performance statistics and savings
+        content.push_str("## Cache Performance Statistics and Savings\n\n");
         let stats = &data.cache_stats;
 
-        content.push_str("### 性能指标\n");
+        content.push_str("### Performance Metrics\n");
         content.push_str(&format!(
-            "- **缓存命中率**: {:.1}%\n",
+            "- **Cache Hit Rate**: {:.1}%\n",
             stats.hit_rate * 100.0
         ));
-        content.push_str(&format!("- **总操作次数**: {}\n", stats.total_operations));
-        content.push_str(&format!("- **缓存命中**: {} 次\n", stats.cache_hits));
-        content.push_str(&format!("- **缓存未命中**: {} 次\n", stats.cache_misses));
-        content.push_str(&format!("- **缓存写入**: {} 次\n", stats.cache_writes));
+        content.push_str(&format!("- **Total Operations**: {}\n", stats.total_operations));
+        content.push_str(&format!("- **Cache Hits**: {} times\n", stats.cache_hits));
+        content.push_str(&format!("- **Cache Misses**: {} times\n", stats.cache_misses));
+        content.push_str(&format!("- **Cache Writes**: {} times\n", stats.cache_writes));
         if stats.cache_errors > 0 {
-            content.push_str(&format!("- **缓存错误**: {} 次\n", stats.cache_errors));
+            content.push_str(&format!("- **Cache Errors**: {} times\n", stats.cache_errors));
         }
 
-        content.push_str("\n### 节约效果\n");
+        content.push_str("\n### Savings\n");
         content.push_str(&format!(
-            "- **节省推理时间**: {:.1} 秒\n",
+            "- **Inference Time Saved**: {:.1} seconds\n",
             stats.inference_time_saved
         ));
         content.push_str(&format!(
-            "- **节省Token数量**: {} 输入 + {} 输出 = {} 总计\n",
+            "- **Tokens Saved**: {} input + {} output = {} total\n",
             stats.input_tokens_saved,
             stats.output_tokens_saved,
             stats.input_tokens_saved + stats.output_tokens_saved
         ));
-        content.push_str(&format!("- **估算节省成本**: ${:.4}\n", stats.cost_saved));
+        content.push_str(&format!("- **Estimated Cost Savings**: ${:.4}\n", stats.cost_saved));
         if stats.performance_improvement > 0.0 {
             content.push_str(&format!(
-                "- **性能提升**: {:.1}%\n",
+                "- **Performance Improvement**: {:.1}%\n",
                 stats.performance_improvement
             ));
         }
 
-        // 计算效率比
+        // Calculate efficiency ratio
         if timing.total_execution_time > 0.0 && stats.inference_time_saved > 0.0 {
             let efficiency_ratio = stats.inference_time_saved / timing.total_execution_time;
             content.push_str(&format!(
-                "- **效率提升比**: {:.1}x（节省时间 / 实际执行时间）\n",
+                "- **Efficiency Improvement Ratio**: {:.1}x (saved time / actual execution time)\n",
                 efficiency_ratio
             ));
         }
         content.push_str("\n");
 
-        // 4. 核心调研数据汇总
-        content.push_str("## 核心调研数据汇总\n\n");
-        content.push_str("根据Prompt模板数据整合规则，以下为四类调研材料的完整内容：\n\n");
+        // 4. Core research data summary
+        content.push_str("## Core Research Data Summary\n\n");
+        content.push_str("Complete content of four types of research materials according to Prompt template data integration rules:\n\n");
 
-        // 系统上下文调研报告
+        // System context research report
         if let Some(ref system_context) = data.system_context {
-            content.push_str("### 系统上下文调研报告\n");
-            content.push_str("提供项目的核心目标、用户角色和系统边界信息。\n\n");
+            content.push_str("### System Context Research Report\n");
+            content.push_str("Provides core objectives, user roles, and system boundary information for the project.\n\n");
             content.push_str(&format!(
                 "```json\n{}\n```\n\n",
                 serde_json::to_string_pretty(system_context).unwrap_or_default()
             ));
         }
 
-        // 领域模块调研报告
+        // Domain modules research report
         if let Some(ref domain_modules) = data.domain_modules {
-            content.push_str("### 领域模块调研报告\n");
-            content.push_str("提供高层次的领域划分、模块关系和核心业务流程信息。\n\n");
+            content.push_str("### Domain Modules Research Report\n");
+            content.push_str("Provides high-level domain division, module relationships, and core business process information.\n\n");
             content.push_str(&format!(
                 "```json\n{}\n```\n\n",
                 serde_json::to_string_pretty(domain_modules).unwrap_or_default()
             ));
         }
 
-        // 工作流调研报告
+        // Workflow research report
         if let Some(ref workflow) = data.workflow {
-            content.push_str("### 工作流调研报告\n");
-            content.push_str("包含对代码库的静态分析结果和业务流程分析。\n\n");
+            content.push_str("### Workflow Research Report\n");
+            content.push_str("Contains static analysis results of the codebase and business process analysis.\n\n");
             content.push_str(&format!(
                 "```json\n{}\n```\n\n",
                 serde_json::to_string_pretty(workflow).unwrap_or_default()
             ));
         }
 
-        // 代码洞察数据
+        // Code insights data
         if let Some(ref code_insights) = data.code_insights {
-            content.push_str("### 代码洞察数据\n");
-            content.push_str("来自预处理阶段的代码分析结果，包含函数、类和模块的定义。\n\n");
+            content.push_str("### Code Insights Data\n");
+            content.push_str("Code analysis results from preprocessing phase, including definitions of functions, classes, and modules.\n\n");
             content.push_str(&format!(
                 "```json\n{}\n```\n\n",
                 serde_json::to_string_pretty(code_insights).unwrap_or_default()
             ));
         }
 
-        // 5. Memory存储统计
-        content.push_str("## Memory存储统计\n\n");
+        // 5. Memory storage statistics
+        content.push_str("## Memory Storage Statistics\n\n");
         if data.memory_stats.is_empty() {
-            content.push_str("暂无Memory存储数据。\n\n");
+            content.push_str("No Memory storage data available.\n\n");
         } else {
             let total_size: usize = data.memory_stats.values().sum();
-            content.push_str(&format!("**总存储大小**: {} bytes\n\n", total_size));
+            content.push_str(&format!("**Total Storage Size**: {} bytes\n\n", total_size));
             for (scope, size) in &data.memory_stats {
                 let percentage = (*size as f64 / total_size as f64) * 100.0;
                 content.push_str(&format!(
@@ -386,10 +386,10 @@ impl SummaryContentGenerator {
             content.push_str("\n");
         }
 
-        // 6. 生成文档统计
-        content.push_str("## 生成文档统计\n\n");
+        // 6. Generated documents statistics
+        content.push_str("## Generated Documents Statistics\n\n");
         content.push_str(&format!(
-            "生成文档数量: {} 个\n\n",
+            "Number of Generated Documents: {}\n\n",
             data.generated_docs.len()
         ));
         for doc in &data.generated_docs {
@@ -399,35 +399,35 @@ impl SummaryContentGenerator {
         content
     }
 
-    /// 生成摘要版本的summary内容
+    /// Generate brief version of summary content
     fn generate_brief_content(data: &SummaryData) -> String {
         let mut content = String::new();
 
-        // 1. 基础信息
-        content.push_str("# 项目分析摘要报告\n\n");
+        // 1. Basic information
+        content.push_str("# Project Analysis Brief Report\n\n");
         content.push_str(&format!(
-            "生成时间: {}\n\n",
+            "Generation Time: {}\n\n",
             chrono::Utc::now().format("%Y-%m-%d %H:%M:%S UTC")
         ));
 
-        // 2. 执行概览
-        content.push_str("## 执行概览\n\n");
+        // 2. Execution overview
+        content.push_str("## Execution Overview\n\n");
         let timing = &data.timing_stats;
         content.push_str(&format!(
-            "**总执行时间**: {:.2} 秒\n",
+            "**Total Execution Time**: {:.2} seconds\n",
             timing.total_execution_time
         ));
 
-        // 显示最耗时的阶段
+        // Display most time-consuming phases
         let mut stages = vec![
-            ("预处理", timing.preprocess_time),
-            ("研究调研", timing.research_time),
-            ("文档化", timing.compose_time),
-            ("输出", timing.output_time),
+            ("Preprocessing", timing.preprocess_time),
+            ("Research", timing.research_time),
+            ("Documentation", timing.compose_time),
+            ("Output", timing.output_time),
         ];
         stages.sort_by(|a, b| b.1.partial_cmp(&a.1).unwrap());
 
-        content.push_str("**各阶段耗时**:\n");
+        content.push_str("**Phase Timing**:\n");
         for (stage, time) in stages {
             let percentage = if timing.total_execution_time > 0.0 {
                 (time / timing.total_execution_time) * 100.0
@@ -438,103 +438,103 @@ impl SummaryContentGenerator {
         }
         content.push_str("\n");
 
-        // 3. 缓存效果概览
-        content.push_str("## 缓存效果概览\n\n");
+        // 3. Cache effectiveness overview
+        content.push_str("## Cache Effectiveness Overview\n\n");
         let stats = &data.cache_stats;
 
-        // 核心指标
-        content.push_str(&format!("**缓存命中率**: {:.1}% ", stats.hit_rate * 100.0));
+        // Core metrics
+        content.push_str(&format!("**Cache Hit Rate**: {:.1}% ", stats.hit_rate * 100.0));
         if stats.hit_rate >= 0.8 {
-            content.push_str("🟢 优秀\n");
+            content.push_str("🟢 Excellent\n");
         } else if stats.hit_rate >= 0.5 {
-            content.push_str("🟡 良好\n");
+            content.push_str("🟡 Good\n");
         } else {
-            content.push_str("🔴 需要优化\n");
+            content.push_str("🔴 Needs Optimization\n");
         }
 
         content.push_str(&format!(
-            "**节省时间**: {:.1} 秒\n",
+            "**Time Saved**: {:.1} seconds\n",
             stats.inference_time_saved
         ));
         content.push_str(&format!(
-            "**节省Token**: {} 输入 + {} 输出 = {} 总计\n",
+            "**Tokens Saved**: {} input + {} output = {} total\n",
             stats.input_tokens_saved,
             stats.output_tokens_saved,
             stats.input_tokens_saved + stats.output_tokens_saved
         ));
-        content.push_str(&format!("**节省成本**: ${:.4}\n", stats.cost_saved));
+        content.push_str(&format!("**Cost Savings**: ${:.4}\n", stats.cost_saved));
 
-        // 效率评估
+        // Efficiency assessment
         if timing.total_execution_time > 0.0 && stats.inference_time_saved > 0.0 {
             let efficiency_ratio = stats.inference_time_saved / timing.total_execution_time;
-            content.push_str(&format!("**效率提升**: {:.1}x 倍\n", efficiency_ratio));
+            content.push_str(&format!("**Efficiency Improvement**: {:.1}x\n", efficiency_ratio));
         }
 
-        // 成本效益分析
+        // Cost-benefit analysis
         if stats.cost_saved > 0.0 {
             let cost_per_second = stats.cost_saved / timing.total_execution_time;
-            content.push_str(&format!("**成本效益**: ${:.6}/秒\n", cost_per_second));
+            content.push_str(&format!("**Cost-Benefit**: ${:.6}/second\n", cost_per_second));
         }
         content.push_str("\n");
 
-        // 4. 调研数据概览
-        content.push_str("## 调研数据概览\n\n");
-        content.push_str("根据Prompt模板数据整合规则，成功收集四类调研材料：\n\n");
+        // 4. Research data overview
+        content.push_str("## Research Data Overview\n\n");
+        content.push_str("Successfully collected four types of research materials according to Prompt template data integration rules:\n\n");
 
         let mut collected_count = 0;
 
-        // 检查各类调研材料是否存在
+        // Check if each type of research material exists
         if data.system_context.is_some() {
-            content.push_str("✅ **系统上下文调研报告**: 已生成\n");
+            content.push_str("✅ **System Context Research Report**: Generated\n");
             collected_count += 1;
         } else {
-            content.push_str("❌ **系统上下文调研报告**: 未生成\n");
+            content.push_str("❌ **System Context Research Report**: Not generated\n");
         }
 
         if data.domain_modules.is_some() {
-            content.push_str("✅ **领域模块调研报告**: 已生成\n");
+            content.push_str("✅ **Domain Modules Research Report**: Generated\n");
             collected_count += 1;
         } else {
-            content.push_str("❌ **领域模块调研报告**: 未生成\n");
+            content.push_str("❌ **Domain Modules Research Report**: Not generated\n");
         }
 
         if data.workflow.is_some() {
-            content.push_str("✅ **工作流调研报告**: 已生成\n");
+            content.push_str("✅ **Workflow Research Report**: Generated\n");
             collected_count += 1;
         } else {
-            content.push_str("❌ **工作流调研报告**: 未生成\n");
+            content.push_str("❌ **Workflow Research Report**: Not generated\n");
         }
 
         if data.code_insights.is_some() {
-            content.push_str("✅ **代码洞察数据**: 已生成\n");
+            content.push_str("✅ **Code Insights Data**: Generated\n");
             collected_count += 1;
         } else {
-            content.push_str("❌ **代码洞察数据**: 未生成\n");
+            content.push_str("❌ **Code Insights Data**: Not generated\n");
         }
 
         content.push_str(&format!(
-            "\n**调研完成度**: {}/4 ({:.1}%)\n\n",
+            "\n**Research Completion Rate**: {}/4 ({:.1}%)\n\n",
             collected_count,
             (collected_count as f64 / 4.0) * 100.0
         ));
 
-        // 5. Memory存储概览
-        content.push_str("## Memory存储概览\n\n");
+        // 5. Memory storage overview
+        content.push_str("## Memory Storage Overview\n\n");
         if data.memory_stats.is_empty() {
-            content.push_str("暂无Memory存储数据。\n\n");
+            content.push_str("No Memory storage data available.\n\n");
         } else {
             let total_size: usize = data.memory_stats.values().sum();
-            content.push_str(&format!("**总存储大小**: {} bytes\n", total_size));
+            content.push_str(&format!("**Total Storage Size**: {} bytes\n", total_size));
             content.push_str(&format!(
-                "**存储作用域数量**: {} 个\n\n",
+                "**Number of Storage Scopes**: {}\n\n",
                 data.memory_stats.len()
             ));
 
-            // 只显示前3个最大的作用域
+            // Display only the top 3 largest scopes
             let mut sorted_stats: Vec<_> = data.memory_stats.iter().collect();
             sorted_stats.sort_by(|a, b| b.1.cmp(a.1));
 
-            content.push_str("### 主要存储分布（前3位）\n");
+            content.push_str("### Main Storage Distribution (Top 3)\n");
             for (scope, size) in sorted_stats.iter().take(3) {
                 let percentage = (**size as f64 / total_size as f64) * 100.0;
                 content.push_str(&format!(
@@ -545,71 +545,71 @@ impl SummaryContentGenerator {
             content.push_str("\n");
         }
 
-        // 6. 文档生成概览
-        content.push_str("## 文档生成概览\n\n");
+        // 6. Document generation overview
+        content.push_str("## Document Generation Overview\n\n");
         content.push_str(&format!(
-            "**文档生成数量**: {} 个\n",
+            "**Number of Generated Documents**: {}\n",
             data.generated_docs.len()
         ));
 
         if !data.generated_docs.is_empty() {
-            content.push_str("**文档类型**: \n - ");
+            content.push_str("**Document Types**: \n - ");
             content.push_str(&data.generated_docs.join("\n - "));
             content.push_str("\n");
         }
         content.push_str("\n");
 
-        // 7. 总体评估
-        content.push_str("## 总体评估\n\n");
+        // 7. Overall assessment
+        content.push_str("## Overall Assessment\n\n");
 
-        // 数据完整性评估
+        // Data completeness assessment
         let data_completeness = (collected_count as f64 / 4.0) * 100.0;
-        content.push_str(&format!("**数据完整性**: {:.1}% ", data_completeness));
+        content.push_str(&format!("**Data Completeness**: {:.1}% ", data_completeness));
         if data_completeness == 100.0 {
-            content.push_str("🟢 完整\n");
+            content.push_str("🟢 Complete\n");
         } else if data_completeness >= 75.0 {
-            content.push_str("🟡 基本完整\n");
+            content.push_str("🟡 Mostly Complete\n");
         } else {
-            content.push_str("🔴 不完整\n");
+            content.push_str("🔴 Incomplete\n");
         }
 
-        // 缓存效率评估
-        content.push_str(&format!("**缓存效率**: {:.1}% ", stats.hit_rate * 100.0));
+        // Cache efficiency assessment
+        content.push_str(&format!("**Cache Efficiency**: {:.1}% ", stats.hit_rate * 100.0));
         if stats.hit_rate >= 0.8 {
-            content.push_str("🟢 高效\n");
+            content.push_str("🟢 Efficient\n");
         } else if stats.hit_rate >= 0.5 {
-            content.push_str("🟡 中等\n");
+            content.push_str("🟡 Moderate\n");
         } else {
-            content.push_str("🔴 低效\n");
+            content.push_str("🔴 Inefficient\n");
         }
 
-        // 执行效率评估
+        // Execution efficiency assessment
         content.push_str(&format!(
-            "**执行效率**: {:.2}s ",
+            "**Execution Efficiency**: {:.2}s ",
             timing.total_execution_time
         ));
         if timing.total_execution_time <= 60.0 {
-            content.push_str("🟢 快速\n");
+            content.push_str("🟢 Fast\n");
         } else if timing.total_execution_time <= 300.0 {
-            content.push_str("🟡 正常\n");
+            content.push_str("🟡 Normal\n");
         } else {
-            content.push_str("🔴 较慢\n");
+            content.push_str("🔴 Slow\n");
         }
 
-        // 文档生成完成度
+        // Document generation completion
         let docs_generated = !data.generated_docs.is_empty();
         content.push_str(&format!(
-            "**文档生成**: {} ",
+            "**Document Generation**: {} ",
             if docs_generated {
-                "已完成"
+                "Completed"
             } else {
-                "未完成"
+                "Not Completed"
             }
         ));
         if docs_generated {
-            content.push_str("🟢 成功\n");
+            content.push_str("🟢 Success\n");
         } else {
-            content.push_str("🔴 失败\n");
+            content.push_str("🔴 Failed\n");
         }
 
         content

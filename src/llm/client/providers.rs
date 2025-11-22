@@ -1,4 +1,4 @@
-//! LLM Provider支持模块
+//! LLM Provider support module
 
 use anyhow::Result;
 use rig::{
@@ -18,7 +18,7 @@ use crate::{
 
 use super::ollama_extractor::OllamaExtractorWrapper;
 
-/// 统一的Provider客户端枚举
+/// Unified Provider client enum
 #[derive(Clone)]
 pub enum ProviderClient {
     OpenAI(rig::providers::openai::Client),
@@ -32,7 +32,7 @@ pub enum ProviderClient {
 }
 
 impl ProviderClient {
-    /// 根据配置创建相应的provider客户端
+    /// Create corresponding provider client based on configuration
     pub fn new(config: &LLMConfig) -> Result<Self> {
         match config.provider {
             LLMProvider::OpenAI => {
@@ -80,7 +80,7 @@ impl ProviderClient {
         }
     }
 
-    /// 创建Agent
+    /// Create Agent
     pub fn create_agent(
         &self,
         model: &str,
@@ -89,83 +89,116 @@ impl ProviderClient {
     ) -> ProviderAgent {
         match self {
             ProviderClient::OpenAI(client) => {
-                let agent = client
+                let mut builder = client
                     .completion_model(model)
                     .completions_api()
                     .into_agent_builder()
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
-                    .build();
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder.build();
                 ProviderAgent::OpenAI(agent)
             }
             ProviderClient::Moonshot(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
-                    .preamble(system_prompt)
-                    .temperature(config.temperature.into())
-                    .build();
+                    .preamble(system_prompt);
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder.build();
                 ProviderAgent::Moonshot(agent)
             }
             ProviderClient::DeepSeek(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
-                    .preamble(system_prompt)
-                    .temperature(config.temperature.into())
-                    .build();
+                    .preamble(system_prompt);
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder.build();
                 ProviderAgent::DeepSeek(agent)
             }
             ProviderClient::Mistral(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
-                    .preamble(system_prompt)
-                    .temperature(config.temperature.into())
-                    .build();
+                    .preamble(system_prompt);
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder.build();
                 ProviderAgent::Mistral(agent)
             }
             ProviderClient::OpenRouter(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
-                    .preamble(system_prompt)
-                    .temperature(config.temperature.into())
-                    .build();
+                    .preamble(system_prompt);
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder.build();
                 ProviderAgent::OpenRouter(agent)
             }
             ProviderClient::Anthropic(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
-                    .build();
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder.build();
                 ProviderAgent::Anthropic(agent)
             }
             ProviderClient::Gemini(client) => {
                 let gen_cfg = GenerationConfig::default();
                 let cfg = AdditionalParameters::default().with_config(gen_cfg);
 
-                let agent = client
+                let mut builder = client
                     .agent(model)
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder
                     .additional_params(serde_json::to_value(cfg).unwrap())
                     .build();
                 ProviderAgent::Gemini(agent)
             }
             ProviderClient::Ollama(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
-                    .build();
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder.build();
                 ProviderAgent::Ollama(agent)
             }
         }
     }
 
-    /// 创建带工具的Agent
+    /// Create Agent with tools
     pub fn create_agent_with_tools(
         &self,
         model: &str,
@@ -178,13 +211,18 @@ impl ProviderClient {
 
         match self {
             ProviderClient::OpenAI(client) => {
-                let agent = client
+                let mut builder = client
                     .completion_model(model)
                     .completions_api()
                     .into_agent_builder()
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
                     .tool(tool_time)
@@ -192,11 +230,16 @@ impl ProviderClient {
                 ProviderAgent::OpenAI(agent)
             }
             ProviderClient::Moonshot(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
                     .tool(tool_time)
@@ -204,11 +247,16 @@ impl ProviderClient {
                 ProviderAgent::Moonshot(agent)
             }
             ProviderClient::DeepSeek(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
                     .tool(tool_time)
@@ -216,10 +264,15 @@ impl ProviderClient {
                 ProviderAgent::DeepSeek(agent)
             }
             ProviderClient::Mistral(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
-                    .preamble(system_prompt)
-                    .temperature(config.temperature.into())
+                    .preamble(system_prompt);
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
                     .tool(tool_time)
@@ -227,10 +280,15 @@ impl ProviderClient {
                 ProviderAgent::Mistral(agent)
             }
             ProviderClient::OpenRouter(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
-                    .preamble(system_prompt)
-                    .temperature(config.temperature.into())
+                    .preamble(system_prompt);
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
                     .tool(tool_time)
@@ -238,11 +296,16 @@ impl ProviderClient {
                 ProviderAgent::OpenRouter(agent)
             }
             ProviderClient::Anthropic(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
                     .tool(tool_time)
@@ -253,11 +316,16 @@ impl ProviderClient {
                 let gen_cfg = GenerationConfig::default();
                 let cfg = AdditionalParameters::default().with_config(gen_cfg);
 
-                let agent = client
+                let mut builder = client
                     .agent(model)
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
                     .tool(tool_time)
@@ -266,11 +334,16 @@ impl ProviderClient {
                 ProviderAgent::Gemini(agent)
             }
             ProviderClient::Ollama(client) => {
-                let agent = client
+                let mut builder = client
                     .agent(model)
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder
                     .tool(file_explorer.clone())
                     .tool(file_reader.clone())
                     .tool(tool_time)
@@ -280,7 +353,7 @@ impl ProviderClient {
         }
     }
 
-    /// 创建Extractor
+    /// Create Extractor
     pub fn create_extractor<T>(
         &self,
         model: &str,
@@ -353,12 +426,16 @@ impl ProviderClient {
             }
             ProviderClient::Ollama(client) => {
                 // Create standard agent for Ollama
-                let agent = client
+                let mut builder = client
                     .agent(model)
                     .preamble(system_prompt)
-                    .max_tokens(config.max_tokens.into())
-                    .temperature(config.temperature.into())
-                    .build();
+                    .max_tokens(config.max_tokens.into());
+                
+                if let Some(temp) = config.temperature {
+                    builder = builder.temperature(temp);
+                }
+                
+                let agent = builder.build();
 
                 // Wrap with OllamaExtractorWrapper to handle structured output
                 let wrapper = OllamaExtractorWrapper::new(agent, config.retry_attempts);
@@ -369,7 +446,7 @@ impl ProviderClient {
     }
 }
 
-/// 统一的Agent枚举
+/// Unified Agent enum
 pub enum ProviderAgent {
     OpenAI(Agent<rig::providers::openai::CompletionModel>),
     Mistral(Agent<rig::providers::mistral::CompletionModel>),
@@ -382,7 +459,7 @@ pub enum ProviderAgent {
 }
 
 impl ProviderAgent {
-    /// 执行prompt
+    /// Execute prompt
     pub async fn prompt(&self, prompt: &str) -> Result<String> {
         match self {
             ProviderAgent::OpenAI(agent) => agent.prompt(prompt).await.map_err(|e| e.into()),
@@ -396,7 +473,7 @@ impl ProviderAgent {
         }
     }
 
-    /// 执行多轮对话
+    /// Execute multi-turn dialogue
     pub async fn multi_turn(
         &self,
         prompt: &str,
@@ -419,7 +496,7 @@ impl ProviderAgent {
     }
 }
 
-/// 统一的Extractor枚举
+/// Unified Extractor enum
 pub enum ProviderExtractor<T>
 where
     T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,
@@ -438,7 +515,7 @@ impl<T> ProviderExtractor<T>
 where
     T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,
 {
-    /// 执行提取
+    /// Execute extraction
     pub async fn extract(&self, prompt: &str) -> Result<T> {
         match self {
             ProviderExtractor::OpenAI(extractor) => {

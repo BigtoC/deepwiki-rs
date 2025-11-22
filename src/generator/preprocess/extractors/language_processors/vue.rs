@@ -71,7 +71,7 @@ impl LanguageProcessor for VueProcessor {
     fn determine_component_type(&self, file_path: &Path, content: &str) -> String {
         let file_name = file_path.file_name().and_then(|n| n.to_str()).unwrap_or("");
 
-        // 检查特殊文件名
+        // Check special file names
         if file_name == "App.vue" {
             return "vue_app".to_string();
         }
@@ -91,7 +91,7 @@ impl LanguageProcessor for VueProcessor {
             return "vue_layout".to_string();
         }
 
-        // 检查内容模式
+        // Check content patterns
         if content.contains("<template>") && content.contains("<script>") {
             if content.contains("export default") {
                 "vue_component".to_string()
@@ -110,7 +110,7 @@ impl LanguageProcessor for VueProcessor {
     fn is_important_line(&self, line: &str) -> bool {
         let trimmed = line.trim();
 
-        // Vue模板标签
+        // Vue template tags
         if trimmed.starts_with("<template>")
             || trimmed.starts_with("<script>")
             || trimmed.starts_with("<style>")
@@ -119,7 +119,7 @@ impl LanguageProcessor for VueProcessor {
             return true;
         }
 
-        // Vue组件定义
+        // Vue component definitions
         if trimmed.contains("export default") || trimmed.contains("defineComponent") {
             return true;
         }
@@ -135,12 +135,12 @@ impl LanguageProcessor for VueProcessor {
             return true;
         }
 
-        // 导入语句
+        // Import statements
         if trimmed.starts_with("import ") {
             return true;
         }
 
-        // Vue指令和事件
+        // Vue directives and events
         if trimmed.contains("v-if")
             || trimmed.contains("v-for")
             || trimmed.contains("v-model")
@@ -150,7 +150,7 @@ impl LanguageProcessor for VueProcessor {
             return true;
         }
 
-        // 重要注释
+        // Important comments
         if trimmed.contains("TODO")
             || trimmed.contains("FIXME")
             || trimmed.contains("NOTE")
@@ -169,9 +169,9 @@ impl LanguageProcessor for VueProcessor {
     fn extract_interfaces(&self, content: &str, _file_path: &Path) -> Vec<InterfaceInfo> {
         let mut interfaces = Vec::new();
 
-        // Vue组件的接口分析主要关注组件定义和方法
+        // Vue component interface analysis focuses on component definitions and methods
         if content.contains("<script") {
-            // 提取Vue组件名称（从文件名或export default）
+            // Extract Vue component name (from file name or export default)
             if content.contains("export default") {
                 interfaces.push(InterfaceInfo {
                     name: "VueComponent".to_string(),
@@ -179,15 +179,15 @@ impl LanguageProcessor for VueProcessor {
                     visibility: "public".to_string(),
                     parameters: Vec::new(),
                     return_type: None,
-                    description: Some("Vue单文件组件".to_string()),
+                    description: Some("Vue single file component".to_string()),
                 });
             }
 
-            // 提取methods中的方法
+            // Extract methods in methods block
             if let Some(methods_start) = content.find("methods:") {
                 let methods_section = &content[methods_start..];
                 for line in methods_section.lines().take(50) {
-                    // 限制搜索范围
+                    // Limit search range
                     let trimmed = line.trim();
                     if let Some(method_name) = self.extract_vue_method(trimmed) {
                         interfaces.push(InterfaceInfo {
@@ -208,9 +208,9 @@ impl LanguageProcessor for VueProcessor {
 }
 
 impl VueProcessor {
-    /// 提取Vue方法名称
+    /// Extract Vue method name
     fn extract_vue_method(&self, line: &str) -> Option<String> {
-        // 匹配: methodName() { 或 methodName: function() {
+        // Match: methodName() { or methodName: function() {
         if line.contains('(') && line.contains('{') {
             if let Some(paren_pos) = line.find('(') {
                 let before_paren = &line[..paren_pos].trim();

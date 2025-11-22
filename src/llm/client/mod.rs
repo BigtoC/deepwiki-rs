@@ -1,4 +1,4 @@
-//! LLM客户端 - 提供统一的LLM服务接口
+//! LLM client - Provides unified LLM service interface
 
 use anyhow::Result;
 use schemars::JsonSchema;
@@ -23,7 +23,7 @@ use providers::ProviderClient;
 use react_executor::ReActExecutor;
 use summary_reasoner::SummaryReasoner;
 
-/// LLM客户端 - 提供统一的LLM服务接口
+/// LLM client - Provides unified LLM service interface
 #[derive(Clone)]
 pub struct LLMClient {
     config: Config,
@@ -31,18 +31,18 @@ pub struct LLMClient {
 }
 
 impl LLMClient {
-    /// 创建新的LLM客户端
+    /// Create a new LLM client
     pub fn new(config: Config) -> Result<Self> {
         let client = ProviderClient::new(&config.llm)?;
         Ok(Self { client, config })
     }
 
-    /// 获取Agent构建器
+    /// Get Agent builder
     fn get_agent_builder(&self) -> AgentBuilder<'_> {
         AgentBuilder::new(&self.client, &self.config)
     }
 
-    /// 通用重试逻辑，用于处理异步操作的重试机制
+    /// Generic retry logic for handling async operation retry mechanism
     async fn retry_with_backoff<T, F, Fut>(&self, operation: F) -> Result<T>
     where
         F: Fn() -> Fut,
@@ -59,7 +59,7 @@ impl LLMClient {
                 Err(err) => {
                     retries += 1;
                     eprintln!(
-                        "❌ 调用模型服务出错，重试中 (第 {} / {}次尝试): {}",
+                        "❌ Model service call error, retrying (attempt {} / {}): {}",
                         retries, max_retries, err
                     );
                     if retries >= max_retries {
@@ -71,7 +71,7 @@ impl LLMClient {
         }
     }
 
-    /// 数据提取方法
+    /// Data extraction method
     pub async fn extract<T>(&self, system_prompt: &str, user_prompt: &str) -> Result<T>
     where
         T: JsonSchema + for<'a> Deserialize<'a> + Serialize + Send + Sync + 'static,
@@ -104,11 +104,11 @@ impl LLMClient {
                 Ok(r) => Ok(r),
                 Err(e) => match fallover_model {
                     Some(ref model) => {
-                        eprintln!(
-                            "❌ 调用模型服务出错，尝试 {} 次均失败，尝试使用备选模型{}...{}",
-                            llm_config.retry_attempts, model, e
-                        );
-                        let user_prompt_with_fixer = format!("{}\n\n**注意事项**此前我调用大模型过程时存在错误，错误信息为“{}”，你注意你这一次要规避这个错误", user_prompt, e);
+                        let msg = self.config.target_language.msg_ai_service_error()
+                            .replace("{}", &llm_config.retry_attempts.to_string())
+                            .replace("{}", &format!(" trying fallback model {}...{}", model, e));
+                        eprintln!("{}", msg);
+                        let user_prompt_with_fixer = format!("{}\n\n**Notice** There was an error during my previous LLM call, error message: \"{}\". Please ensure you avoid this error this time", user_prompt, e);
                         Box::pin(self.extract_inner(
                             system_prompt,
                             &user_prompt_with_fixer,
@@ -118,10 +118,10 @@ impl LLMClient {
                         .await
                     }
                     None => {
-                        eprintln!(
-                            "❌ 调用模型服务出错，尝试 {} 次均失败...{}",
-                            llm_config.retry_attempts, e
-                        );
+                        let msg = self.config.target_language.msg_ai_service_error()
+                            .replace("{}", &llm_config.retry_attempts.to_string())
+                            .replace("{}", &e.to_string());
+                        eprintln!("{}", msg);
                         Err(e.into())
                     }
                 },
@@ -130,7 +130,7 @@ impl LLMClient {
         .await
     }
 
-    /// 智能对话方法（使用默认ReAct配置）
+    /// Intelligent dialogue method (using default ReAct configuration)
     pub async fn prompt(&self, system_prompt: &str, user_prompt: &str) -> Result<String> {
         let react_config = ReActConfig::default();
         let response = self
@@ -139,7 +139,7 @@ impl LLMClient {
         Ok(response.content)
     }
 
-    /// 使用ReAct模式进行多轮对话
+    /// Multi-turn dialogue using ReAct mode
     pub async fn prompt_with_react(
         &self,
         system_prompt: &str,
@@ -151,19 +151,19 @@ impl LLMClient {
 
         let response = self
             .retry_with_backoff(|| async {
-                ReActExecutor::execute(&agent, user_prompt, &react_config)
+                ReActExecutor::execute(&agent, user_prompt, &react_config, &self.config.target_language)
                     .await
                     .map_err(|e| e.into())
             })
             .await?;
 
-        // 如果达到最大迭代次数且启用了总结推理，则尝试fallover
+        // If max iterations reached and summary reasoning enabled, attempt fallover
         if response.stopped_by_max_depth
             && react_config.enable_summary_reasoning
             && response.chat_history.is_some()
         {
             if react_config.verbose {
-                println!("🔄 启动ReAct Agent总结转直接推理模式...");
+                println!("🔄 Activating ReAct Agent summary to direct reasoning mode...");
             }
 
             match self
@@ -172,15 +172,16 @@ impl LLMClient {
             {
                 Ok(summary_response) => {
                     if react_config.verbose {
-                        println!("✅ 总结推理完成");
+                        println!("✅ Summary reasoning completed");
                     }
                     return Ok(summary_response);
                 }
                 Err(e) => {
                     if react_config.verbose {
-                        println!("⚠️  总结推理失败，返回原始部分结果...{}", e);
+                        let msg = self.config.target_language.msg_summary_reasoning_failed();
+                        println!("{}", msg.replace("{}", &e.to_string()));
                     }
-                    // 总结推理失败时，返回原始的部分结果
+                    // When summary reasoning fails, return the original partial result
                 }
             }
         }
@@ -188,7 +189,7 @@ impl LLMClient {
         Ok(response)
     }
 
-    /// 尝试总结推理fallover
+    /// Attempt summary reasoning fallover
     async fn try_summary_reasoning(
         &self,
         system_prompt: &str,
@@ -201,7 +202,7 @@ impl LLMClient {
         let chat_history = original_response
             .chat_history
             .as_ref()
-            .ok_or_else(|| anyhow::anyhow!("缺少对话历史"))?;
+            .ok_or_else(|| anyhow::anyhow!("Missing chat history"))?;
 
         let summary_result = self
             .retry_with_backoff(|| async {
@@ -225,7 +226,7 @@ impl LLMClient {
         ))
     }
 
-    /// 简化的单轮对话方法（不使用工具）
+    /// Simplified single-turn dialogue method (without tools)
     pub async fn prompt_without_react(
         &self,
         system_prompt: &str,

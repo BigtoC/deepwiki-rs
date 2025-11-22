@@ -12,7 +12,7 @@ use std::collections::HashMap;
 use std::fs::Metadata;
 use std::path::PathBuf;
 
-/// 项目结构提取器
+/// Project structure extractor
 pub struct StructureExtractor {
     language_processor: LanguageProcessorManager,
     code_purpose_enhancer: CodePurposeEnhancer,
@@ -28,14 +28,14 @@ impl StructureExtractor {
         }
     }
 
-    /// 提取项目结构
+    /// Extract project structure
     pub async fn extract_structure(&self, project_path: &PathBuf) -> Result<ProjectStructure> {
         let cache_key = format!("structure_{}", project_path.display());
 
-        // 执行结构提取
+        // Execute structure extraction
         let structure = self.extract_structure_impl(project_path).await?;
 
-        // 缓存结果，structure缓存仅用于记录观测
+        // Cache results, structure cache is only used for observation records
         self.context
             .cache_manager
             .write()
@@ -52,7 +52,7 @@ impl StructureExtractor {
         let mut file_types = HashMap::new();
         let mut size_distribution = HashMap::new();
 
-        // 扫描目录，提取内部的目录与文件结构和基本文件信息
+        // Scan directory, extract internal directory and file structure and basic file information
         self.scan_directory(
             project_path,
             project_path,
@@ -65,7 +65,7 @@ impl StructureExtractor {
         )
         .await?;
 
-        // 计算重要性分数
+        // Calculate importance scores
         self.calculate_importance_scores(&mut files, &mut directories);
 
         let project_name = self.context.config.get_project_name();
@@ -108,12 +108,12 @@ impl StructureExtractor {
                 let file_type = entry.file_type().await?;
 
                 if file_type.is_file() {
-                    // 检查是否应该忽略此文件
+                    // Check if this file should be ignored
                     if !self.should_ignore_file(&path) {
                         if let Ok(metadata) = std::fs::metadata(&path) {
                             let file_info = self.create_file_info(&path, root_path, &metadata)?;
 
-                            // 更新统计信息
+                            // Update statistics
                             if let Some(ext) = &file_info.extension {
                                 *file_types.entry(ext.clone()).or_insert(0) += 1;
                             }
@@ -134,11 +134,11 @@ impl StructureExtractor {
                         .to_string_lossy()
                         .to_string();
 
-                    // 跳过隐藏目录和常见的忽略目录
+                    // Skip hidden directories and commonly ignored directories
                     if !self.should_ignore_directory(&dir_name) {
                         dir_subdirectory_count += 1;
 
-                        // 递归扫描子目录
+                        // Recursively scan subdirectories
                         self.scan_directory(
                             &path,
                             root_path,
@@ -154,7 +154,7 @@ impl StructureExtractor {
                 }
             }
 
-            // 创建目录信息
+            // Create directory information
             if current_path != root_path {
                 let dir_info = DirectoryInfo {
                     path: current_path.clone(),
@@ -166,7 +166,7 @@ impl StructureExtractor {
                     file_count: dir_file_count,
                     subdirectory_count: dir_subdirectory_count,
                     total_size: dir_total_size,
-                    importance_score: 0.0, // 稍后计算
+                    importance_score: 0.0, // Calculate later
                 };
                 directories.push(dir_info);
             }
@@ -205,9 +205,9 @@ impl StructureExtractor {
             name,
             size: metadata.len(),
             extension,
-            is_core: false,        // 稍后计算
-            importance_score: 0.0, // 稍后计算
-            complexity_score: 0.0, // 稍后计算
+            is_core: false,        // Calculate later
+            importance_score: 0.0, // Calculate later
+            complexity_score: 0.0, // Calculate later
             last_modified,
         })
     }
@@ -226,19 +226,19 @@ impl StructureExtractor {
         let config = &self.context.config;
         let dir_name_lower = dir_name.to_lowercase();
 
-        // 检查Config中配置的排除目录
+        // Check excluded directories configured in Config
         for excluded_dir in &config.excluded_dirs {
             if dir_name_lower == excluded_dir.to_lowercase() {
                 return true;
             }
         }
 
-        // 检查是否为测试目录（如果不包含测试文件）
+        // Check if it's a test directory (if not including test files)
         if !config.include_tests && is_test_directory(dir_name) {
             return true;
         }
 
-        // 检查隐藏目录
+        // Check hidden directories
         if !config.include_hidden && dir_name.starts_with('.') {
             return true;
         }
@@ -256,10 +256,10 @@ impl StructureExtractor {
 
         let _path_str = path.to_string_lossy().to_lowercase();
 
-        // 检查排除的文件
+        // Check excluded files
         for excluded_file in &config.excluded_files {
             if excluded_file.contains('*') {
-                // 简单的通配符匹配
+                // Simple wildcard matching
                 let pattern = excluded_file.replace('*', "");
                 if file_name.contains(&pattern.to_lowercase()) {
                     return true;
@@ -269,7 +269,7 @@ impl StructureExtractor {
             }
         }
 
-        // 检查排除的扩展名
+        // Check excluded extensions
         if let Some(extension) = path.extension().and_then(|e| e.to_str()) {
             if config
                 .excluded_extensions
@@ -279,7 +279,7 @@ impl StructureExtractor {
             }
         }
 
-        // 检查包含的扩展名（如果指定了）
+        // Check included extensions (if specified)
         if !config.included_extensions.is_empty() {
             if let Some(extension) = path.extension().and_then(|e| e.to_str()) {
                 if !config
@@ -289,28 +289,28 @@ impl StructureExtractor {
                     return true;
                 }
             } else {
-                return true; // 没有扩展名且指定了包含列表
+                return true; // No extension and include list is specified
             }
         }
 
-        // 检查测试文件（如果不包含测试文件）
+        // Check test files (if not including test files)
         if !config.include_tests && is_test_file(path) {
             return true;
         }
 
-        // 检查隐藏文件
+        // Check hidden files
         if !config.include_hidden && file_name.starts_with('.') {
             return true;
         }
 
-        // 检查文件大小
+        // Check file size
         if let Ok(metadata) = std::fs::metadata(path) {
             if metadata.len() > config.max_file_size {
                 return true;
             }
         }
 
-        // 检查二进制文件
+        // Check binary files
         if is_binary_file_path(path) {
             return true;
         }
@@ -323,11 +323,11 @@ impl StructureExtractor {
         files: &mut [FileInfo],
         directories: &mut [DirectoryInfo],
     ) {
-        // 计算文件重要性分数
+        // Calculate file importance scores
         for file in files.iter_mut() {
             let mut score: f64 = 0.0;
 
-            // 基于文件位置的权重
+            // Weight based on file location
             let path_str = file.path.to_string_lossy().to_lowercase();
             if path_str.contains("src") || path_str.contains("lib") {
                 score += 0.3;
@@ -339,34 +339,34 @@ impl StructureExtractor {
                 score += 0.1;
             }
 
-            // 基于文件大小的权重
+            // Weight based on file size
             if file.size > 1024 && file.size < 50 * 1024 {
                 score += 0.2;
             }
 
-            // 基于文件类型的权重
+            // Weight based on file type
             if let Some(ext) = &file.extension {
                 match ext.as_str() {
-                    // 主要编程语言
+                    // Main programming languages
                     "rs" | "py" | "java" | "kt" | "cpp" | "c" | "go" | "rb" | "php" | "m"
-                    | "swift" | "dart" => score += 0.3,
-                    // React 特殊文件
+                    | "swift" | "dart" | "cs" => score += 0.3,
+                    // React special files
                     "jsx" | "tsx" => score += 0.3,
-                    // JavaScript/TypeScript 生态
+                    // JavaScript/TypeScript ecosystem
                     "js" | "ts" | "mjs" | "cjs" => score += 0.3,
-                    // 前端框架文件
+                    // Frontend framework files
                     "vue" | "svelte" => score += 0.3,
-                    // 小程序
+                    // Mini App
                     "wxml" | "ttml" | "ksml" => score += 0.3,
-                    // 配置文件
+                    // Configuration files
                     "toml" | "yaml" | "yml" | "json" | "xml" | "ini" | "env" => score += 0.1,
-                    // 构建和包管理文件
+                    // Build and package management files
                     "gradle" | "pom" => score += 0.15,
                     "package" => score += 0.15,
                     "lock" => score += 0.05,
-                    // 样式文件
-                    "css" | "scss" | "sass" | "less" | "styl" | "wxss" => score += 0.1,
-                    // 模板文件
+                    // Style files
+                    "css" | "scss" | "sass" | "less" | "styl" | "wxss"  => score += 0.1,
+                    // Template files
                     "html" | "htm" | "hbs" | "mustache" | "ejs" => score += 0.1,
                     _ => {}
                 }
@@ -376,11 +376,11 @@ impl StructureExtractor {
             file.is_core = score > 0.5;
         }
 
-        // 计算目录重要性分数
+        // Calculate directory importance scores
         for dir in directories.iter_mut() {
             let mut score: f64 = 0.0;
 
-            // 基于目录名称
+            // Based on directory name
             let name_lower = dir.name.to_lowercase();
             if name_lower == "src" || name_lower == "lib" {
                 score += 0.4;
@@ -389,12 +389,12 @@ impl StructureExtractor {
                 score += 0.3;
             }
 
-            // 基于文件数量
+            // Based on file count
             if dir.file_count > 5 {
                 score += 0.2;
             }
 
-            // 基于子目录数量
+            // Based on subdirectory count
             if dir.subdirectory_count > 2 {
                 score += 0.1;
             }
@@ -403,17 +403,17 @@ impl StructureExtractor {
         }
     }
 
-    /// 识别核心文件
+    /// Identify core files
     pub async fn identify_core_codes(
         &self,
         structure: &ProjectStructure,
     ) -> Result<Vec<CodeDossier>> {
         let mut core_codes = Vec::new();
 
-        // 基于重要性分数筛选核心文件
+        // Filter core files based on importance score
         let mut core_files: Vec<_> = structure.files.iter().filter(|f| f.is_core).collect();
 
-        // 按重要性分数降序排列，确保最重要的组件优先处理
+        // Sort by importance score in descending order, ensuring the most important components are processed first
         core_files.sort_by(|a, b| {
             b.importance_score
                 .partial_cmp(&a.importance_score)
@@ -423,13 +423,13 @@ impl StructureExtractor {
         for file in core_files {
             let code_purpose = self.determine_code_purpose(file).await;
 
-            // 提取接口信息
+            // Extract interface information
             let interfaces = self.extract_file_interfaces(file).await.unwrap_or_default();
             let interface_names: Vec<String> = interfaces.iter().map(|i| i.name.clone()).collect();
 
-            // 提取核心代码摘要
+            // Extract core code summary
             let source_summary =
-                read_code_source(&self.language_processor, &structure.root_path, &file.path);
+                read_code_source(&self.language_processor, &structure.root_path, &file.path, &self.context.config.target_language);
 
             core_codes.push(CodeDossier {
                 name: file.name.clone(),
@@ -437,9 +437,9 @@ impl StructureExtractor {
                 source_summary,
                 code_purpose,
                 importance_score: file.importance_score,
-                description: None,           // 稍后通过LLM分析填充
-                functions: Vec::new(),       // 稍后通过代码分析填充
-                interfaces: interface_names, // 从代码分析中提取的接口名称
+                description: None,           // Filled later through LLM analysis
+                functions: Vec::new(),       // Filled later through code analysis
+                interfaces: interface_names, // Interface names extracted from code analysis
             });
         }
 
@@ -447,10 +447,10 @@ impl StructureExtractor {
     }
 
     async fn determine_code_purpose(&self, file: &FileInfo) -> CodePurpose {
-        // 读取文件内容
+        // Read file content
         let file_content = std::fs::read_to_string(&file.path).ok();
 
-        // 使用增强的组件类型分析器
+        // Use enhanced component type analyzer
         match self
             .code_purpose_enhancer
             .execute(
@@ -463,27 +463,27 @@ impl StructureExtractor {
         {
             Ok(code_purpose) => code_purpose,
             Err(_) => {
-                // 回退到基础规则映射
+                // Fallback to basic rule mapping
                 CodePurposeMapper::map_by_path_and_name(&file.path.to_string_lossy(), &file.name)
             }
         }
     }
 
-    /// 提取文件接口信息
+    /// Extract file interface information
     async fn extract_file_interfaces(
         &self,
         file: &FileInfo,
     ) -> Result<Vec<crate::types::code::InterfaceInfo>> {
-        // 构建完整文件路径
+        // Build complete file path
         let full_path = if file.path.is_absolute() {
             file.path.clone()
         } else {
             file.path.clone()
         };
 
-        // 尝试读取文件内容
+        // Try to read file content
         if let Ok(content) = tokio::fs::read_to_string(&full_path).await {
-            // 使用语言处理器提取接口
+            // Use language processor to extract interfaces
             let interfaces = self
                 .language_processor
                 .extract_interfaces(&full_path, &content);

@@ -19,7 +19,7 @@ pub async fn prompt(context: &GeneratorContext, params: AgentExecuteParams) -> R
     let log_tag = &params.log_tag;
 
     let prompt_key = format!("{}|{}|reply-prompt", prompt_sys, prompt_user);
-    // 尝试从缓存获取 - 直接使用prompt作为key，CacheManager会自动计算hash
+    // Try to get from cache - Use prompt directly as key, CacheManager will automatically calculate hash
     if let Some(cached_reply) = context
         .cache_manager
         .read()
@@ -27,23 +27,25 @@ pub async fn prompt(context: &GeneratorContext, params: AgentExecuteParams) -> R
         .get::<serde_json::Value>(cache_scope, &prompt_key)
         .await?
     {
-        println!("   ✅ 使用缓存的AI分析结果: {}", log_tag);
+        let msg = context.config.target_language.msg_cache_hit().replace("{}", log_tag);
+        println!("{}", msg);
         return Ok(cached_reply.to_string());
     }
 
-    println!("   🤖 正在进行AI分析: {}", log_tag);
+    let msg = context.config.target_language.msg_ai_analyzing().replace("{}", log_tag);
+    println!("{}", msg);
 
     let reply = context
         .llm_client
         .prompt_without_react(prompt_sys, prompt_user)
         .await
-        .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
+        .map_err(|e| anyhow::anyhow!("AI analysis failed: {}", e))?;
 
-    // 估算token使用情况
+    // Estimate token usage
     let input_text = format!("{} {}", prompt_sys, prompt_user);
     let token_usage = estimate_token_usage(&input_text, &reply);
 
-    // 缓存结果 - 使用带token信息的方法
+    // Cache result - Use method with token information
     context
         .cache_manager
         .write()
@@ -64,7 +66,7 @@ pub async fn prompt_with_tools(
     let log_tag = &params.log_tag;
 
     let prompt_key = format!("{}|{}|reply-prompt+tool", prompt_sys, prompt_user);
-    // 尝试从缓存获取 - 直接使用prompt作为key，CacheManager会自动计算hash
+    // Try to get from cache - Use prompt directly as key, CacheManager will automatically calculate hash
     if let Some(cached_reply) = context
         .cache_manager
         .read()
@@ -72,24 +74,26 @@ pub async fn prompt_with_tools(
         .get::<serde_json::Value>(cache_scope, &prompt_key)
         .await?
     {
-        println!("   ✅ 使用缓存的AI分析结果: {}", log_tag);
+        let msg = context.config.target_language.msg_cache_hit().replace("{}", log_tag);
+        println!("{}", msg);
         return Ok(cached_reply.to_string());
     }
 
-    println!("   🤖 正在进行AI分析: {}", log_tag);
+    let msg = context.config.target_language.msg_ai_analyzing().replace("{}", log_tag);
+    println!("{}", msg);
 
     let reply = context
         .llm_client
         .prompt(prompt_sys, prompt_user)
         .await
-        .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
+        .map_err(|e| anyhow::anyhow!("AI analysis failed: {}", e))?;
 
-    // 估算token使用情况
+    // Estimate token usage
     let input_text = format!("{} {}", prompt_sys, prompt_user);
     let output_text = serde_json::to_string(&reply).unwrap_or_default();
     let token_usage = estimate_token_usage(&input_text, &output_text);
 
-    // 缓存结果 - 使用带token信息的方法
+    // Cache result - Use method with token information
     context
         .cache_manager
         .write()
@@ -110,7 +114,7 @@ where
     let log_tag = &params.log_tag;
 
     let prompt_key = format!("{}|{}", prompt_sys, prompt_user);
-    // 尝试从缓存获取 - 直接使用prompt作为key，CacheManager会自动计算hash
+    // Try to get from cache - Use prompt directly as key, CacheManager will automatically calculate hash
     if let Some(cached_reply) = context
         .cache_manager
         .read()
@@ -118,24 +122,26 @@ where
         .get::<T>(cache_scope, &prompt_key)
         .await?
     {
-        println!("   ✅ 使用缓存的AI分析结果: {}", log_tag);
+        let msg = context.config.target_language.msg_cache_hit().replace("{}", log_tag);
+        println!("{}", msg);
         return Ok(cached_reply);
     }
 
-    println!("   🤖 正在进行AI分析: {}", log_tag);
+    let msg = context.config.target_language.msg_ai_analyzing().replace("{}", log_tag);
+    println!("{}", msg);
 
     let reply = context
         .llm_client
         .extract::<T>(prompt_sys, prompt_user)
         .await
-        .map_err(|e| anyhow::anyhow!("AI分析失败: {}", e))?;
+        .map_err(|e| anyhow::anyhow!("AI analysis failed: {}", e))?;
 
-    // 估算token使用情况
+    // Estimate token usage
     let input_text = format!("{} {}", prompt_sys, prompt_user);
     let output_text = serde_json::to_string(&reply).unwrap_or_default();
     let token_usage = estimate_token_usage(&input_text, &output_text);
 
-    // 缓存结果 - 使用带token信息的方法
+    // Cache result - Use method with token information
     context
         .cache_manager
         .write()
