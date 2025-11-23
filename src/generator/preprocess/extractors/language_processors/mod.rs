@@ -52,6 +52,7 @@ impl LanguageProcessorManager {
                 Box::new(python::PythonProcessor::new()),
                 Box::new(java::JavaProcessor::new()),
                 Box::new(csharp::CSharpProcessor::new()),
+                Box::new(swift::SwiftProcessor::new()),
             ],
         }
     }
@@ -150,5 +151,6 @@ pub mod python;
 pub mod react;
 pub mod rust;
 pub mod svelte;
+pub mod swift;
 pub mod typescript;
 pub mod vue;
